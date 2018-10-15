@@ -7,9 +7,9 @@ class XIPInstrument:
 
     def __init__(self):
         # Initialize values common to all XIP instruments
-        self.baud_rate = None
-        self.usb_timeout = None
-        self.flow_control = None
+        self.baud_rate = 115200
+        self.usb_timeout = 2
+        self.flow_control = True
         self.device_serial = None
         self.serial_parameters = None
         self.vid_pid = None
