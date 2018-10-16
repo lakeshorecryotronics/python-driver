@@ -1,4 +1,4 @@
-from XIPInstrument import XIPInstrument
+from lakeshore.XIPInstrument import XIPInstrument
 
 
 class Teslameter(XIPInstrument):
