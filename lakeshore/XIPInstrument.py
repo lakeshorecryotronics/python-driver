@@ -1,3 +1,5 @@
+"""This module implements a parent class that contains all functionality shared by Lake Shore XIP instruments."""
+
 import serial
 from serial.tools.list_ports import comports
 
