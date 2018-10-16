@@ -4,49 +4,40 @@ import serial
 from serial.tools.list_ports import comports
 
 
+class XIPInstrumentConnectionException(Exception):
+    """Names a new type of exception specific to instrument connectivity."""
+    pass
+
+
 class XIPInstrument:
     """Parent class that implements functionality shared by all XIP instruments"""
 
-    def __init__(self):
+    vid_pid = []
+
+    def __init__(self, serial_number, com_port, baud_rate, timeout, flow_control):
         # Initialize values common to all XIP instruments
-        self.baud_rate = 115200
-        self.usb_timeout = 2
-        self.flow_control = True
         self.device_serial = None
-        self.serial_parameters = None
-        self.vid_pid = []
+        self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
 
-    def connect_usb(self, com_port=None,
-                    baud_rate=None,
-                    timeout=None,
-                    flow_control=None):
+    def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
         """Establishes a serial USB connection with optional arguments"""
-
-        # Update the serial parameters if they are passed into the method
-        if baud_rate:
-            self.baud_rate = baud_rate
-        if timeout:
-            self.usb_timeout = timeout
-        if flow_control:
-            self.flow_control = flow_control
-
-        self.serial_parameters = {'baudrate': self.baud_rate,
-                                  'timeout': self.usb_timeout,
-                                  'parity': serial.PARITY_NONE,
-                                  'rtscts': self.flow_control
-                                  }
 
         # Scan the ports for devices matching the VID and PID combos of the instrument
         for port in comports():
             if (port.vid, port.pid) in self.vid_pid:
                 # If the com port argument is passed, check for a match
                 if port.device == com_port or com_port is None:
-                    # Establish a connection with device using the instrument's serial communications parameters
-                    self.device_serial = serial.Serial(port.device, **self.serial_parameters)
+                    if port.serial_number == serial_number or serial_number is None:
+                        # Establish a connection with device using the instrument's serial communications parameters
+                        self.device_serial = serial.Serial(port.device,
+                                                           baudrate=baud_rate,
+                                                           timeout=timeout,
+                                                           parity=serial.PARITY_NONE,
+                                                           rtscts=flow_control)
 
-                    return
-
-        # TODO: Raise an error when no matching instruments are found
+                        break
+        else:
+            raise XIPInstrumentConnectionException("No instrument found with given parameters")
 
     def disconnect_usb(self):
         """Disconnects the USB connection"""
