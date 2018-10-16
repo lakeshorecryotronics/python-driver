@@ -1,6 +1,6 @@
 """Implements functionality unique to the Lake Shore F41 and F71 Teslameters."""
 
-from lakeshore.XIPInstrument import XIPInstrument
+from .XIPInstrument import XIPInstrument
 
 
 class Teslameter(XIPInstrument):
