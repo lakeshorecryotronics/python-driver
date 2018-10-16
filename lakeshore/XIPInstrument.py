@@ -18,6 +18,9 @@ class XIPInstrument:
         # Initialize values common to all XIP instruments
         self.device_serial = None
         self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
+        idn_response = self.usb_query('*IDN?').split(',')
+        self.firmware_version = idn_response[3]
+        self.model_number = idn_response[1]
 
     def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
         """Establishes a serial USB connection with optional arguments"""
@@ -27,6 +30,7 @@ class XIPInstrument:
             if (port.vid, port.pid) in self.vid_pid:
                 # If the com port argument is passed, check for a match
                 if port.device == com_port or com_port is None:
+                    # If the serial number argument is passed, check for a match
                     if port.serial_number == serial_number or serial_number is None:
                         # Establish a connection with device using the instrument's serial communications parameters
                         self.device_serial = serial.Serial(port.device,
