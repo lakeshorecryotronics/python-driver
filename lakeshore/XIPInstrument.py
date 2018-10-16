@@ -14,7 +14,7 @@ class XIPInstrument:
         self.flow_control = True
         self.device_serial = None
         self.serial_parameters = None
-        self.vid_pid = None
+        self.vid_pid = []
 
     def connect_usb(self, com_port=None,
                     baud_rate=None,
