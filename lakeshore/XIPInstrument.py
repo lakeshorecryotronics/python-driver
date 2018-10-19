@@ -56,8 +56,10 @@ class XIPInstrument:
         """Queries over the serial USB connection"""
 
         self.usb_command(query)
-        response = self.device_serial.readline().decode('ascii').rstrip('\r\n')
+        response = self.device_serial.readline().decode('ascii')
 
-        # TODO: Raise an error when the instrument times out
+        # If nothing was returned, raise a timeout error
+        if not response:
+            raise XIPInstrumentConnectionException("The response timed out")
 
-        return response
+        return response.rstrip('\r\n')
