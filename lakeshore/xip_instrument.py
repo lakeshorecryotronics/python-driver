@@ -1,8 +1,8 @@
 """This module implements a parent class that contains all functionality shared by Lake Shore XIP instruments."""
 
+from time import sleep
 import serial
 from serial.tools.list_ports import comports
-from time import sleep
 
 
 class XIPInstrumentConnectionException(Exception):
@@ -59,7 +59,8 @@ class XIPInstrument:
         # Remove the line break the end of the response before returning it.
         return response.rstrip()
 
-    def _error_check(self, response):
+    @staticmethod
+    def _error_check(response):
         """Evaluates the instrument response"""
 
         # If nothing is returned, raise a timeout error.
