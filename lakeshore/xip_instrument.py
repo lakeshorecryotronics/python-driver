@@ -18,11 +18,18 @@ class XIPInstrument:
         # Initialize values common to all XIP instruments
         self.device_serial = None
         self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
-        idn_response = self.usb_query('*IDN?').split(',')
+
+        # Query the instrument identification information and store the firmware version and model number in variables
+        idn_response = self.query('*IDN?').split(',')
         self.firmware_version = idn_response[3]
         self.model_number = idn_response[1]
 
-    def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
+    def command(self, command):
+
+
+    def query(selfs, query):
+
+    def _connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
         """Establishes a serial USB connection with optional arguments"""
 
         # Scan the ports for devices matching the VID and PID combos of the instrument
@@ -43,7 +50,7 @@ class XIPInstrument:
         else:
             raise XIPInstrumentConnectionException("No instrument found with given parameters")
 
-    def disconnect_usb(self):
+    def _disconnect_usb(self):
         """Disconnects the USB connection"""
         self.device_serial.close()
         self.device_serial = None
