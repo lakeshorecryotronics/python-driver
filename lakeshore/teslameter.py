@@ -18,6 +18,29 @@ class Teslameter(XIPInstrument):
 
     vid_pid = [(0x1FB9, 0x0405), (0x1FB9, 0x0406)]
 
+    operation_status_register = [
+        "No Probe",
+        "Overload",
+        "Ranging",
+        "",
+        "",
+        "Ramp done",
+        "No data on breakout adapter"
+    ]
+
+    questionable_status_register = [
+        "X-axis sensor error",
+        "Y-axis sensor error",
+        "Z-axis sensor error",
+        "EEPROM read error",
+        "Temperature compensation error",
+        "Invalid probe",
+        "Field control slew rate limit",
+        "Field control at voltage limit",
+        "Calibration error",
+        "Heartbeat error"
+    ]
+
     def __init__(self, serial_number=None,
                  com_port=None, baud_rate=115200, flow_control=True,
                  timeout=2.0,
