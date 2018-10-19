@@ -32,7 +32,7 @@ class Teslameter(XIPInstrument):
         "X-axis sensor error",
         "Y-axis sensor error",
         "Z-axis sensor error",
-        "EEPROM read error",
+        "Probe EEPROM read error",
         "Temperature compensation error",
         "Invalid probe",
         "Field control slew rate limit",

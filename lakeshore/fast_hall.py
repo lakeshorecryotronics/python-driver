@@ -8,6 +8,34 @@ class FastHall(XIPInstrument):
 
     vid_pid = [(0x1FB9, 0x0704)]
 
+    # TODO: update register enums once they are finalized
+    operation_status_register = [
+        "",
+        "Settling",
+        "Ranging",
+        "Measurement complete",
+        "Waiting for trigger",
+        "",
+        "Field control ramping",
+        "Field measurement enabled",
+        "Transient"
+    ]
+
+    questionable_status_register = [
+        "Source in compliance or at current limit",
+        "",
+        "Field control slew rate limit",
+        "Field control at voltage limit",
+        "Current measurement overload",
+        "Voltage measurement overload",
+        "Invalid probe",
+        "Invalid calibration",
+        "Inter-processor communication error",
+        "Field measurement communication error",
+        "Probe EEPROM read error",
+        "R^2 less than minimum allowable"
+    ]
+
     def __init__(self, serial_number=None,
                  com_port=None, baud_rate=115200, flow_control=True,
                  timeout=2.0,
