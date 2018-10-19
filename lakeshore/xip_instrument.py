@@ -25,11 +25,18 @@ class XIPInstrument:
         self.model_number = idn_response[1]
 
     def command(self, command):
+        """Sends a SCPI command to the instrument"""
 
+        self._usb_command(command)
 
-    def query(selfs, query):
+    def query(self, query):
+        """Sends a SCPI query to the instrument and returns the response"""
 
-    def _connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
+        response = self._usb_query(query)
+
+        return response
+
+    def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
         """Establishes a serial USB connection with optional arguments"""
 
         # Scan the ports for devices matching the VID and PID combos of the instrument
@@ -50,19 +57,19 @@ class XIPInstrument:
         else:
             raise XIPInstrumentConnectionException("No instrument found with given parameters")
 
-    def _disconnect_usb(self):
+    def disconnect_usb(self):
         """Disconnects the USB connection"""
         self.device_serial.close()
         self.device_serial = None
 
-    def usb_command(self, command):
+    def _usb_command(self, command):
         """Sends a command over the serial USB connection"""
         self.device_serial.write(command.encode('ascii') + b'\n')
 
-    def usb_query(self, query):
+    def _usb_query(self, query):
         """Queries over the serial USB connection"""
 
-        self.usb_command(query)
+        self._usb_command(query)
         response = self.device_serial.readline().decode('ascii')
 
         # If nothing was returned, raise a timeout error
