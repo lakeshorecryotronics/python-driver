@@ -8,6 +8,35 @@ class PrecisionSource(XIPInstrument):
 
     vid_pid = [(0x1FB9, 0x0103)]
 
+    operation_status_register = [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "Waiting for trigger event",
+        "Waiting for ARM event",
+        "",
+        "",
+        "",
+        "Trigger model is idle",
+        "",
+        "Interlock is open"
+    ]
+
+    questionable_status_register = [
+        "Voltage source in current limit",
+        "Current source in voltage compliance",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "Calibration error",
+        "Inter-processor communication error"
+    ]
+
     def __init__(self, serial_number=None,
                  com_port=None, baud_rate=115200, flow_control=True,
                  timeout=2.0,
