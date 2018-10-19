@@ -208,5 +208,53 @@ class XIPInstrument:
         if not response:
             raise XIPInstrumentConnectionException("Communication timed out")
 
-        # Remove the line break the end of the response before returning it.
-        return response.rstrip()
+    def get_status_byte(self):
+        """Returns named bits of the status byte register and their values"""
+
+    def get_service_request_enable(self):
+        """Returns the named bits of the status byte service request enable register.
+        This register determines which bits propagate to the master summary status bit"""
+
+    def get_standard_events(self):
+        """Returns the names of the standard event register bits and their values"""
+
+    def get_standard_event_enable_mask(self):
+        """Returns the names of the standard event enable register bits and their values.
+        These values determine which bits propagate to the standard event register"""
+
+    def set_standard_event_enable_mask(self):
+        """Configures values of the standard event enable register bits.
+        These values determine which bits propagate to the standard event register"""
+
+    def get_present_operation_status(self):
+        """Returns the names of the operation status register bits and their values"""
+
+    def get_operation_events(self):
+        """Returns the names of operation event status register bits that are currently high.
+        The event register is latching and values are reset when queried."""
+
+    def get_operation_event_enable_mask(self):
+        """Returns the names of the operation event enable register bits and their values.
+        These values determine which operation bits propagate to the operation event register."""
+
+    def set_operation_event_enable_mask(self):
+        """Configures the values of the operation event enable register bits.
+        These values determine which operation bits propagate to the operation event register."""
+
+    def get_present_questionable_status(self):
+        """Returns the names of the questionable status register bits and their values"""
+
+    def get_questionable_events(self):
+        """Returns the names of questionable event status register bits that are currently high.
+        The event register is latching and values are reset when queried."""
+
+    def get_questionable_event_enable_mask(self):
+        """Returns the names of the questionable event enable register bits and their values.
+        These values determine which questionable bits propagate to the questionable event register."""
+
+    def set_questionable_event_enable_mask(self):
+        """Configures the values of the questionable event enable register bits.
+        These values determine which questionable bits propagate to the questionable event register."""
+
+    def reset_status_register_masks(self):
+        """Resets status register masks to preset values"""
