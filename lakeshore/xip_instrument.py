@@ -28,6 +28,8 @@ class XIPInstrument:
         "Master summary bit",
         "Operation summary bit"
     ]
+    operation_status_register = []
+    questionable_status_register = []
 
     def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address):
         # Initialize values common to all XIP instruments
