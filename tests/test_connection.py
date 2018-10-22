@@ -43,3 +43,8 @@ class TestSCPIErrorQueueChecking(TestWithDUT):
     def test_command_does_not_exist(self):
         with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'Undefined header;FAKEQUERY\?;'):
             self.dut.query('FAKEQUERY?')
+
+    def test_query_with_error_check_disabled(self):
+        response = self.dut.query('*IDN?', check_errors=False)
+
+        self.assertEqual(response.split(',')[0], 'Lake Shore')
