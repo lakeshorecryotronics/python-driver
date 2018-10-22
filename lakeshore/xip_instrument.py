@@ -32,11 +32,8 @@ class XIPInstrument:
         """Sends a SCPI command to the instrument"""
 
         if check_errors:
-            # Append the command with an error buffer query and check the response.
-            command += ";:SYSTem:ERRor:ALL?"
-            response = self.query(command)
-            self._error_check(response)
-
+            # Do a query which will automatically check the errors.
+            self.query(command)
         else:
             # Send command to the instrument over serial.
             self._usb_command(command)
@@ -52,28 +49,23 @@ class XIPInstrument:
         response = self._usb_query(query)
 
         if check_errors:
-            self._error_check(response)
-            # If no error has occurred, remove the part of the response returned by the error buffer.
-            response = response.replace(';0,"No error"', '')
+            # Split the responses to each query, remove the last response which is to the error buffer query,
+            # and check whether it contains an error
+            response_list = response.split(';')
+            error_response = response_list.pop()
+            self._error_check(error_response)
+            response = ';'.join(response_list)
 
         # Remove the line break the end of the response before returning it.
         return response.rstrip()
 
     @staticmethod
-    def _error_check(response):
+    def _error_check(error_response):
         """Evaluates the instrument response"""
 
-        # If nothing is returned, raise a timeout error.
-        if not response:
-            raise XIPInstrumentConnectionException("Communication timed out")
-
         # If the error buffer returns an error, raise an exception with that includes the error.
-        if "No error" not in response:
-            # Isolate the part of the response that is the error
-            response_list = response.split(';')
-            returned_errors = response_list[len(response_list) - 1]
-
-            raise XIPInstrumentConnectionException("SCPI command error: " + returned_errors)
+        if "No error" not in error_response:
+            raise XIPInstrumentConnectionException("SCPI command error(s): " + error_response)
 
     def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
         """Establishes a serial USB connection with optional arguments"""
@@ -116,4 +108,9 @@ class XIPInstrument:
 
         self._usb_command(query)
         response = self.device_serial.readline().decode('ascii')
+
+        # If nothing is returned, raise a timeout error.
+        if not response:
+            raise XIPInstrumentConnectionException("Communication timed out")
+
         return response
