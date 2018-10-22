@@ -8,9 +8,13 @@ class TestDiscovery(unittest.TestCase):
     def test_normal_connection(self):
         Teslameter(flow_control=False)  # No checks needed, just make sure no exceptions are thrown
 
-    def test_target_does_not_exist(self):
-        with self.assertRaises(XIPInstrumentConnectionException):
+    def test_specified_serial_does_not_exist(self):
+        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'No instrument found'):
             Teslameter(serial_number='Fake', flow_control=False)
+
+    def test_specified_com_port_does_not_exist(self):
+        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'No instrument found'):
+            Teslameter(com_port='COM99', flow_control=False)
 
 
 class TestConnectivity(unittest.TestCase):
@@ -24,5 +28,5 @@ class TestConnectivity(unittest.TestCase):
         self.assertEqual(response.split(',')[0], 'Lake Shore')
 
     def test_timeout(self):
-        with self.assertRaises(XIPInstrumentConnectionException):
+        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'The response timed out'):
             self.dut.query('FAKEQUERY?')
