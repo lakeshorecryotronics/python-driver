@@ -258,3 +258,19 @@ class XIPInstrument:
 
     def reset_status_register_masks(self):
         """Resets status register masks to preset values"""
+
+    @staticmethod
+    def _interpret_status_register(integer_representation, register_bit_names):
+        """Translates the integer representation of a register state into a named array"""
+
+        # Initialize an empty array.
+        named_states = []
+
+        # Create an array that maps the boolean value of each bit in the integer
+        # to the name of the instrument state it represents.
+        for n in range(0, len(register_bit_names)):
+            mask = 0b1 << n
+            if register_bit_names[n]:
+                named_states.append([register_bit_names[n], bool(integer_representation & mask)])
+
+        return named_states
