@@ -18,6 +18,16 @@ class XIPInstrument:
     """Parent class that implements functionality shared by all XIP instruments"""
 
     vid_pid = []
+    status_byte_register = [
+        "",
+        "",
+        "Error available bit",
+        "Questionable summary bit",
+        "Message available summary bit",
+        "Event status summary bit",
+        "Master summary bit",
+        "Operation summary bit"
+    ]
 
     def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address):
         # Initialize values common to all XIP instruments
