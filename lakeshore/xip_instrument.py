@@ -1,5 +1,8 @@
 """This module implements a parent class that contains all functionality shared by Lake Shore XIP instruments."""
 
+import re
+from time import sleep
+
 import serial
 from serial.tools.list_ports import comports
 
@@ -20,24 +23,51 @@ class XIPInstrument:
         self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
 
         # Query the instrument identification information and store the firmware version and model number in variables
-        idn_response = self.query('*IDN?').split(',')
+        idn_response = self.query('*IDN?', check_errors=False).split(',')
         self.firmware_version = idn_response[3]
         self.model_number = idn_response[1]
 
     def __del__(self):
-        self.device_serial.close()
+        if self.device_serial is not None:
+            self.device_serial.close()
 
-    def command(self, command):
+    def command(self, command, check_errors=True):
         """Sends a SCPI command to the instrument"""
 
-        self._usb_command(command)
+        if check_errors:
+            # Do a query which will automatically check the errors.
+            self.query(command)
+        else:
+            # Send command to the instrument over serial.
+            self._usb_command(command)
 
-    def query(self, query):
+    def query(self, query, check_errors=True):
         """Sends a SCPI query to the instrument and returns the response"""
 
+        # Append the query with an additional error buffer query.
+        if check_errors:
+            query += ";:SYSTem:ERRor:ALL?"
+
+        # Query the instrument over serial.
         response = self._usb_query(query)
 
+        if check_errors:
+            # Split the responses to each query, remove the last response which is to the error buffer query,
+            # and check whether it contains an error
+            response_list = re.split(''';(?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', response)
+            error_response = response_list.pop()
+            self._error_check(error_response)
+            response = ';'.join(response_list)
+
         return response
+
+    @staticmethod
+    def _error_check(error_response):
+        """Evaluates the instrument response"""
+
+        # If the error buffer returns an error, raise an exception with that includes the error.
+        if "No error" not in error_response:
+            raise XIPInstrumentConnectionException("SCPI command error(s): " + error_response)
 
     def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
         """Establishes a serial USB connection with optional arguments"""
@@ -55,6 +85,12 @@ class XIPInstrument:
                                                            timeout=timeout,
                                                            parity=serial.PARITY_NONE,
                                                            rtscts=flow_control)
+
+                        # Send the instrument a line break, wait 100ms, and clear the input buffer so that
+                        # any leftover communications from a prior session don't gum up the works
+                        self.device_serial.write(b'\n')
+                        sleep(0.1)
+                        self.device_serial.reset_input_buffer()
 
                         break
         else:
@@ -75,8 +111,9 @@ class XIPInstrument:
         self._usb_command(query)
         response = self.device_serial.readline().decode('ascii')
 
-        # If nothing was returned, raise a timeout error
+        # If nothing is returned, raise a timeout error.
         if not response:
-            raise XIPInstrumentConnectionException("The response timed out")
+            raise XIPInstrumentConnectionException("Communication timed out")
 
-        return response.rstrip('\r\n')
+        # Remove the line break the end of the response before returning it.
+        return response.rstrip()

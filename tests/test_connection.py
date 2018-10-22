@@ -28,5 +28,6 @@ class TestConnectivity(unittest.TestCase):
         self.assertEqual(response.split(',')[0], 'Lake Shore')
 
     def test_timeout(self):
-        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'The response timed out'):
-            self.dut.query('FAKEQUERY?')
+        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'Communication timed out'):
+            self.dut.query('FAKEQUERY?', check_errors=False)
+        self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard the error we left in the queue
