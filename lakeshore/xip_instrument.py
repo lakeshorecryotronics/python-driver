@@ -243,7 +243,7 @@ class XIPInstrument:
 
         # Check whether an integer representation or named array was passed.
         # If a named array was passed, call a function to turn it back into an integer representation
-        if isinstance(register_mask_value, list):
+        if isinstance(register_mask_value, dict):
             integer_representation = self._configure_status_register(self.status_byte_register, register_mask_value)
             self.command("*SRE " + str(integer_representation))
 
@@ -251,7 +251,9 @@ class XIPInstrument:
             self.command("*SRE " + str(register_mask_value))
 
         else:
-            raise XIPInstrumentConnectionException("Invalid data type for register mask")
+            raise XIPInstrumentConnectionException("Invalid data type "
+                                                   + str(type(register_mask_value))
+                                                   + " for register mask. Must be dict or int.")
 
     def get_standard_events(self):
         """Returns the names of the standard event register bits and their values"""
@@ -302,14 +304,16 @@ class XIPInstrument:
         """Translates the integer representation of a register state into a named array"""
 
         # Initialize an empty array.
-        named_states = []
+        named_states = {}
+        number_of_bits = 0
 
         # Create an array that maps the boolean value of each bit in the integer
         # to the name of the instrument state it represents.
-        for bit_name in range(0, len(register_bit_names)):
-            mask = 0b1 << bit_name
-            if register_bit_names[bit_name]:
-                named_states.append([register_bit_names[bit_name], bool(int(integer_representation) & mask)])
+        for bit_name in register_bit_names:
+            number_of_bits += 1
+            mask = 0b1 << number_of_bits
+            if bit_name:
+                named_states[bit_name] = bool(int(integer_representation) & mask)
 
         return named_states
 
@@ -317,14 +321,13 @@ class XIPInstrument:
     def _configure_status_register(register_bit_names, named_states):
         """Translates from a named array to an integer representation value"""
         integer_representation = 0
-        empty_register_bits = 0
+        number_of_bits = 0
 
         # Add up the boolean values of an array of named instrument states
         # while being careful to account for unnamed entries in the register bit names list
-        for bit_name in range(0, len(register_bit_names)):
-            if register_bit_names[bit_name]:
-                integer_representation += int(named_states[bit_name - empty_register_bits][1]) << bit_name
-            else:
-                empty_register_bits += 1
+        for bit_name in register_bit_names:
+            number_of_bits += 1
+            if bit_name:
+                integer_representation += int(named_states[bit_name]) << number_of_bits
 
         return integer_representation
