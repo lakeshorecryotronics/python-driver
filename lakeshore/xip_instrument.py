@@ -339,17 +339,16 @@ class XIPInstrument:
             # Add up the boolean values of a list of named instrument states
             # while being careful to account for unnamed entries in the register bit names list
             for bit_name in register_bit_names:
+
                 number_of_bits += 1
                 if bit_name:
                     integer_representation += int(register_mask_value[bit_name]) << number_of_bits
 
             return integer_representation
 
-        elif isinstance(register_mask_value, int):
-
+        if isinstance(register_mask_value, int):
             return register_mask_value
 
-        else:
-            raise XIPInstrumentConnectionException("Invalid data type "
-                                                   + str(type(register_mask_value))
-                                                   + " for register mask. Must be dict or int.")
+        raise XIPInstrumentConnectionException("Invalid data type "
+                                               + str(type(register_mask_value))
+                                               + " for register mask. Must be dict or int.")
