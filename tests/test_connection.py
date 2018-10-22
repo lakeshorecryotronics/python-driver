@@ -31,3 +31,13 @@ class TestConnectivity(unittest.TestCase):
         with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'Communication timed out'):
             self.dut.query('FAKEQUERY?', check_errors=False)
         self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard the error we left in the queue
+
+
+class TestSCPIErrorQueueChecking(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.dut = Teslameter(flow_control=False)
+
+    def test_command_does_not_exist(self):
+        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'Undefined header;FAKEQUERY\?;'):
+            self.dut.query('FAKEQUERY?')
