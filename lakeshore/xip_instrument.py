@@ -21,7 +21,7 @@ class XIPInstrument:
         self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
 
         # Query the instrument identification information and store the firmware version and model number in variables
-        idn_response = self.query('*IDN?').split(',')
+        idn_response = self.query('*IDN?', check_errors=False).split(',')
         self.firmware_version = idn_response[3]
         self.model_number = idn_response[1]
 
