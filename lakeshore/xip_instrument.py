@@ -3,6 +3,7 @@
 from time import sleep
 import serial
 from serial.tools.list_ports import comports
+import re
 
 
 class XIPInstrumentConnectionException(Exception):
@@ -52,7 +53,7 @@ class XIPInstrument:
         if check_errors:
             # Split the responses to each query, remove the last response which is to the error buffer query,
             # and check whether it contains an error
-            response_list = response.split(';')
+            response_list = re.split(''';(?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', response)
             error_response = response_list.pop()
             self._error_check(error_response)
             response = ';'.join(response_list)
