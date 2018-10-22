@@ -29,4 +29,4 @@ class TestConnectivity(unittest.TestCase):
 
     def test_timeout(self):
         with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'The response timed out'):
-            self.dut.query('FAKEQUERY?')
+            self.dut.query('FAKEQUERY?', check_errors=False)
