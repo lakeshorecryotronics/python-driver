@@ -28,6 +28,15 @@ class XIPInstrument:
         "Master summary",
         "Operation summary"
     ]
+    standard_event_register = [
+        "Operation complete",
+        "Query error",
+        "Device specific error",
+        "Execution error",
+        "Command error",
+        "",
+        "Power on"
+    ]
     operation_status_register = []
     questionable_status_register = []
 
@@ -240,31 +249,30 @@ class XIPInstrument:
     def set_service_request_enable_mask(self, register_mask_value):
         """Configures values of the service request enable register bits.
         This register determines which bits propagate to the master summary bit"""
-
-        # Check whether an integer representation or named array was passed.
-        # If a named array was passed, call a function to turn it back into an integer representation
-        if isinstance(register_mask_value, dict):
-            integer_representation = self._configure_status_register(self.status_byte_register, register_mask_value)
-            self.command("*SRE " + str(integer_representation))
-
-        elif isinstance(register_mask_value, int):
-            self.command("*SRE " + str(register_mask_value))
-
-        else:
-            raise XIPInstrumentConnectionException("Invalid data type "
-                                                   + str(type(register_mask_value))
-                                                   + " for register mask. Must be dict or int.")
+        integer_representation = self._configure_status_register(self.status_byte_register, register_mask_value)
+        self.command("*SRE " + str(integer_representation))
 
     def get_standard_events(self):
         """Returns the names of the standard event register bits and their values"""
+        response = self.query("*ESR?")
+        status_bit_array = self._interpret_status_register(response, self.standard_event_register)
+
+        return status_bit_array
 
     def get_standard_event_enable_mask(self):
         """Returns the names of the standard event enable register bits and their values.
         These values determine which bits propagate to the standard event register"""
+        response = self.query("*ESE?")
 
-    def set_standard_event_enable_mask(self):
+        status_bit_array = self._interpret_status_register(response, self.standard_event_register)
+
+        return status_bit_array
+
+    def set_standard_event_enable_mask(self, register_mask_value):
         """Configures values of the standard event enable register bits.
         These values determine which bits propagate to the standard event register"""
+        integer_representation = self._configure_status_register(self.standard_event_register, register_mask_value)
+        self.command("*ESE " + str(integer_representation))
 
     def get_present_operation_status(self):
         """Returns the names of the operation status register bits and their values"""
@@ -318,16 +326,30 @@ class XIPInstrument:
         return named_states
 
     @staticmethod
-    def _configure_status_register(register_bit_names, named_states):
+    def _configure_status_register(register_bit_names, register_mask_value):
         """Translates from a named array to an integer representation value"""
-        integer_representation = 0
-        number_of_bits = 0
 
-        # Add up the boolean values of an array of named instrument states
-        # while being careful to account for unnamed entries in the register bit names list
-        for bit_name in register_bit_names:
-            number_of_bits += 1
-            if bit_name:
-                integer_representation += int(named_states[bit_name]) << number_of_bits
+        # Check whether an integer representation or named array was passed.
+        # If a named array was passed, call a function to turn it back into an integer representation
+        if isinstance(register_mask_value, dict):
 
-        return integer_representation
+            integer_representation = 0
+            number_of_bits = 0
+
+            # Add up the boolean values of a list of named instrument states
+            # while being careful to account for unnamed entries in the register bit names list
+            for bit_name in register_bit_names:
+                number_of_bits += 1
+                if bit_name:
+                    integer_representation += int(register_mask_value[bit_name]) << number_of_bits
+
+            return integer_representation
+
+        elif isinstance(register_mask_value, int):
+
+            return register_mask_value
+
+        else:
+            raise XIPInstrumentConnectionException("Invalid data type "
+                                                   + str(type(register_mask_value))
+                                                   + " for register mask. Must be dict or int.")
