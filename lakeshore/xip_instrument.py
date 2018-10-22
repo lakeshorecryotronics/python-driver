@@ -26,7 +26,8 @@ class XIPInstrument:
         self.model_number = idn_response[1]
 
     def __del__(self):
-        self.device_serial.close()
+        if self.device_serial is not None:
+            self.device_serial.close()
 
     def command(self, command, check_errors=True):
         """Sends a SCPI command to the instrument"""
