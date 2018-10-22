@@ -21,8 +21,8 @@ class XIPInstrument:
     status_byte_register = [
         "",
         "",
-        "Error available bit",
-        "Questionable summary bit",
+        "Error available",
+        "Questionable summary",
         "Message available summary bit",
         "Event status summary bit",
         "Master summary bit",
@@ -222,6 +222,12 @@ class XIPInstrument:
 
     def get_status_byte(self):
         """Returns named bits of the status byte register and their values"""
+        response = self.query("*STB?")
+
+        status_bit_array = self._interpret_status_register(response, self.status_byte_register)
+
+        return status_bit_array
+
 
     def get_service_request_enable(self):
         """Returns the named bits of the status byte service request enable register.
