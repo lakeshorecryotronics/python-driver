@@ -56,8 +56,7 @@ class XIPInstrument:
             self._error_check(error_response)
             response = ';'.join(response_list)
 
-        # Remove the line break the end of the response before returning it.
-        return response.rstrip()
+        return response
 
     @staticmethod
     def _error_check(error_response):
@@ -113,4 +112,5 @@ class XIPInstrument:
         if not response:
             raise XIPInstrumentConnectionException("Communication timed out")
 
-        return response
+        # Remove the line break the end of the response before returning it.
+        return response.rstrip()
