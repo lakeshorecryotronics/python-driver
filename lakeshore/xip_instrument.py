@@ -228,7 +228,7 @@ class XIPInstrument:
 
         return status_bit_array
 
-    def get_service_request_enable(self):
+    def get_service_request_enable_mask(self):
         """Returns the named bits of the status byte service request enable register.
         This register determines which bits propagate to the master summary status bit"""
         response = self.query("*SRE?")
@@ -237,17 +237,19 @@ class XIPInstrument:
 
         return status_bit_array
 
-    def set_service_request_enable(self, register_mask_value):
+    def set_service_request_enable_mask(self, register_mask_value):
         """Configures values of the service request enable register bits.
         This register determines which bits propagate to the master summary bit"""
 
         # Check whether an integer representation or named array was passed.
         # If a named array was passed, call a function to turn it back into an integer representation
-        if type(register_mask_value) is list:
+        if isinstance(register_mask_value, list):
             integer_representation = self._configure_status_register(self.status_byte_register, register_mask_value)
-            self.command("*SRE " + integer_representation)
-        elif type(register_mask_value) is int:
-            self.command("*SRE " + register_mask_value)
+            self.command("*SRE " + str(integer_representation))
+
+        elif isinstance(register_mask_value, int):
+            self.command("*SRE " + str(register_mask_value))
+
         else:
             raise XIPInstrumentConnectionException("Invalid data type for register mask")
 
@@ -304,24 +306,25 @@ class XIPInstrument:
 
         # Create an array that maps the boolean value of each bit in the integer
         # to the name of the instrument state it represents.
-        for n in range(0, len(register_bit_names)):
-            mask = 0b1 << n
-            if register_bit_names[n]:
-                named_states.append([register_bit_names[n], bool(int(integer_representation) & mask)])
+        for bit_name in range(0, len(register_bit_names)):
+            mask = 0b1 << bit_name
+            if register_bit_names[bit_name]:
+                named_states.append([register_bit_names[bit_name], bool(int(integer_representation) & mask)])
 
         return named_states
 
-    def _configure_status_register(self, register_bit_names, named_states):
+    @staticmethod
+    def _configure_status_register(register_bit_names, named_states):
         """Translates from a named array to an integer representation value"""
         integer_representation = 0
         empty_register_bits = 0
 
         # Add up the boolean values of an array of named instrument states
         # while being careful to account for unnamed entries in the register bit names list
-        for n in range(0, len(register_bit_names)):
-            if register_bit_names[n]:
-                integer_representation += int(named_states[n - empty_register_bits][1]) << n
+        for bit_name in range(0, len(register_bit_names)):
+            if register_bit_names[bit_name]:
+                integer_representation += int(named_states[bit_name - empty_register_bits][1]) << bit_name
             else:
                 empty_register_bits += 1
 
-        return  integer_representation
+        return integer_representation
