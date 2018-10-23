@@ -1,5 +1,7 @@
 """This module implements a parent class that contains all functionality shared by Lake Shore XIP instruments."""
 
+from collections import namedtuple
+
 import re
 import select
 import socket
@@ -21,24 +23,38 @@ class XIPInstrument:
     status_byte_register = [
         "",
         "",
-        "Error available",
-        "Questionable summary",
-        "Message available summary",
-        "Event status summary",
-        "Master summary",
-        "Operation summary"
+        "error_available",
+        "questionable_summary",
+        "message_available_summary",
+        "event_status_summary",
+        "master_summary",
+        "operation_summary"
     ]
     standard_event_register = [
-        "Operation complete",
-        "Query error",
-        "Device specific error",
-        "Execution error",
-        "Command error",
+        "Operation_complete",
+        "Query_error",
+        "Device_specific error",
+        "Execution_error",
+        "Command_error",
         "",
-        "Power on"
+        "Power_on"
     ]
     operation_status_register = []
     questionable_status_register = []
+
+    StatusByteRegister = namedtuple('StatusByteRegister', ["error_available",
+                                                           "questionable_summary",
+                                                           "message_available_summary",
+                                                           "event_status_summary",
+                                                           "master_summary",
+                                                           "operation_summary"])
+
+    StandardEventRegister = namedtuple('StandardEventRegister', ["Operation_complete",
+                                                                 "Query_error",
+                                                                 "Device_specific_error",
+                                                                 "Execution_error",
+                                                                 "Command_error",
+                                                                 "Power_on"])
 
     def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address):
         # Initialize values common to all XIP instruments
@@ -234,7 +250,9 @@ class XIPInstrument:
     def get_status_byte(self):
         """Returns named bits of the status byte register and their values"""
         response = self.query("*STB?")
-        status_bit_array = self._interpret_status_register(response, self.status_byte_register)
+        status_bit_array = self._interpret_status_register(response,
+                                                           self.status_byte_register,
+                                                           self.StatusByteRegister)
 
         return status_bit_array
 
@@ -242,20 +260,24 @@ class XIPInstrument:
         """Returns the named bits of the status byte service request enable register.
         This register determines which bits propagate to the master summary status bit"""
         response = self.query("*SRE?")
-        status_bit_array = self._interpret_status_register(response, self.status_byte_register)
+        status_bit_array = self._interpret_status_register(response,
+                                                           self.status_byte_register,
+                                                           self.StatusByteRegister)
 
         return status_bit_array
 
     def set_service_request_enable_mask(self, register_mask_value):
         """Configures values of the service request enable register bits.
         This register determines which bits propagate to the master summary bit"""
-        integer_representation = self._configure_status_register(self.status_byte_register, register_mask_value)
+        integer_representation = self._configure_status_register(register_mask_value, self.status_byte_register)
         self.command("*SRE " + str(integer_representation))
 
     def get_standard_events(self):
         """Returns the names of the standard event register bits and their values"""
         response = self.query("*ESR?")
-        status_bit_array = self._interpret_status_register(response, self.standard_event_register)
+        status_bit_array = self._interpret_status_register(response,
+                                                           self.standard_event_register,
+                                                           self.StandardEventRegister)
 
         return status_bit_array
 
@@ -307,47 +329,44 @@ class XIPInstrument:
         """Resets status register masks to preset values"""
 
     @staticmethod
-    def _interpret_status_register(integer_representation, register_bit_names):
+    def _interpret_status_register(integer_representation, register_bit_names, register):
         """Translates the integer representation of a register state into a named array"""
-
         # Initialize an empty array.
-        named_states = {}
+        bit_states = []
         number_of_bits = 0
 
         # Create an array that maps the boolean value of each bit in the integer
         # to the name of the instrument state it represents.
         for bit_name in register_bit_names:
-            number_of_bits += 1
-            mask = 0b1 << number_of_bits
             if bit_name:
-                named_states[bit_name] = bool(int(integer_representation) & mask)
+                mask = 0b1 << number_of_bits
+                bit_states.append(bool(int(integer_representation) & mask))
 
-        return named_states
+            number_of_bits += 1
+
+        status_register = register(*bit_states)
+
+        return status_register
 
     @staticmethod
-    def _configure_status_register(register_bit_names, register_mask_value):
+    def _configure_status_register(register_mask_value, register_bit_names):
         """Translates from a named array to an integer representation value"""
 
-        # Check whether an integer representation or named array was passed.
-        # If a named array was passed, call a function to turn it back into an integer representation
-        if isinstance(register_mask_value, dict):
-
-            integer_representation = 0
-            number_of_bits = 0
-
-            # Add up the boolean values of a list of named instrument states
-            # while being careful to account for unnamed entries in the register bit names list
-            for bit_name in register_bit_names:
-
-                number_of_bits += 1
-                if bit_name:
-                    integer_representation += int(register_mask_value[bit_name]) << number_of_bits
-
-            return integer_representation
-
+        # Check whether an integer was passed. If so, return it.
         if isinstance(register_mask_value, int):
             return register_mask_value
 
-        raise XIPInstrumentConnectionException("Invalid data type "
-                                               + str(type(register_mask_value))
-                                               + " for register mask. Must be dict or int.")
+        # If a namedtuple class was passed, call a function to turn it back into an integer representation
+        integer_representation = 0
+        number_of_bits = 0
+
+        # Add up the boolean values of a list of named instrument states
+        # while being careful to account for unnamed entries in the register bit names list
+        for bit_name in register_bit_names:
+
+            if bit_name:
+                integer_representation += int(getattr(register_mask_value, bit_name)) << number_of_bits
+
+            number_of_bits += 1
+
+        return integer_representation
