@@ -4,6 +4,16 @@ import unittest
 from lakeshore import Teslameter, XIPInstrumentConnectionException
 
 
+class TestWithDUT(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.dut = Teslameter(flow_control=False)  # TODO: Get a dut with flow control for the HIL rig then remove this.
+
+    @classmethod
+    def tearDownClass(cls):
+        del cls.dut
+
+
 class TestDiscovery(unittest.TestCase):
     def test_normal_connection(self):
         Teslameter(flow_control=False)  # No checks needed, just make sure no exceptions are thrown
@@ -17,11 +27,7 @@ class TestDiscovery(unittest.TestCase):
             Teslameter(com_port='COM99', flow_control=False)
 
 
-class TestConnectivity(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.dut = Teslameter(flow_control=False)  # TODO: Get a dut with flow control for the HIL rig then remove this.
-
+class TestConnectivity(TestWithDUT):
     def test_basic_query(self):
         response = self.dut.query('*IDN?')
 
@@ -31,3 +37,14 @@ class TestConnectivity(unittest.TestCase):
         with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'Communication timed out'):
             self.dut.query('FAKEQUERY?', check_errors=False)
         self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard the error we left in the queue
+
+
+class TestSCPIErrorQueueChecking(TestWithDUT):
+    def test_command_does_not_exist(self):
+        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'Undefined header;FAKEQUERY\?;'):
+            self.dut.query('FAKEQUERY?')
+
+    def test_query_with_error_check_disabled(self):
+        response = self.dut.query('*IDN?', check_errors=False)
+
+        self.assertEqual(response.split(',')[0], 'Lake Shore')
