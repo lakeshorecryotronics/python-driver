@@ -229,6 +229,8 @@ class XIPInstrument:
         if not response:
             raise XIPInstrumentConnectionException("Communication timed out")
 
+        return response
+
     def get_status_byte(self):
         """Returns named bits of the status byte register and their values"""
         response = self.query("*STB?")
