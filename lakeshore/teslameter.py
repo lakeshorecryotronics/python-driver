@@ -44,7 +44,7 @@ class Teslameter(XIPInstrument):
     OperationRegister = namedtuple('OperationRegister',
                                    [bit_name for bit_name in operation_register if bit_name != ""])
 
-    QuestionableRegister = namedtuple('QuestionableRegister', 
+    QuestionableRegister = namedtuple('QuestionableRegister',
                                       [bit_name for bit_name in questionable_register if bit_name != ""])
 
     def __init__(self, serial_number=None,
