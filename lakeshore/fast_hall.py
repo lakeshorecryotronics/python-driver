@@ -12,29 +12,29 @@ class FastHall(XIPInstrument):
     # TODO: update register enums once they are finalized
     operation_register = [
         "",
-        "Settling",
-        "Ranging",
-        "Measurement complete",
-        "Waiting for trigger",
+        "settling",
+        "ranging",
+        "measurement_complete",
+        "waiting_for_trigger",
         "",
-        "Field control ramping",
-        "Field measurement enabled",
-        "Transient"
+        "field_control_ramping",
+        "field_measurement_enabled",
+        "transient"
     ]
 
     questionable_register = [
-        "Source in compliance or at current limit",
+        "source_in_compliance_or_at_current_limit",
         "",
-        "Field control slew rate limit",
-        "Field control at voltage limit",
-        "Current measurement overload",
-        "Voltage measurement overload",
-        "Invalid probe",
-        "Invalid calibration",
-        "Inter-processor communication error",
-        "Field measurement communication error",
-        "Probe EEPROM read error",
-        "R^2 less than minimum allowable"
+        "field_control_slew_rate_limit",
+        "field_control_at_voltage_limit",
+        "current_measurement_overload",
+        "voltage_measurement_overload",
+        "invalid_probe",
+        "invalid_calibration",
+        "inter-processor_communication_error",
+        "field_measurement_communication_error",
+        "probe_EEPROM_read_error",
+        "r^2_less_than_minimum_allowable"
     ]
 
     OperationRegister = namedtuple('OperationRegister',

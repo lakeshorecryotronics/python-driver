@@ -15,27 +15,27 @@ class PrecisionSource(XIPInstrument):
         "",
         "",
         "",
-        "Waiting for trigger event",
-        "Waiting for ARM event",
+        "waiting_for_trigger_event",
+        "waiting_for_ARM_event",
         "",
         "",
         "",
-        "Trigger model is idle",
+        "trigger_model_is_idle",
         "",
-        "Interlock is open"
+        "interlock_is_open"
     ]
 
     questionable_register = [
-        "Voltage source in current limit",
-        "Current source in voltage compliance",
+        "voltage_source_in_current_limit",
+        "current_source_in_voltage_compliance",
         "",
         "",
         "",
         "",
         "",
         "",
-        "Calibration error",
-        "Inter-processor communication error"
+        "calibration_error",
+        "inter_processor_communication_error"
     ]
 
     OperationRegister = namedtuple('OperationRegister',
