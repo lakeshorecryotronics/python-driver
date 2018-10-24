@@ -265,7 +265,7 @@ class XIPInstrument:
     def set_service_request_enable_mask(self, register_mask):
         """Configures values of the service request enable register bits.
         This register determines which bits propagate to the master summary bit"""
-        integer_representation = self._configure_status_register(register_mask, self.status_byte_register)
+        integer_representation = self._configure_status_register(self.status_byte_register, register_mask)
         self.command("*SRE " + str(integer_representation))
 
     def get_standard_events(self):
@@ -410,7 +410,7 @@ class XIPInstrument:
 
         return integer_representation
 
-    def modify_status_register_mask(self, bit_name, value):
+    def modify_service_request_mask(self, bit_name, value):
         """Gets the service request enable mask, changes a bit, and sets the register"""
         status_mask = self.get_service_request_enable_mask()
 
