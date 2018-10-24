@@ -56,9 +56,9 @@ class XIPInstrument:
                                                                  "Command_error",
                                                                  "Power_on"])
 
-    OperationRegister = namedtuple('OperationRegister')
+    OperationRegister = namedtuple('OperationRegister', [])
 
-    QuestionableRegister = namedtuple('QuestionableRegister')
+    QuestionableRegister = namedtuple('QuestionableRegister', [])
 
     def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address):
         # Initialize values common to all XIP instruments
