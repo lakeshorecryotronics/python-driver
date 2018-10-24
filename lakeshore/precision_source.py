@@ -38,9 +38,11 @@ class PrecisionSource(XIPInstrument):
         "Inter-processor communication error"
     ]
 
-    OperationRegister = namedtuple('OperationRegister')
+    OperationRegister = namedtuple('OperationRegister',
+                                   [bit_name for bit_name in operation_register if bit_name != ""])
 
-    QuestionableRegister = namedtuple('QuestionableRegister')
+    QuestionableRegister = namedtuple('QuestionableRegister',
+                                      [bit_name for bit_name in questionable_register if bit_name != ""])
 
     def __init__(self, serial_number=None,
                  com_port=None, baud_rate=115200, flow_control=True,

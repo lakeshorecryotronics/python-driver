@@ -19,31 +19,33 @@ class Teslameter(XIPInstrument):
     vid_pid = [(0x1FB9, 0x0405), (0x1FB9, 0x0406)]
 
     operation_register = [
-        "No Probe",
-        "Overload",
-        "Ranging",
+        "no_probe",
+        "overload",
+        "ranging",
         "",
         "",
-        "Ramp done",
-        "No data on breakout adapter"
+        "ramp_done",
+        "no_data_on_breakout_adapter"
     ]
 
     questionable_register = [
-        "X-axis sensor error",
-        "Y-axis sensor error",
-        "Z-axis sensor error",
-        "Probe EEPROM read error",
-        "Temperature compensation error",
-        "Invalid probe",
-        "Field control slew rate limit",
-        "Field control at voltage limit",
-        "Calibration error",
-        "Heartbeat error"
+        "x_axis_sensor_error",
+        "y_axis_sensor_error",
+        "z_axis_sensor_error",
+        "probe_EEPROM_read_error",
+        "temperature_compensation_error",
+        "invalid_probe",
+        "field_control_slew_rate_limit",
+        "field_control_at_voltage_limit",
+        "calibration_error",
+        "heartbeat_error"
     ]
 
-    OperationRegister = namedtuple('OperationRegister')
+    OperationRegister = namedtuple('OperationRegister',
+                                   [bit_name for bit_name in operation_register if bit_name != ""])
 
-    QuestionableRegister = namedtuple('QuestionableRegister')
+    QuestionableRegister = namedtuple('QuestionableRegister', 
+                                      [bit_name for bit_name in questionable_register if bit_name != ""])
 
     def __init__(self, serial_number=None,
                  com_port=None, baud_rate=115200, flow_control=True,
