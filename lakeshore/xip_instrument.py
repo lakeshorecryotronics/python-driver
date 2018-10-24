@@ -395,7 +395,7 @@ class XIPInstrument:
         return status_register
 
     @staticmethod
-    def _configure_status_register(register_mask_value, register_bit_names):
+    def _configure_status_register(register_bit_names, register_mask_value):
         """Translates from a named array to an integer representation value"""
 
         # Check whether an integer was passed. If so, return it.
