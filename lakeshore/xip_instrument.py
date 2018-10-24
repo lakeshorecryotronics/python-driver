@@ -370,3 +370,35 @@ class XIPInstrument:
             number_of_bits += 1
 
         return integer_representation
+
+    def modify_status_register_mask(self, bit_name, value):
+        """Gets the service request enable mask, changes a bit, and sets the register"""
+        status_mask = self.get_service_request_enable_mask()
+
+        new_status_mask = status_mask._replace(**{bit_name: value})
+
+        self.set_service_request_enable_mask(new_status_mask)
+
+    def modify_standard_event_register_mask(self, bit_name, value):
+        """Gets the standard event register mask, changes a bit, and sets the register"""
+        status_mask = self.get_standard_event_enable_mask()
+
+        new_status_mask = status_mask._replace(**{bit_name: value})
+
+        self.set_standard_event_enable_mask(new_status_mask)
+
+    def modify_operation_register_mask(self, bit_name, value):
+        """Gets the operation condition register mask, changes a bit, and sets the register"""
+        status_mask = self.get_operation_event_enable_mask()
+
+        new_status_mask = status_mask._replace(**{bit_name: value})
+
+        self.set_operation_event_enable_mask(new_status_mask)
+
+    def modify_questionable_register_mask(self, bit_name, value):
+        """Gets the questionable condition register mask, changes a bit, and sets the register"""
+        status_mask = self.get_questionable_event_enable_mask()
+
+        new_status_mask = status_mask._replace(**{bit_name: value})
+
+        self.set_questionable_event_enable_mask(new_status_mask)
