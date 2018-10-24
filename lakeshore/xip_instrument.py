@@ -395,12 +395,12 @@ class XIPInstrument:
         return status_register
 
     @staticmethod
-    def _configure_status_register(register_bit_names, register_mask_value):
+    def _configure_status_register(register_bit_names, register_mask):
         """Translates from a named array to an integer representation value"""
 
         # Check whether an integer was passed. If so, return it.
-        if isinstance(register_mask_value, int):
-            return register_mask_value
+        if isinstance(register_mask, int):
+            return register_mask
 
         # If a namedtuple class was passed, call a function to turn it back into an integer representation
         integer_representation = 0
@@ -411,7 +411,7 @@ class XIPInstrument:
         for bit_name in register_bit_names:
 
             if bit_name:
-                integer_representation += int(getattr(register_mask_value, bit_name)) << number_of_bits
+                integer_representation += int(getattr(register_mask, bit_name)) << number_of_bits
 
             number_of_bits += 1
 
