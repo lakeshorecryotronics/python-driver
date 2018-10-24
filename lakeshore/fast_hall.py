@@ -9,7 +9,7 @@ class FastHall(XIPInstrument):
     vid_pid = [(0x1FB9, 0x0704)]
 
     # TODO: update register enums once they are finalized
-    operation_status_register = [
+    operation_register = [
         "",
         "Settling",
         "Ranging",
@@ -21,7 +21,7 @@ class FastHall(XIPInstrument):
         "Transient"
     ]
 
-    questionable_status_register = [
+    questionable_register = [
         "Source in compliance or at current limit",
         "",
         "Field control slew rate limit",

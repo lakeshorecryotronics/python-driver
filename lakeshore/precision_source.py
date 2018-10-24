@@ -8,7 +8,7 @@ class PrecisionSource(XIPInstrument):
 
     vid_pid = [(0x1FB9, 0x0103)]
 
-    operation_status_register = [
+    operation_register = [
         "",
         "",
         "",
@@ -24,7 +24,7 @@ class PrecisionSource(XIPInstrument):
         "Interlock is open"
     ]
 
-    questionable_status_register = [
+    questionable_register = [
         "Voltage source in current limit",
         "Current source in voltage compliance",
         "",

@@ -39,8 +39,8 @@ class XIPInstrument:
         "",
         "Power_on"
     ]
-    operation_status_register = []
-    questionable_status_register = []
+    operation_register = []
+    questionable_register = []
 
     StatusByteRegister = namedtuple('StatusByteRegister', ["error_available",
                                                            "questionable_summary",
@@ -266,10 +266,10 @@ class XIPInstrument:
 
         return status_register
 
-    def set_service_request_enable_mask(self, register_mask_value):
+    def set_service_request_enable_mask(self, register_mask):
         """Configures values of the service request enable register bits.
         This register determines which bits propagate to the master summary bit"""
-        integer_representation = self._configure_status_register(register_mask_value, self.status_byte_register)
+        integer_representation = self._configure_status_register(register_mask, self.status_byte_register)
         self.command("*SRE " + str(integer_representation))
 
     def get_standard_events(self):
@@ -289,26 +289,40 @@ class XIPInstrument:
 
         return status_register
 
-    def set_standard_event_enable_mask(self, register_mask_value):
+    def set_standard_event_enable_mask(self, register_mask):
         """Configures values of the standard event enable register bits.
         These values determine which bits propagate to the standard event register"""
-        integer_representation = self._configure_status_register(self.standard_event_register, register_mask_value)
+        integer_representation = self._configure_status_register(self.standard_event_register, register_mask)
         self.command("*ESE " + str(integer_representation))
 
     def get_present_operation_status(self):
         """Returns the names of the operation status register bits and their values"""
+        response = self.query("STATus:OPERation:CONDition?")
+        status_register = self._interpret_status_register(response, self.operation_register)
+
+        return status_register
 
     def get_operation_events(self):
         """Returns the names of operation event status register bits that are currently high.
         The event register is latching and values are reset when queried."""
+        response = self.query("STATus:OPERation:EVENt?")
+        status_register = self._interpret_status_register(response, self.operation_register)
+
+        return status_register
 
     def get_operation_event_enable_mask(self):
         """Returns the names of the operation event enable register bits and their values.
         These values determine which operation bits propagate to the operation event register."""
+        response = self.query("STATus:OPERation:ENABle?")
+        status_register = self._interpret_status_register(response, self.operation_register)
 
-    def set_operation_event_enable_mask(self):
+        return status_register
+
+    def set_operation_event_enable_mask(self, register_mask):
         """Configures the values of the operation event enable register bits.
         These values determine which operation bits propagate to the operation event register."""
+        integer_representation = self._configure_status_register(self.standard_event_register, register_mask)
+        self.command("STATus:OPERation:ENABle " + str(integer_representation))
 
     def get_present_questionable_status(self):
         """Returns the names of the questionable status register bits and their values"""

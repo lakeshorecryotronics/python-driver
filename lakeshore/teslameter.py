@@ -18,7 +18,7 @@ class Teslameter(XIPInstrument):
 
     vid_pid = [(0x1FB9, 0x0405), (0x1FB9, 0x0406)]
 
-    operation_status_register = [
+    operation_register = [
         "No Probe",
         "Overload",
         "Ranging",
@@ -28,7 +28,7 @@ class Teslameter(XIPInstrument):
         "No data on breakout adapter"
     ]
 
-    questionable_status_register = [
+    questionable_register = [
         "X-axis sensor error",
         "Y-axis sensor error",
         "Z-axis sensor error",
