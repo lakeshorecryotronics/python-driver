@@ -31,10 +31,10 @@ class FastHall(XIPInstrument):
         "voltage_measurement_overload",
         "invalid_probe",
         "invalid_calibration",
-        "inter-processor_communication_error",
+        "inter_processor_communication_error",
         "field_measurement_communication_error",
         "probe_EEPROM_read_error",
-        "r^2_less_than_minimum_allowable"
+        "r2_less_than_minimum_allowable"
     ]
 
     OperationRegister = namedtuple('OperationRegister',
