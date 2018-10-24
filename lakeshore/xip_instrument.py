@@ -373,6 +373,7 @@ class XIPInstrument:
 
     def reset_status_register_masks(self):
         """Resets status register masks to preset values"""
+        self.command("STATus:PRESet")
 
     @staticmethod
     def _interpret_status_register(integer_representation, register_bit_names, register):
