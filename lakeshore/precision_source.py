@@ -1,5 +1,6 @@
 """Implements functionality unique to the Lake Shore 155 Precision Source"""
 
+from collections import namedtuple
 from .xip_instrument import XIPInstrument
 
 
@@ -36,6 +37,10 @@ class PrecisionSource(XIPInstrument):
         "Calibration error",
         "Inter-processor communication error"
     ]
+
+    OperationRegister = namedtuple('OperationRegister')
+
+    QuestionableRegister = namedtuple('QuestionableRegister')
 
     def __init__(self, serial_number=None,
                  com_port=None, baud_rate=115200, flow_control=True,

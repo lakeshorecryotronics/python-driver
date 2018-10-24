@@ -1,5 +1,6 @@
 """Implements functionality unique to the Lake Shore M91 Fast Hall"""
 
+from collections import namedtuple
 from .xip_instrument import XIPInstrument
 
 
@@ -35,6 +36,10 @@ class FastHall(XIPInstrument):
         "Probe EEPROM read error",
         "R^2 less than minimum allowable"
     ]
+
+    OperationRegister = namedtuple('OperationRegister')
+
+    QuestionableRegister = namedtuple('QuestionableRegister')
 
     def __init__(self, serial_number=None,
                  com_port=None, baud_rate=115200, flow_control=True,

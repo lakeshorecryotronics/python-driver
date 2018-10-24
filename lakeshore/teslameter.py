@@ -41,6 +41,10 @@ class Teslameter(XIPInstrument):
         "Heartbeat error"
     ]
 
+    OperationRegister = namedtuple('OperationRegister')
+
+    QuestionableRegister = namedtuple('QuestionableRegister')
+
     def __init__(self, serial_number=None,
                  com_port=None, baud_rate=115200, flow_control=True,
                  timeout=2.0,
