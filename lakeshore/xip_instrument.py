@@ -31,30 +31,22 @@ class XIPInstrument:
         "operation_summary"
     ]
     standard_event_register = [
-        "Operation_complete",
-        "Query_error",
-        "Device_specific error",
-        "Execution_error",
-        "Command_error",
+        "operation_complete",
+        "query_error",
+        "device_specific_error",
+        "execution_error",
+        "command_error",
         "",
-        "Power_on"
+        "power_on"
     ]
     operation_register = []
     questionable_register = []
 
-    StatusByteRegister = namedtuple('StatusByteRegister', ["error_available",
-                                                           "questionable_summary",
-                                                           "message_available_summary",
-                                                           "event_status_summary",
-                                                           "master_summary",
-                                                           "operation_summary"])
+    StatusByteRegister = namedtuple('StatusByteRegister',
+                                    [bit_name for bit_name in status_byte_register if bit_name != ""])
 
-    StandardEventRegister = namedtuple('StandardEventRegister', ["Operation_complete",
-                                                                 "Query_error",
-                                                                 "Device_specific_error",
-                                                                 "Execution_error",
-                                                                 "Command_error",
-                                                                 "Power_on"])
+    StandardEventRegister = namedtuple('StandardEventRegister',
+                                       [bit_name for bit_name in standard_event_register if bit_name != ""])
 
     OperationRegister = namedtuple('OperationRegister', [])
 
