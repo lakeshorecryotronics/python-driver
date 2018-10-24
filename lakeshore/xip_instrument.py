@@ -250,21 +250,21 @@ class XIPInstrument:
     def get_status_byte(self):
         """Returns named bits of the status byte register and their values"""
         response = self.query("*STB?")
-        status_bit_array = self._interpret_status_register(response,
-                                                           self.status_byte_register,
-                                                           self.StatusByteRegister)
+        status_register = self._interpret_status_register(response,
+                                                          self.status_byte_register,
+                                                          self.StatusByteRegister)
 
-        return status_bit_array
+        return status_register
 
     def get_service_request_enable_mask(self):
         """Returns the named bits of the status byte service request enable register.
         This register determines which bits propagate to the master summary status bit"""
         response = self.query("*SRE?")
-        status_bit_array = self._interpret_status_register(response,
-                                                           self.status_byte_register,
-                                                           self.StatusByteRegister)
+        status_register = self._interpret_status_register(response,
+                                                          self.status_byte_register,
+                                                          self.StatusByteRegister)
 
-        return status_bit_array
+        return status_register
 
     def set_service_request_enable_mask(self, register_mask_value):
         """Configures values of the service request enable register bits.
@@ -275,19 +275,19 @@ class XIPInstrument:
     def get_standard_events(self):
         """Returns the names of the standard event register bits and their values"""
         response = self.query("*ESR?")
-        status_bit_array = self._interpret_status_register(response,
-                                                           self.standard_event_register,
-                                                           self.StandardEventRegister)
+        status_register = self._interpret_status_register(response,
+                                                          self.standard_event_register,
+                                                          self.StandardEventRegister)
 
-        return status_bit_array
+        return status_register
 
     def get_standard_event_enable_mask(self):
         """Returns the names of the standard event enable register bits and their values.
         These values determine which bits propagate to the standard event register"""
         response = self.query("*ESE?")
-        status_bit_array = self._interpret_status_register(response, self.standard_event_register)
+        status_register = self._interpret_status_register(response, self.standard_event_register)
 
-        return status_bit_array
+        return status_register
 
     def set_standard_event_enable_mask(self, register_mask_value):
         """Configures values of the standard event enable register bits.
