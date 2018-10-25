@@ -1,7 +1,12 @@
 """Implements functionality unique to the Lake Shore F41 and F71 Teslameters."""
 
+from collections import namedtuple
 import re
 from .xip_instrument import XIPInstrument
+
+DataPoint = namedtuple("DataPoint", ['time_elapsed', 'date', 'hour', 'minute', 'second',
+                                     'time_zone_hour', 'time_zone_minute',
+                                     'magnitude', 'x', 'y', 'z', 'field_control_set_point', 'input_state'])
 
 
 class Teslameter(XIPInstrument):
@@ -39,11 +44,23 @@ class Teslameter(XIPInstrument):
 
             # Ignore the response if it contains no data
             if ';' in response:
+                # Split apart the response into single data points.
+                data_points = response.rstrip(';').split(';')
 
-                # If it does contain data, split the data apart and then separate each value and add it to the array.
-                parsed = response.rstrip(';').split(';')
-                for point in parsed:
-                    buffered_data.append(re.split('-|T|:|\+|,', point))
+                for point in data_points:
+                    # Divide the data point along its delimiters.
+                    parsed_point = re.split('T|:|\+|,', point)
+
+                    # If field control is not connected to the instrument, insert 0 for the field control set point.
+                    if len(parsed_point) == 11:
+                        input_state = parsed_point.pop()
+                        parsed_point.append('0')
+                        parsed_point.append(input_state)
+
+                    # Unpack the parsed point into a namedtuple and append it to the list
+                    new_point = DataPoint((len(buffered_data) + 1) * sample_rate_in_ms / 1000,
+                                          *parsed_point)
+                    buffered_data.append(new_point)
 
                     # Check to see if time is up. If so, return the data.
                     if len(buffered_data) * sample_rate_in_ms >= length_of_time_in_seconds * 1000:
