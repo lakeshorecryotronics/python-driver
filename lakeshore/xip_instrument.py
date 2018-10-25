@@ -86,6 +86,11 @@ class XIPInstrument:
         self.device_tcp.settimeout(timeout)
         self.device_tcp.connect((ip_address, 8888))
 
+    def disconnect_tcp(self):
+        """Disconnects the TCP connection"""
+        self.device_tcp.close()
+        self.device_tcp = None
+
     def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
         """Establishes a serial USB connection with optional arguments"""
 
