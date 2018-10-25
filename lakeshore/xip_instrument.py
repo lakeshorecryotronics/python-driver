@@ -31,9 +31,10 @@ class XIPInstrument:
         if ip_address is not None:
             self.connect_tcp(ip_address, timeout)
 
-        # Query the instrument identification information and store the firmware version and model number in variables
+        # Query the instrument identification information and store it in variables
         idn_response = self.query('*IDN?', check_errors=False).split(',')
         self.firmware_version = idn_response[3]
+        self.serial_number = idn_response[2]
         self.model_number = idn_response[1]
 
     def __del__(self):
