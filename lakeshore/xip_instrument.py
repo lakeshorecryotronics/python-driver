@@ -123,11 +123,11 @@ class XIPInstrument:
         self.device_serial.close()
         self.device_serial = None
 
-    def tcp_command(self, command):
+    def _tcp_command(self, command):
         """Sends a command over the TCP connection"""
         self.device_tcp.send(command.encode('utf-8') + b'\n')
 
-    def tcp_query(self, query):
+    def _tcp_query(self, query):
         """Queries over the TCP connection"""
         self.tcp_command(query)
 
