@@ -39,6 +39,8 @@ class XIPInstrument:
     def __del__(self):
         if self.device_serial is not None:
             self.device_serial.close()
+        if self.device_tcp is not None:
+            self.device_tcp.close()
 
     def command(self, command, check_errors=True):
         """Sends a SCPI command to the instrument"""
