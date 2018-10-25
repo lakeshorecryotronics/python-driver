@@ -49,7 +49,7 @@ class Teslameter(XIPInstrument):
 
                 for point in data_points:
                     # Divide the data point along its delimiters.
-                    parsed_point = re.split('T|:|\+|,', point)
+                    parsed_point = re.split(r'T|:|\+|,', point)
 
                     # If field control is not connected to the instrument, insert 0 for the field control set point.
                     if len(parsed_point) == 11:
