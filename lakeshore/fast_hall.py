@@ -11,6 +11,6 @@ class FastHall(XIPInstrument):
     def __init__(self, serial_number=None,
                  com_port=None, baud_rate=115200, flow_control=True,
                  timeout=2.0,
-                 ip_address=None,):
+                 ip_address=None):
         # Call the parent init, then fill in values specific to FastHall
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address)
