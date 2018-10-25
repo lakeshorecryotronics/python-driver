@@ -2,10 +2,9 @@
 
 import re
 from time import sleep
-
+import socket
 import serial
 from serial.tools.list_ports import comports
-import socket
 
 
 class XIPInstrumentConnectionException(Exception):
@@ -18,7 +17,7 @@ class XIPInstrument:
 
     vid_pid = []
 
-    def __init__(self, serial_number, com_port, baud_rate, timeout, flow_control, ip_address):
+    def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address):
         # Initialize values common to all XIP instruments
         self.device_serial = None
         self.device_tcp = None
