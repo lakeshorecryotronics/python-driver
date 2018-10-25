@@ -5,6 +5,7 @@ from time import sleep
 
 import serial
 from serial.tools.list_ports import comports
+import socket
 
 
 class XIPInstrumentConnectionException(Exception):
@@ -17,10 +18,18 @@ class XIPInstrument:
 
     vid_pid = []
 
-    def __init__(self, serial_number, com_port, baud_rate, timeout, flow_control):
+    def __init__(self, serial_number, com_port, baud_rate, timeout, flow_control, ip_address):
         # Initialize values common to all XIP instruments
         self.device_serial = None
-        self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
+        self.device_tcp = None
+
+        if serial_number is None and com_port is None and ip_address is None:
+            self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
+        if serial_number is not None or com_port is not None:
+            self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
+
+        if ip_address is not None:
+            self.connect_tcp(ip_address, timeout)
 
         # Query the instrument identification information and store the firmware version and model number in variables
         idn_response = self.query('*IDN?', check_errors=False).split(',')
@@ -68,6 +77,12 @@ class XIPInstrument:
         # If the error buffer returns an error, raise an exception with that includes the error.
         if "No error" not in error_response:
             raise XIPInstrumentConnectionException("SCPI command error(s): " + error_response)
+
+    def connect_tcp(self, ip_address, timeout):
+        """Establishes a TCP connection with the instrument on the specified IP address"""
+        self.device_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.device_tcp.settimeout(timeout)
+        self.device_tcp.connect((ip_address, 8888))
 
     def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
         """Establishes a serial USB connection with optional arguments"""
