@@ -49,8 +49,13 @@ class XIPInstrument:
             # Do a query which will automatically check the errors.
             self.query(command)
         else:
-            # Send command to the instrument over serial.
-            self._usb_command(command)
+            # Send command to the instrument over serial. If serial is not configured, send it over TCP.
+            if self.device_serial is not None:
+                self._usb_command(command)
+            elif self.device_tcp is not None:
+                self._tcp_command(command)
+            else:
+                raise XIPInstrumentConnectionException("No connections configured")
 
     def query(self, query, check_errors=True):
         """Sends a SCPI query to the instrument and returns the response"""
@@ -59,8 +64,13 @@ class XIPInstrument:
         if check_errors:
             query += ";:SYSTem:ERRor:ALL?"
 
-        # Query the instrument over serial.
-        response = self._usb_query(query)
+        # Query the instrument over serial. If serial is not configured, use TCP.
+        if self.device_serial is not None:
+            response = self._usb_query(query)
+        elif self.device_tcp is not None:
+            response = self._tcp_query(query)
+        else:
+            raise XIPInstrumentConnectionException("No connections configured")
 
         if check_errors:
             # Split the responses to each query, remove the last response which is to the error buffer query,
@@ -129,7 +139,7 @@ class XIPInstrument:
 
     def _tcp_query(self, query):
         """Queries over the TCP connection"""
-        self.tcp_command(query)
+        self._tcp_command(query)
 
         total_response = ""
 
