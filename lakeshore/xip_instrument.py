@@ -123,6 +123,28 @@ class XIPInstrument:
         self.device_serial.close()
         self.device_serial = None
 
+    def tcp_command(self, command):
+        """Sends a command over the TCP connection"""
+        self.device_tcp.send(command.encode('utf-8') + b'\n')
+
+    def tcp_query(self, query):
+        """Queries over the TCP connection"""
+        self.tcp_command(query)
+
+        total_response = ""
+
+        # Continuously receive data from the buffer until a line break
+        while True:
+            # sleep(0.01)
+            response = self.device_tcp.recv(4096).decode('utf-8')
+
+            # Add received information to the response
+            total_response += response
+
+            # Return the response once it ends with a line break
+            if total_response.endswith("\r\n"):
+                return total_response.rstrip()
+
     def _usb_command(self, command):
         """Sends a command over the serial USB connection"""
         self.device_serial.write(command.encode('ascii') + b'\n')
