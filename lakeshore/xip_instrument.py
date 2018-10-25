@@ -127,7 +127,11 @@ class XIPInstrument:
 
                         break
         else:
-            raise XIPInstrumentConnectionException("No serial connections found")
+            if com_port is None and serial_number is None:
+                raise XIPInstrumentConnectionException("No serial connections found")
+            else:
+                raise XIPInstrumentConnectionException(
+                    "No serial connections found with a matching COM port and/or matching serial number")
 
     def disconnect_usb(self):
         """Disconnects the USB connection"""
