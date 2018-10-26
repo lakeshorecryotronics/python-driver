@@ -156,7 +156,6 @@ class XIPInstrument:
 
         # Continuously receive data from the buffer until a line break
         while True:
-            # sleep(0.01)
             response = self.device_tcp.recv(4096).decode('utf-8')
 
             # Add received information to the response
