@@ -156,7 +156,12 @@ class XIPInstrument:
 
         # Continuously receive data from the buffer until a line break
         while True:
-            response = self.device_tcp.recv(4096).decode('utf-8')
+
+            # Receive the data and raise an error on timeout
+            try:
+                response = self.device_tcp.recv(4096).decode('utf-8')
+            except socket.timeout:
+                raise XIPInstrumentConnectionException("Connection timed out")
 
             # Add received information to the response
             total_response += response
