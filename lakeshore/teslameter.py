@@ -1,7 +1,8 @@
 """Implements functionality unique to the Lake Shore F41 and F71 Teslameters."""
 
-from collections import namedtuple
 import re
+from collections import namedtuple
+
 from .xip_instrument import XIPInstrument
 
 DataPoint = namedtuple("DataPoint", ['time_elapsed', 'date', 'hour', 'minute', 'second',
@@ -37,7 +38,7 @@ class Teslameter(XIPInstrument):
         self.query('FETC:BUFF:DC?', check_errors=False)
 
         buffered_data = []
-        
+
         # Create a csv file with headers if a file name is passed. Files of the same name will be overwritten.
         if file_name is not None:
             file = open(file_name + ".csv", "w")
