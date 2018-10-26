@@ -22,19 +22,26 @@ class XIPInstrument:
         self.device_serial = None
         self.device_tcp = None
 
-        if serial_number is None and com_port is None and ip_address is None:
-            self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
-        if serial_number is not None or com_port is not None:
-            self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
-
+        # Raise an error if serial and TCP parameters are passed. Otherwise connect to the instrument using one of them.
         if ip_address is not None:
-            self.connect_tcp(ip_address, timeout)
+            if com_port is not None:
+                raise ValueError("Two different connection methods provided.")
+            else:
+                self.connect_tcp(ip_address, timeout)
+        else:
+            self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
 
         # Query the instrument identification information and store it in variables
         idn_response = self.query('*IDN?', check_errors=False).split(',')
         self.firmware_version = idn_response[3]
         self.serial_number = idn_response[2]
         self.model_number = idn_response[1]
+
+        # Check to make sure the serial number matches what was provided if connecting over TCP
+        if ip_address is not None and serial_number is not None and serial_number != self.serial_number:
+            raise XIPInstrumentConnectionException("Instrument found but the serial number does not match. " +
+                                                   "serial number provided is " + serial_number +
+                                                   ", serial number found is " + self.serial_number)
 
     def __del__(self):
         if self.device_serial is not None:
