@@ -1,11 +1,12 @@
 """This module implements a parent class that contains all functionality shared by Lake Shore XIP instruments."""
 
 import re
-from time import sleep
+import select
 import socket
+from time import sleep
+
 import serial
 from serial.tools.list_ports import comports
-import select
 
 
 class XIPInstrumentConnectionException(Exception):
@@ -110,11 +111,11 @@ class XIPInstrument:
         sleep(0.1)
         socket_list = [self.device_tcp]
         while 1:
-            socket_ready, o, e = select.select(socket_list, [], [], 0.0)
-            if len(socket_ready) == 0:
+            read_objects, _, _ = select.select(socket_list, [], [], 0.0)
+            if not read_objects:
                 break
-            for s in socket_ready:
-                s.recv(1)
+            for read_object in read_objects:
+                read_object.recv(1)
 
     def disconnect_tcp(self):
         """Disconnects the TCP connection"""
