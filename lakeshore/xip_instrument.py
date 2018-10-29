@@ -5,6 +5,7 @@ from time import sleep
 import socket
 import serial
 from serial.tools.list_ports import comports
+import select
 
 
 class XIPInstrumentConnectionException(Exception):
@@ -102,6 +103,18 @@ class XIPInstrument:
         self.device_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.device_tcp.settimeout(timeout)
         self.device_tcp.connect((ip_address, 8888))
+
+        # Send the instrument a line break, wait 100ms, and clear the input buffer so that
+        # any leftover communications from a prior session don't gum up the works.
+        self.device_tcp.send(b'\n')
+        sleep(0.1)
+        socket_list = [self.device_tcp]
+        while 1:
+            socket_ready, o, e = select.select(socket_list, [], [], 0.0)
+            if len(socket_ready) == 0:
+                break
+            for s in socket_ready:
+                s.recv(1)
 
     def disconnect_tcp(self):
         """Disconnects the TCP connection"""
