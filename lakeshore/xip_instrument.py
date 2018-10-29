@@ -109,9 +109,8 @@ class XIPInstrument:
         # any leftover communications from a prior session don't gum up the works.
         self.device_tcp.send(b'\n')
         sleep(0.1)
-        socket_list = [self.device_tcp]
-        while 1:
-            read_objects, _, _ = select.select(socket_list, [], [], 0.0)
+        while True:
+            read_objects, _, _ = select.select([self.device_tcp], [], [], 0.0)
             if not read_objects:
                 break
             for read_object in read_objects:
