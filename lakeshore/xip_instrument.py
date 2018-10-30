@@ -245,7 +245,7 @@ class XIPInstrument:
 
     def get_status_byte(self):
         """Returns named bits of the status byte register and their values"""
-        response = self.query("*STB?")
+        response = self.query("*STB?", check_errors=False)
         status_register = self._interpret_status_register(response,
                                                           self.status_byte_register,
                                                           self.StatusByteRegister)
@@ -255,7 +255,7 @@ class XIPInstrument:
     def get_service_request_enable_mask(self):
         """Returns the named bits of the status byte service request enable register.
         This register determines which bits propagate to the master summary status bit"""
-        response = self.query("*SRE?")
+        response = self.query("*SRE?", check_errors=False)
         status_register = self._interpret_status_register(response,
                                                           self.status_byte_register,
                                                           self.StatusByteRegister)
@@ -266,11 +266,11 @@ class XIPInstrument:
         """Configures values of the service request enable register bits.
         This register determines which bits propagate to the master summary bit"""
         integer_representation = self._configure_status_register(self.status_byte_register, register_mask)
-        self.command("*SRE " + str(integer_representation))
+        self.command("*SRE " + str(integer_representation), check_errors=False)
 
     def get_standard_events(self):
         """Returns the names of the standard event register bits and their values"""
-        response = self.query("*ESR?")
+        response = self.query("*ESR?", check_errors=False)
         status_register = self._interpret_status_register(response,
                                                           self.standard_event_register,
                                                           self.StandardEventRegister)
@@ -280,7 +280,7 @@ class XIPInstrument:
     def get_standard_event_enable_mask(self):
         """Returns the names of the standard event enable register bits and their values.
         These values determine which bits propagate to the standard event register"""
-        response = self.query("*ESE?")
+        response = self.query("*ESE?", check_errors=False)
         status_register = self._interpret_status_register(response,
                                                           self.standard_event_register,
                                                           self.StandardEventRegister)
@@ -291,11 +291,11 @@ class XIPInstrument:
         """Configures values of the standard event enable register bits.
         These values determine which bits propagate to the standard event register"""
         integer_representation = self._configure_status_register(self.standard_event_register, register_mask)
-        self.command("*ESE " + str(integer_representation))
+        self.command("*ESE " + str(integer_representation), check_errors=False)
 
     def get_present_operation_status(self):
         """Returns the names of the operation status register bits and their values"""
-        response = self.query("STATus:OPERation:CONDition?")
+        response = self.query("STATus:OPERation:CONDition?", check_errors=False)
         status_register = self._interpret_status_register(response,
                                                           self.operation_register,
                                                           self.OperationRegister)
@@ -305,7 +305,7 @@ class XIPInstrument:
     def get_operation_events(self):
         """Returns the names of operation event status register bits that are currently high.
         The event register is latching and values are reset when queried."""
-        response = self.query("STATus:OPERation:EVENt?")
+        response = self.query("STATus:OPERation:EVENt?", check_errors=False)
         status_register = self._interpret_status_register(response,
                                                           self.operation_register,
                                                           self.OperationRegister)
@@ -315,7 +315,7 @@ class XIPInstrument:
     def get_operation_event_enable_mask(self):
         """Returns the names of the operation event enable register bits and their values.
         These values determine which operation bits propagate to the operation event register."""
-        response = self.query("STATus:OPERation:ENABle?")
+        response = self.query("STATus:OPERation:ENABle?", check_errors=False)
         status_register = self._interpret_status_register(response,
                                                           self.operation_register,
                                                           self.OperationRegister)
@@ -326,11 +326,11 @@ class XIPInstrument:
         """Configures the values of the operation event enable register bits.
         These values determine which operation bits propagate to the operation event register."""
         integer_representation = self._configure_status_register(self.operation_register, register_mask)
-        self.command("STATus:OPERation:ENABle " + str(integer_representation))
+        self.command("STATus:OPERation:ENABle " + str(integer_representation), check_errors=False)
 
     def get_present_questionable_status(self):
         """Returns the names of the questionable status register bits and their values"""
-        response = self.query("STATus:QUEStionable:CONDition?")
+        response = self.query("STATus:QUEStionable:CONDition?", check_errors=False)
         status_register = self._interpret_status_register(response,
                                                           self.questionable_register,
                                                           self.QuestionableRegister)
@@ -340,7 +340,7 @@ class XIPInstrument:
     def get_questionable_events(self):
         """Returns the names of questionable event status register bits that are currently high.
         The event register is latching and values are reset when queried."""
-        response = self.query("STATus:QUEStionable:EVENt?")
+        response = self.query("STATus:QUEStionable:EVENt?", check_errors=False)
         status_register = self._interpret_status_register(response,
                                                           self.questionable_register,
                                                           self.QuestionableRegister)
@@ -350,7 +350,7 @@ class XIPInstrument:
     def get_questionable_event_enable_mask(self):
         """Returns the names of the questionable event enable register bits and their values.
         These values determine which questionable bits propagate to the questionable event register."""
-        response = self.query("STATus:QUEStionable:ENABle?")
+        response = self.query("STATus:QUEStionable:ENABle?", check_errors=False)
         status_register = self._interpret_status_register(response,
                                                           self.questionable_register,
                                                           self.QuestionableRegister)
@@ -361,11 +361,11 @@ class XIPInstrument:
         """Configures the values of the questionable event enable register bits.
         These values determine which questionable bits propagate to the questionable event register."""
         integer_representation = self._configure_status_register(self.questionable_register, register_mask)
-        self.command("STATus:QUEStionable:ENABle " + str(integer_representation))
+        self.command("STATus:QUEStionable:ENABle " + str(integer_representation), check_errors=False)
 
     def reset_status_register_masks(self):
         """Resets status register masks to preset values"""
-        self.command("STATus:PRESet")
+        self.command("STATus:PRESet", check_errors=False)
 
     @staticmethod
     def _interpret_status_register(integer_representation, register_bit_names, register):
