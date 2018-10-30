@@ -23,7 +23,7 @@ class Teslameter(XIPInstrument):
         # Call the parent init, then fill in values specific to the Teslameter
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address)
 
-    def _stream_buffered_data(self, length_of_time_in_seconds, sample_rate_in_ms):
+    def stream_buffered_data(self, length_of_time_in_seconds, sample_rate_in_ms):
         """Yields a generator object for the buffered field data"""
 
         # Set the sample rate
@@ -85,7 +85,7 @@ class Teslameter(XIPInstrument):
 
     def get_buffered_data_points(self, length_of_time_in_seconds, sample_rate_in_ms):
         """Returns a list of namedtuples that contain the buffered data."""
-        return list(self._stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms))
+        return list(self.stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms))
 
     def log_buffered_data_to_file(self, length_of_time_in_seconds, sample_rate_in_ms, file_name):
         """Creates a CSV file with the buffered data and excel-friendly timestamps."""
@@ -94,7 +94,7 @@ class Teslameter(XIPInstrument):
         file.write('time elapsed,date,time,' +
                    'magnitude,x,y,z,field control set point,input state\n')
 
-        data_stream_generator = self._stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms)
+        data_stream_generator = self.stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms)
 
         # Parse the datetime value into a separate date and time.
         for point in data_stream_generator:
