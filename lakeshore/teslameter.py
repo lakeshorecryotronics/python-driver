@@ -85,15 +85,7 @@ class Teslameter(XIPInstrument):
 
     def get_buffered_data_points(self, length_of_time_in_seconds, sample_rate_in_ms):
         """Returns a list of namedtuples that contain the buffered data."""
-
-        data_stream_generator = self._stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms)
-
-        data_points = []
-
-        for point in data_stream_generator:
-            data_points.append(point)
-
-        return data_points
+        return list(self._stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms))
 
     def log_buffered_data_to_file(self, length_of_time_in_seconds, sample_rate_in_ms, file_name):
         """Creates a CSV file with the buffered data and excel-friendly timestamps."""
