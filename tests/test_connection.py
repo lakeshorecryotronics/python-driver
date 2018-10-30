@@ -19,12 +19,20 @@ class TestDiscovery(unittest.TestCase):
         Teslameter(flow_control=False)  # No checks needed, just make sure no exceptions are thrown
 
     def test_specified_serial_does_not_exist(self):
-        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'No instrument found'):
+        with self.assertRaisesRegexp(XIPInstrumentConnectionException,
+                                     "No serial connections found with a matching COM port " +
+                                     "and/or matching serial number"):
             Teslameter(serial_number='Fake', flow_control=False)
 
     def test_specified_com_port_does_not_exist(self):
-        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'No instrument found'):
+        with self.assertRaisesRegexp(XIPInstrumentConnectionException,
+                                     "No serial connections found with a matching COM port " +
+                                     "and/or matching serial number"):
             Teslameter(com_port='COM99', flow_control=False)
+
+    @unittest.skip('Need a dedicated ethernet port for the Teslameter on the HIL rig')
+    def test_tcp_connection(self):
+        Teslameter('static_ip')  # TODO: Replace with actual IP address
 
 
 class TestConnectivity(TestWithDUT):
