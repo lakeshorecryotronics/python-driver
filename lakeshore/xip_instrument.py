@@ -372,16 +372,13 @@ class XIPInstrument:
         """Translates the integer representation of a register state into a named array"""
         # Initialize an empty array.
         bit_states = []
-        number_of_bits = 0
 
         # Create an array that maps the boolean value of each bit in the integer
         # to the name of the instrument state it represents.
-        for bit_name in register_bit_names:
+        for count, bit_name in enumerate(register_bit_names):
             if bit_name:
-                mask = 0b1 << number_of_bits
+                mask = 0b1 << count
                 bit_states.append(bool(int(integer_representation) & mask))
-
-            number_of_bits += 1
 
         status_register = register(*bit_states)
 
