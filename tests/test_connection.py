@@ -54,5 +54,9 @@ class TestSCPIErrorQueueChecking(TestWithDUT):
 
     def test_query_with_error_check_disabled(self):
         response = self.dut.query('*IDN?', check_errors=False)
-
         self.assertEqual(response.split(',')[0], 'Lake Shore')
+
+
+class TestTeslameter(TestWithDUT):
+    def test_getting_buffered_data(self):
+        self.assertEqual(len(self.dut.get_buffered_data_points(1, 10)), 100)
