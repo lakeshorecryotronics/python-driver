@@ -241,7 +241,7 @@ class XIPInstrument:
         if not response:
             raise XIPInstrumentConnectionException("Communication timed out")
 
-        return response
+        return response.rstrip()
 
     def get_status_byte(self):
         """Returns named bits of the status byte register and their values"""
