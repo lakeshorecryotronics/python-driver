@@ -3,6 +3,8 @@
 from collections import namedtuple
 from datetime import datetime
 
+import iso8601
+
 from .xip_instrument import XIPInstrument
 
 DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
@@ -53,11 +55,7 @@ class Teslameter(XIPInstrument):
                     point_data = point.split(',')
 
                     # Convert the time stamp into python datetime format.
-                    # If the time stamp has a whole number of seconds it must be parsed without the microseconds.
-                    try:
-                        point_data[0] = datetime.strptime(point_data[0], "%Y-%m-%dT%H:%M:%S.%f%z")
-                    except ValueError:
-                        point_data[0] = datetime.strptime(point_data[0], "%Y-%m-%dT%H:%M:%S%z")
+                    point_data[0] = iso8601.parse_date(point_data[0])
 
                     # Convert the returned values from strings to floats
                     for count, _ in enumerate(point_data):
