@@ -14,5 +14,5 @@ setup(
     long_description_content_type='text/markdown',
     packages=[r'lakeshore'],
     url='',  # TODO: Add GitHub URL
-    install_requires=['pyserial>=3.0']
+    install_requires=['pyserial>=3.0', 'iso8601']
 )
