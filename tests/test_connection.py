@@ -58,7 +58,5 @@ class TestSCPIErrorQueueChecking(TestWithDUT):
 
 
 class TestTeslameter(TestWithDUT):
-    @unittest.skip('Datetime format conversion causes a problem on the HIL rig. ' +
-                   'Will be resolved by either firmware change.')
     def test_getting_buffered_data(self):
         self.assertEqual(len(self.dut.get_buffered_data_points(1, 10)), 100)
