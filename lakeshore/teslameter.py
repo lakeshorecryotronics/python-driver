@@ -88,7 +88,7 @@ class Teslameter(XIPInstrument):
     def log_buffered_data_to_file(self, length_of_time_in_seconds, sample_rate_in_ms, file_name):
         """Creates a CSV file with the buffered data and excel-friendly timestamps."""
         # Open the file and write in header information.
-        file = open(file_name + ".csv", "w")
+        file = open(file_name + ".csv", "a")
         file.write('time elapsed,date,time,' +
                    'magnitude,x,y,z,field control set point,input state\n')
 

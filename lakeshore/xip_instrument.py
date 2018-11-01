@@ -51,33 +51,44 @@ class XIPInstrument:
         if self.device_tcp is not None:
             self.device_tcp.close()
 
-    def command(self, command, check_errors=True):
+    def command(self, *commands, **kwargs):
         """Sends a SCPI command to the instrument"""
 
+        check_errors = kwargs.get("check_errors", True)
+
+        # Group all commands into a single string with SCPI delimiters.
+        command_string = ";:".join(commands)
+
+        # Pass the string to the query function if it contains a question mark.
         if check_errors:
             # Do a query which will automatically check the errors.
-            self.query(command)
+            self.query(command_string)
         else:
             # Send command to the instrument over serial. If serial is not configured, send it over TCP.
             if self.device_serial is not None:
-                self._usb_command(command)
+                self._usb_command(command_string)
             elif self.device_tcp is not None:
-                self._tcp_command(command)
+                self._tcp_command(command_string)
             else:
                 raise XIPInstrumentConnectionException("No connections configured")
 
-    def query(self, query, check_errors=True):
+    def query(self, *queries, **kwargs):
         """Sends a SCPI query to the instrument and returns the response"""
+
+        check_errors = kwargs.get("check_errors", True)
+
+        # Group all commands and queries a single string with SCPI delimiters.
+        query_string = ";:".join(queries)
 
         # Append the query with an additional error buffer query.
         if check_errors:
-            query += ";:SYSTem:ERRor:ALL?"
+            query_string += ";:SYSTem:ERRor:ALL?"
 
         # Query the instrument over serial. If serial is not configured, use TCP.
         if self.device_serial is not None:
-            response = self._usb_query(query)
+            response = self._usb_query(query_string)
         elif self.device_tcp is not None:
-            response = self._tcp_query(query)
+            response = self._tcp_query(query_string)
         else:
             raise XIPInstrumentConnectionException("No connections configured")
 
