@@ -42,7 +42,7 @@ class TestConnectivity(TestWithDUT):
         self.assertEqual(response.split(',')[0], 'Lake Shore')
 
     def test_multiple_queries(self):
-        response = self.dut.query('*IDN?', 'PROBe:MODel?', 'UNIT?', check_errors=False)
+        response = self.dut.query('*IDN?', 'SENSe:RELative:BASEline?', 'UNIT?', check_errors=False)
 
         self.assertEqual(len(response.split(';')), 3)
 
