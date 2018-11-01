@@ -51,8 +51,10 @@ class XIPInstrument:
         if self.device_tcp is not None:
             self.device_tcp.close()
 
-    def command(self, *commands, check_errors=True):
+    def command(self, *commands, **kwargs):
         """Sends a SCPI command to the instrument"""
+
+        check_errors = kwargs.get("check_errors", True)
 
         total_commands = ""
 
@@ -77,8 +79,10 @@ class XIPInstrument:
                 else:
                     raise XIPInstrumentConnectionException("No connections configured")
 
-    def query(self, *queries, check_errors=True):
+    def query(self, *queries, **kwargs):
         """Sends a SCPI query to the instrument and returns the response"""
+
+        check_errors = kwargs.get("check_errors", True)
 
         total_query = ""
 
