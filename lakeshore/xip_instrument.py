@@ -56,50 +56,39 @@ class XIPInstrument:
 
         check_errors = kwargs.get("check_errors", True)
 
-        total_commands = ""
-
         # Group all commands into a single string with SCPI delimiters.
-        for command in commands:
-            total_commands += command + ";:"
-        total_commands = total_commands.rstrip(";:")
+        command_string = ";:".join(commands)
 
         # Pass the string to the query function if it contains a question mark.
-        if "?" in total_commands:
-            self.query(total_commands, check_errors)
+        if check_errors:
+            # Do a query which will automatically check the errors.
+            self.query(command_string)
         else:
-            if check_errors:
-                # Do a query which will automatically check the errors.
-                self.query(total_commands)
+            # Send command to the instrument over serial. If serial is not configured, send it over TCP.
+            if self.device_serial is not None:
+                self._usb_command(command_string)
+            elif self.device_tcp is not None:
+                self._tcp_command(command_string)
             else:
-                # Send command to the instrument over serial. If serial is not configured, send it over TCP.
-                if self.device_serial is not None:
-                    self._usb_command(total_commands)
-                elif self.device_tcp is not None:
-                    self._tcp_command(total_commands)
-                else:
-                    raise XIPInstrumentConnectionException("No connections configured")
+                raise XIPInstrumentConnectionException("No connections configured")
 
     def query(self, *queries, **kwargs):
         """Sends a SCPI query to the instrument and returns the response"""
 
         check_errors = kwargs.get("check_errors", True)
 
-        total_query = ""
-
         # Group all commands and queries a single string with SCPI delimiters.
-        for query in queries:
-            total_query += query + ";:"
-        total_query = total_query.rstrip(";:")
+        query_string = ";:".join(queries)
 
         # Append the query with an additional error buffer query.
         if check_errors:
-            total_query += ";:SYSTem:ERRor:ALL?"
+            query_string += ";:SYSTem:ERRor:ALL?"
 
         # Query the instrument over serial. If serial is not configured, use TCP.
         if self.device_serial is not None:
-            response = self._usb_query(total_query)
+            response = self._usb_query(query_string)
         elif self.device_tcp is not None:
-            response = self._tcp_query(total_query)
+            response = self._tcp_query(query_string)
         else:
             raise XIPInstrumentConnectionException("No connections configured")
 
