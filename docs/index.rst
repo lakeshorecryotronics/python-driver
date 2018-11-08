@@ -20,10 +20,3 @@ Table of contents
    fast_hall
    examples
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
