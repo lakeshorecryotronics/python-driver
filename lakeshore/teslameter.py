@@ -88,18 +88,18 @@ class Teslameter(XIPInstrument):
     def log_buffered_data_to_file(self, length_of_time_in_seconds, sample_rate_in_ms, file_name):
         """Creates a CSV file with the buffered data and excel-friendly timestamps."""
         # Open the file and write in header information.
-        file = open(file_name + ".csv", "a")
-        file.write('time elapsed,date,time,' +
-                   'magnitude,x,y,z,field control set point,input state\n')
+        with open(file_name + ".csv", "a") as file:
+            file.write('time elapsed,date,time,' +
+                       'magnitude,x,y,z,field control set point,input state\n')
 
-        data_stream_generator = self.stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms)
+            data_stream_generator = self.stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms)
 
-        # Parse the datetime value into a separate date and time.
-        for point in data_stream_generator:
-            for count, data in enumerate(point):
-                if count != 1:
-                    file.write(str(data) + ',')
-                else:
-                    file.write(datetime.strftime(data, '%m/%d/%Y') + ',' +
-                               datetime.strftime(data, '%H:%M:%S.%f') + ',')
-            file.write('\n')
+            # Parse the datetime value into a separate date and time.
+            for point in data_stream_generator:
+                for count, data in enumerate(point):
+                    if count != 1:
+                        file.write(str(data) + ',')
+                    else:
+                        file.write(datetime.strftime(data, '%m/%d/%Y') + ',' +
+                                   datetime.strftime(data, '%H:%M:%S.%f') + ',')
+                file.write('\n')
