@@ -78,7 +78,7 @@ class PrecisionSource(XIPInstrument):
         self.questionable_register = PrecisionSourceQuestionableRegister
 
     def sweep_voltage(self,
-                      dwell_time_in_ms,
+                      dwell_time,
                       offset_values=None,
                       amplitude_values=None,
                       frequency_values=None):
@@ -109,18 +109,19 @@ class PrecisionSource(XIPInstrument):
             if offset is not None:
                 self.command("SOURCE:VOLTAGE:OFFSET " + str(offset))
 
-            for amplitude in amplitude_values:
-                if amplitude is not None:
-                    self.command("SOURCE:VOLTAGE:AMPLITUDE " + str(amplitude))
+            for frequency in frequency_values:
+                if frequency is not None:
+                    self.command("SOURCE:FREQUENCY " + str(frequency))
 
-                for frequency in frequency_values:
-                    if frequency is not None:
-                        self.command("SOURCE:FREQUENCY " + str(frequency))
-                        # Wait for the amount of time specified before sending the next combination of parameters.
-                        sleep(dwell_time_in_ms)
+                for amplitude in amplitude_values:
+                    if amplitude is not None:
+                        self.command("SOURCE:VOLTAGE:AMPLITUDE " + str(amplitude))
+
+                    # Wait for the amount of time specified before sending the next combination of parameters.
+                    sleep(dwell_time)
 
     def sweep_current(self,
-                      dwell_time_in_ms,
+                      dwell_time,
                       offset_values=None,
                       amplitude_values=None,
                       frequency_values=None):
@@ -151,12 +152,13 @@ class PrecisionSource(XIPInstrument):
             if offset is not None:
                 self.command("SOURCE:CURRENT:OFFSET " + str(offset))
 
-            for amplitude in amplitude_values:
-                if amplitude is not None:
-                    self.command("SOURCE:CURRENT:AMPLITUDE " + str(amplitude))
+            for frequency in frequency_values:
+                if frequency is not None:
+                    self.command("SOURCE:FREQUENCY " + str(frequency))
 
-                for frequency in frequency_values:
-                    if frequency is not None:
-                        self.command("SOURCE:FREQUENCY " + str(frequency))
-                        # Wait for the amount of time specified before sending the next combination of parameters.
-                        sleep(dwell_time_in_ms)
+                for amplitude in amplitude_values:
+                    if amplitude is not None:
+                        self.command("SOURCE:CURRENT:AMPLITUDE " + str(amplitude))
+
+                    # Wait for the amount of time specified before sending the next combination of parameters.
+                    sleep(dwell_time)
