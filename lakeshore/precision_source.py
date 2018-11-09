@@ -88,7 +88,7 @@ class PrecisionSource(XIPInstrument):
         self.command("SOURCE:FUNCTION:MODE VOLTAGE")
 
         # Configure the instrument to automatically choose the best range for a given output setting
-        self.command("SOURCE:FUNCTION:SHAPE AC")
+        self.command("SOURCE:FUNCTION:SHAPE SIN")
 
         # Turn on the output voltage
         self.command("OUTPUT ON")
@@ -131,7 +131,7 @@ class PrecisionSource(XIPInstrument):
         self.command("SOURCE:FUNCTION:MODE CURRENT")
 
         # Configure the instrument to automatically choose the best range for a given output setting
-        self.command("SOURCE:FUNCTION:SHAPE AC")
+        self.command("SOURCE:FUNCTION:SHAPE SIN")
 
         # Turn on the output voltage
         self.command("OUTPUT ON")
