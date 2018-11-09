@@ -14,7 +14,7 @@ DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
 
 
 class Teslameter(XIPInstrument):
-    """A XIP Instrument subclass that establishes Teslameter-specific parameters and methods"""
+    """A class object representing a Lake Shore F41 or F71 Teslameter"""
 
     vid_pid = [(0x1FB9, 0x0405), (0x1FB9, 0x0406)]
 
@@ -26,7 +26,7 @@ class Teslameter(XIPInstrument):
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address)
 
     def stream_buffered_data(self, length_of_time_in_seconds, sample_rate_in_ms):
-        """Yields a generator object for the buffered field data"""
+        """Yield a generator object for the buffered field data"""
 
         # Set the sample rate
         self.command("SENSE:AVERAGE:COUNT " + str(sample_rate_in_ms / 10))
