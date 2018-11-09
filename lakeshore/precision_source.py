@@ -1,6 +1,7 @@
 """Implements functionality unique to the Lake Shore 155 Precision Source"""
 
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
+from time import sleep
 
 
 class PrecisionSourceOperationRegister(RegisterBase):
@@ -75,3 +76,87 @@ class PrecisionSource(XIPInstrument):
         self.standard_event_register = StandardEventRegister
         self.operation_register = PrecisionSourceOperationRegister
         self.questionable_register = PrecisionSourceQuestionableRegister
+
+    def sweep_voltage(self,
+                      dwell_time_in_ms,
+                      offset_values=None,
+                      amplitude_values=None,
+                      frequency_values=None):
+        """Sweep source output voltage parameters based on list arguments"""
+
+        # Change the output mode to source voltage instead of current.
+        self.command("SOURCE:FUNCTION:MODE VOLTAGE")
+
+        # Configure the instrument to automatically choose the best range for a given output setting
+        self.command("SOURCE:FUNCTION:SHAPE AC")
+
+        # Turn on the output voltage
+        self.command("OUTPUT ON")
+
+        # Check to see if arguments were passed for each parameter.
+        # If not, initialize them in a way they will be ignored.
+        if offset_values is None:
+            offset_values = [None]
+
+        if amplitude_values is None:
+            amplitude_values = [None]
+
+        if frequency_values is None:
+            frequency_values = [None]
+
+        # Step through every combination of the three values.
+        for offset in offset_values:
+            if offset is not None:
+                self.command("SOURCE:VOLTAGE:OFFSET " + str(offset))
+
+            for amplitude in amplitude_values:
+                if amplitude is not None:
+                    self.command("SOURCE:VOLTAGE:AMPLITUDE " + str(amplitude))
+
+                for frequency in frequency_values:
+                    if frequency is not None:
+                        self.command("SOURCE:FREQUENCY " + str(frequency))
+                        # Wait for the amount of time specified before sending the next combination of parameters.
+                        sleep(dwell_time_in_ms)
+
+    def sweep_current(self,
+                      dwell_time_in_ms,
+                      offset_values=None,
+                      amplitude_values=None,
+                      frequency_values=None):
+        """Sweep the source output current parameters based on list arguments"""
+
+        # Change the output mode to source current instead of voltage
+        self.command("SOURCE:FUNCTION:MODE CURRENT")
+
+        # Configure the instrument to automatically choose the best range for a given output setting
+        self.command("SOURCE:FUNCTION:SHAPE AC")
+
+        # Turn on the output voltage
+        self.command("OUTPUT ON")
+
+        # Check to see if arguments were passed for each parameter.
+        # If not, initialize them in a way they will be ignored.
+        if offset_values is None:
+            offset_values = [None]
+
+        if amplitude_values is None:
+            amplitude_values = [None]
+
+        if frequency_values is None:
+            frequency_values = [None]
+
+        # Step through every combination of the three values.
+        for offset in offset_values:
+            if offset is not None:
+                self.command("SOURCE:CURRENT:OFFSET " + str(offset))
+
+            for amplitude in amplitude_values:
+                if amplitude is not None:
+                    self.command("SOURCE:CURRENT:AMPLITUDE " + str(amplitude))
+
+                for frequency in frequency_values:
+                    if frequency is not None:
+                        self.command("SOURCE:FREQUENCY " + str(frequency))
+                        # Wait for the amount of time specified before sending the next combination of parameters.
+                        sleep(dwell_time_in_ms)
