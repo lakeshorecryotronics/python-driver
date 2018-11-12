@@ -54,7 +54,7 @@ The Python driver makes it simple to send the instrument a command or query::
 
     my_instrument = PrecisionSource()
 
-    my_instrument.command('SOURCE:FUNCTION:MODE AC')
+    my_instrument.command('SOURCE:FUNCTION:MODE SIN')
     print(my_instrument.query('SOURCE:FUNCTION:MODE?'))
 
 Error checking
