@@ -18,5 +18,5 @@ Table of contents
    teslameter
    precision_source
    fast_hall
-   examples
+   example_scripts
 
