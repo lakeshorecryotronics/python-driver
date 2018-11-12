@@ -13,23 +13,9 @@ A simple example
     my_instrument = PrecisionSource()
     print(my_instrument.query('*IDN?'))
 
-Connecting to an instrument
----------------------------
-The driver attempts to connect to an instrument when an instrument class object is created.
-
-It can communicate with an instrument in two different ways. The most common way to is connect a USB cable between the instrument and the computer. This type of connection is a serial connection.
-
-The alternative is to use TCP/IP communication over a Wi-fi or ethernet network. Note that the "SCPI over TCP" option must be enabled on the front panel of the instrument and that network security rules must allow for TCP communication between the computer and instrument.
-
-Serial USB connection
-~~~~~~~~~~~~~~~~~~~~~
-If you have only one instrument plugged into your computer via USB, connecting to it is very simple::
-
-    from lakeshore.PrecisionSource import PrecisionSource
-
-    my_instrument = PrecisionSource()
-
-When no arguments are passed, the driver will connect to the first available instrument.
+Connecting to a specific instrument
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The driver attempts to connect to an instrument when an instrument class object is created. When no arguments are passed, the driver will connect to the first available instrument.
 
 If multiple instruments are connected you may target a specific device in one of two ways. Either by specifying the serial number of the instrument::
 
@@ -43,8 +29,10 @@ or the COM port it is connected to::
 
     my_specific_instrument = FastHall(com_port='COM7')
 
-TCP Connection
-~~~~~~~~~~~~~~
+Connecting over TCP
+~~~~~~~~~~~~~~~~~~~
+By default, the driver will try to connect to the instrument over a serial USB connection.
+
 Connecting to an instrument over TCP requires knowledge of its IP address. On a XIP instrument the IP address can be found through the front panel interface and used like so::
 
     from lakeshore.PrecisionSource import PrecisionSource
@@ -52,11 +40,9 @@ Connecting to an instrument over TCP requires knowledge of its IP address. On a 
     my_network_connected_instrument = PrecisionSource(ip_address='10.1.2.34')
 
 Commands and queries
---------------------
+~~~~~~~~~~~~~~~~~~~~
 All Lake Shore instruments supported by the Python driver have :func:`~lakeshore.xip_instrument.command` and :func:`~lakeshore.xip_instrument.query` methods.
 
-A basic command and query
-~~~~~~~~~~~~~~~~~~~~~~~~~
 The Python driver makes it simple to send the instrument a command or query::
 
     from lakeshore.PrecisionSource import PrecisionSource
@@ -66,8 +52,8 @@ The Python driver makes it simple to send the instrument a command or query::
     my_instrument.command('SOURCE:FUNCTION:MODE SIN')
     print(my_instrument.query('SOURCE:FUNCTION:MODE?'))
 
-Error checking
-~~~~~~~~~~~~~~
+Checking for SCPI errors
+~~~~~~~~~~~~~~~~~~~~~~~~
 Both the command and query methods will automatically check the SCPI error queue for invalid commands or parameters. If you would like to disable error checking, such as in situations where you need a faster response rate, it can be turned off with an optional argument::
 
     from lakeshore.Teslameter import Teslameter
@@ -75,8 +61,8 @@ Both the command and query methods will automatically check the SCPI error queue
     my_instrument = Teslameter()
     z_axis_measurement = my_instrument.query('FETCH:DC? Z', check_errors=False)
 
-Multiple commands or queries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sending multiple commands or queries together
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 To simplify, speed up, or simultaneously send multiple commands or queries simply separate them with commas::
 
     from lakeshore.Teslameter import Teslameter
