@@ -13,6 +13,8 @@ A simple example
     my_instrument = PrecisionSource()
     print(my_instrument.query('*IDN?'))
 
+Making Connections
+------------------
 Connecting to a specific instrument
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The driver attempts to connect to an instrument when an instrument class object is created. When no arguments are passed, the driver will connect to the first available instrument.
@@ -40,7 +42,7 @@ Connecting to an instrument over TCP requires knowledge of its IP address. On a 
     my_network_connected_instrument = PrecisionSource(ip_address='10.1.2.34')
 
 Commands and queries
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 All Lake Shore instruments supported by the Python driver have :func:`~lakeshore.xip_instrument.command` and :func:`~lakeshore.xip_instrument.query` methods.
 
 The Python driver makes it simple to send the instrument a command or query::
@@ -51,15 +53,6 @@ The Python driver makes it simple to send the instrument a command or query::
 
     my_instrument.command('SOURCE:FUNCTION:MODE SIN')
     print(my_instrument.query('SOURCE:FUNCTION:MODE?'))
-
-Checking for SCPI errors
-~~~~~~~~~~~~~~~~~~~~~~~~
-Both the command and query methods will automatically check the SCPI error queue for invalid commands or parameters. If you would like to disable error checking, such as in situations where you need a faster response rate, it can be turned off with an optional argument::
-
-    from lakeshore.Teslameter import Teslameter
-
-    my_instrument = Teslameter()
-    z_axis_measurement = my_instrument.query('FETCH:DC? Z', check_errors=False)
 
 Sending multiple commands or queries together
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,3 +65,12 @@ To simplify, speed up, or simultaneously send multiple commands or queries simpl
     response = my_instrument.query('SENSE:AVERAGE:COUNT 25', 'FETCH:DC?', 'FETCH:TEMP?')
 
 The commands will execute in the order they are listed. The response to each query will be delimited by semicolons in the order they are listed.
+
+Checking for SCPI errors
+~~~~~~~~~~~~~~~~~~~~~~~~
+Both the command and query methods will automatically check the SCPI error queue for invalid commands or parameters. If you would like to disable error checking, such as in situations where you need a faster response rate, it can be turned off with an optional argument::
+
+    from lakeshore.Teslameter import Teslameter
+
+    my_instrument = Teslameter()
+    z_axis_measurement = my_instrument.query('FETCH:DC? Z', check_errors=False)
