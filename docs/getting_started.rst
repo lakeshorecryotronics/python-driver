@@ -54,8 +54,8 @@ The Python driver makes it simple to send the instrument a command or query::
     my_instrument.command('SOURCE:FUNCTION:MODE SIN')
     print(my_instrument.query('SOURCE:FUNCTION:MODE?'))
 
-Sending multiple commands or queries together
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Grouping multiple commands & queries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 To simplify, speed up, or simultaneously send multiple commands or queries simply separate them with commas::
 
     from lakeshore.Teslameter import Teslameter
