@@ -4,7 +4,7 @@ from .xip_instrument import XIPInstrument
 
 
 class PrecisionSource(XIPInstrument):
-    """A XIP Instrument subclass that establishes 155 specific parameters and methods"""
+    """A class object representing a Lake Shore 155 precision I/V source"""
 
     vid_pid = [(0x1FB9, 0x0103)]
 

@@ -3,20 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Lake Shore Python Driver's documentation!
-====================================================
+Welcome to the Lake Shore Python driver docs
+============================================
+Welcome to the documentation for the Lake Shore Python driver. Begin by completing the :ref:`installation` then read up on :ref:`getting_started` with the driver.
 
-Contents:
+Table of contents
+=================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   installation
+   getting_started
+   teslameter
+   precision_source
+   fast_hall
+   example_scripts
 

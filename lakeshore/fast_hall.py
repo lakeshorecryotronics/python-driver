@@ -4,7 +4,7 @@ from .xip_instrument import XIPInstrument
 
 
 class FastHall(XIPInstrument):
-    """A XIP Instrument subclass that establishes M91 specific parameters and methods"""
+    """A class object representing a Lake Shore M91 Fast Hall controller"""
 
     vid_pid = [(0x1FB9, 0x0704)]
 

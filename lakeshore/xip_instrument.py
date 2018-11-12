@@ -52,7 +52,7 @@ class XIPInstrument:
             self.device_tcp.close()
 
     def command(self, *commands, **kwargs):
-        """Sends a SCPI command to the instrument"""
+        """Send a SCPI command or multiple commands to the instrument"""
 
         check_errors = kwargs.get("check_errors", True)
 
@@ -73,7 +73,7 @@ class XIPInstrument:
                 raise XIPInstrumentConnectionException("No connections configured")
 
     def query(self, *queries, **kwargs):
-        """Sends a SCPI query to the instrument and returns the response"""
+        """Send a SCPI query or multiple queries to the instrument and return the response(s)"""
 
         check_errors = kwargs.get("check_errors", True)
 
@@ -128,12 +128,12 @@ class XIPInstrument:
                 read_object.recv(1)
 
     def disconnect_tcp(self):
-        """Disconnects the TCP connection"""
+        """Disconnect the TCP connection"""
         self.device_tcp.close()
         self.device_tcp = None
 
     def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, timeout=None, flow_control=None):
-        """Establishes a serial USB connection with optional arguments"""
+        """Establish a serial USB connection"""
 
         # Scan the ports for devices matching the VID and PID combos of the instrument
         for port in comports():
@@ -164,16 +164,16 @@ class XIPInstrument:
                     "No serial connections found with a matching COM port and/or matching serial number")
 
     def disconnect_usb(self):
-        """Disconnects the USB connection"""
+        """Disconnect the USB connection"""
         self.device_serial.close()
         self.device_serial = None
 
     def _tcp_command(self, command):
-        """Sends a command over the TCP connection"""
+        """Send a command over the TCP connection"""
         self.device_tcp.send(command.encode('utf-8') + b'\n')
 
     def _tcp_query(self, query):
-        """Queries over the TCP connection"""
+        """Query over the TCP connection"""
         self._tcp_command(query)
 
         total_response = ""
@@ -195,11 +195,11 @@ class XIPInstrument:
                 return total_response.rstrip()
 
     def _usb_command(self, command):
-        """Sends a command over the serial USB connection"""
+        """Send a command over the serial USB connection"""
         self.device_serial.write(command.encode('ascii') + b'\n')
 
     def _usb_query(self, query):
-        """Queries over the serial USB connection"""
+        """Query over the serial USB connection"""
 
         self._usb_command(query)
         response = self.device_serial.readline().decode('ascii')
