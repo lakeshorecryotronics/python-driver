@@ -4,6 +4,15 @@ Getting Started
 ===============
 This page assumes that you have completed :ref:`installation` of the Lake Shore Python driver. It is intended to give a basic understanding of how to use the driver to communicate with an instrument.
 
+A simple example
+----------------
+::
+
+    from lakeshore.PrecisionSource import PrecisionSource
+
+    my_instrument = PrecisionSource()
+    print(my_instrument.query('*IDN?'))
+
 Connecting to an instrument
 ---------------------------
 The driver attempts to connect to an instrument when an instrument class object is created.
