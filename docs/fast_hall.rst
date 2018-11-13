@@ -11,5 +11,6 @@ Instrument methods
 .. module:: lakeshore.fast_hall
 
 .. autoclass:: FastHall
+    :member-order: bysource
     :members:
     :inherited-members:
