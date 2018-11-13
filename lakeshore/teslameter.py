@@ -12,40 +12,40 @@ DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
                                      'field_control_set_point',
                                      'input_state'])
 
+operation_register = [
+    "no_probe",
+    "overload",
+    "ranging",
+    "",
+    "",
+    "ramp_done",
+    "no_data_on_breakout_adapter"
+]
+
+questionable_register = [
+    "x_axis_sensor_error",
+    "y_axis_sensor_error",
+    "z_axis_sensor_error",
+    "probe_EEPROM_read_error",
+    "temperature_compensation_error",
+    "invalid_probe",
+    "field_control_slew_rate_limit",
+    "field_control_at_voltage_limit",
+    "calibration_error",
+    "heartbeat_error"
+]
+
+OperationRegister = namedtuple('OperationRegister',
+                               [bit_name for bit_name in operation_register if bit_name != ""])
+
+QuestionableRegister = namedtuple('QuestionableRegister',
+                                  [bit_name for bit_name in questionable_register if bit_name != ""])
+
 
 class Teslameter(XIPInstrument):
     """A class object representing a Lake Shore F41 or F71 Teslameter"""
 
     vid_pid = [(0x1FB9, 0x0405), (0x1FB9, 0x0406)]
-
-    operation_register = [
-        "no_probe",
-        "overload",
-        "ranging",
-        "",
-        "",
-        "ramp_done",
-        "no_data_on_breakout_adapter"
-    ]
-
-    questionable_register = [
-        "x_axis_sensor_error",
-        "y_axis_sensor_error",
-        "z_axis_sensor_error",
-        "probe_EEPROM_read_error",
-        "temperature_compensation_error",
-        "invalid_probe",
-        "field_control_slew_rate_limit",
-        "field_control_at_voltage_limit",
-        "calibration_error",
-        "heartbeat_error"
-    ]
-
-    OperationRegister = namedtuple('OperationRegister',
-                                   [bit_name for bit_name in operation_register if bit_name != ""])
-
-    QuestionableRegister = namedtuple('QuestionableRegister',
-                                      [bit_name for bit_name in questionable_register if bit_name != ""])
 
     def __init__(self, serial_number=None,
                  com_port=None, baud_rate=115200, flow_control=True,
