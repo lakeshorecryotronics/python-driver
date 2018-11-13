@@ -3,7 +3,7 @@
 from collections import namedtuple
 from .xip_instrument import XIPInstrument
 
-operation_register = [
+OPERATION_REGISTER_BIT_NAMES = [
     "",
     "",
     "",
@@ -19,7 +19,7 @@ operation_register = [
     "interlock_is_open"
 ]
 
-questionable_register = [
+QUESTIONABLE_REGISTER_BIT_NAMES = [
     "voltage_source_in_current_limit",
     "current_source_in_voltage_compliance",
     "",
@@ -32,11 +32,11 @@ questionable_register = [
     "inter_processor_communication_error"
 ]
 
-OperationRegister = namedtuple('OperationRegister',
-                               [bit_name for bit_name in operation_register if bit_name != ""])
+OPERATION_REGISTER_TUPLE = namedtuple('OperationRegister',
+                                      [bit_name for bit_name in OPERATION_REGISTER_BIT_NAMES if bit_name != ""])
 
-QuestionableRegister = namedtuple('QuestionableRegister',
-                                  [bit_name for bit_name in questionable_register if bit_name != ""])
+QUESTIONABLE_REGISTER_TUPLE = namedtuple('QuestionableRegister',
+                                         [bit_name for bit_name in QUESTIONABLE_REGISTER_BIT_NAMES if bit_name != ""])
 
 
 class PrecisionSource(XIPInstrument):

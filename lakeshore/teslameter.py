@@ -12,7 +12,7 @@ DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
                                      'field_control_set_point',
                                      'input_state'])
 
-operation_register = [
+OPERATION_REGISTER_BIT_NAMES = [
     "no_probe",
     "overload",
     "ranging",
@@ -22,7 +22,7 @@ operation_register = [
     "no_data_on_breakout_adapter"
 ]
 
-questionable_register = [
+QUESTIONABLE_REGISTER_BIT_NAMES = [
     "x_axis_sensor_error",
     "y_axis_sensor_error",
     "z_axis_sensor_error",
@@ -35,11 +35,11 @@ questionable_register = [
     "heartbeat_error"
 ]
 
-OperationRegister = namedtuple('OperationRegister',
-                               [bit_name for bit_name in operation_register if bit_name != ""])
+OPERATION_REGISTER_TUPLE = namedtuple('OperationRegister',
+                                      [bit_name for bit_name in OPERATION_REGISTER_BIT_NAMES if bit_name != ""])
 
-QuestionableRegister = namedtuple('QuestionableRegister',
-                                  [bit_name for bit_name in questionable_register if bit_name != ""])
+QUESTIONABLE_REGISTER_TUPLE = namedtuple('QuestionableRegister',
+                                         [bit_name for bit_name in QUESTIONABLE_REGISTER_BIT_NAMES if bit_name != ""])
 
 
 class Teslameter(XIPInstrument):

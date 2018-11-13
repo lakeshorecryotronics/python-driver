@@ -4,7 +4,7 @@ from collections import namedtuple
 from .xip_instrument import XIPInstrument
 
 # TODO: update register enums once they are finalized
-operation_register = [
+OPERATION_REGISTER_BIT_NAMES = [
     "",
     "settling",
     "ranging",
@@ -16,7 +16,7 @@ operation_register = [
     "transient"
 ]
 
-questionable_register = [
+QUESTIONABLE_REGISTER_BIT_NAMES = [
     "source_in_compliance_or_at_current_limit",
     "",
     "field_control_slew_rate_limit",
@@ -31,11 +31,11 @@ questionable_register = [
     "r2_less_than_minimum_allowable"
 ]
 
-OperationRegister = namedtuple('OperationRegister',
-                               [bit_name for bit_name in operation_register if bit_name != ""])
+OPERATION_REGISTER_TUPLE = namedtuple('OperationRegister',
+                                      [bit_name for bit_name in OPERATION_REGISTER_BIT_NAMES if bit_name != ""])
 
-QuestionableRegister = namedtuple('QuestionableRegister',
-                                  [bit_name for bit_name in questionable_register if bit_name != ""])
+QUESTIONABLE_REGISTER_TUPLE = namedtuple('QuestionableRegister',
+                                         [bit_name for bit_name in QUESTIONABLE_REGISTER_BIT_NAMES if bit_name != ""])
 
 
 class FastHall(XIPInstrument):
