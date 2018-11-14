@@ -21,7 +21,7 @@ amplitude_sweep_list = [value/10 for value in range(0, 51)]
 # Creates a list of frequencies starting with 0.1 Hz and increasing by powers of ten up to 10 kHz
 frequency_sweep_list = [10**exponent for exponent in range(-1, 5)]
 
-# Use the function defined above to sweep across all combinations of the lists.
+# Use the lists defined above to sweep across all combinations of the lists.
 # For each combination, wait 10ms before moving to the next one.
 my_source.sweep_voltage(0.01,
                         offset_values=offset_sweep_list,
