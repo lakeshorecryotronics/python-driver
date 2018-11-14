@@ -25,7 +25,7 @@ class OperationRegister:
         "ramp_done",
         "no_data_on_breakout_adapter"
     ]
-    
+
     def __init__(self,
                  no_probe,
                  overload,
@@ -47,7 +47,7 @@ class QuestionableRegister:
         "x_axis_sensor_error",
         "y_axis_sensor_error",
         "z_axis_sensor_error",
-        "probe_EEPROM_read_error",
+        "probe_eeprom_read_error",
         "temperature_compensation_error",
         "invalid_probe",
         "field_control_slew_rate_limit",
@@ -60,7 +60,7 @@ class QuestionableRegister:
                  x_axis_sensor_error,
                  y_axis_sensor_error,
                  z_axis_sensor_error,
-                 probe_EEPROM_read_error,
+                 probe_eeprom_read_error,
                  temperature_compensation_error,
                  invalid_probe,
                  field_control_slew_rate_limit,
@@ -70,7 +70,7 @@ class QuestionableRegister:
         self.x_axis_sensor_error = x_axis_sensor_error
         self.y_axis_sensor_error = y_axis_sensor_error
         self.z_axis_sensor_error = z_axis_sensor_error
-        self.probe_EEPROM_read_error = probe_EEPROM_read_error
+        self.probe_eeprom_read_error = probe_eeprom_read_error
         self.temperature_compensation_error = temperature_compensation_error
         self.invalid_probe = invalid_probe
         self.field_control_slew_rate_limit = field_control_slew_rate_limit

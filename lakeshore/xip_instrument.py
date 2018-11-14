@@ -22,7 +22,7 @@ class StatusByteRegister:
         "master_summary",
         "operation_summary"
     ]
-    
+
     def __init__(self,
                  error_available,
                  questionable_summary,

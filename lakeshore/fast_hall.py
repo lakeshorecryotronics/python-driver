@@ -18,7 +18,7 @@ class OperationRegister:
         "field_measurement_enabled",
         "transient"
     ]
-    
+
     def __init__(self,
                  settling,
                  ranging,
@@ -50,10 +50,10 @@ class QuestionableRegister:
         "invalid_calibration",
         "inter_processor_communication_error",
         "field_measurement_communication_error",
-        "probe_EEPROM_read_error",
+        "probe_eeprom_read_error",
         "r2_less_than_minimum_allowable"
     ]
-    
+
     def __init__(self,
                  source_in_compliance_or_at_current_limit,
                  field_control_slew_rate_limit,
@@ -64,7 +64,7 @@ class QuestionableRegister:
                  invalid_calibration,
                  inter_processor_communication_error,
                  field_measurement_communication_error,
-                 probe_EEPROM_read_error,
+                 probe_eeprom_read_error,
                  r2_less_than_minimum_allowable):
         self.source_in_compliance_or_at_current_limit = source_in_compliance_or_at_current_limit
         self.field_control_slew_rate_limit = field_control_slew_rate_limit
@@ -75,7 +75,7 @@ class QuestionableRegister:
         self.invalid_calibration = invalid_calibration
         self.inter_processor_communication_error = inter_processor_communication_error
         self.field_measurement_communication_error = field_measurement_communication_error
-        self.probe_EEPROM_read_error = probe_EEPROM_read_error
+        self.probe_eeprom_read_error = probe_eeprom_read_error
         self.r2_less_than_minimum_allowable = r2_less_than_minimum_allowable
 
 

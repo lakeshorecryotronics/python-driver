@@ -13,7 +13,7 @@ class OperationRegister:
         "",
         "",
         "waiting_for_trigger_event",
-        "waiting_for_ARM_event",
+        "waiting_for_arm_event",
         "",
         "",
         "",
@@ -21,14 +21,14 @@ class OperationRegister:
         "",
         "interlock_is_open"
     ]
-    
+
     def __init__(self,
                  waiting_for_trigger_event,
-                 waiting_for_ARM_event,
+                 waiting_for_arm_event,
                  trigger_model_is_idle,
                  interlock_is_open):
         self.waiting_for_trigger_event = waiting_for_trigger_event
-        self.waiting_for_ARM_event = waiting_for_ARM_event
+        self.waiting_for_arm_event = waiting_for_arm_event
         self.trigger_model_is_idle = trigger_model_is_idle
         self.interlock_is_open = interlock_is_open
 
@@ -48,7 +48,7 @@ class QuestionableRegister:
         "calibration_error",
         "inter_processor_communication_error"
     ]
-    
+
     def __init__(self,
                  voltage_source_in_current_limit,
                  current_source_in_voltage_compliance,
