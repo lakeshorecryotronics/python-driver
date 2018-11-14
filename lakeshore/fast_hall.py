@@ -50,5 +50,5 @@ class FastHall(XIPInstrument):
                  ip_address=None):
         # Call the parent init, then fill in values specific to FastHall
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address)
-        self.OperationRegister = OperationRegister
-        self.QuestionableRegister = QuestionableRegister
+        self.operation_register = OperationRegister
+        self.questionable_register = QuestionableRegister

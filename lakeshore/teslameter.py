@@ -55,8 +55,8 @@ class Teslameter(XIPInstrument):
                  ip_address=None):
         # Call the parent init, then fill in values specific to the Teslameter
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address)
-        self.OperationRegister = OperationRegister
-        self.QuestionableRegister = QuestionableRegister
+        self.operation_register = OperationRegister
+        self.questionable_register = QuestionableRegister
 
     def stream_buffered_data(self, length_of_time_in_seconds, sample_rate_in_ms):
         """Yield a generator object for the buffered field data"""

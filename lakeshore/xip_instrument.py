@@ -52,10 +52,10 @@ class XIPInstrument:
         # Initialize values common to all XIP instruments
         self.device_serial = None
         self.device_tcp = None
-        self.StatusByteRegister = StatusByteRegister
-        self.StandardEventRegister = StandardEventRegister
-        self.OperationRegister = None
-        self.QuestionableRegister = None
+        self.status_byte_register = StatusByteRegister
+        self.standard_event_register = StandardEventRegister
+        self.operation_register = None
+        self.questionable_register = None
 
         # Raise an error if serial and TCP parameters are passed. Otherwise connect to the instrument using one of them.
         if ip_address is not None:
@@ -246,7 +246,7 @@ class XIPInstrument:
     def get_status_byte(self):
         """Returns named bits of the status byte register and their values"""
         response = self.query("*STB?", check_errors=False)
-        status_register = self._interpret_status_register(response, self.StatusByteRegister)
+        status_register = self._interpret_status_register(response, self.status_byte_register)
 
         return status_register
 
@@ -254,7 +254,7 @@ class XIPInstrument:
         """Returns the named bits of the status byte service request enable register.
         This register determines which bits propagate to the master summary status bit"""
         response = self.query("*SRE?", check_errors=False)
-        status_register = self._interpret_status_register(response, self.StatusByteRegister)
+        status_register = self._interpret_status_register(response, self.status_byte_register)
 
         return status_register
 
@@ -267,7 +267,7 @@ class XIPInstrument:
     def get_standard_events(self):
         """Returns the names of the standard event register bits and their values"""
         response = self.query("*ESR?", check_errors=False)
-        status_register = self._interpret_status_register(response, self.StandardEventRegister)
+        status_register = self._interpret_status_register(response, self.standard_event_register)
 
         return status_register
 
@@ -275,7 +275,7 @@ class XIPInstrument:
         """Returns the names of the standard event enable register bits and their values.
         These values determine which bits propagate to the standard event register"""
         response = self.query("*ESE?", check_errors=False)
-        status_register = self._interpret_status_register(response, self.StandardEventRegister)
+        status_register = self._interpret_status_register(response, self.standard_event_register)
 
         return status_register
 
@@ -288,7 +288,7 @@ class XIPInstrument:
     def get_present_operation_status(self):
         """Returns the names of the operation status register bits and their values"""
         response = self.query("STATus:OPERation:CONDition?", check_errors=False)
-        status_register = self._interpret_status_register(response, self.OperationRegister)
+        status_register = self._interpret_status_register(response, self.operation_register)
 
         return status_register
 
@@ -296,7 +296,7 @@ class XIPInstrument:
         """Returns the names of operation event status register bits that are currently high.
         The event register is latching and values are reset when queried."""
         response = self.query("STATus:OPERation:EVENt?", check_errors=False)
-        status_register = self._interpret_status_register(response, self.OperationRegister)
+        status_register = self._interpret_status_register(response, self.operation_register)
 
         return status_register
 
@@ -304,7 +304,7 @@ class XIPInstrument:
         """Returns the names of the operation event enable register bits and their values.
         These values determine which operation bits propagate to the operation event register."""
         response = self.query("STATus:OPERation:ENABle?", check_errors=False)
-        status_register = self._interpret_status_register(response, self.OperationRegister)
+        status_register = self._interpret_status_register(response, self.operation_register)
 
         return status_register
 
@@ -317,7 +317,7 @@ class XIPInstrument:
     def get_present_questionable_status(self):
         """Returns the names of the questionable status register bits and their values"""
         response = self.query("STATus:QUEStionable:CONDition?", check_errors=False)
-        status_register = self._interpret_status_register(response, self.QuestionableRegister)
+        status_register = self._interpret_status_register(response, self.questionable_register)
 
         return status_register
 
@@ -325,7 +325,7 @@ class XIPInstrument:
         """Returns the names of questionable event status register bits that are currently high.
         The event register is latching and values are reset when queried."""
         response = self.query("STATus:QUEStionable:EVENt?", check_errors=False)
-        status_register = self._interpret_status_register(response, self.QuestionableRegister)
+        status_register = self._interpret_status_register(response, self.questionable_register)
 
         return status_register
 
@@ -333,7 +333,7 @@ class XIPInstrument:
         """Returns the names of the questionable event enable register bits and their values.
         These values determine which questionable bits propagate to the questionable event register."""
         response = self.query("STATus:QUEStionable:ENABle?", check_errors=False)
-        status_register = self._interpret_status_register(response, self.QuestionableRegister)
+        status_register = self._interpret_status_register(response, self.questionable_register)
 
         return status_register
 
