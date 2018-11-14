@@ -1,6 +1,5 @@
 """Implements functionality unique to the Lake Shore M91 Fast Hall"""
 
-from collections import namedtuple
 from .xip_instrument import XIPInstrument
 
 

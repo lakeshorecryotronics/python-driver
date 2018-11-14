@@ -1,6 +1,5 @@
 """Implements functionality unique to the Lake Shore 155 Precision Source"""
 
-from collections import namedtuple
 from .xip_instrument import XIPInstrument
 
 
