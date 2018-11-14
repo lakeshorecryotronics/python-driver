@@ -22,6 +22,20 @@ class StatusByteRegister:
         "master_summary",
         "operation_summary"
     ]
+    
+    def __init__(self,
+                 error_available,
+                 questionable_summary,
+                 message_available_summary,
+                 event_status_summary,
+                 master_summary,
+                 operation_summary):
+        self.error_available = error_available
+        self.questionable_summary = questionable_summary
+        self.message_available_summary = message_available_summary
+        self.event_status_summary = event_status_summary
+        self.master_summary = master_summary
+        self.operation_summary = operation_summary
 
 
 class StandardEventRegister:
@@ -36,6 +50,20 @@ class StandardEventRegister:
         "",
         "power_on"
     ]
+
+    def __init__(self,
+                 operation_complete,
+                 query_error,
+                 device_specific_error,
+                 execution_error,
+                 command_error,
+                 power_on):
+        self.operation_complete = operation_complete
+        self.query_error = query_error
+        self.device_specific_error = device_specific_error
+        self.execution_error = execution_error
+        self.command_error = command_error
+        self.power_on = power_on
 
 
 class XIPInstrumentConnectionException(Exception):
@@ -350,16 +378,16 @@ class XIPInstrument:
     @staticmethod
     def _interpret_status_register(integer_representation, register):
         """Translates the integer representation of a register state into a named array"""
-        # Create an instance of the status register
-        status_register = register()
+        # Create a dictionary to temporarily store the bit states
+        bit_states = {}
 
         # Assign the boolean value of each bit in the integer to the corresponding status register bit name
         for count, bit_name in enumerate(register.bit_names):
             if bit_name:
                 mask = 0b1 << count
-                setattr(status_register, bit_name, bool(int(integer_representation) & mask))
+                bit_states[bit_name] = bool(int(integer_representation) & mask)
 
-        return status_register
+        return register(**bit_states)
 
     @staticmethod
     def _configure_status_register(mask_register):

@@ -21,6 +21,16 @@ class OperationRegister:
         "",
         "interlock_is_open"
     ]
+    
+    def __init__(self,
+                 waiting_for_trigger_event,
+                 waiting_for_ARM_event,
+                 trigger_model_is_idle,
+                 interlock_is_open):
+        self.waiting_for_trigger_event = waiting_for_trigger_event
+        self.waiting_for_ARM_event = waiting_for_ARM_event
+        self.trigger_model_is_idle = trigger_model_is_idle
+        self.interlock_is_open = interlock_is_open
 
 
 class QuestionableRegister:
@@ -38,6 +48,16 @@ class QuestionableRegister:
         "calibration_error",
         "inter_processor_communication_error"
     ]
+    
+    def __init__(self,
+                 voltage_source_in_current_limit,
+                 current_source_in_voltage_compliance,
+                 calibration_error,
+                 inter_processor_communication_error):
+        self.voltage_source_in_current_limit = voltage_source_in_current_limit
+        self.current_source_in_voltage_compliance = current_source_in_voltage_compliance
+        self.calibration_error = calibration_error
+        self.inter_processor_communication_error = inter_processor_communication_error
 
 
 class PrecisionSource(XIPInstrument):

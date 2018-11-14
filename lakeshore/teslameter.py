@@ -25,6 +25,19 @@ class OperationRegister:
         "ramp_done",
         "no_data_on_breakout_adapter"
     ]
+    
+    def __init__(self,
+                 no_probe,
+                 overload,
+                 ranging,
+                 ramp_done,
+                 no_data_on_breakout_adapter
+                 ):
+        self.no_probe = no_probe
+        self.overload = overload
+        self.ranging = ranging
+        self.ramp_done = ramp_done
+        self.no_data_on_breakout_adapter = no_data_on_breakout_adapter
 
 
 class QuestionableRegister:
@@ -42,6 +55,28 @@ class QuestionableRegister:
         "calibration_error",
         "heartbeat_error"
     ]
+
+    def __init__(self,
+                 x_axis_sensor_error,
+                 y_axis_sensor_error,
+                 z_axis_sensor_error,
+                 probe_EEPROM_read_error,
+                 temperature_compensation_error,
+                 invalid_probe,
+                 field_control_slew_rate_limit,
+                 field_control_at_voltage_limit,
+                 calibration_error,
+                 heartbeat_error):
+        self.x_axis_sensor_error = x_axis_sensor_error
+        self.y_axis_sensor_error = y_axis_sensor_error
+        self.z_axis_sensor_error = z_axis_sensor_error
+        self.probe_EEPROM_read_error = probe_EEPROM_read_error
+        self.temperature_compensation_error = temperature_compensation_error
+        self.invalid_probe = invalid_probe
+        self.field_control_slew_rate_limit = field_control_slew_rate_limit
+        self.field_control_at_voltage_limit = field_control_at_voltage_limit
+        self.calibration_error = calibration_error
+        self.heartbeat_error = heartbeat_error
 
 
 class Teslameter(XIPInstrument):
