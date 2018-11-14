@@ -12,6 +12,7 @@ from serial.tools.list_ports import comports
 
 
 class StatusByteRegister:
+    """Class object representing the status byte register"""
 
     bit_names = [
         "",
@@ -26,6 +27,7 @@ class StatusByteRegister:
 
 
 class StandardEventRegister:
+    """Class object representing the standard event register"""
 
     bit_names = [
         "operation_complete",

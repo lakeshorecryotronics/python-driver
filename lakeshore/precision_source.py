@@ -5,6 +5,7 @@ from .xip_instrument import XIPInstrument
 
 
 class OperationRegister:
+    """Class object representing the operation status register"""
 
     bit_names = [
         "",
@@ -24,6 +25,7 @@ class OperationRegister:
 
 
 class QuestionableRegister:
+    """Class object representing the questionable status register"""
 
     bit_names = [
         "voltage_source_in_current_limit",

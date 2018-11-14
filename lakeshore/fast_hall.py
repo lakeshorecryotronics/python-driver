@@ -6,6 +6,7 @@ from .xip_instrument import XIPInstrument
 
 # TODO: update register enums once they are finalized
 class OperationRegister:
+    """Class object representing the operation status register"""
 
     bit_names = [
         "",
@@ -21,6 +22,7 @@ class OperationRegister:
 
 
 class QuestionableRegister:
+    """Class object representing the questionable status register"""
 
     bit_names = [
         "source_in_compliance_or_at_current_limit",

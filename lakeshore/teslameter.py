@@ -14,6 +14,7 @@ DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
 
 
 class OperationRegister:
+    """Class object representing the operation status register"""
 
     bit_names = [
         "no_probe",
@@ -27,6 +28,7 @@ class OperationRegister:
 
 
 class QuestionableRegister:
+    """Class object representing the questionable status register"""
 
     bit_names = [
         "x_axis_sensor_error",
