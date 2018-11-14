@@ -1,7 +1,5 @@
 """This module implements a parent class that contains all functionality shared by Lake Shore XIP instruments."""
 
-from collections import namedtuple
-
 import re
 import select
 import socket
