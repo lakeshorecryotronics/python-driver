@@ -12,34 +12,34 @@ DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
                                      'field_control_set_point',
                                      'input_state'])
 
-OPERATION_REGISTER_BIT_NAMES = [
-    "no_probe",
-    "overload",
-    "ranging",
-    "",
-    "",
-    "ramp_done",
-    "no_data_on_breakout_adapter"
-]
 
-QUESTIONABLE_REGISTER_BIT_NAMES = [
-    "x_axis_sensor_error",
-    "y_axis_sensor_error",
-    "z_axis_sensor_error",
-    "probe_EEPROM_read_error",
-    "temperature_compensation_error",
-    "invalid_probe",
-    "field_control_slew_rate_limit",
-    "field_control_at_voltage_limit",
-    "calibration_error",
-    "heartbeat_error"
-]
+class OperationRegister:
 
-OPERATION_REGISTER_TUPLE = namedtuple('OperationRegister',
-                                      [bit_name for bit_name in OPERATION_REGISTER_BIT_NAMES if bit_name != ""])
+    bit_names = [
+        "no_probe",
+        "overload",
+        "ranging",
+        "",
+        "",
+        "ramp_done",
+        "no_data_on_breakout_adapter"
+    ]
 
-QUESTIONABLE_REGISTER_TUPLE = namedtuple('QuestionableRegister',
-                                         [bit_name for bit_name in QUESTIONABLE_REGISTER_BIT_NAMES if bit_name != ""])
+
+class QuestionableRegister:
+
+    bit_names = [
+        "x_axis_sensor_error",
+        "y_axis_sensor_error",
+        "z_axis_sensor_error",
+        "probe_EEPROM_read_error",
+        "temperature_compensation_error",
+        "invalid_probe",
+        "field_control_slew_rate_limit",
+        "field_control_at_voltage_limit",
+        "calibration_error",
+        "heartbeat_error"
+    ]
 
 
 class Teslameter(XIPInstrument):
@@ -53,6 +53,8 @@ class Teslameter(XIPInstrument):
                  ip_address=None):
         # Call the parent init, then fill in values specific to the Teslameter
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address)
+        self.OperationRegister = OperationRegister
+        self.QuestionableRegister = QuestionableRegister
 
     def stream_buffered_data(self, length_of_time_in_seconds, sample_rate_in_ms):
         """Yield a generator object for the buffered field data"""

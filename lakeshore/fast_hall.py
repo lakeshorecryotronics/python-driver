@@ -3,39 +3,39 @@
 from collections import namedtuple
 from .xip_instrument import XIPInstrument
 
+
 # TODO: update register enums once they are finalized
-OPERATION_REGISTER_BIT_NAMES = [
-    "",
-    "settling",
-    "ranging",
-    "measurement_complete",
-    "waiting_for_trigger",
-    "",
-    "field_control_ramping",
-    "field_measurement_enabled",
-    "transient"
-]
+class OperationRegister:
 
-QUESTIONABLE_REGISTER_BIT_NAMES = [
-    "source_in_compliance_or_at_current_limit",
-    "",
-    "field_control_slew_rate_limit",
-    "field_control_at_voltage_limit",
-    "current_measurement_overload",
-    "voltage_measurement_overload",
-    "invalid_probe",
-    "invalid_calibration",
-    "inter_processor_communication_error",
-    "field_measurement_communication_error",
-    "probe_EEPROM_read_error",
-    "r2_less_than_minimum_allowable"
-]
+    bit_names = [
+        "",
+        "settling",
+        "ranging",
+        "measurement_complete",
+        "waiting_for_trigger",
+        "",
+        "field_control_ramping",
+        "field_measurement_enabled",
+        "transient"
+    ]
 
-OPERATION_REGISTER_TUPLE = namedtuple('OperationRegister',
-                                      [bit_name for bit_name in OPERATION_REGISTER_BIT_NAMES if bit_name != ""])
 
-QUESTIONABLE_REGISTER_TUPLE = namedtuple('QuestionableRegister',
-                                         [bit_name for bit_name in QUESTIONABLE_REGISTER_BIT_NAMES if bit_name != ""])
+class QuestionableRegister:
+
+    bit_names = [
+        "source_in_compliance_or_at_current_limit",
+        "",
+        "field_control_slew_rate_limit",
+        "field_control_at_voltage_limit",
+        "current_measurement_overload",
+        "voltage_measurement_overload",
+        "invalid_probe",
+        "invalid_calibration",
+        "inter_processor_communication_error",
+        "field_measurement_communication_error",
+        "probe_EEPROM_read_error",
+        "r2_less_than_minimum_allowable"
+    ]
 
 
 class FastHall(XIPInstrument):
@@ -49,3 +49,5 @@ class FastHall(XIPInstrument):
                  ip_address=None):
         # Call the parent init, then fill in values specific to FastHall
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address)
+        self.OperationRegister = OperationRegister
+        self.QuestionableRegister = QuestionableRegister
