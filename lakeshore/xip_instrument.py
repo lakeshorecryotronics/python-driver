@@ -386,6 +386,7 @@ class XIPInstrument:
     @staticmethod
     def _interpret_status_register(integer_representation, register):
         """Translates the integer representation of a register state into a named array"""
+
         # Create a dictionary to temporarily store the bit states
         bit_states = {}
 
@@ -400,22 +401,20 @@ class XIPInstrument:
     @staticmethod
     def _configure_status_register(mask_register):
         """Translates from a named array to an integer representation value"""
+
         # Check whether an integer was passed. If so, return it.
         if isinstance(mask_register, int):
             return mask_register
 
         # If a class was passed, call a function to turn it back into an integer representation
         integer_representation = 0
-        number_of_bits = 0
 
         # Add up the boolean values of a list of named instrument states
         # while being careful to account for unnamed entries in the register bit names list
-        for bit_name in mask_register.bit_names:
+        for count, bit_name in enumerate(mask_register.bit_names):
 
             if bit_name:
-                integer_representation += int(getattr(mask_register, bit_name)) << number_of_bits
-
-            number_of_bits += 1
+                integer_representation += int(getattr(mask_register, bit_name)) << count
 
         return integer_representation
 
