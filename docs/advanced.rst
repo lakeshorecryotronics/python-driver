@@ -32,10 +32,10 @@ Modifying a register mask can be done in one of two ways. Either by using the *m
 
 or by using the *set* functions to define the states of all bits in the register::
 
-    from lakeshore import PrecisionSource, QuestionableRegister
+    from lakeshore import PrecisionSource, PrecisionSourceQuestionableRegister
 
     my_instrument = PrecisionSource()
-    register_mask = QuestionableRegister(voltage_source_in_current_limit=True,
+    register_mask = PrecisionSourceQuestionableRegister(voltage_source_in_current_limit=True,
                                          current_source_in_voltage_compliance=True,
                                          calibration_error=False,
                                          inter_processor_communication_error=False)

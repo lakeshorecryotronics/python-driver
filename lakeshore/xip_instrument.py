@@ -10,6 +10,7 @@ from serial.tools.list_ports import comports
 
 
 class RegisterBase:
+    """Base class of the status register classes"""
 
     bit_names = []
 
