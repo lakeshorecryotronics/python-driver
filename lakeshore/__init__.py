@@ -1,5 +1,5 @@
 """Python driver for Lake Shore instruments"""
 from .xip_instrument import XIPInstrumentConnectionException
-from .teslameter import Teslameter
-from .fast_hall import FastHall
-from .precision_source import PrecisionSource
+from .teslameter import Teslameter, TeslameterOperationRegister, TeslameterQuestionableRegister
+from .fast_hall import FastHall, FastHallOperationRegister, FastHallQuestionableRegister
+from .precision_source import PrecisionSource, PrecisionSourceOperationRegister, PrecisionSourceQuestionableRegister

@@ -13,5 +13,6 @@ Instrument methods
 .. module:: lakeshore.teslameter
 
 .. autoclass:: Teslameter
+    :member-order: bysource
     :members:
     :inherited-members:

@@ -9,6 +9,72 @@ import serial
 from serial.tools.list_ports import comports
 
 
+class RegisterBase:
+    """Base class of the status register classes"""
+
+    bit_names = []
+
+    def __str__(self):
+        return str(vars(self))
+
+
+class StatusByteRegister(RegisterBase):
+    """Class object representing the status byte register"""
+
+    bit_names = [
+        "",
+        "",
+        "error_available",
+        "questionable_summary",
+        "message_available_summary",
+        "event_status_summary",
+        "master_summary",
+        "operation_summary"
+    ]
+
+    def __init__(self,
+                 error_available,
+                 questionable_summary,
+                 message_available_summary,
+                 event_status_summary,
+                 master_summary,
+                 operation_summary):
+        self.error_available = error_available
+        self.questionable_summary = questionable_summary
+        self.message_available_summary = message_available_summary
+        self.event_status_summary = event_status_summary
+        self.master_summary = master_summary
+        self.operation_summary = operation_summary
+
+
+class StandardEventRegister(RegisterBase):
+    """Class object representing the standard event register"""
+
+    bit_names = [
+        "operation_complete",
+        "query_error",
+        "device_specific_error",
+        "execution_error",
+        "command_error",
+        "",
+        "power_on"
+    ]
+
+    def __init__(self,
+                 operation_complete,
+                 query_error,
+                 device_specific_error,
+                 execution_error,
+                 command_error,
+                 power_on):
+        self.operation_complete = operation_complete
+        self.query_error = query_error
+        self.device_specific_error = device_specific_error
+        self.execution_error = execution_error
+        self.command_error = command_error
+        self.power_on = power_on
+
+
 class XIPInstrumentConnectionException(Exception):
     """Names a new type of exception specific to instrument connectivity."""
     pass
@@ -23,6 +89,10 @@ class XIPInstrument:
         # Initialize values common to all XIP instruments
         self.device_serial = None
         self.device_tcp = None
+        self.status_byte_register = StatusByteRegister
+        self.standard_event_register = StandardEventRegister
+        self.operation_register = None
+        self.questionable_register = None
 
         # Raise an error if serial and TCP parameters are passed. Otherwise connect to the instrument using one of them.
         if ip_address is not None:
@@ -112,6 +182,7 @@ class XIPInstrument:
 
     def connect_tcp(self, ip_address, timeout):
         """Establishes a TCP connection with the instrument on the specified IP address"""
+
         self.device_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.device_tcp.settimeout(timeout)
         self.device_tcp.connect((ip_address, 8888))
@@ -129,6 +200,7 @@ class XIPInstrument:
 
     def disconnect_tcp(self):
         """Disconnect the TCP connection"""
+
         self.device_tcp.close()
         self.device_tcp = None
 
@@ -165,15 +237,18 @@ class XIPInstrument:
 
     def disconnect_usb(self):
         """Disconnect the USB connection"""
+
         self.device_serial.close()
         self.device_serial = None
 
     def _tcp_command(self, command):
         """Send a command over the TCP connection"""
+
         self.device_tcp.send(command.encode('utf-8') + b'\n')
 
     def _tcp_query(self, query):
         """Query over the TCP connection"""
+
         self._tcp_command(query)
 
         total_response = ""
@@ -196,6 +271,7 @@ class XIPInstrument:
 
     def _usb_command(self, command):
         """Send a command over the serial USB connection"""
+
         self.device_serial.write(command.encode('ascii') + b'\n')
 
     def _usb_query(self, query):
@@ -208,5 +284,193 @@ class XIPInstrument:
         if not response:
             raise XIPInstrumentConnectionException("Communication timed out")
 
-        # Remove the line break the end of the response before returning it.
         return response.rstrip()
+
+    def get_status_byte(self):
+        """Returns named bits of the status byte register and their values"""
+
+        response = self.query("*STB?", check_errors=False)
+        status_register = self._interpret_status_register(response, self.status_byte_register)
+
+        return status_register
+
+    def get_service_request_enable_mask(self):
+        """Returns the named bits of the status byte service request enable register.
+        This register determines which bits propagate to the master summary status bit"""
+
+        response = self.query("*SRE?", check_errors=False)
+        status_register = self._interpret_status_register(response, self.status_byte_register)
+
+        return status_register
+
+    def set_service_request_enable_mask(self, register_mask):
+        """Configures values of the service request enable register bits.
+        This register determines which bits propagate to the master summary bit"""
+
+        integer_representation = self._configure_status_register(register_mask)
+        self.command("*SRE " + str(integer_representation), check_errors=False)
+
+    def get_standard_events(self):
+        """Returns the names of the standard event register bits and their values"""
+
+        response = self.query("*ESR?", check_errors=False)
+        status_register = self._interpret_status_register(response, self.standard_event_register)
+
+        return status_register
+
+    def get_standard_event_enable_mask(self):
+        """Returns the names of the standard event enable register bits and their values.
+        These values determine which bits propagate to the standard event register"""
+
+        response = self.query("*ESE?", check_errors=False)
+        status_register = self._interpret_status_register(response, self.standard_event_register)
+
+        return status_register
+
+    def set_standard_event_enable_mask(self, register_mask):
+        """Configures values of the standard event enable register bits.
+        These values determine which bits propagate to the standard event register"""
+
+        integer_representation = self._configure_status_register(register_mask)
+        self.command("*ESE " + str(integer_representation), check_errors=False)
+
+    def get_present_operation_status(self):
+        """Returns the names of the operation status register bits and their values"""
+
+        response = self.query("STATus:OPERation:CONDition?", check_errors=False)
+        status_register = self._interpret_status_register(response, self.operation_register)
+
+        return status_register
+
+    def get_operation_events(self):
+        """Returns the names of operation event status register bits that are currently high.
+        The event register is latching and values are reset when queried."""
+
+        response = self.query("STATus:OPERation:EVENt?", check_errors=False)
+        status_register = self._interpret_status_register(response, self.operation_register)
+
+        return status_register
+
+    def get_operation_event_enable_mask(self):
+        """Returns the names of the operation event enable register bits and their values.
+        These values determine which operation bits propagate to the operation event register."""
+
+        response = self.query("STATus:OPERation:ENABle?", check_errors=False)
+        status_register = self._interpret_status_register(response, self.operation_register)
+
+        return status_register
+
+    def set_operation_event_enable_mask(self, register_mask):
+        """Configures the values of the operation event enable register bits.
+        These values determine which operation bits propagate to the operation event register."""
+
+        integer_representation = self._configure_status_register(register_mask)
+        self.command("STATus:OPERation:ENABle " + str(integer_representation), check_errors=False)
+
+    def get_present_questionable_status(self):
+        """Returns the names of the questionable status register bits and their values"""
+
+        response = self.query("STATus:QUEStionable:CONDition?", check_errors=False)
+        status_register = self._interpret_status_register(response, self.questionable_register)
+
+        return status_register
+
+    def get_questionable_events(self):
+        """Returns the names of questionable event status register bits that are currently high.
+        The event register is latching and values are reset when queried."""
+
+        response = self.query("STATus:QUEStionable:EVENt?", check_errors=False)
+        status_register = self._interpret_status_register(response, self.questionable_register)
+
+        return status_register
+
+    def get_questionable_event_enable_mask(self):
+        """Returns the names of the questionable event enable register bits and their values.
+        These values determine which questionable bits propagate to the questionable event register."""
+
+        response = self.query("STATus:QUEStionable:ENABle?", check_errors=False)
+        status_register = self._interpret_status_register(response, self.questionable_register)
+
+        return status_register
+
+    def set_questionable_event_enable_mask(self, register_mask):
+        """Configures the values of the questionable event enable register bits.
+        These values determine which questionable bits propagate to the questionable event register."""
+
+        integer_representation = self._configure_status_register(register_mask)
+        self.command("STATus:QUEStionable:ENABle " + str(integer_representation), check_errors=False)
+
+    def reset_status_register_masks(self):
+        """Resets status register masks to preset values"""
+        self.command("STATus:PRESet", check_errors=False)
+
+    @staticmethod
+    def _interpret_status_register(integer_representation, register):
+        """Translates the integer representation of a register state into a named array"""
+
+        # Create a dictionary to temporarily store the bit states
+        bit_states = {}
+
+        # Assign the boolean value of each bit in the integer to the corresponding status register bit name
+        for count, bit_name in enumerate(register.bit_names):
+            if bit_name:
+                mask = 0b1 << count
+                bit_states[bit_name] = bool(int(integer_representation) & mask)
+
+        return register(**bit_states)
+
+    @staticmethod
+    def _configure_status_register(mask_register):
+        """Translates from a named array to an integer representation value"""
+
+        # Check whether an integer was passed. If so, return it.
+        if isinstance(mask_register, int):
+            return mask_register
+
+        # If a class was passed, call a function to turn it back into an integer representation
+        integer_representation = 0
+
+        # Add up the boolean values of a list of named instrument states
+        # while being careful to account for unnamed entries in the register bit names list
+        for count, bit_name in enumerate(mask_register.bit_names):
+
+            if bit_name:
+                integer_representation += int(getattr(mask_register, bit_name)) << count
+
+        return integer_representation
+
+    def modify_service_request_mask(self, bit_name, value):
+        """Gets the service request enable mask, changes a bit, and sets the register"""
+
+        mask_register = self.get_service_request_enable_mask()
+
+        setattr(mask_register, bit_name, value)
+
+        self.set_service_request_enable_mask(mask_register)
+
+    def modify_standard_event_register_mask(self, bit_name, value):
+        """Gets the standard event register mask, changes a bit, and sets the register"""
+
+        mask_register = self.get_standard_event_enable_mask()
+
+        setattr(mask_register, bit_name, value)
+
+        self.set_standard_event_enable_mask(mask_register)
+
+    def modify_operation_register_mask(self, bit_name, value):
+        """Gets the operation condition register mask, changes a bit, and sets the register"""
+
+        mask_register = self.get_operation_event_enable_mask()
+
+        setattr(mask_register, bit_name, value)
+
+        self.set_operation_event_enable_mask(mask_register)
+
+    def modify_questionable_register_mask(self, bit_name, value):
+        """Gets the questionable condition register mask, changes a bit, and sets the register"""
+
+        mask_register = self.get_questionable_event_enable_mask()
+
+        setattr(mask_register, bit_name, value)
+
+        self.set_questionable_event_enable_mask(mask_register)

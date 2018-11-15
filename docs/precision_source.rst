@@ -11,5 +11,6 @@ Instrument methods
 .. module:: lakeshore.precision_source
 
 .. autoclass:: PrecisionSource
+    :member-order: bysource
     :members:
     :inherited-members:

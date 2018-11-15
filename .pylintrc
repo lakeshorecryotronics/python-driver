@@ -120,28 +120,28 @@ inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
 inlinevar-name-hint=[A-Za-z_][A-Za-z0-9_]*$
 
 # Regular expression matching correct function names
-function-rgx=[a-z_][a-z0-9_]{2,30}$
+function-rgx=[a-z_][a-z0-9_]{2,40}$
 
 # Naming hint for function names
-function-name-hint=[a-z_][a-z0-9_]{2,30}$
+function-name-hint=[a-z_][a-z0-9_]{2,40}$
 
 # Regular expression matching correct variable names
-variable-rgx=[a-z_][a-z0-9_]{2,30}$
+variable-rgx=[a-z_][a-z0-9_]{2,40}$
 
 # Naming hint for variable names
-variable-name-hint=[a-z_][a-z0-9_]{2,30}$
+variable-name-hint=[a-z_][a-z0-9_]{2,40}$
 
 # Regular expression matching correct attribute names
-attr-rgx=[a-z_][a-z0-9_]{2,30}$
+attr-rgx=[a-z_][a-z0-9_]{2,40}$
 
 # Naming hint for attribute names
-attr-name-hint=[a-z_][a-z0-9_]{2,30}$
+attr-name-hint=[a-z_][a-z0-9_]{2,40}$
 
 # Regular expression matching correct method names
-method-rgx=[a-z_][a-z0-9_]{2,30}$
+method-rgx=[a-z_][a-z0-9_]{2,40}$
 
 # Naming hint for method names
-method-name-hint=[a-z_][a-z0-9_]{2,30}$
+method-name-hint=[a-z_][a-z0-9_]{2,40}$
 
 # Regular expression matching correct constant names
 const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
@@ -150,10 +150,10 @@ const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
 const-name-hint=(([A-Z_][A-Z0-9_]*)|(__.*__))$
 
 # Regular expression matching correct class attribute names
-class-attribute-rgx=([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$
+class-attribute-rgx=([A-Za-z_][A-Za-z0-9_]{2,40}|(__.*__))$
 
 # Naming hint for class attribute names
-class-attribute-name-hint=([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$
+class-attribute-name-hint=([A-Za-z_][A-Za-z0-9_]{2,40}|(__.*__))$
 
 # Regular expression matching correct module names
 module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
@@ -162,10 +162,10 @@ module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
 module-name-hint=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
 
 # Regular expression matching correct argument names
-argument-rgx=[a-z_][a-z0-9_]{2,30}$
+argument-rgx=[a-z_][a-z0-9_]{2,40}$
 
 # Naming hint for argument names
-argument-name-hint=[a-z_][a-z0-9_]{2,30}$
+argument-name-hint=[a-z_][a-z0-9_]{2,40}$
 
 # Regular expression which should only match function or class names that do
 # not require a docstring.
@@ -319,7 +319,7 @@ exclude-protected=_asdict,_fields,_replace,_source,_make
 [DESIGN]
 
 # Maximum number of arguments for function / method
-max-args=10
+max-args=15
 
 # Argument names that match this expression will be ignored. Default to name
 # with leading underscore
@@ -341,13 +341,13 @@ max-statements=50
 max-parents=7
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=7
+max-attributes=20
 
 # Minimum number of public methods for a class (see R0903).
-min-public-methods=2
+min-public-methods=0
 
 # Maximum number of public methods for a class (see R0904).
-max-public-methods=20
+max-public-methods=50
 
 # Maximum number of boolean expressions in a if statement
 max-bool-expr=5
