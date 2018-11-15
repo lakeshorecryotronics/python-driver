@@ -5,7 +5,7 @@ from datetime import datetime
 
 import iso8601
 
-from .xip_instrument import XIPInstrument
+from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
                                      'magnitude', 'x', 'y', 'z',
@@ -13,7 +13,7 @@ DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
                                      'input_state'])
 
 
-class OperationRegister:
+class OperationRegister(RegisterBase):
     """Class object representing the operation status register"""
 
     bit_names = [
@@ -40,7 +40,7 @@ class OperationRegister:
         self.no_data_on_breakout_adapter = no_data_on_breakout_adapter
 
 
-class QuestionableRegister:
+class QuestionableRegister(RegisterBase):
     """Class object representing the questionable status register"""
 
     bit_names = [

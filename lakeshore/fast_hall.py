@@ -1,10 +1,10 @@
 """Implements functionality unique to the Lake Shore M91 Fast Hall"""
 
-from .xip_instrument import XIPInstrument
+from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 
 # TODO: update register enums once they are finalized
-class OperationRegister:
+class OperationRegister(RegisterBase):
     """Class object representing the operation status register"""
 
     bit_names = [
@@ -36,7 +36,7 @@ class OperationRegister:
         self.transient = transient
 
 
-class QuestionableRegister:
+class QuestionableRegister(RegisterBase):
     """Class object representing the questionable status register"""
 
     bit_names = [

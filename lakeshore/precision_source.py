@@ -1,9 +1,9 @@
 """Implements functionality unique to the Lake Shore 155 Precision Source"""
 
-from .xip_instrument import XIPInstrument
+from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 
-class OperationRegister:
+class OperationRegister(RegisterBase):
     """Class object representing the operation status register"""
 
     bit_names = [
@@ -33,7 +33,7 @@ class OperationRegister:
         self.interlock_is_open = interlock_is_open
 
 
-class QuestionableRegister:
+class QuestionableRegister(RegisterBase):
     """Class object representing the questionable status register"""
 
     bit_names = [
