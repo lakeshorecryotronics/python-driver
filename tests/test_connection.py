@@ -32,7 +32,7 @@ class TestDiscovery(unittest.TestCase):
 
     # @unittest.skip('Need a dedicated ethernet port for the Teslameter on the HIL rig')
     def test_tcp_connection(self):
-        Teslameter('192.168.0.12')
+        Teslameter(ip_address='192.168.0.12')
 
 
 class TestConnectivity(TestWithDUT):
