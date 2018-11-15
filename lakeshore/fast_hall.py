@@ -4,7 +4,7 @@ from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, Sta
 
 
 # TODO: update register enums once they are finalized
-class OperationRegister(RegisterBase):
+class FastHallOperationRegister(RegisterBase):
     """Class object representing the operation status register"""
 
     bit_names = [
@@ -36,7 +36,7 @@ class OperationRegister(RegisterBase):
         self.transient = transient
 
 
-class QuestionableRegister(RegisterBase):
+class FastHallQuestionableRegister(RegisterBase):
     """Class object representing the questionable status register"""
 
     bit_names = [
@@ -92,5 +92,5 @@ class FastHall(XIPInstrument):
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address)
         self.status_byte_register = StatusByteRegister
         self.standard_event_register = StandardEventRegister
-        self.operation_register = OperationRegister
-        self.questionable_register = QuestionableRegister
+        self.operation_register = FastHallOperationRegister
+        self.questionable_register = FastHallQuestionableRegister

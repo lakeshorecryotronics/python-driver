@@ -3,7 +3,7 @@
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 
-class OperationRegister(RegisterBase):
+class PrecisionSourceOperationRegister(RegisterBase):
     """Class object representing the operation status register"""
 
     bit_names = [
@@ -33,7 +33,7 @@ class OperationRegister(RegisterBase):
         self.interlock_is_open = interlock_is_open
 
 
-class QuestionableRegister(RegisterBase):
+class PrecisionSourceQuestionableRegister(RegisterBase):
     """Class object representing the questionable status register"""
 
     bit_names = [
@@ -73,5 +73,5 @@ class PrecisionSource(XIPInstrument):
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address)
         self.status_byte_register = StatusByteRegister
         self.standard_event_register = StandardEventRegister
-        self.operation_register = OperationRegister
-        self.questionable_register = QuestionableRegister
+        self.operation_register = PrecisionSourceOperationRegister
+        self.questionable_register = PrecisionSourceQuestionableRegister

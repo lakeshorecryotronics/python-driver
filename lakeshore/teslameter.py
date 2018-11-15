@@ -13,7 +13,7 @@ DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
                                      'input_state'])
 
 
-class OperationRegister(RegisterBase):
+class TeslameterOperationRegister(RegisterBase):
     """Class object representing the operation status register"""
 
     bit_names = [
@@ -40,7 +40,7 @@ class OperationRegister(RegisterBase):
         self.no_data_on_breakout_adapter = no_data_on_breakout_adapter
 
 
-class QuestionableRegister(RegisterBase):
+class TeslameterQuestionableRegister(RegisterBase):
     """Class object representing the questionable status register"""
 
     bit_names = [
@@ -92,8 +92,8 @@ class Teslameter(XIPInstrument):
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address)
         self.status_byte_register = StatusByteRegister
         self.standard_event_register = StandardEventRegister
-        self.operation_register = OperationRegister
-        self.questionable_register = QuestionableRegister
+        self.operation_register = TeslameterOperationRegister
+        self.questionable_register = TeslameterQuestionableRegister
 
     def stream_buffered_data(self, length_of_time_in_seconds, sample_rate_in_ms):
         """Yield a generator object for the buffered field data"""
