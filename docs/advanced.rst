@@ -12,10 +12,10 @@ Reading a register
 ~~~~~~~~~~~~~~~~~~
 Each register and register mask can be read by a corresponding *get* function. The function returns an object that contains the state of each register bit. For example::
 
-    from lakeshore.teslameter import Teslameter
+    from lakeshore import Teslameter
 
     my_instrument = Teslameter()
-    print(vars(dut.get_operation_events()))
+    print(dut.get_operation_events())
 
 will return the following::
 
@@ -25,14 +25,14 @@ Modifying a register mask
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 Modifying a register mask can be done in one of two ways. Either by using the *modify* functions like so::
 
-    from lakeshore.precision_source import PrecisionSource
+    from lakeshore import PrecisionSource
 
     my_instrument = PrecisionSource()
     my_instrument.modify_standard_event_register_mask('command_error', True)
 
-or by using the *set* functions like so::
+or by using the *set* functions to define the states of all bits in the register::
 
-    from lakeshore.precision_source import PrecisionSource, QuestionableRegister
+    from lakeshore import PrecisionSource, QuestionableRegister
 
     my_instrument = PrecisionSource()
     register_mask = QuestionableRegister(voltage_source_in_current_limit=True,

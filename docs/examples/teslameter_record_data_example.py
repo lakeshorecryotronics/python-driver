@@ -1,5 +1,4 @@
-from lakeshore.teslameter import Teslameter
-from time import sleep
+from lakeshore import Teslameter
 
 # Connect to the first available Teslameter over USB
 my_teslameter = Teslameter()

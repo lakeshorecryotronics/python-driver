@@ -8,7 +8,7 @@ A simple example
 ----------------
 ::
 
-    from lakeshore.precision_source import PrecisionSource
+    from lakeshore import PrecisionSource
 
     my_instrument = PrecisionSource()
     print(my_instrument.query('*IDN?'))
@@ -21,13 +21,13 @@ The driver attempts to connect to an instrument when an instrument class object 
 
 If multiple instruments are connected you may target a specific device in one of two ways. Either by specifying the serial number of the instrument::
 
-    from lakeshore.teslameter import Teslameter
+    from lakeshore import Teslameter
 
     my_specific_instrument = Teslameter(serial_number='LSA12AB')
 
 or the COM port it is connected to::
 
-    from lakeshore.fast_hall import FastHall
+    from lakeshore import FastHall
 
     my_specific_instrument = FastHall(com_port='COM7')
 
@@ -37,7 +37,7 @@ By default, the driver will try to connect to the instrument over a serial USB c
 
 Connecting to an instrument over TCP requires knowledge of its IP address. On a XIP instrument the IP address can be found through the front panel interface and used like so::
 
-    from lakeshore.precision_source import PrecisionSource
+    from lakeshore import PrecisionSource
 
     my_network_connected_instrument = PrecisionSource(ip_address='10.1.2.34')
 
@@ -47,7 +47,7 @@ All Lake Shore instruments supported by the Python driver have :func:`~lakeshore
 
 The Python driver makes it simple to send the instrument a command or query::
 
-    from lakeshore.precision_source import PrecisionSource
+    from lakeshore import PrecisionSource
 
     my_instrument = PrecisionSource()
 
@@ -58,7 +58,7 @@ Grouping multiple commands & queries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 To simplify, speed up, or simultaneously send multiple commands or queries simply separate them with commas::
 
-    from lakeshore.teslameter import Teslameter
+    from lakeshore import Teslameter
 
     my_instrument = Teslameter()
     # Set the averaging window to 250 ms, get the dC field measurement, and get the temperature measurement.
@@ -70,7 +70,7 @@ Checking for SCPI errors
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Both the command and query methods will automatically check the SCPI error queue for invalid commands or parameters. If you would like to disable error checking, such as in situations where you need a faster response rate, it can be turned off with an optional argument::
 
-    from lakeshore.teslameter import Teslameter
+    from lakeshore import Teslameter
 
     my_instrument = Teslameter()
     z_axis_measurement = my_instrument.query('FETCH:DC? Z', check_errors=False)
