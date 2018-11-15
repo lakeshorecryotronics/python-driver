@@ -9,7 +9,15 @@ import serial
 from serial.tools.list_ports import comports
 
 
-class StatusByteRegister:
+class RegisterBase:
+
+    bit_names = []
+
+    def __str__(self):
+        return str(vars(self))
+
+
+class StatusByteRegister(RegisterBase):
     """Class object representing the status byte register"""
 
     bit_names = [
@@ -38,7 +46,7 @@ class StatusByteRegister:
         self.operation_summary = operation_summary
 
 
-class StandardEventRegister:
+class StandardEventRegister(RegisterBase):
     """Class object representing the standard event register"""
 
     bit_names = [
