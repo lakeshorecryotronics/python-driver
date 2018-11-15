@@ -1,7 +1,8 @@
 """Implements functionality unique to the Lake Shore 155 Precision Source"""
 
-from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 from time import sleep
+
+from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 
 class PrecisionSourceOperationRegister(RegisterBase):
