@@ -74,3 +74,4 @@ Both the command and query methods will automatically check the SCPI error queue
 
     my_instrument = Teslameter()
     z_axis_measurement = my_instrument.query('FETCH:DC? Z', check_errors=False)
+
