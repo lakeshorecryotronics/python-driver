@@ -1,6 +1,7 @@
 """Implements functionality unique to the Lake Shore 155 Precision Source"""
 
 from time import sleep
+import itertools
 
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
@@ -106,20 +107,20 @@ class PrecisionSource(XIPInstrument):
             frequency_values = [None]
 
         # Step through every combination of the three values.
-        for offset in offset_values:
+        for offset, frequency, amplitude in itertools.product(offset_values, frequency_values, amplitude_values):
+
+            parameter_commands = []
+
             if offset is not None:
-                self.command("SOURCE:VOLTAGE:OFFSET " + str(offset))
+                parameter_commands.append("SOURCE:VOLTAGE:OFFSET " + str(offset))
+            if frequency is not None:
+                parameter_commands.append("SOURCE:FREQUENCY " + str(frequency))
+            if amplitude is not None:
+                parameter_commands.append("SOURCE:VOLTAGE:AMPLITUDE " + str(amplitude))
 
-            for frequency in frequency_values:
-                if frequency is not None:
-                    self.command("SOURCE:FREQUENCY " + str(frequency))
+            self.command(*parameter_commands)
 
-                for amplitude in amplitude_values:
-                    if amplitude is not None:
-                        self.command("SOURCE:VOLTAGE:AMPLITUDE " + str(amplitude))
-
-                    # Wait for the amount of time specified before sending the next combination of parameters.
-                    sleep(dwell_time)
+            sleep(dwell_time)
 
     def sweep_current(self,
                       dwell_time,
@@ -149,17 +150,17 @@ class PrecisionSource(XIPInstrument):
             frequency_values = [None]
 
         # Step through every combination of the three values.
-        for offset in offset_values:
+        for offset, frequency, amplitude in itertools.product(offset_values, frequency_values, amplitude_values):
+
+            parameter_commands = []
+
             if offset is not None:
-                self.command("SOURCE:CURRENT:OFFSET " + str(offset))
+                parameter_commands.append("SOURCE:CURRENT:OFFSET " + str(offset))
+            if frequency is not None:
+                parameter_commands.append("SOURCE:FREQUENCY " + str(frequency))
+            if amplitude is not None:
+                parameter_commands.append("SOURCE:CURRENT:AMPLITUDE " + str(amplitude))
 
-            for frequency in frequency_values:
-                if frequency is not None:
-                    self.command("SOURCE:FREQUENCY " + str(frequency))
+            self.command(*parameter_commands)
 
-                for amplitude in amplitude_values:
-                    if amplitude is not None:
-                        self.command("SOURCE:CURRENT:AMPLITUDE " + str(amplitude))
-
-                    # Wait for the amount of time specified before sending the next combination of parameters.
-                    sleep(dwell_time)
+            sleep(dwell_time)
