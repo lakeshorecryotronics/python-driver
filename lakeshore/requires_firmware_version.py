@@ -1,5 +1,8 @@
-from lakeshore.xip_instrument import XIPInstrumentConnectionException
+"""Function for ensuring an error is raised if the instrument firmware does not support the called function."""
+
 from distutils.version import LooseVersion
+
+from lakeshore.xip_instrument import XIPInstrumentConnectionException
 
 
 def requires_firmware_version(required_version):
