@@ -1,5 +1,8 @@
 """Implements functionality unique to the Lake Shore 155 Precision Source"""
 
+from time import sleep
+import itertools
+
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 
@@ -75,3 +78,123 @@ class PrecisionSource(XIPInstrument):
         self.standard_event_register = StandardEventRegister
         self.operation_register = PrecisionSourceOperationRegister
         self.questionable_register = PrecisionSourceQuestionableRegister
+
+    def sweep_voltage(self,
+                      dwell_time,
+                      offset_values=None,
+                      amplitude_values=None,
+                      frequency_values=None):
+        """Sweep source output voltage parameters based on list arguments.
+
+        Args:
+            dwell_time (int):
+                The length of time to wait at each parameter combination.
+                Note that the update rate will be limited by the SCPI communication response time.
+                The response time is usually on the order of 10-30 milliseconds.
+
+            offset_values (list):
+                DC offset values in volts to sweep over
+
+            amplitude_values (list):
+                Peak to peak values in volts to sweep over
+
+            frequency_values (list):
+                Frequency values in Hertz to sweep over
+
+        """
+
+        # Change the output mode to source voltage instead of current.
+        self.command("SOURCE:FUNCTION:MODE VOLTAGE")
+
+        # Configure the instrument to automatically choose the best range for a given output setting
+        self.command("SOURCE:FUNCTION:SHAPE SIN")
+
+        # Turn on the output voltage
+        self.command("OUTPUT ON")
+
+        # Check to see if arguments were passed for each parameter.
+        # If not, initialize them in a way they will be ignored.
+        if offset_values is None:
+            offset_values = [None]
+
+        if amplitude_values is None:
+            amplitude_values = [None]
+
+        if frequency_values is None:
+            frequency_values = [None]
+
+        # Step through every combination of the three values.
+        for offset, frequency, amplitude in itertools.product(offset_values, frequency_values, amplitude_values):
+
+            parameter_commands = []
+
+            if offset is not None:
+                parameter_commands.append("SOURCE:VOLTAGE:OFFSET " + str(offset))
+            if frequency is not None:
+                parameter_commands.append("SOURCE:FREQUENCY " + str(frequency))
+            if amplitude is not None:
+                parameter_commands.append("SOURCE:VOLTAGE:AMPLITUDE " + str(amplitude))
+
+            self.command(*parameter_commands)
+
+            sleep(dwell_time)
+
+    def sweep_current(self,
+                      dwell_time,
+                      offset_values=None,
+                      amplitude_values=None,
+                      frequency_values=None):
+        """Sweep the source output current parameters based on list arguments
+
+            Args:
+                dwell_time (int):
+                    The length of time to wait at each parameter combination.
+                    Note that the update rate will be limited by the SCPI communication response time.
+                    The response time is usually on the order of 10-30 milliseconds.
+
+                offset_values (list):
+                    DC offset values in volts to sweep over
+
+                amplitude_values (list):
+                    Peak to peak values in volts to sweep over
+
+                frequency_values (list):
+                    Frequency values in Hertz to sweep over
+
+        """
+
+        # Change the output mode to source current instead of voltage
+        self.command("SOURCE:FUNCTION:MODE CURRENT")
+
+        # Configure the instrument to automatically choose the best range for a given output setting
+        self.command("SOURCE:FUNCTION:SHAPE SIN")
+
+        # Turn on the output voltage
+        self.command("OUTPUT ON")
+
+        # Check to see if arguments were passed for each parameter.
+        # If not, initialize them in a way they will be ignored.
+        if offset_values is None:
+            offset_values = [None]
+
+        if amplitude_values is None:
+            amplitude_values = [None]
+
+        if frequency_values is None:
+            frequency_values = [None]
+
+        # Step through every combination of the three values.
+        for offset, frequency, amplitude in itertools.product(offset_values, frequency_values, amplitude_values):
+
+            parameter_commands = []
+
+            if offset is not None:
+                parameter_commands.append("SOURCE:CURRENT:OFFSET " + str(offset))
+            if frequency is not None:
+                parameter_commands.append("SOURCE:FREQUENCY " + str(frequency))
+            if amplitude is not None:
+                parameter_commands.append("SOURCE:CURRENT:AMPLITUDE " + str(amplitude))
+
+            self.command(*parameter_commands)
+
+            sleep(dwell_time)
