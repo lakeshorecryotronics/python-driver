@@ -121,30 +121,6 @@ class XIPInstrument:
         if self.device_tcp is not None:
             self.device_tcp.close()
 
-    def _version_check(required_version):
-        """Decorator for raising an error when the instrument firmware
-        is not up to date with the function's required version."""
-
-        def decorator_version_check(func):
-
-            def wrapper(self, *args, **kwargs):
-
-                # Remove all non-numeric characters.
-                required_version_value = re.sub("[^0-9]", "", required_version)
-                instrument_version_value = re.sub("[^0-9]", "", self.firmware_version)
-
-                # Raise an error if the instrument version is earlier than the required version.
-                if required_version_value > instrument_version_value:
-                    raise XIPInstrumentConnectionException('This function requires instrument firmware version ' +
-                                                           str(required_version) +
-                                                           ' or later. Please update your instrument.')
-
-                value = func(self, *args, **kwargs)
-
-                return value
-            return wrapper
-        return decorator_version_check
-
     def command(self, *commands, **kwargs):
         """Send a SCPI command or multiple commands to the instrument"""
 

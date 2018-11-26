@@ -95,6 +95,7 @@ class Teslameter(XIPInstrument):
         self.operation_register = TeslameterOperationRegister
         self.questionable_register = TeslameterQuestionableRegister
 
+    @XIPInstrument._version_check('1.1.3')
     def stream_buffered_data(self, length_of_time_in_seconds, sample_rate_in_ms):
         """Yield a generator object for the buffered field data"""
 
