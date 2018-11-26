@@ -5,6 +5,7 @@ from datetime import datetime
 
 import iso8601
 
+from .requires_firmware_version import requires_firmware_version
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
@@ -95,7 +96,7 @@ class Teslameter(XIPInstrument):
         self.operation_register = TeslameterOperationRegister
         self.questionable_register = TeslameterQuestionableRegister
 
-    @XIPInstrument._version_check('1.1.3')
+    @requires_firmware_version('1.1.2018091003')
     def stream_buffered_data(self, length_of_time_in_seconds, sample_rate_in_ms):
         """Yield a generator object for the buffered field data"""
 
@@ -152,10 +153,12 @@ class Teslameter(XIPInstrument):
 
                     yield new_point
 
+    @requires_firmware_version('1.1.2018091003')
     def get_buffered_data_points(self, length_of_time_in_seconds, sample_rate_in_ms):
         """Returns a list of namedtuples that contain the buffered data."""
         return list(self.stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms))
 
+    @requires_firmware_version('1.1.2018091003')
     def log_buffered_data_to_file(self, length_of_time_in_seconds, sample_rate_in_ms, file_name):
         """Creates a CSV file with the buffered data and excel-friendly timestamps."""
         # Open the file and write in header information.
