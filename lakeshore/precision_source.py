@@ -84,7 +84,24 @@ class PrecisionSource(XIPInstrument):
                       offset_values=None,
                       amplitude_values=None,
                       frequency_values=None):
-        """Sweep source output voltage parameters based on list arguments"""
+        """Sweep source output voltage parameters based on list arguments.
+
+        Args:
+            dwell_time (int):
+                The length of time to wait at each parameter combination.
+                Note that the update rate will be limited by the SCPI communication response time.
+                The response time is usually on the order of 10-30 milliseconds.
+
+            offset_values (list):
+                DC offset values in volts to sweep over
+
+            amplitude_values (list):
+                Peak to peak values in volts to sweep over
+
+            frequency_values (list):
+                Frequency values in Hertz to sweep over
+
+        """
 
         # Change the output mode to source voltage instead of current.
         self.command("SOURCE:FUNCTION:MODE VOLTAGE")
@@ -127,7 +144,24 @@ class PrecisionSource(XIPInstrument):
                       offset_values=None,
                       amplitude_values=None,
                       frequency_values=None):
-        """Sweep the source output current parameters based on list arguments"""
+        """Sweep the source output current parameters based on list arguments
+
+                Args:
+            dwell_time (int):
+                The length of time to wait at each parameter combination.
+                Note that the update rate will be limited by the SCPI communication response time.
+                The response time is usually on the order of 10-30 milliseconds.
+
+            offset_values (list):
+                DC offset values in volts to sweep over
+
+            amplitude_values (list):
+                Peak to peak values in volts to sweep over
+
+            frequency_values (list):
+                Frequency values in Hertz to sweep over
+
+        """
 
         # Change the output mode to source current instead of voltage
         self.command("SOURCE:FUNCTION:MODE CURRENT")
