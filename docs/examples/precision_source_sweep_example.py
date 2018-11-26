@@ -23,6 +23,7 @@ frequency_sweep_list = [10**exponent for exponent in range(-1, 5)]
 
 # Use the lists defined above to sweep across all combinations of the lists.
 # For each combination, wait 10ms before moving to the next one.
+# Note that the dwell time will be limited by the response time of the serial communication.
 my_source.sweep_voltage(0.01,
                         offset_values=offset_sweep_list,
                         amplitude_values=amplitude_sweep_list,
