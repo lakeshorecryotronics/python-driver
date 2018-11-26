@@ -11,7 +11,7 @@ def requires_firmware_version(required_version):
 
             # Raise an error if the instrument version is earlier than the required version.
             if LooseVersion(required_version) > LooseVersion(self.firmware_version):
-                raise XIPInstrumentConnectionException('This function requires instrument firmware version ' +
+                raise XIPInstrumentConnectionException(func.__name__ + ' requires instrument firmware version ' +
                                                        str(required_version) +
                                                        ' or later. Please update your instrument.')
 
