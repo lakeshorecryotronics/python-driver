@@ -1,4 +1,4 @@
-"""Function for ensuring an error is raised if the instrument firmware does not support the called function."""
+"""Decorator for ensuring an error is raised if the instrument firmware does not support the called function."""
 
 from distutils.version import LooseVersion
 
@@ -6,7 +6,7 @@ from lakeshore.xip_instrument import XIPInstrumentConnectionException
 
 
 def requires_firmware_version(required_version):
-    """Decorator for raising an error when the instrument firmware
+    """Decorator for raises an error when the instrument firmware
     is not up to date with the function's required version."""
 
     def decorator_version_check(func):
