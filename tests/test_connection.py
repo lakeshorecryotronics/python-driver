@@ -30,7 +30,6 @@ class TestDiscovery(unittest.TestCase):
                                      "and/or matching serial number"):
             Teslameter(com_port='COM99', flow_control=False)
 
-    # @unittest.skip('Need a dedicated ethernet port for the Teslameter on the HIL rig')
     def test_tcp_connection(self):
         Teslameter(ip_address='192.168.0.12')
 
