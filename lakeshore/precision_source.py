@@ -146,20 +146,20 @@ class PrecisionSource(XIPInstrument):
                       frequency_values=None):
         """Sweep the source output current parameters based on list arguments
 
-                Args:
-            dwell_time (int):
-                The length of time to wait at each parameter combination.
-                Note that the update rate will be limited by the SCPI communication response time.
-                The response time is usually on the order of 10-30 milliseconds.
+            Args:
+                dwell_time (int):
+                    The length of time to wait at each parameter combination.
+                    Note that the update rate will be limited by the SCPI communication response time.
+                    The response time is usually on the order of 10-30 milliseconds.
 
-            offset_values (list):
-                DC offset values in volts to sweep over
+                offset_values (list):
+                    DC offset values in volts to sweep over
 
-            amplitude_values (list):
-                Peak to peak values in volts to sweep over
+                amplitude_values (list):
+                    Peak to peak values in volts to sweep over
 
-            frequency_values (list):
-                Frequency values in Hertz to sweep over
+                frequency_values (list):
+                    Frequency values in Hertz to sweep over
 
         """
 
