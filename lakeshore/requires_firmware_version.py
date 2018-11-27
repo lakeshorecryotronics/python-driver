@@ -7,7 +7,7 @@ from lakeshore.xip_instrument import XIPInstrumentException
 
 
 def requires_firmware_version(required_version):
-    """Decorator for raises an error when the instrument firmware
+    """Decorator for raising an error when the instrument firmware
     is not up to date with the function's required version."""
 
     def decorator_version_check(func):
