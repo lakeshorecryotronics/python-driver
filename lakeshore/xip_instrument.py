@@ -75,7 +75,7 @@ class StandardEventRegister(RegisterBase):
         self.power_on = power_on
 
 
-class XIPInstrumentConnectionException(Exception):
+class XIPInstrumentException(Exception):
     """Names a new type of exception specific to instrument connectivity."""
     pass
 
@@ -111,7 +111,7 @@ class XIPInstrument:
 
         # Check to make sure the serial number matches what was provided if connecting over TCP
         if ip_address is not None and serial_number is not None and serial_number != self.serial_number:
-            raise XIPInstrumentConnectionException("Instrument found but the serial number does not match. " +
+            raise XIPInstrumentException("Instrument found but the serial number does not match. " +
                                                    "serial number provided is " + serial_number +
                                                    ", serial number found is " + self.serial_number)
 
@@ -150,7 +150,7 @@ class XIPInstrument:
             elif self.device_tcp is not None:
                 self._tcp_command(command_string)
             else:
-                raise XIPInstrumentConnectionException("No connections configured")
+                raise XIPInstrumentException("No connections configured")
 
     def query(self, *queries, **kwargs):
         """Send a SCPI query or multiple queries to the instrument and return the response(s)
@@ -183,7 +183,7 @@ class XIPInstrument:
         elif self.device_tcp is not None:
             response = self._tcp_query(query_string)
         else:
-            raise XIPInstrumentConnectionException("No connections configured")
+            raise XIPInstrumentException("No connections configured")
 
         if check_errors:
             # Split the responses to each query, remove the last response which is to the error buffer query,
@@ -201,7 +201,7 @@ class XIPInstrument:
 
         # If the error buffer returns an error, raise an exception with that includes the error.
         if "No error" not in error_response:
-            raise XIPInstrumentConnectionException("SCPI command error(s): " + error_response)
+            raise XIPInstrumentException("SCPI command error(s): " + error_response)
 
     def connect_tcp(self, ip_address, timeout):
         """Establishes a TCP connection with the instrument on the specified IP address"""
@@ -253,9 +253,9 @@ class XIPInstrument:
                         break
         else:
             if com_port is None and serial_number is None:
-                raise XIPInstrumentConnectionException("No serial connections found")
+                raise XIPInstrumentException("No serial connections found")
             else:
-                raise XIPInstrumentConnectionException(
+                raise XIPInstrumentException(
                     "No serial connections found with a matching COM port and/or matching serial number")
 
     def disconnect_usb(self):
@@ -283,7 +283,7 @@ class XIPInstrument:
             try:
                 response = self.device_tcp.recv(4096).decode('utf-8')
             except socket.timeout:
-                raise XIPInstrumentConnectionException("Connection timed out")
+                raise XIPInstrumentException("Connection timed out")
 
             # Add received information to the response
             total_response += response
@@ -305,7 +305,7 @@ class XIPInstrument:
 
         # If nothing is returned, raise a timeout error.
         if not response:
-            raise XIPInstrumentConnectionException("Communication timed out")
+            raise XIPInstrumentException("Communication timed out")
 
         return response.rstrip()
 
