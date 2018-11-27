@@ -112,8 +112,8 @@ class XIPInstrument:
         # Check to make sure the serial number matches what was provided if connecting over TCP
         if ip_address is not None and serial_number is not None and serial_number != self.serial_number:
             raise XIPInstrumentException("Instrument found but the serial number does not match. " +
-                                                   "serial number provided is " + serial_number +
-                                                   ", serial number found is " + self.serial_number)
+                                         "serial number provided is " + serial_number +
+                                         ", serial number found is " + self.serial_number)
 
     def __del__(self):
         if self.device_serial is not None:
