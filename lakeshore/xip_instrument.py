@@ -122,7 +122,17 @@ class XIPInstrument:
             self.device_tcp.close()
 
     def command(self, *commands, **kwargs):
-        """Send a SCPI command or multiple commands to the instrument"""
+        """Send a SCPI command or multiple commands to the instrument
+
+            Args:
+                commands (str):
+                    Any number of SCPI commands.
+
+            Kwargs:
+                check_errors (bool):
+                    Chooses whether to query the SCPI error queue and raise errors as exceptions. True by default.
+
+        """
 
         check_errors = kwargs.get("check_errors", True)
 
@@ -143,7 +153,20 @@ class XIPInstrument:
                 raise XIPInstrumentConnectionException("No connections configured")
 
     def query(self, *queries, **kwargs):
-        """Send a SCPI query or multiple queries to the instrument and return the response(s)"""
+        """Send a SCPI query or multiple queries to the instrument and return the response(s)
+
+            Args:
+                queries (str):
+                    Any number of SCPI queries or commands.
+
+            Kwargs:
+                check_errors (bool):
+                    Chooses whether to query the SCPI error queue and raise errors as exceptions. True by default.
+
+            Returns:
+               The instrument query response as a string.
+
+        """
 
         check_errors = kwargs.get("check_errors", True)
 
