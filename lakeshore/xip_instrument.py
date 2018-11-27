@@ -463,7 +463,16 @@ class XIPInstrument:
         return integer_representation
 
     def modify_service_request_mask(self, bit_name, value):
-        """Gets the service request enable mask, changes a bit, and sets the register"""
+        """Gets the service request enable mask, changes a bit, and sets the register.
+
+            Args:
+                bit_name (str):
+                    The name of the bit to modify.
+
+                value (bool):
+                    Determines whether the bit masks (false) or passes (true) the corresponding state.
+
+        """
 
         mask_register = self.get_service_request_enable_mask()
 
@@ -472,7 +481,16 @@ class XIPInstrument:
         self.set_service_request_enable_mask(mask_register)
 
     def modify_standard_event_register_mask(self, bit_name, value):
-        """Gets the standard event register mask, changes a bit, and sets the register"""
+        """Gets the standard event register mask, changes a bit, and sets the register
+
+            Args:
+                bit_name (str):
+                    The name of the bit to modify.
+
+                value (bool):
+                    Determines whether the bit masks (false) or passes (true) the corresponding state.
+
+        """
 
         mask_register = self.get_standard_event_enable_mask()
 
@@ -481,7 +499,16 @@ class XIPInstrument:
         self.set_standard_event_enable_mask(mask_register)
 
     def modify_operation_register_mask(self, bit_name, value):
-        """Gets the operation condition register mask, changes a bit, and sets the register"""
+        """Gets the operation condition register mask, changes a bit, and sets the register
+
+            Args:
+                bit_name (str):
+                    The name of the bit to modify.
+
+                value (bool):
+                    Determines whether the bit masks (false) or passes (true) the corresponding state.
+
+        """
 
         mask_register = self.get_operation_event_enable_mask()
 
@@ -490,7 +517,16 @@ class XIPInstrument:
         self.set_operation_event_enable_mask(mask_register)
 
     def modify_questionable_register_mask(self, bit_name, value):
-        """Gets the questionable condition register mask, changes a bit, and sets the register"""
+        """Gets the questionable condition register mask, changes a bit, and sets the register
+
+            Args:
+                bit_name (str):
+                    The name of the bit to modify.
+
+                value (bool):
+                    Determines whether the bit masks (false) or passes (true) the corresponding state.
+
+        """
 
         mask_register = self.get_questionable_event_enable_mask()
 
