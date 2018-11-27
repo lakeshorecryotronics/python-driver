@@ -328,7 +328,12 @@ class XIPInstrument:
 
     def set_service_request_enable_mask(self, register_mask):
         """Configures values of the service request enable register bits.
-        This register determines which bits propagate to the master summary bit"""
+        This register determines which bits propagate to the master summary bit
+
+            Args:
+                register_mask (StatusByteRegister):
+                    A StatusByteRegister class object with all bits configured true or false.
+        """
 
         integer_representation = self._configure_status_register(register_mask)
         self.command("*SRE " + str(integer_representation), check_errors=False)
@@ -352,7 +357,12 @@ class XIPInstrument:
 
     def set_standard_event_enable_mask(self, register_mask):
         """Configures values of the standard event enable register bits.
-        These values determine which bits propagate to the standard event register"""
+        These values determine which bits propagate to the standard event register
+
+            Args:
+                register_mask (StandardEventRegister):
+                    A StandardEventRegister class object with all bits configured true or false.
+        """
 
         integer_representation = self._configure_status_register(register_mask)
         self.command("*ESE " + str(integer_representation), check_errors=False)
@@ -385,7 +395,12 @@ class XIPInstrument:
 
     def set_operation_event_enable_mask(self, register_mask):
         """Configures the values of the operation event enable register bits.
-        These values determine which operation bits propagate to the operation event register."""
+        These values determine which operation bits propagate to the operation event register.
+
+            Args:
+                register_mask ([Instrument]OperationRegister):
+                    An instrument specific OperationRegister class object with all bits configured true or false.
+        """
 
         integer_representation = self._configure_status_register(register_mask)
         self.command("STATus:OPERation:ENABle " + str(integer_representation), check_errors=False)
@@ -418,7 +433,12 @@ class XIPInstrument:
 
     def set_questionable_event_enable_mask(self, register_mask):
         """Configures the values of the questionable event enable register bits.
-        These values determine which questionable bits propagate to the questionable event register."""
+        These values determine which questionable bits propagate to the questionable event register.
+
+            Args:
+                register_mask ([Instrument]QuestionableRegister):
+                    An instrument specific QuestionableRegister class object with all bits configured true or false.
+        """
 
         integer_representation = self._configure_status_register(register_mask)
         self.command("STATus:QUEStionable:ENABle " + str(integer_representation), check_errors=False)
