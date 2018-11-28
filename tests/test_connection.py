@@ -1,7 +1,7 @@
 import unittest
 
 # Teslameter is used for these general tests on the HIL rig at this time
-from lakeshore import Teslameter, XIPInstrumentConnectionException
+from lakeshore import Teslameter, XIPInstrumentException
 
 
 class TestWithDUT(unittest.TestCase):
@@ -19,13 +19,13 @@ class TestDiscovery(unittest.TestCase):
         Teslameter(flow_control=False)  # No checks needed, just make sure no exceptions are thrown
 
     def test_specified_serial_does_not_exist(self):
-        with self.assertRaisesRegexp(XIPInstrumentConnectionException,
+        with self.assertRaisesRegexp(XIPInstrumentException,
                                      "No serial connections found with a matching COM port " +
                                      "and/or matching serial number"):
             Teslameter(serial_number='Fake', flow_control=False)
 
     def test_specified_com_port_does_not_exist(self):
-        with self.assertRaisesRegexp(XIPInstrumentConnectionException,
+        with self.assertRaisesRegexp(XIPInstrumentException,
                                      "No serial connections found with a matching COM port " +
                                      "and/or matching serial number"):
             Teslameter(com_port='COM99', flow_control=False)
@@ -46,14 +46,14 @@ class TestConnectivity(TestWithDUT):
         self.assertEqual(len(response.split(';')), 3)
 
     def test_timeout(self):
-        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'Communication timed out'):
+        with self.assertRaisesRegexp(XIPInstrumentException, 'Communication timed out'):
             self.dut.query('FAKEQUERY?', check_errors=False)
         self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard the error we left in the queue
 
 
 class TestSCPIErrorQueueChecking(TestWithDUT):
     def test_command_does_not_exist(self):
-        with self.assertRaisesRegexp(XIPInstrumentConnectionException, 'Undefined header;FAKEQUERY\?;'):
+        with self.assertRaisesRegexp(XIPInstrumentException, 'Undefined header;FAKEQUERY\?;'):
             self.dut.query('FAKEQUERY?')
 
     def test_query_with_error_check_disabled(self):

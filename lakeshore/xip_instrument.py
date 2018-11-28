@@ -75,7 +75,7 @@ class StandardEventRegister(RegisterBase):
         self.power_on = power_on
 
 
-class XIPInstrumentConnectionException(Exception):
+class XIPInstrumentException(Exception):
     """Names a new type of exception specific to instrument connectivity."""
     pass
 
@@ -111,9 +111,9 @@ class XIPInstrument:
 
         # Check to make sure the serial number matches what was provided if connecting over TCP
         if ip_address is not None and serial_number is not None and serial_number != self.serial_number:
-            raise XIPInstrumentConnectionException("Instrument found but the serial number does not match. " +
-                                                   "serial number provided is " + serial_number +
-                                                   ", serial number found is " + self.serial_number)
+            raise XIPInstrumentException("Instrument found but the serial number does not match. " +
+                                         "serial number provided is " + serial_number +
+                                         ", serial number found is " + self.serial_number)
 
     def __del__(self):
         if self.device_serial is not None:
@@ -122,7 +122,17 @@ class XIPInstrument:
             self.device_tcp.close()
 
     def command(self, *commands, **kwargs):
-        """Send a SCPI command or multiple commands to the instrument"""
+        """Send a SCPI command or multiple commands to the instrument
+
+            Args:
+                commands (str):
+                    Any number of SCPI commands.
+
+            Kwargs:
+                check_errors (bool):
+                    Chooses whether to query the SCPI error queue and raise errors as exceptions. True by default.
+
+        """
 
         check_errors = kwargs.get("check_errors", True)
 
@@ -140,10 +150,23 @@ class XIPInstrument:
             elif self.device_tcp is not None:
                 self._tcp_command(command_string)
             else:
-                raise XIPInstrumentConnectionException("No connections configured")
+                raise XIPInstrumentException("No connections configured")
 
     def query(self, *queries, **kwargs):
-        """Send a SCPI query or multiple queries to the instrument and return the response(s)"""
+        """Send a SCPI query or multiple queries to the instrument and return the response(s)
+
+            Args:
+                queries (str):
+                    Any number of SCPI queries or commands.
+
+            Kwargs:
+                check_errors (bool):
+                    Chooses whether to query the SCPI error queue and raise errors as exceptions. True by default.
+
+            Returns:
+               The instrument query response as a string.
+
+        """
 
         check_errors = kwargs.get("check_errors", True)
 
@@ -160,7 +183,7 @@ class XIPInstrument:
         elif self.device_tcp is not None:
             response = self._tcp_query(query_string)
         else:
-            raise XIPInstrumentConnectionException("No connections configured")
+            raise XIPInstrumentException("No connections configured")
 
         if check_errors:
             # Split the responses to each query, remove the last response which is to the error buffer query,
@@ -178,7 +201,7 @@ class XIPInstrument:
 
         # If the error buffer returns an error, raise an exception with that includes the error.
         if "No error" not in error_response:
-            raise XIPInstrumentConnectionException("SCPI command error(s): " + error_response)
+            raise XIPInstrumentException("SCPI command error(s): " + error_response)
 
     def connect_tcp(self, ip_address, timeout):
         """Establishes a TCP connection with the instrument on the specified IP address"""
@@ -230,9 +253,9 @@ class XIPInstrument:
                         break
         else:
             if com_port is None and serial_number is None:
-                raise XIPInstrumentConnectionException("No serial connections found")
+                raise XIPInstrumentException("No serial connections found")
             else:
-                raise XIPInstrumentConnectionException(
+                raise XIPInstrumentException(
                     "No serial connections found with a matching COM port and/or matching serial number")
 
     def disconnect_usb(self):
@@ -260,7 +283,7 @@ class XIPInstrument:
             try:
                 response = self.device_tcp.recv(4096).decode('utf-8')
             except socket.timeout:
-                raise XIPInstrumentConnectionException("Connection timed out")
+                raise XIPInstrumentException("Connection timed out")
 
             # Add received information to the response
             total_response += response
@@ -282,7 +305,7 @@ class XIPInstrument:
 
         # If nothing is returned, raise a timeout error.
         if not response:
-            raise XIPInstrumentConnectionException("Communication timed out")
+            raise XIPInstrumentException("Communication timed out")
 
         return response.rstrip()
 
@@ -305,7 +328,12 @@ class XIPInstrument:
 
     def set_service_request_enable_mask(self, register_mask):
         """Configures values of the service request enable register bits.
-        This register determines which bits propagate to the master summary bit"""
+        This register determines which bits propagate to the master summary bit
+
+            Args:
+                register_mask (StatusByteRegister):
+                    A StatusByteRegister class object with all bits configured true or false.
+        """
 
         integer_representation = self._configure_status_register(register_mask)
         self.command("*SRE " + str(integer_representation), check_errors=False)
@@ -329,7 +357,12 @@ class XIPInstrument:
 
     def set_standard_event_enable_mask(self, register_mask):
         """Configures values of the standard event enable register bits.
-        These values determine which bits propagate to the standard event register"""
+        These values determine which bits propagate to the standard event register
+
+            Args:
+                register_mask (StandardEventRegister):
+                    A StandardEventRegister class object with all bits configured true or false.
+        """
 
         integer_representation = self._configure_status_register(register_mask)
         self.command("*ESE " + str(integer_representation), check_errors=False)
@@ -362,7 +395,12 @@ class XIPInstrument:
 
     def set_operation_event_enable_mask(self, register_mask):
         """Configures the values of the operation event enable register bits.
-        These values determine which operation bits propagate to the operation event register."""
+        These values determine which operation bits propagate to the operation event register.
+
+            Args:
+                register_mask ([Instrument]OperationRegister):
+                    An instrument specific OperationRegister class object with all bits configured true or false.
+        """
 
         integer_representation = self._configure_status_register(register_mask)
         self.command("STATus:OPERation:ENABle " + str(integer_representation), check_errors=False)
@@ -395,7 +433,12 @@ class XIPInstrument:
 
     def set_questionable_event_enable_mask(self, register_mask):
         """Configures the values of the questionable event enable register bits.
-        These values determine which questionable bits propagate to the questionable event register."""
+        These values determine which questionable bits propagate to the questionable event register.
+
+            Args:
+                register_mask ([Instrument]QuestionableRegister):
+                    An instrument specific QuestionableRegister class object with all bits configured true or false.
+        """
 
         integer_representation = self._configure_status_register(register_mask)
         self.command("STATus:QUEStionable:ENABle " + str(integer_representation), check_errors=False)
@@ -440,7 +483,16 @@ class XIPInstrument:
         return integer_representation
 
     def modify_service_request_mask(self, bit_name, value):
-        """Gets the service request enable mask, changes a bit, and sets the register"""
+        """Gets the service request enable mask, changes a bit, and sets the register.
+
+            Args:
+                bit_name (str):
+                    The name of the bit to modify.
+
+                value (bool):
+                    Determines whether the bit masks (false) or passes (true) the corresponding state.
+
+        """
 
         mask_register = self.get_service_request_enable_mask()
 
@@ -449,7 +501,16 @@ class XIPInstrument:
         self.set_service_request_enable_mask(mask_register)
 
     def modify_standard_event_register_mask(self, bit_name, value):
-        """Gets the standard event register mask, changes a bit, and sets the register"""
+        """Gets the standard event register mask, changes a bit, and sets the register
+
+            Args:
+                bit_name (str):
+                    The name of the bit to modify.
+
+                value (bool):
+                    Determines whether the bit masks (false) or passes (true) the corresponding state.
+
+        """
 
         mask_register = self.get_standard_event_enable_mask()
 
@@ -458,7 +519,16 @@ class XIPInstrument:
         self.set_standard_event_enable_mask(mask_register)
 
     def modify_operation_register_mask(self, bit_name, value):
-        """Gets the operation condition register mask, changes a bit, and sets the register"""
+        """Gets the operation condition register mask, changes a bit, and sets the register
+
+            Args:
+                bit_name (str):
+                    The name of the bit to modify.
+
+                value (bool):
+                    Determines whether the bit masks (false) or passes (true) the corresponding state.
+
+        """
 
         mask_register = self.get_operation_event_enable_mask()
 
@@ -467,7 +537,16 @@ class XIPInstrument:
         self.set_operation_event_enable_mask(mask_register)
 
     def modify_questionable_register_mask(self, bit_name, value):
-        """Gets the questionable condition register mask, changes a bit, and sets the register"""
+        """Gets the questionable condition register mask, changes a bit, and sets the register
+
+            Args:
+                bit_name (str):
+                    The name of the bit to modify.
+
+                value (bool):
+                    Determines whether the bit masks (false) or passes (true) the corresponding state.
+
+        """
 
         mask_register = self.get_questionable_event_enable_mask()
 

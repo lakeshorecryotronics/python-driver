@@ -61,7 +61,7 @@ To simplify, speed up, or simultaneously send multiple commands or queries simpl
     from lakeshore import Teslameter
 
     my_instrument = Teslameter()
-    # Set the averaging window to 250 ms, get the dC field measurement, and get the temperature measurement.
+    # Set the averaging window to 250 ms, get the DC field measurement, and get the temperature measurement.
     response = my_instrument.query('SENSE:AVERAGE:COUNT 25', 'FETCH:DC?', 'FETCH:TEMP?')
 
 The commands will execute in the order they are listed. The response to each query will be delimited by semicolons in the order they are listed.

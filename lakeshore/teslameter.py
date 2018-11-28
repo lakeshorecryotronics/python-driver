@@ -8,6 +8,7 @@ import iso8601
 from .requires_firmware_version import requires_firmware_version
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
+# A namedtuple object representing a Teslameter measurement buffer data point.
 DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
                                      'magnitude', 'x', 'y', 'z',
                                      'field_control_set_point',
@@ -98,7 +99,19 @@ class Teslameter(XIPInstrument):
 
     @requires_firmware_version('1.1.2018091003')
     def stream_buffered_data(self, length_of_time_in_seconds, sample_rate_in_ms):
-        """Yield a generator object for the buffered field data"""
+        """Yield a generator object for the buffered field data.
+        Useful for getting the data in real time when doing a lengthy acquisition.
+
+            Args:
+                length_of_time_in_seconds (float):
+                    The period of time over which to stream the data.
+
+                sample_rate_in_ms (int):
+                    The averaging window (sampling period) of the instrument.
+
+            Returns:
+               A generator object that returns the data as datapoint tuples
+        """
 
         # Set the sample rate
         self.command("SENSE:AVERAGE:COUNT " + str(sample_rate_in_ms / 10))
@@ -155,12 +168,35 @@ class Teslameter(XIPInstrument):
 
     @requires_firmware_version('1.1.2018091003')
     def get_buffered_data_points(self, length_of_time_in_seconds, sample_rate_in_ms):
-        """Returns a list of namedtuples that contain the buffered data."""
+        """Returns a list of namedtuples that contain the buffered data.
+
+            Args:
+                length_of_time_in_seconds (float):
+                    The period of time over which to collect the data.
+
+                sample_rate_in_ms (int):
+                    The averaging window (sampling period) of the instrument.
+
+            Returns:
+               The data as a list of datapoint tuples
+        """
         return list(self.stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms))
 
     @requires_firmware_version('1.1.2018091003')
     def log_buffered_data_to_file(self, length_of_time_in_seconds, sample_rate_in_ms, file_name):
-        """Creates a CSV file with the buffered data and excel-friendly timestamps."""
+        """Creates or appends a CSV file with the buffered data and excel-friendly timestamps.
+
+            Args:
+                length_of_time_in_seconds (float):
+                    The period of time over which to collect the data.
+
+                sample_rate_in_ms (int):
+                    The averaging window (sampling period) of the instrument.
+
+                file_name (str):
+                    The name of the file to which data will be written.
+                    The name should not include the file type extension.
+        """
         # Open the file and write in header information.
         with open(file_name + ".csv", "a") as file:
             file.write('time elapsed,date,time,' +
