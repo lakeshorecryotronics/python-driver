@@ -278,3 +278,77 @@ class Teslameter(XIPInstrument):
                     A field units value that will act as the zero field for the relative measurement.
         """
         self.command("SENS:RELATIVE:BASELINE " + str(baseline_field))
+
+    def configure_field_measurement_setup(self, mode="DC", autorange=True, expected_field=0.0, averaging_samples=20):
+        """Configures the field measurement settings.
+
+            Args:
+                mode (str):
+                    * Modes are as follows:
+                    * "DC"
+                    * "AC" (0.1 - 500 Hz)
+                    * "HIFR" (50 Hz - 100 kHz)
+
+                autorange (bool):
+                    Chooses whether the instrument automatically selects the best range for the measured value
+
+                expected_field (float):
+                    When autorange is False, the expected_field is the largest field expected to be measured.
+                    It sets the lowest instrument field range capable of measuring the value.
+
+                averaging_samples (int):
+                    The number of field samples to average. Each sample is 10 milliseconds of field information.
+
+        """
+        self.command("SENS:MODE " + mode)
+        self.command("SENS:RANGE:AUTO " + str(int(autorange)))
+        self.command("SENS:RANGE " + str(expected_field))
+        self.command("SENS:AVERAGE:COUNT " + str(averaging_samples))
+
+    def get_field_measurement_setup(self):
+        """Returns the mode, autoranging state, range, and number of averaging samples as a dictionary."""
+        measurement_setup = {"mode": self.query("SENS:MODE?"),
+                             "autorange": self.query("SENS:RANGE:AUTO?"),
+                             "range": self.query("SENS:RANGE?"),
+                             "averaging_samples": self.query("SENS:AVERAGE:COUNT?")}
+
+        return measurement_setup
+
+    def configure_temperature_compensation(self, temperature_source="PROBE", manual_temperature=None):
+        """Configures how temperature compensation is applied to the field readings.
+
+            Args:
+                temperature_source (str):
+                    * Determines where the temperature measurement is drawn from. Options are:
+                    * "PROBE" (Compensation is based on measurement of a thermistor in the probe)
+                    * "MTEMP" (Compensation is based on a manual temperature value provided by the user)
+                    * "NONE" (Temperature compensation is not applied)
+
+                manual_temperature (float):
+                    Sets the temperature provided by the user for MTEMP (manual temperature) source in Celsius.
+
+        """
+        self.command("SENS:TCOM:SOURCE " + temperature_source)
+        if manual_temperature is not None:
+            self.command("SENS:TCOM:MTEM " + str(manual_temperature))
+
+    def get_temperature_compensation_manual_temperature(self):
+        """Returns the manual temperature setting value in Celsius."""
+        return self.query("SENS:TCOM:MTEM?")
+
+    def configure_field_units(self, units="TESLA"):
+        """Configures the field measurement units of the instrument.
+
+            Args:
+                units (str):
+                    * A unit of magnetic field. Options are:
+                    * "TESLA"
+                    * "GAUSS"
+
+        """
+        self.command("UNIT:FIELD " + units)
+
+    def get_field_units(self):
+        """Returns the magnetic field units of the instrument."""
+        return self.query("UNIT:FIELD?")
+
