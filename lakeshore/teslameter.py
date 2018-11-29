@@ -352,3 +352,124 @@ class Teslameter(XIPInstrument):
         """Returns the magnetic field units of the instrument."""
         return self.query("UNIT:FIELD?")
 
+    @requires_firmware_version("1.1.2018091003")
+    def configure_field_control_limits(self, voltage_limit=10.0, slew_rate_limit=10.0):
+        """Configures the limits of the field control output.
+
+            Args:
+                voltage_limit (float):
+                    The maximum voltage permitted at the field control output. Must be between 0 and 10V.
+
+                slew_rate_limit (float):
+                    The maximum rate of change of the field control output voltage in volts per second.
+
+        """
+        self.command("SOURCE:FIELD:VLIMIT " + str(voltage_limit))
+        self.command("SOURCE:FIELD:SLEW " + str(slew_rate_limit))
+
+    @requires_firmware_version("1.1.2018091003")
+    def get_field_control_limits(self):
+        """Returns the field control output voltage limit and slew rate limit."""
+        limits = {"mode": self.query("SOURCE:FIELD:VLIMIT?"),
+                  "autorange": self.query("SOURCE:FIELD:SLEW?")}
+
+        return limits
+
+    @requires_firmware_version("1.1.2018091003")
+    def configure_field_control_output_mode(self, mode="CLOSED", output_enabled=True):
+        """Configure the field control mode and state.
+
+            Args:
+                mode (str):
+                    * Determines whether the field control is in open or closed loop mode
+                    * "CLOSED" (closed loop control)
+                    * "OPEN" (open loop control, voltage output)
+
+                output_enabled (bool):
+                    Turn the field control voltage output on or off.
+
+        """
+        if mode is "CLOSED":
+            mode = "CLLOOP"
+
+        if mode is "OPEN":
+            mode = "OPLOOP"
+
+        self.command("SOURCE:FIELD:MODE " + mode)
+        self.command("SOURCE:FIELD:STATE " + str(int(output_enabled)))
+
+    @requires_firmware_version("1.1.2018091003")
+    def get_field_control_output_mode(self):
+        """Returns the mode and state of the field control output."""
+        output_state = {"control_mode": self.query("SOURCE:FIELD:MODE?"),
+                        "output_enabled": self.query("SOURCE:FIELD:STATE?")}
+
+        return output_state
+
+    @requires_firmware_version("1.1.2018091003")
+    def configure_field_control_pid(self, gain=None, integral=None, ramp_rate=None):
+        """Configures the closed loop control parameters of the field control output.
+
+            Args:
+                gain (float):
+                    Also known as P or Proportional in PID control.
+                    This controls how strongly the control output reacts to the present error.
+                    Note that the integral value is multiplied by the gain value.
+
+                integral (float):
+                    Also known as I or Integral in PID control.
+                    This controls how strongly the control output reacts to the past error *history*
+
+                ramp_rate (float):
+                    This value controls how quickly the present field setpoint will transition to a new setpoint.
+                    The ramp rate is configured in field units per second.
+
+        """
+        if gain is not None:
+            self.command("SOURCE:FIELD:CLL:GAIN " + str(gain))
+        if integral is not None:
+            self.command("SOURCE:FIELD:CLL:INTEGRAL " + str(integral))
+        if ramp_rate is not None:
+            self.command("SOURCE:FIELD:CLL:RAMP " + str(ramp_rate))
+
+    @requires_firmware_version("1.1.2018091003")
+    def get_field_control_pid(self):
+        """Returns the gain, integral, and ramp rate."""
+        pid = {"gain": self.query("SOURCE:FIELD:CLL:GAIN?"),
+               "integral": self.query("SOURCE:FIELD:CLL:INTEGRAL?"),
+               "ramp_rate": self.query("SOURCE:FIELD:CLL:RAMPRATE?")}
+
+        return pid
+
+    @requires_firmware_version("1.1.2018091003")
+    def set_field_control_setpoint(self, setpoint):
+        """Sets the field control setpoint value in field units."""
+        self.command("SOURCE:FIELD:CLL:SETPOINT " + str(setpoint))
+
+    @requires_firmware_version("1.1.2018091003")
+    def get_field_control_setpoint(self):
+        """Returns the field control setpoint."""
+        return self.query("SOURCE:FIELD:CLL:SETPOINT?")
+
+    @requires_firmware_version("1.1.2018091003")
+    def set_field_control_open_loop_voltage(self, output_voltage):
+        """Sets the field control open loop voltage."""
+        self.command("SOURCE:FIELD:OPL:VOLTAGE " + str(output_voltage))
+
+    @requires_firmware_version("1.1.2018091003")
+    def get_field_control_open_loop_voltage(self):
+        """Returns the field control open loop voltage."""
+        return self.query("SOURCE:FIELD:OPL:VOLTAGE?")
+
+    def set_analog_output(self, analog_output_mode):
+        """Configures what signal is provided by the analog output BNC.
+
+            Args:
+                analog_output_mode (str):
+                    * Configures what signal is provided by the analog output BNC. Options are:
+                    * "X" (raw amplified X channel Hall voltage)
+                    * "Y" (raw amplified Y channel Hall voltage)
+                    * "Z" (raw amplified Z channel Hall voltage)
+
+        """
+        self.command("SOURCE:AOUT " + analog_output_mode)
