@@ -473,3 +473,7 @@ class Teslameter(XIPInstrument):
 
         """
         self.command("SOURCE:AOUT " + analog_output_mode)
+
+    def get_analog_output(self):
+        """Returns what signal is being provided by the analog output."""
+        return self.query("SOURCE:AOUT?")
