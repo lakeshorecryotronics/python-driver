@@ -213,3 +213,27 @@ class Teslameter(XIPInstrument):
                         file.write(datetime.strftime(data, '%m/%d/%Y') + ',' +
                                    datetime.strftime(data, '%H:%M:%S.%f') + ',')
                 file.write('\n')
+
+    def get_dc_field(self):
+        """Returns the DC field reading."""
+        return self.query("FETCH:DC?")
+
+    def get_dc_field_xyz(self):
+        """Returns the DC field reading."""
+        return self.query("FETCH:DC? ALL")
+
+    def get_rms_field(self):
+        """Returns the RMS field reading."""
+        return self.query("FETCH:RMS?")
+
+    def get_rms_field_xyz(self):
+        """Returns the RMS field reading."""
+        return self.query("FETCH:RMS? ALL")
+
+    def get_frequency(self):
+        """Returns the field frequency reading."""
+        return self.query("FETCH:FREQ?")
+
+    def get_max_min(self):
+        """Returns the maximum and minimum field readings respectively."""
+        return self.query("FETCH:MAX?", "FETCH:MIN?")
