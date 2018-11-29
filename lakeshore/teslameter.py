@@ -237,3 +237,44 @@ class Teslameter(XIPInstrument):
     def get_max_min(self):
         """Returns the maximum and minimum field readings respectively."""
         return self.query("FETCH:MAX?", "FETCH:MIN?")
+
+    def reset_max_min(self):
+        """Resets the maximum and minimum field readings to the present field reading."""
+        self.command("SENS:MRESET")
+
+    def get_temperature(self):
+        """Returns the temperature reading."""
+        return self.query("FETCH:TEMP?")
+
+    def get_probe_information(self):
+        """Returns a dictionary of probe data."""
+        probe_data = {"model_number": self.query("PROBE:MODEL?"),
+                      "serial_number": self.query("PROBE:SNUM?"),
+                      "probe_type": self.query("PROBE:PTYPE?"),
+                      "sensor_type": self.query("PROBE:STYPE?"),
+                      "sensor_orientation": self.query("PROBE:SOR?"),
+                      "number_of_axes": self.query("PROBE:AXES?"),
+                      "calibration_date": self.query("PROBE:CALDATE?")}
+
+        return probe_data
+
+    def get_relative_field(self):
+        """Returns the relative field value."""
+        return self.query("FETC:RELATIVE?")
+
+    def tare_relative_field(self):
+        """Copies the current field reading to the relative baseline value."""
+        self.command("SENS:RELATIVE:TARE")
+
+    def get_relative_field_baseline(self):
+        """Returns the relative field baseline value."""
+        return self.query("SENS:RELATIVE:BASELINE?")
+
+    def set_relative_field_baseline(self, baseline_field):
+        """Configures the relative baseline value.
+
+            Args:
+                baseline_field (float):
+                    A field units value that will act as the zero field for the relative measurement.
+        """
+        self.command("SENS:RELATIVE:BASELINE " + str(baseline_field))
