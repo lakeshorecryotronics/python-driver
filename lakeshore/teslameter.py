@@ -337,7 +337,7 @@ class Teslameter(XIPInstrument):
         """Returns the source of temperature measurement for field compensation."""
         return self.query("SENS:TCOM:SOURCE?")
 
-    def get_temperature_compensation_manual_temperature(self):
+    def get_temperature_compensation_manual_temp(self):
         """Returns the manual temperature setting value in Celsius."""
         return self.query("SENS:TCOM:MTEM?")
 
@@ -394,10 +394,10 @@ class Teslameter(XIPInstrument):
                     Turn the field control voltage output on or off.
 
         """
-        if mode is "CLOSED":
+        if mode == "CLOSED":
             mode = "CLLOOP"
 
-        if mode is "OPEN":
+        if mode == "OPEN":
             mode = "OPLOOP"
 
         self.command("SOURCE:FIELD:MODE " + mode)

@@ -98,7 +98,7 @@ class TestTeslameterBasics(TestWithDUT):
 
     def test_temperature_compensation(self):
         self.dut.configure_temperature_compensation(manual_temperature=23.45)
-        self.dut.get_temperature_compensation_manual_temperature()
+        self.dut.get_temperature_compensation_manual_temp()
         self.dut.get_temperature_compensation_source()
 
     def test_field_control(self):
