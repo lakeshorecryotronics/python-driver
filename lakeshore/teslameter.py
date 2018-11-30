@@ -279,7 +279,7 @@ class Teslameter(XIPInstrument):
         """
         self.command("SENS:RELATIVE:BASELINE " + str(baseline_field))
 
-    def configure_field_measurement_setup(self, mode="DC", autorange=True, expected_field=0.0, averaging_samples=20):
+    def configure_field_measurement_setup(self, mode="DC", autorange=True, expected_field=None, averaging_samples=20):
         """Configures the field measurement settings.
 
             Args:
@@ -302,7 +302,8 @@ class Teslameter(XIPInstrument):
         """
         self.command("SENS:MODE " + mode)
         self.command("SENS:RANGE:AUTO " + str(int(autorange)))
-        self.command("SENS:RANGE " + str(expected_field))
+        if expected_field is not None:
+            self.command("SENS:RANGE " + str(expected_field))
         self.command("SENS:AVERAGE:COUNT " + str(averaging_samples))
 
     def get_field_measurement_setup(self):
