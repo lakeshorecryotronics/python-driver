@@ -333,6 +333,10 @@ class Teslameter(XIPInstrument):
         if manual_temperature is not None:
             self.command("SENS:TCOM:MTEM " + str(manual_temperature))
 
+    def get_temperature_compensation_source(self):
+        """Returns the source of temperature measurement for field compensation."""
+        return self.query("SENS:TCOM:SOURCE?")
+
     def get_temperature_compensation_manual_temperature(self):
         """Returns the manual temperature setting value in Celsius."""
         return self.query("SENS:TCOM:MTEM?")
