@@ -437,3 +437,11 @@ class PrecisionSource(XIPInstrument):
 
         """
         self.command("SOURCE:VOLTAGE:PROTECTION " + str(max_current))
+
+    def enable_ac_high_voltage_compliance(self):
+        """Configures the current mode compliance voltage to be 100V in AC output modes."""
+        self.command("SOURCE:CURRENT:AC:VRANGE 100")
+
+    def disable_ac_high_voltage_compliance(self):
+        """Configures the current mode compliance voltage to be 10V in AC output modes."""
+        self.command("SOURCE:CURRENT:AC:VRANGE 10")
