@@ -327,14 +327,30 @@ class PrecisionSource(XIPInstrument):
 
         """
 
-        # Change the output mode to source current instead of voltage
-        self.command("SOURCE:FUNCTION:MODE CURRENT")
+        # Change the output mode to source voltage instead of current
+        self.command("SOURCE:FUNCTION:MODE VOLTAGE")
 
         # Configure the instrument to output a sine wave
         self.command("SOURCE:FUNCTION:SHAPE DC")
 
         # Configure DC current level
-        self.command("SOURCE:CURRENT:AMPLITUDE " + str(voltage_level))
+        self.command("SOURCE:VOLTAGE:AMPLITUDE " + str(voltage_level))
 
         # Turn on the output voltage
         self.command("OUTPUT ON")
+
+    def get_output_settings(self):
+        """Returns a dictionary of the output settings."""
+
+        mode = self.query("SOURCE:FUNCTION:MODE?")
+
+        output_settings = {"mode": mode,
+                           "output_shape": self.query("SOURCE:FUNCTION:SHAPE?"),
+                           "amplitude": float(self.query("SOURCE:" + mode + ":AMPLITUDE?")),
+                           "frequency": float(self.query("SOURCE:FREQUENCY?")),
+                           "offset": float(self.query("SOURCE:" + mode + ":OFFSET?")),
+                           "phase": float(self.query("SOURCE:PHASE?")),
+                           "autorange": bool(self.query("SOURCE:" + mode + ":RANGE:AUTO?")),
+                           "range": float(self.query("SOURCE:" + mode + ":RANGE?"))}
+
+        return output_settings
