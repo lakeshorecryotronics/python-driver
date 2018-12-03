@@ -255,7 +255,7 @@ class PrecisionSource(XIPInstrument):
         # Configure the phase of the output
         self.command("SOURCE:PHASE " + str(phase))
 
-        # Turn on the output voltage
+        # Turn on the output current
         self.command("OUTPUT ON")
 
     def output_sine_voltage(self, amplitude, frequency, offset=0.0, phase=0.0):
@@ -315,7 +315,7 @@ class PrecisionSource(XIPInstrument):
         # Configure DC current level
         self.command("SOURCE:CURRENT:AMPLITUDE " + str(current_level))
 
-        # Turn on the output voltage
+        # Turn on the output current
         self.command("OUTPUT ON")
 
     def output_dc_voltage(self, voltage_level):
@@ -354,3 +354,44 @@ class PrecisionSource(XIPInstrument):
                            "range": float(self.query("SOURCE:" + mode + ":RANGE?"))}
 
         return output_settings
+
+    def enable_autorange(self):
+        """Enables the instrument to automatically select the best range for the given output parameters."""
+        self.command("SOURCE:VOLTAGE:RANGE:AUTO ON")
+        self.command("SOURCE:CURRENT:RANGE:AUTO ON")
+
+    def disable_autorange(self):
+        """Enables the instrument to automatically select the best range for the given output parameters."""
+        self.command("SOURCE:VOLTAGE:RANGE:AUTO OFF")
+        self.command("SOURCE:CURRENT:RANGE:AUTO OFF")
+
+    def set_current_range(self, current_range="100E-3"):
+        """Manually sets the current range when autorange is disabled.
+
+            Args:
+                current_range (str):
+                    * The range in amps. Valid ranges are:
+                    * "100E-3"
+                    * "10E-3"
+                    * "1E-3"
+                    * "100E-6"
+                    * "10E-6"
+                    * "1E-6"
+
+        """
+        self.command("SOURCE:CURRENT:RANGE " + current_range)
+
+    def set_voltage_range(self, voltage_range="10"):
+        """Manually sets the voltage range when autorange is disabled.
+
+            Args:
+                voltage_range (str):
+                    * The range in volts. Valid ranges are:
+                    * "100"
+                    * "10"
+                    * "1"
+                    * "0.1"
+                    * "0.01"
+
+        """
+        self.command("SOURCE:VOLTAGE:RANGE " + voltage_range)
