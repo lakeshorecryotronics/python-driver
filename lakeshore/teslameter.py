@@ -216,27 +216,49 @@ class Teslameter(XIPInstrument):
 
     def get_dc_field(self):
         """Returns the DC field reading."""
-        return self.query("FETCH:DC?")
+        return float(self.query("FETCH:DC?"))
 
     def get_dc_field_xyz(self):
         """Returns the DC field reading."""
-        return self.query("FETCH:DC? ALL")
+
+        response = self.query("FETCH:DC? ALL")
+        separated_response = response.split(",")
+
+        xyz_values = []
+
+        for channel_value in separated_response:
+            xyz_values.append(float(channel_value))
+
+        return xyz_values
 
     def get_rms_field(self):
         """Returns the RMS field reading."""
-        return self.query("FETCH:RMS?")
+        return float(self.query("FETCH:RMS?"))
 
     def get_rms_field_xyz(self):
         """Returns the RMS field reading."""
-        return self.query("FETCH:RMS? ALL")
+
+        response = self.query("FETCH:RMS? ALL")
+        separated_response = response.split(",")
+
+        xyz_values = []
+
+        for channel_value in separated_response:
+            xyz_values.append(float(channel_value))
+
+        return xyz_values
 
     def get_frequency(self):
         """Returns the field frequency reading."""
-        return self.query("FETCH:FREQ?")
+        return float(self.query("FETCH:FREQ?"))
 
     def get_max_min(self):
         """Returns the maximum and minimum field readings respectively."""
-        return self.query("FETCH:MAX?", "FETCH:MIN?")
+
+        response = self.query("FETCH:MAX?", "FETCH:MIN?")
+        separated_response = response.split(",")
+
+        return [float(separated_response[0]), float(separated_response[1])]
 
     def reset_max_min(self):
         """Resets the maximum and minimum field readings to the present field reading."""
@@ -244,7 +266,7 @@ class Teslameter(XIPInstrument):
 
     def get_temperature(self):
         """Returns the temperature reading."""
-        return self.query("FETCH:TEMP?")
+        return float(self.query("FETCH:TEMP?"))
 
     def get_probe_information(self):
         """Returns a dictionary of probe data."""
@@ -260,7 +282,7 @@ class Teslameter(XIPInstrument):
 
     def get_relative_field(self):
         """Returns the relative field value."""
-        return self.query("FETC:RELATIVE?")
+        return float(self.query("FETC:RELATIVE?"))
 
     def tare_relative_field(self):
         """Copies the current field reading to the relative baseline value."""
@@ -268,7 +290,7 @@ class Teslameter(XIPInstrument):
 
     def get_relative_field_baseline(self):
         """Returns the relative field baseline value."""
-        return self.query("SENS:RELATIVE:BASELINE?")
+        return float(self.query("SENS:RELATIVE:BASELINE?"))
 
     def set_relative_field_baseline(self, baseline_field):
         """Configures the relative baseline value.
@@ -311,7 +333,7 @@ class Teslameter(XIPInstrument):
         measurement_setup = {"mode": self.query("SENS:MODE?"),
                              "autorange": self.query("SENS:RANGE:AUTO?"),
                              "range": self.query("SENS:RANGE?"),
-                             "averaging_samples": self.query("SENS:AVERAGE:COUNT?")}
+                             "averaging_samples": int(self.query("SENS:AVERAGE:COUNT?"))}
 
         return measurement_setup
 
@@ -339,7 +361,7 @@ class Teslameter(XIPInstrument):
 
     def get_temperature_compensation_manual_temp(self):
         """Returns the manual temperature setting value in Celsius."""
-        return self.query("SENS:TCOM:MTEM?")
+        return float(self.query("SENS:TCOM:MTEM?"))
 
     def configure_field_units(self, units="TESLA"):
         """Configures the field measurement units of the instrument.
@@ -375,8 +397,8 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_limits(self):
         """Returns the field control output voltage limit and slew rate limit."""
-        limits = {"mode": self.query("SOURCE:FIELD:VLIMIT?"),
-                  "autorange": self.query("SOURCE:FIELD:SLEW?")}
+        limits = {"mode": float(self.query("SOURCE:FIELD:VLIMIT?")),
+                  "autorange": float(self.query("SOURCE:FIELD:SLEW?"))}
 
         return limits
 
@@ -440,9 +462,9 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_pid(self):
         """Returns the gain, integral, and ramp rate."""
-        pid = {"gain": self.query("SOURCE:FIELD:CLL:GAIN?"),
-               "integral": self.query("SOURCE:FIELD:CLL:INTEGRAL?"),
-               "ramp_rate": self.query("SOURCE:FIELD:CLL:RAMPRATE?")}
+        pid = {"gain": float(self.query("SOURCE:FIELD:CLL:GAIN?")),
+               "integral": float(self.query("SOURCE:FIELD:CLL:INTEGRAL?")),
+               "ramp_rate": float(self.query("SOURCE:FIELD:CLL:RAMPRATE?"))}
 
         return pid
 
@@ -454,7 +476,7 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_setpoint(self):
         """Returns the field control setpoint."""
-        return self.query("SOURCE:FIELD:CLL:SETPOINT?")
+        return float(self.query("SOURCE:FIELD:CLL:SETPOINT?"))
 
     @requires_firmware_version("1.1.2018091003")
     def set_field_control_open_loop_voltage(self, output_voltage):
@@ -464,7 +486,7 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_open_loop_voltage(self):
         """Returns the field control open loop voltage."""
-        return self.query("SOURCE:FIELD:OPL:VOLTAGE?")
+        return float(self.query("SOURCE:FIELD:OPL:VOLTAGE?"))
 
     def set_analog_output(self, analog_output_mode):
         """Configures what signal is provided by the analog output BNC.
