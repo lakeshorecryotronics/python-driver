@@ -482,3 +482,11 @@ class Teslameter(XIPInstrument):
     def get_analog_output(self):
         """Returns what signal is being provided by the analog output."""
         return self.query("SOURCE:AOUT?")
+
+    def reset_measurement_settings(self):
+        """Resets measurement settings to their default values."""
+        self.command("SYSTEM:PRESET")
+
+    def factory_reset(self):
+        """Resets all system information such as settings, wi-fi connections, date and time, etc."""
+        self.command("SYSTEM:FACTORYRESET")
