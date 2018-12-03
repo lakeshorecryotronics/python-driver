@@ -351,7 +351,9 @@ class PrecisionSource(XIPInstrument):
                            "offset": float(self.query("SOURCE:" + mode + ":OFFSET?")),
                            "phase": float(self.query("SOURCE:PHASE?")),
                            "autorange": bool(self.query("SOURCE:" + mode + ":RANGE:AUTO?")),
-                           "range": float(self.query("SOURCE:" + mode + ":RANGE?"))}
+                           "range": self.query("SOURCE:" + mode + ":RANGE?"),
+                           "limit": float(self.query("SOURCE:" + mode + ":LIMIT?")),
+                           "protection": float(self.query("SOURCE:" + mode + ":PROTECTION?"))}
 
         return output_settings
 
@@ -395,3 +397,43 @@ class PrecisionSource(XIPInstrument):
 
         """
         self.command("SOURCE:VOLTAGE:RANGE " + voltage_range)
+
+    def set_current_limit(self, current_limit):
+        """Sets the highest settable current output value when in current mode.
+
+            Args:
+                current_limit (float):
+                    The maximum settable current in amps. Must be between 0 and 100 milliamps.
+
+        """
+        self.command("SOURCE:CURRENT:LIMIT " + str(current_limit))
+
+    def set_voltage_limit(self, voltage_limit):
+        """Sets the highest settable voltage output value when in voltage mode.
+
+            Args:
+                voltage_limit (float):
+                    The maximum settable voltage in amps. Must be between 0 and 100 volts.
+
+        """
+        self.command("SOURCE:VOLTAGE:LIMIT " + str(voltage_limit))
+
+    def set_current_mode_voltage_protection(self, max_voltage):
+        """Sets the maximum voltage level permitted by the instrument when sourcing current.
+
+            Args:
+                max_voltage (float):
+                    The maximum permissible voltage. Must be between 1 and 100 volts.
+
+        """
+        self.command("SOURCE:CURRENT:PROTECTION " + str(max_voltage))
+
+    def set_voltage_mode_current_protection(self, max_current):
+        """Sets the maximum current level permitted by the instrument when sourcing voltage.
+
+            Args:
+                max_current (float):
+                    The maximum permissible voltage. Must be between 1 and 100 volts.
+
+        """
+        self.command("SOURCE:VOLTAGE:PROTECTION " + str(max_current))
