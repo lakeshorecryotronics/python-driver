@@ -106,7 +106,7 @@ class PrecisionSource(XIPInstrument):
         # Change the output mode to source voltage instead of current.
         self.command("SOURCE:FUNCTION:MODE VOLTAGE")
 
-        # Configure the instrument to automatically choose the best range for a given output setting
+        # Configure the instrument to output a sine wave
         self.command("SOURCE:FUNCTION:SHAPE SIN")
 
         # Turn on the output voltage
@@ -166,7 +166,7 @@ class PrecisionSource(XIPInstrument):
         # Change the output mode to source current instead of voltage
         self.command("SOURCE:FUNCTION:MODE CURRENT")
 
-        # Configure the instrument to automatically choose the best range for a given output setting
+        # Configure the instrument to output a sine wave
         self.command("SOURCE:FUNCTION:SHAPE SIN")
 
         # Turn on the output voltage
@@ -198,3 +198,143 @@ class PrecisionSource(XIPInstrument):
             self.command(*parameter_commands)
 
             sleep(dwell_time)
+
+    def enable_output(self):
+        """Turns on the source output."""
+        self.command("OUTPUT ON")
+
+    def disable_output(self):
+        """Turns off the source output."""
+        self.command("OUTPUT OFF")
+
+    def route_terminals(self, output_connections_location="REAR"):
+        """Configures whether the source output is routed through the front or rear connections.
+
+            Args:
+                output_connections_location (str):
+                    * Valid options are:
+                    * "REAR" (Output is routed out the rear connections)
+                    * "FRONT" (Output is routed out the front connections)
+
+        """
+        self.command("ROUTE:TERMINALS " + output_connections_location)
+
+    def output_sine_current(self, amplitude, frequency, offset=0.0, phase=0.0):
+        """Configures and enables the source output to be a sine wave current source.
+
+            Args:
+                amplitude (float):
+                    The peak current amplitude value in amps.
+
+                frequency (float):
+                    The source frequency value in hertz.
+
+                offset (float):
+                    The DC offset current in amps.
+
+                phase (float):
+                    Shifts the phase of the output relative to the reference out. Must be between -180 and 180 degrees.
+
+        """
+
+        # Change the output mode to source current instead of voltage
+        self.command("SOURCE:FUNCTION:MODE CURRENT")
+
+        # Configure the instrument to output a sine wave
+        self.command("SOURCE:FUNCTION:SHAPE SIN")
+
+        # Configure the output amplitude
+        self.command("SOURCE:CURRENT:AMPLITUDE " + str(amplitude))
+
+        # Configure the output frequency
+        self.command("SOURCE:FREQUENCY " + str(frequency))
+
+        # Configure the output DC offset
+        self.command("SOURCE:CURRENT:OFFSET " + str(offset))
+
+        # Configure the phase of the output
+        self.command("SOURCE:PHASE " + str(phase))
+
+        # Turn on the output voltage
+        self.command("OUTPUT ON")
+
+    def output_sine_voltage(self, amplitude, frequency, offset=0.0, phase=0.0):
+        """Configures and enables the source output to be a sine wave voltage source.
+
+            Args:
+                amplitude (float):
+                    The peak voltage amplitude value in volts.
+
+                frequency (float):
+                    The source frequency value in hertz.
+
+                offset (float):
+                    The DC offset voltage in volts.
+
+                phase (float):
+                    Shifts the phase of the output relative to the reference out. Must be between -180 and 180 degrees.
+
+        """
+
+        # Change the output mode to source voltage instead of current
+        self.command("SOURCE:FUNCTION:MODE VOLTAGE")
+
+        # Configure the instrument to output a sine wave
+        self.command("SOURCE:FUNCTION:SHAPE SIN")
+
+        # Configure the output amplitude
+        self.command("SOURCE:VOLTAGE:AMPLITUDE " + str(amplitude))
+
+        # Configure the output frequency
+        self.command("SOURCE:FREQUENCY " + str(frequency))
+
+        # Configure the output DC offset
+        self.command("SOURCE:VOLTAGE:OFFSET " + str(offset))
+
+        # Configure the phase of the output
+        self.command("SOURCE:PHASE " + str(phase))
+
+        # Turn on the output voltage
+        self.command("OUTPUT ON")
+
+    def output_dc_current(self, current_level):
+        """Configures the source output to be a DC current source.
+
+            Args:
+                current_level (float):
+                    The output current level in amps.
+
+        """
+
+        # Change the output mode to source current instead of voltage
+        self.command("SOURCE:FUNCTION:MODE CURRENT")
+
+        # Configure the instrument to output a sine wave
+        self.command("SOURCE:FUNCTION:SHAPE DC")
+
+        # Configure DC current level
+        self.command("SOURCE:CURRENT:AMPLITUDE " + str(current_level))
+
+        # Turn on the output voltage
+        self.command("OUTPUT ON")
+
+    def output_dc_voltage(self, voltage_level):
+        """Configures the source output to be a DC current source.
+
+            Args:
+                voltage_level (float):
+                    The output voltage level in volts.
+
+        """
+
+        # Change the output mode to source current instead of voltage
+        self.command("SOURCE:FUNCTION:MODE CURRENT")
+
+        # Configure the instrument to output a sine wave
+        self.command("SOURCE:FUNCTION:SHAPE DC")
+
+        # Configure DC current level
+        self.command("SOURCE:CURRENT:AMPLITUDE " + str(voltage_level))
+
+        # Turn on the output voltage
+        self.command("OUTPUT ON")
