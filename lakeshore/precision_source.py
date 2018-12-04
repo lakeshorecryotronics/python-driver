@@ -87,8 +87,8 @@ class PrecisionSource(XIPInstrument):
         """Sweep source output voltage parameters based on list arguments.
 
         Args:
-            dwell_time (int):
-                The length of time to wait at each parameter combination.
+            dwell_time (float):
+                The length of time in seconds to wait at each parameter combination.
                 Note that the update rate will be limited by the SCPI communication response time.
                 The response time is usually on the order of 10-30 milliseconds.
 
@@ -147,8 +147,8 @@ class PrecisionSource(XIPInstrument):
         """Sweep the source output current parameters based on list arguments
 
             Args:
-                dwell_time (int):
-                    The length of time to wait at each parameter combination.
+                dwell_time (float):
+                    The length of time in seconds to wait at each parameter combination.
                     Note that the update rate will be limited by the SCPI communication response time.
                     The response time is usually on the order of 10-30 milliseconds.
 
