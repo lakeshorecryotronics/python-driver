@@ -222,12 +222,8 @@ class Teslameter(XIPInstrument):
         """Returns the DC field reading."""
 
         response = self.query("FETCH:DC? ALL")
-        separated_response = response.split(",")
 
-        xyz_values = []
-
-        for channel_value in separated_response:
-            xyz_values.append(float(channel_value))
+        xyz_values = [float(channel_value) for channel_value in response.split(",")]
 
         return xyz_values
 
