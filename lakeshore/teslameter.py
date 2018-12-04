@@ -417,19 +417,19 @@ class Teslameter(XIPInstrument):
 
         """
         if mode == "CLOSED":
-            mode = "CLLOOP"
+            scpi_mode = "CLLOOP"
 
         if mode == "OPEN":
-            mode = "OPLOOP"
+            scpi_mode = "OPLOOP"
 
-        self.command("SOURCE:FIELD:MODE " + mode)
+        self.command("SOURCE:FIELD:MODE " + scpi_mode)
         self.command("SOURCE:FIELD:STATE " + str(int(output_enabled)))
 
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_output_mode(self):
         """Returns the mode and state of the field control output."""
         output_state = {"control_mode": self.query("SOURCE:FIELD:MODE?"),
-                        "output_enabled": self.query("SOURCE:FIELD:STATE?")}
+                        "output_enabled": bool(self.query("SOURCE:FIELD:STATE?"))}
 
         return output_state
 
