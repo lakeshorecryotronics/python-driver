@@ -395,7 +395,7 @@ class Teslameter(XIPInstrument):
         return limits
 
     @requires_firmware_version("1.1.2018091003")
-    def configure_field_control_output_mode(self, mode="CLOSED", output_enabled=True):
+    def configure_field_control_output_mode(self, mode="CLLOOP", output_enabled=True):
         """Configure the field control mode and state.
 
             Args:
