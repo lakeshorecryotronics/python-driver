@@ -401,20 +401,15 @@ class Teslameter(XIPInstrument):
             Args:
                 mode (str):
                     * Determines whether the field control is in open or closed loop mode
-                    * "CLOSED" (closed loop control)
-                    * "OPEN" (open loop control, voltage output)
+                    * "CLLOOP" (closed loop control)
+                    * "OPLOOP" (open loop control, voltage output)
 
                 output_enabled (bool):
                     Turn the field control voltage output on or off.
 
         """
-        if mode == "CLOSED":
-            scpi_mode = "CLLOOP"
 
-        if mode == "OPEN":
-            scpi_mode = "OPLOOP"
-
-        self.command("SOURCE:FIELD:MODE " + scpi_mode)
+        self.command("SOURCE:FIELD:MODE " + mode)
         self.command("SOURCE:FIELD:STATE " + str(int(output_enabled)))
 
     @requires_firmware_version("1.1.2018091003")
