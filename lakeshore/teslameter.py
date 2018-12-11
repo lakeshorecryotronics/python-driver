@@ -248,7 +248,7 @@ class Teslameter(XIPInstrument):
         """Returns the maximum and minimum field readings respectively."""
 
         response = self.query("FETCH:MAX?", "FETCH:MIN?")
-        separated_response = response.split(",")
+        separated_response = response.split(";")
 
         return [float(separated_response[0]), float(separated_response[1])]
 
