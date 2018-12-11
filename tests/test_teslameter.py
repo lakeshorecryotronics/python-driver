@@ -23,6 +23,7 @@ class TestBasics(TestWithDUT):
         self.dut.get_dc_field()
         self.dut.get_dc_field_xyz()
         self.dut.get_max_min()
+        self.dut.configure_field_measurement_setup(mode="AC")
         self.dut.get_frequency()
         self.dut.get_rms_field()
         self.dut.get_rms_field_xyz()
