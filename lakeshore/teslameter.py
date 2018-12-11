@@ -128,7 +128,7 @@ class Teslameter(XIPInstrument):
 
         while number_of_samples <= total_number_of_samples:
             # Query the buffer.
-            response = self.query('FETC:BUFF:DC?', check_errors=False)
+            response = self.query('FETC:BUFF:DC?', check_errors=False).strip('"')
 
             # Ignore the response if it contains no data
             if ';' in response:
