@@ -1,5 +1,5 @@
 from tests.test_connection import TestWithDUT
-
+from time import sleep
 
 class TestBuffers(TestWithDUT):
     def test_getting_buffered_data(self):
@@ -24,6 +24,7 @@ class TestBasics(TestWithDUT):
         self.dut.get_dc_field_xyz()
         self.dut.get_max_min()
         self.dut.configure_field_measurement_setup(mode="AC")
+        sleep(0.5)
         self.dut.get_frequency()
         self.dut.get_rms_field()
         self.dut.get_rms_field_xyz()
