@@ -1,6 +1,7 @@
 from tests.test_connection import TestWithDUT
 from time import sleep
 
+
 class TestBuffers(TestWithDUT):
     def test_getting_buffered_data(self):
         self.assertEqual(len(self.dut.get_buffered_data_points(1, 10)), 100)
