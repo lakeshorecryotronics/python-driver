@@ -19,6 +19,7 @@ class TestBasics(TestWithDUT):
         self.dut.configure_field_measurement_setup(mode="AC")
 
     def test_fetch_queries(self):
+        self.dut.command("SENS:TCOM:TSOURCE NONE")
         self.dut.get_dc_field()
         self.dut.get_dc_field_xyz()
         self.dut.get_max_min()
@@ -44,7 +45,7 @@ class TestBasics(TestWithDUT):
     def test_field_control(self):
         self.dut.configure_field_control_limits()
         self.dut.get_field_control_limits()
-        self.dut.configure_field_control_output_mode(mode="OPEN", output_enabled=False)
+        self.dut.configure_field_control_output_mode(mode="OPLOOP", output_enabled=False)
         self.dut.get_field_control_output_mode()
         self.dut.configure_field_control_pid(gain=1, integral=0.1, ramp_rate=10)
         self.dut.get_field_control_pid()

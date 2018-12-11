@@ -343,7 +343,7 @@ class Teslameter(XIPInstrument):
                     Sets the temperature provided by the user for MTEMP (manual temperature) source in Celsius.
 
         """
-        self.command("SENS:TCOM:SOURCE " + temperature_source)
+        self.command("SENS:TCOM:TSOURCE " + temperature_source)
         if manual_temperature is not None:
             self.command("SENS:TCOM:MTEM " + str(manual_temperature))
 
