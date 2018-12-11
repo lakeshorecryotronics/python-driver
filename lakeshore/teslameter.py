@@ -349,7 +349,7 @@ class Teslameter(XIPInstrument):
 
     def get_temperature_compensation_source(self):
         """Returns the source of temperature measurement for field compensation."""
-        return self.query("SENS:TCOM:SOURCE?")
+        return self.query("SENS:TCOM:TSOURCE?")
 
     def get_temperature_compensation_manual_temp(self):
         """Returns the manual temperature setting value in Celsius."""
