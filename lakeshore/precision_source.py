@@ -215,6 +215,10 @@ class PrecisionSource(XIPInstrument):
                     Turns the source output on when True, off when False.
 
         """
+        if output_on:
+            self.enable_output()
+        else:
+            self.disable_output()
 
     def route_terminals(self, output_connections_location="REAR"):
         """Configures whether the source output is routed through the front or rear connections.
