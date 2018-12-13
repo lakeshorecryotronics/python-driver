@@ -207,6 +207,15 @@ class PrecisionSource(XIPInstrument):
         """Turns off the source output."""
         self.command("OUTPUT OFF")
 
+    def set_output(self, output_on):
+        """Configure the source output on or off.
+
+            Args:
+                output_on (bool):
+                    Turns the source output on when True, off when False.
+
+        """
+
     def route_terminals(self, output_connections_location="REAR"):
         """Configures whether the source output is routed through the front or rear connections.
 
