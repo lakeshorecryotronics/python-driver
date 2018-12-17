@@ -7,7 +7,7 @@ with io.open('README.md', 'rt', encoding='utf8') as readme_file:
 
 setup(
     name='lakeshore',
-    version='0.0.2',
+    version='0.0.3',
     maintainer='Lake Shore Cryotronics, Inc.',
     maintainer_email='service@lakeshore.com',
     long_description=readme,
