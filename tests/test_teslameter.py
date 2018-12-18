@@ -1,4 +1,5 @@
 from tests.test_xip_base import TestWithDUT
+from time import sleep
 
 
 class TestBufferedFieldData(TestWithDUT):
@@ -23,6 +24,10 @@ class TestStatusRegisters(TestWithDUT):
 
 
 class TestBasics(TestWithDUT):
+    def setUp(self):
+        self.dut.configure_field_measurement_setup(mode="AC")
+        sleep(1)
+
     def test_methods_provide_responses(self):
         # Methods that expect responses (method, args, kwargs)
         dut_methods = [(self.dut.get_dc_field, [], {}),
