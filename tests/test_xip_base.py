@@ -1,4 +1,4 @@
-import unittest
+import unittest2 as unittest  # Python 2 compatability
 
 # Teslameter is used for these general tests on the HIL rig at this time
 from lakeshore import Teslameter, XIPInstrumentException
