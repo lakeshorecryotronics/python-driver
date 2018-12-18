@@ -21,8 +21,8 @@ file.write('Instrument serial number:,' + my_teslameter.serial_number + '\n')
 file.write('Probe serial number:,' + probe_serial_number + '\n')
 file.write('Probe temperature:,' + probe_temperature + '\n\n')
 
+# Collect 10 seconds of 10 ms data points and write them to the csv file
+my_teslameter.log_buffered_data_to_file(10, 10, file)
+
 # Close the file so that it can be used by the function
 file.close()
-
-# Collect 10 seconds of 10 ms data points and write them to the csv file
-my_teslameter.log_buffered_data_to_file(10, 10, 'teslameter_data')
