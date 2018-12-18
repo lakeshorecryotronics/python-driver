@@ -4,6 +4,12 @@ import unittest2 as unittest  # Python 2 compatability
 from lakeshore import Teslameter, XIPInstrumentException
 
 
+def setUpModule():
+    dut = Teslameter(flow_control=False)
+    dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard any errors in the queue before the run starts
+    del dut
+
+
 class TestWithDUT(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
