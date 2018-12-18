@@ -1,4 +1,4 @@
-from tests.test_connection import TestWithDUT
+from tests.test_xip_base import TestWithDUT
 
 
 class TestBufferedFieldData(TestWithDUT):

@@ -31,10 +31,13 @@ class TestDiscovery(unittest.TestCase):
             Teslameter(com_port='COM99', flow_control=False)
 
     def test_tcp_connection(self):
-        Teslameter(ip_address='192.168.0.12')
+        Teslameter(ip_address='192.168.0.12')  # No checks needed, just make sure no exceptions are thrown
 
 
 class TestConnectivity(TestWithDUT):
+    def tearDown(self):
+        self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard any errors left in the queue
+
     def test_basic_query(self):
         response = self.dut.query('*IDN?')
 
@@ -48,7 +51,6 @@ class TestConnectivity(TestWithDUT):
     def test_timeout(self):
         with self.assertRaisesRegexp(XIPInstrumentException, 'Communication timed out'):
             self.dut.query('FAKEQUERY?', check_errors=False)
-        self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard the error we left in the queue
 
 
 class TestSCPIErrorQueueChecking(TestWithDUT):
@@ -58,4 +60,5 @@ class TestSCPIErrorQueueChecking(TestWithDUT):
 
     def test_query_with_error_check_disabled(self):
         response = self.dut.query('*IDN?', check_errors=False)
+
         self.assertEqual(response.split(',')[0], 'Lake Shore')
