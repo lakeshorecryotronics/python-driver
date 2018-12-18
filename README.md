@@ -1,20 +1,34 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+The [Lake Shore](https://www.lakeshore.com) python driver allows users to quickly and easily communicate with Lake Shore instruments. It automatically establishes a connection and provides a variety of functions specific to the product that configure settings and acquire measurements. 
+
+# List of Supported Products
+* [F41 and F71 Teslameters](https://www.lakeshore.com/products/Gaussmeters/F71-F41-teslameters/Pages/Overview.aspx)
+* [155 Precision I/V Source](https://www.lakeshore.com/products/measureready/model-155/Pages/Overview.aspx) 
+
 
 # Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+Install the driver using [pip](https://pip.pypa.io/en/stable/quickstart/):
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+    pip install lakeshore
+
+# A simple example
+The following code will connect to a 155 Precision Source over USB and print what is returned by an identification query.
+
+    from lakeshore import PrecisionSource
+
+    my_instrument = PrecisionSource()
+    print(my_instrument.query('*IDN?'))
+
+# Documentation
+Detailed documentation of the driver and more example code is available [here](TBD).
 
 # Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+We want your feedback! Please request changes, features, and additional instruments through the GitHub issues page.
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://www.visualstudio.com/en-us/docs/git/create-a-readme). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+If you have developed a code for your application that would be helpful for other users, please create a pull request on GitHub.
+
+# Resources
+* Lake Shore website: [https://www.lakeshore.com](https://www.lakeshore.com)
+* GitHub: 
+* License: 
+* Change log: 
