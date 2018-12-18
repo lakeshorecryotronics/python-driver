@@ -5,9 +5,12 @@ from setuptools import setup
 with io.open('README.md', 'rt', encoding='utf8') as readme_file:
     readme = readme_file.read()
 
+with io.open('VERSION', 'rt', encoding='utf8') as version_file:
+    version = version_file.read().strip()
+
 setup(
     name='lakeshore',
-    version='0.0.5',
+    version=version,
     maintainer='Lake Shore Cryotronics, Inc.',
     maintainer_email='service@lakeshore.com',
     license='MIT',
