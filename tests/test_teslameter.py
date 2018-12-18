@@ -1,62 +1,71 @@
 from tests.test_connection import TestWithDUT
-from time import sleep
 
 
-class TestBuffers(TestWithDUT):
-    def test_getting_buffered_data(self):
-        self.assertEqual(len(self.dut.get_buffered_data_points(1, 10)), 100)
+class TestBufferedFieldData(TestWithDUT):
+    def test_stream_buffered_data_provides_correct_number_of_points(self):
+        iterable = self.dut.stream_buffered_data(1, 10)
+
+        self.assertEqual(len(list(iterable)), 100)
+
+    def test_get_buffered_data_provides_correct_number_of_points(self):
+        points = self.dut.get_buffered_data_points(1, 10)
+
+        self.assertEqual(len(points), 100)
 
 
 class TestStatusRegisters(TestWithDUT):
-    def test_modification_of_register(self):
+    def test_modification_of_operation_register(self):
         self.dut.modify_operation_register_mask('ranging', False)
+
         response = self.dut.get_operation_event_enable_mask()
 
         self.assertEqual(response.ranging, False)
 
 
 class TestBasics(TestWithDUT):
-    def TestMeasurementConfiguration(self):
-        self.dut.configure_field_measurement_setup(mode="AC")
+    def test_methods_provide_responses(self):
+        # Methods that expect responses (method, args, kwargs)
+        dut_methods = [(self.dut.get_dc_field, [], {}),
+                       (self.dut.get_dc_field_xyz, [], {}),
+                       (self.dut.get_rms_field, [], {}),
+                       (self.dut.get_rms_field_xyz, [], {}),
+                       (self.dut.get_frequency, [], {}),
+                       (self.dut.get_max_min, [], {}),
+                       (self.dut.get_temperature, [], {}),
+                       (self.dut.get_probe_information, [], {}),
+                       (self.dut.get_relative_field, [], {}),
+                       (self.dut.get_relative_field_baseline, [], {}),
+                       (self.dut.get_field_measurement_setup, [], {}),
+                       (self.dut.get_temperature_compensation_source, [], {}),
+                       (self.dut.get_temperature_compensation_manual_temp, [], {}),
+                       (self.dut.get_field_units, [], {}),
+                       (self.dut.get_field_control_limits, [], {}),
+                       (self.dut.get_field_control_output_mode, [], {}),
+                       (self.dut.get_field_control_pid, [], {}),
+                       (self.dut.get_field_control_setpoint, [], {}),
+                       (self.dut.get_field_control_open_loop_voltage, [], {}),
+                       (self.dut.get_analog_output, [], {})]
 
-    def test_fetch_queries(self):
-        self.dut.command("SENS:TCOM:TSOURCE NONE")
-        self.dut.get_dc_field()
-        self.dut.get_dc_field_xyz()
-        self.dut.get_max_min()
-        self.dut.configure_field_measurement_setup(mode="AC")
-        sleep(0.5)
-        self.dut.get_frequency()
-        self.dut.get_rms_field()
-        self.dut.get_rms_field_xyz()
-        self.dut.get_temperature()
+        for method_to_call, args, kwargs in dut_methods:
+            with self.subTest(method=method_to_call):
+                response = method_to_call(*args, **kwargs)
 
-    def test_relative_field(self):
-        self.dut.get_relative_field()
-        self.dut.tare_relative_field()
-        self.dut.get_relative_field_baseline()
-        self.dut.set_relative_field_baseline(12.3)
+                self.assertIsNotNone(response)  # Ensure that no exception was raised, and a response was provided
 
-    def test_probe_data(self):
-        self.dut.get_probe_information()
+    def test_methods_do_not_raise_exceptions(self):
+        # Methods that don't expect responses (method, args, kwargs)
+        dut_methods = [(self.dut.tare_relative_field, [], {}),
+                       (self.dut.set_relative_field_baseline, [12.3], {}),
+                       (self.dut.configure_field_measurement_setup, [], {"mode": "AC"}),
+                       (self.dut.configure_temperature_compensation, [], {"manual_temperature": 23.45}),
+                       (self.dut.configure_field_units, [], {}),
+                       (self.dut.configure_field_control_limits, [], {}),
+                       (self.dut.configure_field_control_output_mode, [], {"mode": "OPLOOP", "output_enabled": False}),
+                       (self.dut.configure_field_control_pid, [], {"gain": 1, "integral": 0.1, "ramp_rate": 10}),
+                       (self.dut.set_field_control_setpoint, [1], {}),
+                       (self.dut.set_field_control_open_loop_voltage, [1], {}),
+                       (self.dut.set_analog_output, ["X"], {})]
 
-    def test_temperature_compensation(self):
-        self.dut.configure_temperature_compensation(manual_temperature=23.45)
-        self.dut.get_temperature_compensation_manual_temp()
-        self.dut.get_temperature_compensation_source()
-
-    def test_field_control(self):
-        self.dut.configure_field_control_limits()
-        self.dut.get_field_control_limits()
-        self.dut.configure_field_control_output_mode(mode="OPLOOP", output_enabled=False)
-        self.dut.get_field_control_output_mode()
-        self.dut.configure_field_control_pid(gain=1, integral=0.1, ramp_rate=10)
-        self.dut.get_field_control_pid()
-        self.dut.set_field_control_setpoint(1)
-        self.dut.get_field_control_setpoint()
-        self.dut.set_field_control_open_loop_voltage(1)
-        self.dut.get_field_control_open_loop_voltage()
-
-    def test_analog_out(self):
-        self.dut.set_analog_output("X")
-        self.dut.get_analog_output()
+        for method_to_call, args, kwargs in dut_methods:
+            with self.subTest(method=method_to_call):
+                method_to_call(*args, **kwargs)  # Just ensure that no exception was raised
