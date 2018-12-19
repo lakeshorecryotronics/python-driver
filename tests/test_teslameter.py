@@ -1,5 +1,7 @@
-from tests.test_xip_base import TestWithDUT
+from tempfile import TemporaryFile
 from time import sleep
+
+from tests.test_xip_base import TestWithDUT
 
 
 class TestBufferedFieldData(TestWithDUT):
@@ -12,6 +14,24 @@ class TestBufferedFieldData(TestWithDUT):
         points = self.dut.get_buffered_data_points(1, 10)
 
         self.assertEqual(len(points), 100)
+
+    def test_log_to_csv_has_expected_number_of_rows(self):
+        with TemporaryFile(mode='w+') as log_file:
+            self.dut.log_buffered_data_to_file(1, 10, log_file)
+
+            log_file.seek(0)
+            lines = log_file.readlines()
+            self.assertEqual(len(lines), 101)  # 1 header, 100 points
+
+    def test_log_to_csv_has_expected_length(self):
+        with TemporaryFile(mode='w+') as log_file:
+            self.dut.log_buffered_data_to_file(1, 10, log_file)
+
+            log_file.seek(0)
+            lines = log_file.readlines()
+
+            for row in lines[:-1]:
+                self.assertEqual(len(row.split(',')), 9)
 
 
 class TestStatusRegisters(TestWithDUT):
