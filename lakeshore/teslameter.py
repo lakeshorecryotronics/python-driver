@@ -139,12 +139,13 @@ class Teslameter(XIPInstrument):
                     # Split the data point along the delimiter.
                     point_data = point.split(',')
 
-                    # Convert the time stamp into python datetime format.
-                    point_data[0] = iso8601.parse_date(point_data[0])
-
-                    # Convert the returned values from strings to floats
+                    # Convert the returned values from strings to appropriate types
                     for count, _ in enumerate(point_data):
-                        if count != 0:
+                        if count == 0:
+                            point_data[count] = iso8601.parse_date(point_data[count])
+                        elif count == len(point_data) - 1:
+                            point_data[count] = int(point_data[count])
+                        else:
                             point_data[count] = float(point_data[count])
 
                     # If the instrument does not have a field control option, insert zero as the control set point.
@@ -204,13 +205,15 @@ class Teslameter(XIPInstrument):
 
         # Parse the datetime value into a separate date and time.
         for point in data_stream_generator:
+            column_values = []
             for count, data in enumerate(point):
                 if count != 1:
-                    file.write(str(data) + ',')
+                    column_values.append(str(data))
                 else:
-                    file.write(datetime.strftime(data, '%m/%d/%Y') + ',' +
-                               datetime.strftime(data, '%H:%M:%S.%f') + ',')
-            file.write('\n')
+                    column_values.append(datetime.strftime(data, '%m/%d/%Y'))
+                    column_values.append(datetime.strftime(data, '%H:%M:%S.%f'))
+
+            file.write(','.join(column_values) + '\n')
 
     def get_dc_field(self):
         """Returns the DC field reading."""
