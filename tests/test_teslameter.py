@@ -1,10 +1,10 @@
 from tempfile import TemporaryFile
 from time import sleep
 
-from tests.test_xip_base import TestWithDUT
+from tests.utils import TestWithRealDUT
 
 
-class TestBufferedFieldData(TestWithDUT):
+class TestBufferedFieldData(TestWithRealDUT):
     def test_stream_buffered_data_provides_correct_number_of_points(self):
         iterable = self.dut.stream_buffered_data(1, 10)
 
@@ -34,7 +34,7 @@ class TestBufferedFieldData(TestWithDUT):
                 self.assertEqual(len(row.split(',')), 9)
 
 
-class TestStatusRegisters(TestWithDUT):
+class TestStatusRegisters(TestWithRealDUT):
     def test_modification_of_operation_register(self):
         self.dut.modify_operation_register_mask('ranging', False)
 
@@ -43,7 +43,7 @@ class TestStatusRegisters(TestWithDUT):
         self.assertEqual(response.ranging, False)
 
 
-class TestBasics(TestWithDUT):
+class TestBasics(TestWithRealDUT):
     def setUp(self):
         self.dut.configure_field_measurement_setup(mode="AC")
         sleep(1)

@@ -2,22 +2,13 @@ import unittest2 as unittest  # Python 2 compatability
 
 # Teslameter is used for these general tests on the HIL rig at this time
 from lakeshore import Teslameter, XIPInstrumentException
+from tests.utils import TestWithRealDUT
 
 
 def setUpModule():
     dut = Teslameter()
     dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard any errors in the queue before the run starts
     del dut
-
-
-class TestWithDUT(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.dut = Teslameter()
-
-    @classmethod
-    def tearDownClass(cls):
-        del cls.dut
 
 
 class TestDiscovery(unittest.TestCase):
@@ -41,7 +32,7 @@ class TestDiscovery(unittest.TestCase):
         Teslameter(ip_address='192.168.0.12', tcp_port=7777)
 
 
-class TestConnectivity(TestWithDUT):
+class TestConnectivity(TestWithRealDUT):
     def tearDown(self):
         self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard any errors left in the queue
 
@@ -60,7 +51,7 @@ class TestConnectivity(TestWithDUT):
             self.dut.query('FAKEQUERY?', check_errors=False)
 
 
-class TestSCPIErrorQueueChecking(TestWithDUT):
+class TestSCPIErrorQueueChecking(TestWithRealDUT):
     def test_command_does_not_exist(self):
         with self.assertRaisesRegexp(XIPInstrumentException, 'Undefined header;FAKEQUERY\?;'):
             self.dut.query('FAKEQUERY?')
