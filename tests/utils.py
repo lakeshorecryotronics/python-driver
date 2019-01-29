@@ -4,6 +4,9 @@ from lakeshore import Teslameter
 import logging
 
 
+fake_dut_comms_log = logging.getLogger('fake_dut_comms')
+
+
 class FakeDutConnection:
     def __init__(self):
         self.incoming = deque()
@@ -11,6 +14,7 @@ class FakeDutConnection:
 
     def setup_response(self, message):
         self.incoming.append(message)
+        fake_dut_comms_log.info('Setup fake response: {}'.format(message))
 
     def get_outgoing_message(self):
         return self.outgoing.popleft()
@@ -19,8 +23,10 @@ class FakeDutConnection:
         self.incoming.clear()
         self.outgoing.clear()
 
-    def write(self, message):
-        self.outgoing.append(message.decode('ascii').rstrip())
+    def write(self, data):
+        message = data.decode('ascii').rstrip()
+        self.outgoing.append(message)
+        fake_dut_comms_log.info('Write to dut: {}'.format(message))
 
     def readline(self):
         return self.incoming.popleft().encode('ascii') + b'\n'
