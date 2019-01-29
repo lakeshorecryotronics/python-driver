@@ -1,8 +1,9 @@
-import unittest2 as unittest
-from collections import deque
-from lakeshore import Teslameter
 import logging
+from collections import deque
 
+import unittest2 as unittest
+
+from lakeshore import Teslameter
 
 fake_dut_comms_log = logging.getLogger('fake_dut_comms')
 
@@ -46,8 +47,12 @@ class TestWithFakeDUT(unittest.TestCase):
 class TestWithRealDUT(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # Teslameter is used for these general tests on the HIL rig at this time
         cls.dut = Teslameter(flow_control=False)  # TODO: Get a dut with flow control for the HIL rig then remove this.
 
     @classmethod
     def tearDownClass(cls):
         del cls.dut
+
+    def tearDown(self):
+        self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard any errors left in the queue
