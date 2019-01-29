@@ -68,12 +68,18 @@ class PrecisionSource(XIPInstrument):
 
     vid_pid = [(0x1FB9, 0x0103)]
 
-    def __init__(self, serial_number=None,
-                 com_port=None, baud_rate=115200, flow_control=False,
+    def __init__(self,
+                 serial_number=None,
+                 com_port=None,
+                 baud_rate=115200,
+                 flow_control=False,
                  timeout=2.0,
-                 ip_address=None, tcp_port=7777):
+                 ip_address=None,
+                 tcp_port=7777,
+                 **kwargs):
+
         # Call the parent init, then fill in values specific to the 155
-        XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port)
+        XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port,  **kwargs)
         self.status_byte_register = StatusByteRegister
         self.standard_event_register = StandardEventRegister
         self.operation_register = PrecisionSourceOperationRegister

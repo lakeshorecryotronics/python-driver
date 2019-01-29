@@ -87,7 +87,7 @@ class XIPInstrument:
     vid_pid = []
     logger = logging.getLogger(__name__)
 
-    def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port):
+    def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port, connection=None):
         # Initialize values common to all XIP instruments
         self.device_serial = None
         self.device_tcp = None
@@ -105,7 +105,10 @@ class XIPInstrument:
             else:
                 self.connect_tcp(ip_address, tcp_port, timeout)
         else:
-            self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
+            if connection is None:
+                self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
+            else:
+                self.device_serial = connection
 
         # Query the instrument identification information and store it in variables
         idn_response = self.query('*IDN?', check_errors=False).split(',')
