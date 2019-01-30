@@ -3,6 +3,7 @@
 import re
 import select
 import socket
+from threading import Lock
 from time import sleep
 
 import serial
@@ -93,6 +94,7 @@ class XIPInstrument:
         self.standard_event_register = StandardEventRegister
         self.operation_register = None
         self.questionable_register = None
+        self.dut_lock = Lock()
 
         # Raise an error if serial and TCP parameters are passed. Otherwise connect to the instrument using one of them.
         if ip_address is not None:
@@ -144,13 +146,14 @@ class XIPInstrument:
             # Do a query which will automatically check the errors.
             self.query(command_string)
         else:
-            # Send command to the instrument over serial. If serial is not configured, send it over TCP.
-            if self.device_serial is not None:
-                self._usb_command(command_string)
-            elif self.device_tcp is not None:
-                self._tcp_command(command_string)
-            else:
-                raise XIPInstrumentException("No connections configured")
+            with self.dut_lock:
+                # Send command to the instrument over serial. If serial is not configured, send it over TCP.
+                if self.device_serial is not None:
+                    self._usb_command(command_string)
+                elif self.device_tcp is not None:
+                    self._tcp_command(command_string)
+                else:
+                    raise XIPInstrumentException("No connections configured")
 
     def query(self, *queries, **kwargs):
         """Send a SCPI query or multiple queries to the instrument and return the response(s)
@@ -178,12 +181,13 @@ class XIPInstrument:
             query_string += ";:SYSTem:ERRor:ALL?"
 
         # Query the instrument over serial. If serial is not configured, use TCP.
-        if self.device_serial is not None:
-            response = self._usb_query(query_string)
-        elif self.device_tcp is not None:
-            response = self._tcp_query(query_string)
-        else:
-            raise XIPInstrumentException("No connections configured")
+        with self.dut_lock:
+            if self.device_serial is not None:
+                response = self._usb_query(query_string)
+            elif self.device_tcp is not None:
+                response = self._tcp_query(query_string)
+            else:
+                raise XIPInstrumentException("No connections configured")
 
         if check_errors:
             # Split the responses to each query, remove the last response which is to the error buffer query,
