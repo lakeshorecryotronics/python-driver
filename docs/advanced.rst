@@ -1,7 +1,13 @@
 .. _advanced:
 
-Advanced Functions
-==================
+Advanced
+========
+
+Thread Safety
+----------------
+
+All methods are thread safe. They can be called from multiple python threads.
+
 Status Registers
 ----------------
 Every XIP instrument implements the SCPI status system which is derived from the status system called out in chapter 11 of the IEEE 488.2 standard. This system is useful for efficiently monitoring the state of an instrument. However the system is also fairly complex. Refer to the instrument manual available on `our website`_ before diving in.
