@@ -10,16 +10,16 @@ class TestDiscovery(unittest.TestCase):
         Teslameter()  # No checks needed, just make sure no exceptions are thrown
 
     def test_specified_serial_does_not_exist(self):
-        with self.assertRaisesRegexp(XIPInstrumentException,
-                                     "No serial connections found with a matching COM port " +
-                                     "and/or matching serial number"):
-            Teslameter(serial_number='Fake', )
+        with self.assertRaisesRegex(XIPInstrumentException,
+                                    r'No serial connections found with a matching COM port '
+                                    r'and/or matching serial number'):
+            Teslameter(serial_number='Fake')
 
     def test_specified_com_port_does_not_exist(self):
-        with self.assertRaisesRegexp(XIPInstrumentException,
-                                     "No serial connections found with a matching COM port " +
-                                     "and/or matching serial number"):
-            Teslameter(com_port='COM99', )
+        with self.assertRaisesRegex(XIPInstrumentException,
+                                    r'No serial connections found with a matching COM port '
+                                    r'and/or matching serial number'):
+            Teslameter(com_port='COM99')
 
     def test_tcp_connection(self):
         # No checks needed, just make sure no exceptions are thrown
@@ -34,7 +34,7 @@ class TestBasicComms(TestWithRealDUT):
         self.assertEqual(response.split(',')[0], 'Lake Shore')
 
     def test_timeout(self):
-        with self.assertRaisesRegexp(XIPInstrumentException, 'Communication timed out'):
+        with self.assertRaisesRegex(XIPInstrumentException, r'Communication timed out'):
             self.dut.query('FAKEQUERY?', check_errors=False)
 
 
@@ -67,7 +67,7 @@ class TestQueries(TestWithFakeDUT):
 class TestErrorChecking(TestWithFakeDUT):
     def test_error_is_raised_for_nonexistent_command(self):
         self.fake_connection.setup_response('-113,"Undefined header;FAKEQUERY?;"')
-        with self.assertRaisesRegexp(XIPInstrumentException, 'Undefined header;FAKEQUERY\?;'):
+        with self.assertRaisesRegex(XIPInstrumentException, r'Undefined header;FAKEQUERY\?;'):
             self.dut.query('FAKEQUERY?')
 
     def test_query_no_error_check(self):
