@@ -33,8 +33,7 @@ class TeslameterOperationRegister(RegisterBase):
                  overload,
                  ranging,
                  ramp_done,
-                 no_data_on_breakout_adapter
-                 ):
+                 no_data_on_breakout_adapter):
         self.no_probe = no_probe
         self.overload = overload
         self.ranging = ranging

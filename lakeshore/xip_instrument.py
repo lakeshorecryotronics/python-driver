@@ -77,7 +77,6 @@ class StandardEventRegister(RegisterBase):
 
 class XIPInstrumentException(Exception):
     """Names a new type of exception specific to instrument connectivity."""
-    pass
 
 
 class XIPInstrument:
