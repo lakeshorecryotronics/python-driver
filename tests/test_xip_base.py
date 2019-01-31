@@ -7,7 +7,10 @@ from tests.utils import TestWithRealDUT, TestWithFakeDUT
 
 class TestDiscovery(unittest.TestCase):
     def test_normal_connection(self):
-        Teslameter()  # No checks needed, just make sure no exceptions are thrown
+        try:
+            Teslameter()
+        except XIPInstrumentException:
+            self.fail('Exception raised unexpectedly.')
 
     def test_specified_serial_does_not_exist(self):
         with self.assertRaisesRegex(XIPInstrumentException,
@@ -22,8 +25,10 @@ class TestDiscovery(unittest.TestCase):
             Teslameter(com_port='COM99')
 
     def test_tcp_connection(self):
-        # No checks needed, just make sure no exceptions are thrown
-        Teslameter(ip_address='192.168.0.12', tcp_port=7777)
+        try:
+            Teslameter(ip_address='192.168.0.12', tcp_port=7777)
+        except XIPInstrumentException:
+            self.fail('Exception raised unexpectedly.')
 
 
 class TestBasicComms(TestWithRealDUT):
