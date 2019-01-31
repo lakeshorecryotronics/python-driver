@@ -4,9 +4,23 @@ Advanced
 ========
 
 Thread Safety
-----------------
+-------------
 
 All methods are thread safe. They can be called from multiple python threads.
+
+Logging
+-------
+
+For debugging your application, it can be useful to see a log of transactions with the instrument(s). All commands/queries are logged to a logger named *lakeshore*.
+
+For example, you can print this log to stdout like this::
+
+    import logging
+    import sys
+
+    lake_shore_log = logging.getLogger('lakeshore')
+    lake_shore_log.addHandler(logging.StreamHandler(stream=sys.stdout))
+    lake_shore_log.setLevel(logging.INFO)
 
 Status Registers
 ----------------
