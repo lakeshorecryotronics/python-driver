@@ -1,7 +1,7 @@
 from tempfile import TemporaryFile
 from time import sleep
 
-from tests.utils import TestWithRealDUT
+from tests.utils import TestWithRealDUT, TestWithFakeDUT
 
 
 class TestBufferedFieldData(TestWithRealDUT):
@@ -34,6 +34,307 @@ class TestBufferedFieldData(TestWithRealDUT):
                 self.assertEqual(len(row.split(',')), 9)
 
 
+class TestBasicReadings(TestWithFakeDUT):
+    def test_get_dc_field(self):
+        self.fake_connection.setup_response('123.456;No error')
+        response = self.dut.get_dc_field()
+        self.assertAlmostEqual(response, 123.456)
+        self.assertIn('FETCH:DC?', self.fake_connection.get_outgoing_message())
+
+    def test_get_dc_field_xyz(self):
+        self.fake_connection.setup_response('12,34,56;No error')
+        response = self.dut.get_dc_field_xyz()
+        for expected, actual in zip([12, 34, 56], response):
+            self.assertAlmostEqual(expected, actual)
+        self.assertIn('FETCH:DC? ALL', self.fake_connection.get_outgoing_message())
+
+    def test_get_rms_field(self):
+        self.fake_connection.setup_response('123.456;No error')
+        response = self.dut.get_rms_field()
+        self.assertAlmostEqual(response, 123.456)
+        self.assertIn('FETCH:RMS?', self.fake_connection.get_outgoing_message())
+
+    def test_get_rms_field_xyz(self):
+        self.fake_connection.setup_response('12,34,56;No error')
+        response = self.dut.get_rms_field_xyz()
+        for expected, actual in zip([12, 34, 56], response):
+            self.assertAlmostEqual(expected, actual)
+        self.assertIn('FETCH:RMS? ALL', self.fake_connection.get_outgoing_message())
+
+    def test_get_frequency(self):
+        self.fake_connection.setup_response('123.456;No error')
+        response = self.dut.get_frequency()
+        self.assertAlmostEqual(response, 123.456)
+        self.assertIn('FETCH:FREQ?', self.fake_connection.get_outgoing_message())
+
+    def test_get_max_min(self):
+        self.fake_connection.setup_response('10;-10;No error')
+        response = self.dut.get_max_min()
+        for expected, actual in zip([10, -10], response):
+            self.assertAlmostEqual(expected, actual)
+        self.assertIn('FETCH:MAX?;:FETCH:MIN?', self.fake_connection.get_outgoing_message())
+
+    def test_reset_max_min(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.reset_max_min()
+        self.assertIn('SENS:MRESET', self.fake_connection.get_outgoing_message())
+
+    def test_get_relative_field(self):
+        self.fake_connection.setup_response('123.456;No error')
+        response = self.dut.get_relative_field()
+        self.assertAlmostEqual(response, 123.456)
+        self.assertIn('FETCH:RELATIVE?', self.fake_connection.get_outgoing_message())
+
+    def test_tare_relative_field(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.tare_relative_field()
+        self.assertIn('SENS:RELATIVE:TARE', self.fake_connection.get_outgoing_message())
+
+    def test_get_relative_field_baseline(self):
+        self.fake_connection.setup_response('123.456;No error')
+        response = self.dut.get_relative_field_baseline()
+        self.assertAlmostEqual(response, 123.456)
+        self.assertIn('SENS:RELATIVE:BASELINE?', self.fake_connection.get_outgoing_message())
+
+    def test_set_relative_field_baseline(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_relative_field_baseline(123.456)
+        self.assertIn('SENS:RELATIVE:BASELINE 123.456', self.fake_connection.get_outgoing_message())
+
+
+class TestTemperatureCompensation(TestWithFakeDUT):
+    def test_get_temperature(self):
+        self.fake_connection.setup_response('23.5;No error')
+        response = self.dut.get_temperature()
+        self.assertAlmostEqual(response, 23.5)
+        self.assertIn('FETCH:TEMP?', self.fake_connection.get_outgoing_message())
+
+    def test_configure_temperature_compensation_defaults(self):
+        self.fake_connection.setup_response('No error')
+
+        self.dut.configure_temperature_compensation()
+
+        self.assertIn('SENS:TCOM:TSOURCE PROBE', self.fake_connection.get_outgoing_message())
+
+    def test_configure_temperature_compensation(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+
+        self.dut.configure_temperature_compensation(temperature_source='MTEMP', manual_temperature=77.1)
+
+        self.assertIn('SENS:TCOM:TSOURCE MTEMP', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENS:TCOM:MTEM 77.1', self.fake_connection.get_outgoing_message())
+
+    def test_get_temperature_compensation_source(self):
+        self.fake_connection.setup_response('MTEMP;No error')
+        response = self.dut.get_temperature_compensation_source()
+        self.assertEqual(response, 'MTEMP')
+        self.assertIn('SENS:TCOM:TSOURCE?', self.fake_connection.get_outgoing_message())
+
+    def test_get_temperature_compensation_manual_temp(self):
+        self.fake_connection.setup_response('77.1;No error')
+        response = self.dut.get_temperature_compensation_manual_temp()
+        self.assertAlmostEqual(response, 77.1)
+        self.assertIn('SENS:TCOM:MTEM?', self.fake_connection.get_outgoing_message())
+
+
+class TestProbeInformation(TestWithFakeDUT):
+    def test_get_probe_information(self):
+        probe_data = {'model_number': '7547',
+                      'serial_number': '1234567',
+                      'probe_type': 'FLINT',
+                      'sensor_type': 'FLINT',
+                      'sensor_orientation': 'VERTICAL',
+                      'number_of_axes': '3',
+                      'calibration_date': '2/1/2019'}
+
+        self.fake_connection.setup_response(probe_data['model_number'] + ';No error')
+        self.fake_connection.setup_response(probe_data['serial_number'] + ';No error')
+        self.fake_connection.setup_response(probe_data['probe_type'] + ';No error')
+        self.fake_connection.setup_response(probe_data['sensor_type'] + ';No error')
+        self.fake_connection.setup_response(probe_data['sensor_orientation'] + ';No error')
+        self.fake_connection.setup_response(probe_data['number_of_axes'] + ';No error')
+        self.fake_connection.setup_response(probe_data['calibration_date'] + ';No error')
+
+        response = self.dut.get_probe_information()
+
+        self.assertDictEqual(probe_data, response)
+
+
+class TestFieldMeasurementConfiguration(TestWithFakeDUT):
+    def test_configure_field_measurement_defaults(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+
+        self.dut.configure_field_measurement_setup()
+
+        self.assertIn('SENS:MODE DC', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENS:RANGE:AUTO 1', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENS:AVERAGE:COUNT 20', self.fake_connection.get_outgoing_message())
+
+    def test_configure_field_measurement(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+
+        self.dut.configure_field_measurement_setup(mode='AC', autorange=False, expected_field=123.456, averaging_samples=100)
+
+        self.assertIn('SENS:MODE AC', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENS:RANGE:AUTO 0', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENS:RANGE 123.456', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENS:AVERAGE:COUNT 100', self.fake_connection.get_outgoing_message())
+
+    def test_get_field_measurement_setup(self):
+        setup = {'mode': 'DC',
+                 'autorange': False,
+                 'expected_field': 123.456,
+                 'averaging_samples': 100}
+
+        self.fake_connection.setup_response(setup['mode'] + ';No error')
+        self.fake_connection.setup_response(str(int(setup['autorange'])) + ';No error')
+        self.fake_connection.setup_response(str(setup['expected_field']) + ';No error')
+        self.fake_connection.setup_response(str(setup['averaging_samples']) + ';No error')
+
+        response = self.dut.get_field_measurement_setup()
+
+        self.assertDictEqual(response, setup)
+
+    def test_configure_field_units(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.configure_field_units('TESLA')
+        self.assertIn('UNIT:FIELD TESLA', self.fake_connection.get_outgoing_message())
+
+    def test_get_field_units(self):
+        self.fake_connection.setup_response('GAUSS;No error')
+        response = self.dut.get_field_units()
+        self.assertEqual(response, 'GAUSS')
+        self.assertIn('UNIT:FIELD?', self.fake_connection.get_outgoing_message())
+
+
+class TestFieldControl(TestWithFakeDUT):
+    def test_configure_field_control_limits(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+
+        self.dut.configure_field_control_limits(voltage_limit=7.3, slew_rate_limit=1.5)
+
+        self.assertIn('SOURCE:FIELD:VLIMIT 7.3', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURCE:FIELD:SLEW 1.5', self.fake_connection.get_outgoing_message())
+
+    def test_get_field_control_limits(self):
+        limits = {'voltage_limit': 5.3,
+                  'slew_rate_limit': 6.8}
+
+        self.fake_connection.setup_response(str(limits['voltage_limit']) + ';No error')
+        self.fake_connection.setup_response(str(limits['slew_rate_limit']) + ';No error')
+
+        response = self.dut.get_field_control_limits()
+
+        self.assertDictEqual(response, limits)
+
+    def test_configure_field_control_output_mode_defaults(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+
+        self.dut.configure_field_control_output_mode()
+
+        self.assertIn('SOURCE:FIELD:MODE CLLOOP', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURCE:FIELD:STATE 1', self.fake_connection.get_outgoing_message())
+
+    def test_configure_field_control_output_mode(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+
+        self.dut.configure_field_control_output_mode(mode='OPLOOP', output_enabled=False)
+
+        self.assertIn('SOURCE:FIELD:MODE OPLOOP', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURCE:FIELD:STATE 0', self.fake_connection.get_outgoing_message())
+
+    def test_get_field_control_output_mode(self):
+        output_state = {'mode': 'OPLOOP',
+                        'output_enabled': False}
+
+        self.fake_connection.setup_response(output_state['mode'] + ';No error')
+        self.fake_connection.setup_response(str(int(output_state['output_enabled'])) + ';No error')
+
+        response = self.dut.get_field_control_output_mode()
+
+        self.assertDictEqual(response, output_state)
+
+    def test_configure_field_control_pid(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+
+        self.dut.configure_field_control_pid(gain=1.5, integral=5.3, ramp_rate=1234.56)
+
+        self.assertIn('SOURCE:FIELD:CLL:GAIN 1.5', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURCE:FIELD:CLL:INTEGRAL 5.3', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURCE:FIELD:CLL:RAMP 1234.56', self.fake_connection.get_outgoing_message())
+
+    def test_get_field_control_pid(self):
+        pid = {'gain': 1.2,
+               'integral': 0.51,
+               'ramp_rate': 123.456}
+
+        self.fake_connection.setup_response(str(pid['gain']) + ';No error')
+        self.fake_connection.setup_response(str(pid['integral']) + ';No error')
+        self.fake_connection.setup_response(str(pid['ramp_rate']) + ';No error')
+
+        response = self.dut.get_field_control_pid()
+
+        self.assertDictEqual(response, pid)
+
+    def test_set_field_control_setpoint(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_field_control_setpoint(5000.7)
+        self.assertIn('SOURCE:FIELD:CLL:SETPOINT 5000.7', self.fake_connection.get_outgoing_message())
+
+    def test_get_field_control_setpoint(self):
+        self.fake_connection.setup_response('12.3456;No error')
+        response = self.dut.get_field_control_setpoint()
+        self.assertAlmostEqual(response, 12.3456)
+        self.assertIn('SOURCE:FIELD:CLL:SETPOINT?', self.fake_connection.get_outgoing_message())
+
+    def test_set_field_control_open_loop_voltage(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_field_control_open_loop_voltage(1.23)
+        self.assertIn('SOURCE:FIELD:OPL:VOLTAGE 1.23', self.fake_connection.get_outgoing_message())
+
+    def test_get_field_control_open_loop_voltage(self):
+        self.fake_connection.setup_response('-6.8;No error')
+        response = self.dut.get_field_control_open_loop_voltage()
+        self.assertAlmostEqual(response, -6.8)
+        self.assertIn('SOURCE:FIELD:OPL:VOLTAGE?', self.fake_connection.get_outgoing_message())
+
+
+class TestAnalogOut(TestWithFakeDUT):
+    def test_set_analog_output(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_analog_output('Y')
+        self.assertIn('SOURCE:AOUT Y', self.fake_connection.get_outgoing_message())
+
+    def test_get_analog_output(self):
+        self.fake_connection.setup_response('Z;No error')
+        response = self.dut.get_analog_output()
+        self.assertEqual(response, 'Z')
+        self.assertIn('SOURCE:AOUT?', self.fake_connection.get_outgoing_message())
+
+
+class TestResets(TestWithFakeDUT):
+    def test_reset_measurement_settings(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.reset_measurement_settings()
+        self.assertIn('SYSTEM:PRESET', self.fake_connection.get_outgoing_message())
+
+    def test_factory_reset(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.factory_reset()
+        self.assertIn('SYSTEM:FACTORYRESET', self.fake_connection.get_outgoing_message())
+
+
 class TestStatusRegisters(TestWithRealDUT):
     def test_modification_of_operation_register(self):
         self.dut.modify_operation_register_mask('ranging', False)
@@ -41,57 +342,3 @@ class TestStatusRegisters(TestWithRealDUT):
         response = self.dut.get_operation_event_enable_mask()
 
         self.assertEqual(response.ranging, False)
-
-
-class TestBasics(TestWithRealDUT):
-    def setUp(self):
-        self.dut.configure_field_measurement_setup(mode="AC")
-        sleep(1)
-
-    def test_methods_provide_responses(self):
-        # Methods that expect responses (method, args, kwargs)
-        dut_methods = [(self.dut.get_dc_field, [], {}),
-                       (self.dut.get_dc_field_xyz, [], {}),
-                       (self.dut.get_rms_field, [], {}),
-                       (self.dut.get_rms_field_xyz, [], {}),
-                       (self.dut.get_frequency, [], {}),
-                       (self.dut.get_max_min, [], {}),
-                       (self.dut.get_temperature, [], {}),
-                       (self.dut.get_probe_information, [], {}),
-                       (self.dut.get_relative_field, [], {}),
-                       (self.dut.get_relative_field_baseline, [], {}),
-                       (self.dut.get_field_measurement_setup, [], {}),
-                       (self.dut.get_temperature_compensation_source, [], {}),
-                       (self.dut.get_temperature_compensation_manual_temp, [], {}),
-                       (self.dut.get_field_units, [], {}),
-                       (self.dut.get_field_control_limits, [], {}),
-                       (self.dut.get_field_control_output_mode, [], {}),
-                       (self.dut.get_field_control_pid, [], {}),
-                       (self.dut.get_field_control_setpoint, [], {}),
-                       (self.dut.get_field_control_open_loop_voltage, [], {}),
-                       (self.dut.get_analog_output, [], {})]
-
-        for method_to_call, args, kwargs in dut_methods:
-            # with self.subTest(method=method_to_call):
-            #TODO: Determine why subtests prevent teardown method's delete class from closing the serial port
-            response = method_to_call(*args, **kwargs)
-
-            self.assertIsNotNone(response)  # Ensure that no exception was raised, and a response was provided
-
-    def test_methods_do_not_raise_exceptions(self):
-        # Methods that don't expect responses (method, args, kwargs)
-        dut_methods = [(self.dut.tare_relative_field, [], {}),
-                       (self.dut.set_relative_field_baseline, [12.3], {}),
-                       (self.dut.configure_field_measurement_setup, [], {"mode": "AC"}),
-                       (self.dut.configure_temperature_compensation, [], {"manual_temperature": 23.45}),
-                       (self.dut.configure_field_units, [], {}),
-                       (self.dut.configure_field_control_limits, [], {}),
-                       (self.dut.configure_field_control_output_mode, [], {"mode": "OPLOOP", "output_enabled": False}),
-                       (self.dut.configure_field_control_pid, [], {"gain": 1, "integral": 0.1, "ramp_rate": 10}),
-                       (self.dut.set_field_control_setpoint, [1], {}),
-                       (self.dut.set_field_control_open_loop_voltage, [1], {}),
-                       (self.dut.set_analog_output, ["X"], {})]
-
-        for method_to_call, args, kwargs in dut_methods:
-            # with self.subTest(method=method_to_call):
-            method_to_call(*args, **kwargs)  # Just ensure that no exception was raised
