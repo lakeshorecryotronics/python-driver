@@ -1,5 +1,6 @@
 """This module implements a parent class that contains all functionality shared by Lake Shore XIP instruments."""
 
+import logging
 import re
 import select
 import socket
@@ -84,6 +85,7 @@ class XIPInstrument:
     """Parent class that implements functionality shared by all XIP instruments"""
 
     vid_pid = []
+    logger = logging.getLogger(__name__)
 
     def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address):
         # Initialize values common to all XIP instruments
@@ -94,6 +96,7 @@ class XIPInstrument:
         self.operation_register = None
         self.questionable_register = None
         self.dut_lock = Lock()
+        self.serial_number = None
 
         # Raise an error if serial and TCP parameters are passed. Otherwise connect to the instrument using one of them.
         if ip_address is not None:
@@ -154,6 +157,8 @@ class XIPInstrument:
                 else:
                     raise XIPInstrumentException("No connections configured")
 
+                self.logger.info('Sent SCPI command to %s: %s', self.serial_number, command_string)
+
     def query(self, *queries, **kwargs):
         """Send a SCPI query or multiple queries to the instrument and return the response(s)
 
@@ -187,6 +192,9 @@ class XIPInstrument:
                 response = self._tcp_query(query_string)
             else:
                 raise XIPInstrumentException("No connections configured")
+
+            self.logger.info('Sent SCPI query to %s: %s', self.serial_number, query_string)
+            self.logger.info('Received SCPI response from %s: %s', self.serial_number, response)
 
         if check_errors:
             # Split the responses to each query, remove the last response which is to the error buffer query,
