@@ -6,7 +6,7 @@ Advanced
 Thread Safety
 -------------
 
-All methods are thread safe. They can be called from multiple python threads.
+While an instrument can only be instantiated once, all methods on an instrument are thread safe. Multiple python treads with a reference to an instrument may simultaneously call the instrument methods.
 
 Logging
 -------
