@@ -87,7 +87,7 @@ class XIPInstrument:
     vid_pid = []
     logger = logging.getLogger(__name__)
 
-    def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address):
+    def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port):
         # Initialize values common to all XIP instruments
         self.device_serial = None
         self.device_tcp = None
@@ -103,7 +103,7 @@ class XIPInstrument:
             if com_port is not None:
                 raise ValueError("Two different connection methods provided.")
             else:
-                self.connect_tcp(ip_address, timeout)
+                self.connect_tcp(ip_address, tcp_port, timeout)
         else:
             self.connect_usb(serial_number, com_port, baud_rate, timeout, flow_control)
 
@@ -214,12 +214,12 @@ class XIPInstrument:
         if "No error" not in error_response:
             raise XIPInstrumentException("SCPI command error(s): " + error_response)
 
-    def connect_tcp(self, ip_address, timeout):
+    def connect_tcp(self, ip_address, tcp_port, timeout):
         """Establishes a TCP connection with the instrument on the specified IP address"""
 
         self.device_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.device_tcp.settimeout(timeout)
-        self.device_tcp.connect((ip_address, 8888))
+        self.device_tcp.connect((ip_address, tcp_port))
 
         # Send the instrument a line break, wait 100ms, and clear the input buffer so that
         # any leftover communications from a prior session don't gum up the works.
