@@ -5,7 +5,7 @@ from lakeshore import Teslameter, XIPInstrumentException
 
 
 def setUpModule():
-    dut = Teslameter(flow_control=False)
+    dut = Teslameter()
     dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard any errors in the queue before the run starts
     del dut
 
@@ -13,7 +13,7 @@ def setUpModule():
 class TestWithDUT(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.dut = Teslameter(flow_control=False)  # TODO: Get a dut with flow control for the HIL rig then remove this.
+        cls.dut = Teslameter()  # TODO: Get a dut with flow control for the HIL rig then remove this.
 
     @classmethod
     def tearDownClass(cls):
@@ -22,19 +22,19 @@ class TestWithDUT(unittest.TestCase):
 
 class TestDiscovery(unittest.TestCase):
     def test_normal_connection(self):
-        Teslameter(flow_control=False)  # No checks needed, just make sure no exceptions are thrown
+        Teslameter()  # No checks needed, just make sure no exceptions are thrown
 
     def test_specified_serial_does_not_exist(self):
         with self.assertRaisesRegexp(XIPInstrumentException,
                                      "No serial connections found with a matching COM port " +
                                      "and/or matching serial number"):
-            Teslameter(serial_number='Fake', flow_control=False)
+            Teslameter(serial_number='Fake', )
 
     def test_specified_com_port_does_not_exist(self):
         with self.assertRaisesRegexp(XIPInstrumentException,
                                      "No serial connections found with a matching COM port " +
                                      "and/or matching serial number"):
-            Teslameter(com_port='COM99', flow_control=False)
+            Teslameter(com_port='COM99', )
 
     def test_tcp_connection(self):
         Teslameter(ip_address='192.168.0.12')  # No checks needed, just make sure no exceptions are thrown
