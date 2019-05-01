@@ -13,7 +13,7 @@ def setUpModule():
 class TestWithDUT(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.dut = Teslameter()  # TODO: Get a dut with flow control for the HIL rig then remove this.
+        cls.dut = Teslameter()
 
     @classmethod
     def tearDownClass(cls):
