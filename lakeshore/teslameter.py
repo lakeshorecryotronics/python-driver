@@ -481,15 +481,20 @@ class Teslameter(XIPInstrument):
         """Returns the field control open loop voltage."""
         return float(self.query("SOURCE:FIELD:OPL:VOLTAGE?"))
 
+    @requires_firmware_version("1.4.2019061411")
     def set_analog_output(self, analog_output_mode):
         """Configures what signal is provided by the analog output BNC.
 
             Args:
                 analog_output_mode (str):
                     * Configures what signal is provided by the analog output BNC. Options are:
-                    * "X" (raw amplified X channel Hall voltage)
-                    * "Y" (raw amplified Y channel Hall voltage)
-                    * "Z" (raw amplified Z channel Hall voltage)
+                    * "XRAW" (raw amplified X channel Hall voltage)
+                    * "YRAW" (raw amplified Y channel Hall voltage)
+                    * "ZRAW" (raw amplified Z channel Hall voltage)
+                    * "XCOR" (Corrrected X channel field measurement)
+                    * "YCOR" (Corrected Y channel field measurement)
+                    * "ZCOR" (Corrected Z channel field measurement)
+                    * "MCOR" (Corrected magnitude field measurement)
 
         """
         self.command("SOURCE:AOUT " + analog_output_mode)
