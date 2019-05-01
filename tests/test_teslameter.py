@@ -72,10 +72,11 @@ class TestBasics(TestWithDUT):
                        (self.dut.get_analog_output, [], {})]
 
         for method_to_call, args, kwargs in dut_methods:
-            with self.subTest(method=method_to_call):
-                response = method_to_call(*args, **kwargs)
+            # with self.subTest(method=method_to_call):
+            #TODO: Determine why subtests prevent teardown method's delete class from closing the serial port
+            response = method_to_call(*args, **kwargs)
 
-                self.assertIsNotNone(response)  # Ensure that no exception was raised, and a response was provided
+            self.assertIsNotNone(response)  # Ensure that no exception was raised, and a response was provided
 
     def test_methods_do_not_raise_exceptions(self):
         # Methods that don't expect responses (method, args, kwargs)
@@ -92,5 +93,5 @@ class TestBasics(TestWithDUT):
                        (self.dut.set_analog_output, ["X"], {})]
 
         for method_to_call, args, kwargs in dut_methods:
-            with self.subTest(method=method_to_call):
-                method_to_call(*args, **kwargs)  # Just ensure that no exception was raised
+            # with self.subTest(method=method_to_call):
+            method_to_call(*args, **kwargs)  # Just ensure that no exception was raised

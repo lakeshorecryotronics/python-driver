@@ -336,7 +336,7 @@ class Teslameter(XIPInstrument):
                 temperature_source (str):
                     * Determines where the temperature measurement is drawn from. Options are:
                     * "PROBE" (Compensation is based on measurement of a thermistor in the probe)
-                    * "MTEMP" (Compensation is based on a manual temperature value provided by the user)
+                    * "MTEM" (Compensation is based on a manual temperature value provided by the user)
                     * "NONE" (Temperature compensation is not applied)
 
                 manual_temperature (float):
