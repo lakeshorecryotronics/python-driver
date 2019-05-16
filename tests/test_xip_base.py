@@ -37,7 +37,8 @@ class TestDiscovery(unittest.TestCase):
             Teslameter(com_port='COM99', )
 
     def test_tcp_connection(self):
-        Teslameter(ip_address='192.168.0.12')  # No checks needed, just make sure no exceptions are thrown
+        # No checks needed, just make sure no exceptions are thrown
+        Teslameter(ip_address='192.168.0.12', tcp_port=7777)
 
 
 class TestConnectivity(TestWithDUT):
