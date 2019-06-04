@@ -82,12 +82,12 @@ class FastHallQuestionableRegister(RegisterBase):
 class FastHall(XIPInstrument):
     """A class object representing a Lake Shore M91 Fast Hall controller"""
 
-    vid_pid = [(0x1FB9, 0x0704)]
+    vid_pid = [(0x1FB9, 0x0705)]
 
     def __init__(self,
                  serial_number=None,
                  com_port=None,
-                 baud_rate=115200,
+                 baud_rate=921600,
                  flow_control=True,
                  timeout=2.0,
                  ip_address=None,
