@@ -100,3 +100,32 @@ class FastHall(XIPInstrument):
         self.standard_event_register = StandardEventRegister
         self.operation_register = FastHallOperationRegister
         self.questionable_register = FastHallQuestionableRegister
+
+    # Reset Methods
+    def reset_contact_check_measurement(self):
+        """Resets the measurement to a not run state, canceling any running measurement"""
+        self.command("CCHECK:RESET")
+
+    def reset_fasthall_measurement(self):
+        """Resets the measurement to a not run state, canceling any running measurement"""
+        self.command("FASTHALL:RESET")
+
+    def reset_four_wire_measurement(self):
+        """Resets the measurement to a not run state, canceling any running measurement"""
+        self.command("FWIRE:RESET")
+
+    def reset_dc_hall_measurement(self):
+        """Resets the measurement to a not run state, canceling any running measurement"""
+        self.command("HALL:DC:RESET")
+
+    def reset_resistivity_measurement(self):
+        """Resets the measurement to a not run state, canceling any running measurement"""
+        self.command("RESISTIVITY:RESET")
+
+    def reset_measurement_settings(self):
+        """Resets all measurement settings to their default"""
+        self.command("SYSTEM:PRESET")
+
+    def factory_reset(self):
+        """Resets all system information such as settings, wi-fi connections, date and time, etc"""
+        self.command("SYSTEM:FACTORYRESET")
