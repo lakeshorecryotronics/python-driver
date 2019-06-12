@@ -101,6 +101,35 @@ class FastHall(XIPInstrument):
         self.operation_register = FastHallOperationRegister
         self.questionable_register = FastHallQuestionableRegister
 
+    #Status Methods
+    def get_contact_check_running_status(self):
+        """Indicates if the contact check measurement is running."""
+        return bool(self.query("CCHECK:RUNNING?"))
+
+    def get_fasthall_running_status(self):
+        """Indicates if the FastHall measurement is running"""
+        return bool(self.query("FASTHALL:RUNNING?"))
+
+    def get_four_wire_running_status(self):
+        """Indicates if the four wire measurement is running"""
+        return bool(self.query("FWIRE:RUNNING?"))
+
+    def get_resistivity_running_status(self):
+        """Indicates if the resistivity measurement is running"""
+        return bool(self.query("RESISTIVITY:RUNNING?"))
+
+    def get_dc_hall_running_status(self):
+        """Indicates if the DC Hall measurement is running"""
+        return bool(self.query("HALL:DC:RUNNING?"))
+
+    def get_dc_hall_waiting_status(self):
+        """Indicates if the DC hall measurement is running."""
+        return bool(self.query("HALL:DC:WAITING?"))
+
+    def continue_dc_hall(self):
+        """Continues the DC hall measurement if it's in a waiting state """
+        self.command("HALL:DC:CONTINUE")
+
     # Reset Methods
     def reset_contact_check_measurement(self):
         """Resets the measurement to a not run state, canceling any running measurement"""
@@ -129,3 +158,4 @@ class FastHall(XIPInstrument):
     def factory_reset(self):
         """Resets all system information such as settings, wi-fi connections, date and time, etc"""
         self.command("SYSTEM:FACTORYRESET")
+
