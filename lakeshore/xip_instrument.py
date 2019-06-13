@@ -567,3 +567,11 @@ class XIPInstrument:
         setattr(mask_register, bit_name, value)
 
         self.set_questionable_event_enable_mask(mask_register)
+
+    def reset_measurement_settings(self):
+        """Resets measurement settings to their default values."""
+        self.command("SYSTEM:PRESET")
+
+    def factory_reset(self):
+        """Resets all system information such as settings, wi-fi connections, date and time, etc."""
+        self.command("SYSTEM:FACTORYRESET")
