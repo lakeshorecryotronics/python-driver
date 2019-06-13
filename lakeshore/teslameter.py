@@ -85,12 +85,18 @@ class Teslameter(XIPInstrument):
 
     vid_pid = [(0x1FB9, 0x0405), (0x1FB9, 0x0406)]
 
-    def __init__(self, serial_number=None,
-                 com_port=None, baud_rate=115200, flow_control=True,
+    def __init__(self,
+                 serial_number=None,
+                 com_port=None,
+                 baud_rate=115200,
+                 flow_control=True,
                  timeout=2.0,
-                 ip_address=None, tcp_port=7777):
+                 ip_address=None,
+                 tcp_port=7777,
+                 **kwargs):
+
         # Call the parent init, then fill in values specific to the Teslameter
-        XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port)
+        XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port, **kwargs)
         self.status_byte_register = StatusByteRegister
         self.standard_event_register = StandardEventRegister
         self.operation_register = TeslameterOperationRegister
@@ -274,7 +280,7 @@ class Teslameter(XIPInstrument):
 
     def get_relative_field(self):
         """Returns the relative field value."""
-        return float(self.query("FETC:RELATIVE?"))
+        return float(self.query("FETCH:RELATIVE?"))
 
     def tare_relative_field(self):
         """Copies the current field reading to the relative baseline value."""
@@ -323,8 +329,8 @@ class Teslameter(XIPInstrument):
     def get_field_measurement_setup(self):
         """Returns the mode, autoranging state, range, and number of averaging samples as a dictionary."""
         measurement_setup = {"mode": self.query("SENS:MODE?"),
-                             "autorange": self.query("SENS:RANGE:AUTO?"),
-                             "range": self.query("SENS:RANGE?"),
+                             "autorange": bool(int(self.query("SENS:RANGE:AUTO?"))),
+                             "expected_field": float(self.query("SENS:RANGE?")),
                              "averaging_samples": int(self.query("SENS:AVERAGE:COUNT?"))}
 
         return measurement_setup
@@ -389,8 +395,8 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_limits(self):
         """Returns the field control output voltage limit and slew rate limit."""
-        limits = {"mode": float(self.query("SOURCE:FIELD:VLIMIT?")),
-                  "autorange": float(self.query("SOURCE:FIELD:SLEW?"))}
+        limits = {"voltage_limit": float(self.query("SOURCE:FIELD:VLIMIT?")),
+                  "slew_rate_limit": float(self.query("SOURCE:FIELD:SLEW?"))}
 
         return limits
 
@@ -415,8 +421,8 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_output_mode(self):
         """Returns the mode and state of the field control output."""
-        output_state = {"control_mode": self.query("SOURCE:FIELD:MODE?"),
-                        "output_enabled": bool(self.query("SOURCE:FIELD:STATE?"))}
+        output_state = {"mode": self.query("SOURCE:FIELD:MODE?"),
+                        "output_enabled": bool(int(self.query("SOURCE:FIELD:STATE?")))}
 
         return output_state
 
