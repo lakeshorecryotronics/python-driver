@@ -79,7 +79,7 @@ class PrecisionSource(XIPInstrument):
                  **kwargs):
 
         # Call the parent init, then fill in values specific to the 155
-        XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port,  **kwargs)
+        XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port, **kwargs)
         self.status_byte_register = StatusByteRegister
         self.standard_event_register = StandardEventRegister
         self.operation_register = PrecisionSourceOperationRegister
