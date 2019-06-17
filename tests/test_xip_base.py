@@ -2,7 +2,7 @@ import unittest2 as unittest  # Python 2 compatability
 
 # Teslameter is used for these general tests on the HIL rig at this time
 from lakeshore import Teslameter, XIPInstrumentException
-from tests.utils import TestWithRealDUT, TestWithFakeDUT
+from tests.utils import TestWithRealTeslameter, TestWithFakeTeslameter
 
 
 class TestDiscovery(unittest.TestCase):
@@ -31,7 +31,7 @@ class TestDiscovery(unittest.TestCase):
             self.fail('Exception raised unexpectedly.')
 
 
-class TestBasicComms(TestWithRealDUT):
+class TestBasicComms(TestWithRealTeslameter):
     def test_basic_query(self):
         # Primarily tested on fake, just a spot check on real DUT
         response = self.dut.query('*IDN?')
@@ -43,7 +43,7 @@ class TestBasicComms(TestWithRealDUT):
             self.dut.query('FAKEQUERY?', check_errors=False)
 
 
-class TestCommands(TestWithFakeDUT):
+class TestCommands(TestWithFakeTeslameter):
     def test_basic_command(self):
         self.fake_connection.setup_response('No error')
         self.dut.command('*RST')
@@ -55,7 +55,7 @@ class TestCommands(TestWithFakeDUT):
         self.assertEqual(self.fake_connection.get_outgoing_message(), '*RST;:*RST;:SYSTem:ERRor:ALL?')
 
 
-class TestQueries(TestWithFakeDUT):
+class TestQueries(TestWithFakeTeslameter):
     def test_basic_query(self):
         self.fake_connection.setup_response('LSCI,F41,#######,1.2.3;No error')
         response = self.dut.query('*IDN?')
@@ -69,7 +69,7 @@ class TestQueries(TestWithFakeDUT):
         self.assertEqual(self.fake_connection.get_outgoing_message(), '*IDN?;:UNIT?;:SYSTem:ERRor:ALL?')
 
 
-class TestErrorChecking(TestWithFakeDUT):
+class TestErrorChecking(TestWithFakeTeslameter):
     def test_error_is_raised_for_nonexistent_command(self):
         self.fake_connection.setup_response('-113,"Undefined header;FAKEQUERY?;"')
         with self.assertRaisesRegex(XIPInstrumentException, r'Undefined header;FAKEQUERY\?;'):

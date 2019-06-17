@@ -3,7 +3,7 @@ from collections import deque
 
 import unittest2 as unittest
 
-from lakeshore import Teslameter
+from lakeshore import Teslameter, FastHall
 
 fake_dut_comms_log = logging.getLogger('fake_dut_comms')
 
@@ -36,19 +36,40 @@ class FakeDutConnection:
         return lambda: None  # Ignore unimplemented methods
 
 
-class TestWithFakeDUT(unittest.TestCase):
+class TestWithFakeTeslameter(unittest.TestCase):
     def setUp(self):
         self.fake_connection = FakeDutConnection()
-        self.fake_connection.setup_response('LSCI,FakeModel,FakeSerial,999.999.999')  # Simulate maximum version so all methods are allowed
+        self.fake_connection.setup_response('LSCI,F71,FakeSerial,999.999.999')  # Simulate maximum version so all methods are allowed
         self.dut = Teslameter(connection=self.fake_connection)
         self.fake_connection.reset()  # Clear startup activity
 
 
-class TestWithRealDUT(unittest.TestCase):
+class TestWithRealTeslameter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Teslameter is used for these general tests on the HIL rig at this time
         cls.dut = Teslameter()
+
+    @classmethod
+    def tearDownClass(cls):
+        del cls.dut
+
+    def tearDown(self):
+        self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard any errors left in the queue
+
+
+class TestWithFakeFastHall(unittest.TestCase):
+    def setUp(self):
+        self.fake_connection = FakeDutConnection()
+        self.fake_connection.setup_response('LSCI,M91,FakeSerial,999.999.999')  # Simulate maximum version so all methods are allowed
+        self.dut = FastHall(connection=self.fake_connection)
+        self.fake_connection.reset()  # Clear startup activity
+
+
+class TestWithRealFastHall(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.dut = FastHall(flow_control=False)  # TODO: Get a dut with flow control for the HIL rig then remove this.
 
     @classmethod
     def tearDownClass(cls):
