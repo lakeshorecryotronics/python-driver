@@ -48,7 +48,7 @@ class TestWithRealDUT(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Teslameter is used for these general tests on the HIL rig at this time
-        cls.dut = Teslameter(flow_control=False)  # TODO: Get a dut with flow control for the HIL rig then remove this.
+        cls.dut = Teslameter()
 
     @classmethod
     def tearDownClass(cls):
