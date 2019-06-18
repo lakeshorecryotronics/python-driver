@@ -104,27 +104,27 @@ class FastHall(XIPInstrument):
     #Status Methods
     def get_contact_check_running_status(self):
         """Indicates if the contact check measurement is running."""
-        return bool(self.query("CCHECK:RUNNING?"))
+        return bool(int(self.query("CCHECK:RUNNING?")))
 
     def get_fasthall_running_status(self):
         """Indicates if the FastHall measurement is running"""
-        return bool(self.query("FASTHALL:RUNNING?"))
+        return bool(int(self.query("FASTHALL:RUNNING?")))
 
     def get_four_wire_running_status(self):
         """Indicates if the four wire measurement is running"""
-        return bool(self.query("FWIRE:RUNNING?"))
+        return bool(int(self.query("FWIRE:RUNNING?")))
 
     def get_resistivity_running_status(self):
         """Indicates if the resistivity measurement is running"""
-        return bool(self.query("RESISTIVITY:RUNNING?"))
+        return bool(int(self.query("RESISTIVITY:RUNNING?")))
 
     def get_dc_hall_running_status(self):
         """Indicates if the DC Hall measurement is running"""
-        return bool(self.query("HALL:DC:RUNNING?"))
+        return bool(int(self.query("HALL:DC:RUNNING?")))
 
     def get_dc_hall_waiting_status(self):
         """Indicates if the DC hall measurement is running."""
-        return bool(self.query("HALL:DC:WAITING?"))
+        return bool(int(self.query("HALL:DC:WAITING?")))
 
     def continue_dc_hall(self):
         """Continues the DC hall measurement if it's in a waiting state """

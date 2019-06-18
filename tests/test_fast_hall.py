@@ -46,9 +46,9 @@ class TestRunningStatusFake(TestWithFakeFastHall):
         self.assertIn('CCHECK:RUNNING?', self.fake_connection.get_outgoing_message())
 
     def test_fasthall_running(self):
-        self.fake_connection.setup_response('1;No error')
+        self.fake_connection.setup_response('0;No error')
         response = self.dut.get_fasthall_running_status()
-        self.assertAlmostEqual(response, 1)
+        self.assertAlmostEqual(response, 0)
         self.assertIn('FASTHALL:RUNNING?', self.fake_connection.get_outgoing_message())
 
     def test_four_wire_running(self):
@@ -58,9 +58,9 @@ class TestRunningStatusFake(TestWithFakeFastHall):
         self.assertIn('FWIRE:RUNNING?', self.fake_connection.get_outgoing_message())
 
     def test_dc_hall_running(self):
-        self.fake_connection.setup_response('1;No error')
+        self.fake_connection.setup_response('0;No error')
         response = self.dut.get_dc_hall_running_status()
-        self.assertAlmostEqual(response, 1)
+        self.assertAlmostEqual(response, 0)
         self.assertIn('HALL:DC:RUNNING?', self.fake_connection.get_outgoing_message())
 
     def test_resistivity_running(self):
