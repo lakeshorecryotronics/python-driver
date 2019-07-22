@@ -313,13 +313,13 @@ class TestFieldControl(TestWithFakeDUT):
 class TestAnalogOut(TestWithFakeDUT):
     def test_set_analog_output(self):
         self.fake_connection.setup_response('No error')
-        self.dut.set_analog_output('Y')
-        self.assertIn('SOURCE:AOUT Y', self.fake_connection.get_outgoing_message())
+        self.dut.set_analog_output('YRAW')
+        self.assertIn('SOURCE:AOUT YRAW', self.fake_connection.get_outgoing_message())
 
     def test_get_analog_output(self):
-        self.fake_connection.setup_response('Z;No error')
+        self.fake_connection.setup_response('ZRAW;No error')
         response = self.dut.get_analog_output()
-        self.assertEqual(response, 'Z')
+        self.assertEqual(response, 'ZRAW')
         self.assertIn('SOURCE:AOUT?', self.fake_connection.get_outgoing_message())
 
 
