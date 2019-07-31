@@ -3,26 +3,6 @@
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 
-def _generate_scpi_run_string(start_string, arguments):
-    """Constructs a string of parameters in a specific order and format to run a given FastHall measurement
-        Args:
-            start_string(str):
-                the beginning of the SCPI command string that is unique to and called by specific run methods
-            arguments(list):
-                a list of the parameter values that will comprise the end of the SCPI command string
-    """
-    argument_string = ""
-    for count in arguments:
-        if str(count) != 'None':
-            if isinstance(count, bool):
-                count = str(int(count))
-            if argument_string == "":
-                argument_string = str(count)
-            else:
-                argument_string += "," + str(count)
-    return start_string + argument_string
-
-
 # TODO: update register enums once they are finalized
 class FastHallOperationRegister(RegisterBase):
     """Class object representing the operation status register"""
@@ -648,9 +628,12 @@ class FastHall(XIPInstrument):
             Args:
                 settings(ContactCheckOptimizedParameters):
         """
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("CCHECK:START ", parameter_list)
-        self.command(scpi_parameter_string)
+        command_string = "CCHECK:START " + \
+                         str(settings.max_current) + "," + \
+                         str(settings.max_voltage) + "," + \
+                         str(settings.number_of_points) + "," + \
+                         str(settings.min_r_squared)
+        self.command(command_string)
 
     def run_contact_check_vdp_measurement_manual(self, settings):
         """Performs a contact check measurement on contact pairs 1-2, 2-3, 3-4, and 4-1.
@@ -658,9 +641,17 @@ class FastHall(XIPInstrument):
             Args:
                 settings(ContactCheckManualParameters):
                 """
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("CCHECK:START:MANUAL ", parameter_list)
-        self.command(scpi_parameter_string)
+        command_string = "CCHECK:START:MANUAL " + \
+                         str(settings.excitation_type) + "," + \
+                         str(settings.excitation_start_value) + "," + \
+                         str(settings.excitation_end_value) + "," + \
+                         str(settings.excitation_range) + "," + \
+                         str(settings.measurement_range) + "," + \
+                         str(settings.compliance_limit) + "," + \
+                         str(settings.number_of_points) + "," + \
+                         str(settings.min_r_squared) + "," + \
+                         str(settings.blanking_time)
+        self.command(command_string)
 
     def run_contact_check_hbar_measurement(self, settings):
         """Performs a contact check measurement on contact pairs 5-6, 5-1, 5-2, 5-3, 5-4, and 6-1
@@ -668,9 +659,17 @@ class FastHall(XIPInstrument):
             Args:
                 settings(ContactCheckManualParameters):
                 """
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("CCHECK:HBAR:START ", parameter_list)
-        self.command(scpi_parameter_string)
+        command_string = "CCHECK:HBAR:START " + \
+                         str(settings.excitation_type) + "," + \
+                         str(settings.excitation_start_value) + "," + \
+                         str(settings.excitation_end_value) + "," + \
+                         str(settings.excitation_range) + "," + \
+                         str(settings.measurement_range) + "," + \
+                         str(settings.compliance_limit) + "," + \
+                         str(settings.number_of_points) + "," + \
+                         str(settings.min_r_squared) + "," + \
+                         str(settings.blanking_time)
+        self.command(command_string)
 
     def run_fasthall_vdp_measurement(self, settings):
         """Performs a FastHall measurement.
@@ -678,9 +677,21 @@ class FastHall(XIPInstrument):
             Args:
                 settings (FastHallManualParameters):
             """
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("FASTHALL:START ", parameter_list)
-        self.command(scpi_parameter_string)
+        command_string = "FASTHALL:START " + \
+                         str(settings.excitation_type) + "," + \
+                         str(settings.excitation_value) + "," + \
+                         str(settings.excitation_range) + "," + \
+                         str(settings.excitation_measurement_range) + "," + \
+                         str(settings.measurement_range) + "," + \
+                         str(settings.compliance_limit) + "," + \
+                         str(settings.user_defined_field) + "," + \
+                         str(settings.max_samples) + "," + \
+                         str(settings.resistivity) + "," + \
+                         str(settings.blanking_time) + "," + \
+                         str(settings.averaging_samples) + "," + \
+                         str(settings.sample_thickness) + "," + \
+                         str(settings.min_hall_voltage_snr)
+        self.command(command_string)
 
     def run_fasthall_vdp_measurement_optimized(self, settings):
         """Performs a FastHall (measurement that uses the last run contact check measurement's excitation type,
@@ -690,9 +701,14 @@ class FastHall(XIPInstrument):
             Args:
                 settings (FastHallOptimizedParameters)
         """
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("FASTHALL:START:LINK ", parameter_list)
-        self.command(scpi_parameter_string)
+        command_string = "FASTHALL:START:LINK " + \
+                         str(settings.user_defined_field) + "," + \
+                         str(settings.measurement_range) + "," + \
+                         str(settings.max_samples) + "," + \
+                         str(settings.min_hall_voltage_snr) + "," + \
+                         str(settings.averaging_samples) + "," + \
+                         str(settings.sample_thickness)
+        self.command(command_string)
 
     # Four Wire Run Method
     def run_four_wire_measurement(self, settings):
@@ -702,9 +718,24 @@ class FastHall(XIPInstrument):
             Args:
                 settings(FourWireParameters)
         """
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("FWIRE:START ", parameter_list)
-        self.command(scpi_parameter_string)
+        if settings.excitation_reversal != 'DEF':
+            settings.excitation_reversal = int(settings.excitation_reversal)
+        command_string = "FWIRE:START " + \
+                         str(settings.contact_point1) + "," + \
+                         str(settings.contact_point2) + "," + \
+                         str(settings.contact_point3) + "," + \
+                         str(settings.contact_point4) + "," + \
+                         str(settings.excitation_type) + "," + \
+                         str(settings.excitation_value) + "," + \
+                         str(settings.excitation_range) + "," + \
+                         str(settings.excitation_measurement_range) + "," + \
+                         str(settings.measurement_range) + "," + \
+                         str(settings.compliance_limit) + "," + \
+                         str(settings.blanking_time) + "," + \
+                         str(settings.max_samples) + "," + \
+                         str(settings.min_snr) + "," + \
+                         str(settings.excitation_reversal)
+        self.command(command_string)
 
     # DC Hall Run Methods
     def run_dc_hall_vdp_measurement(self, settings):
@@ -715,10 +746,23 @@ class FastHall(XIPInstrument):
                 settings(DCHallParameters)
 
         """
+        if settings.with_field_reversal != 'DEF':
+            settings.with_field_reversal = int(settings.with_field_reversal)
 
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("HALL:DC:START ", parameter_list)
-        self.command(scpi_parameter_string)
+        command_string = "HALL:DC:START " + \
+                         str(settings.excitation_type) + "," + \
+                         str(settings.excitation_value) + "," + \
+                         str(settings.excitation_range) + "," + \
+                         str(settings.excitation_measurement_range) + "," + \
+                         str(settings.measurement_range) + "," + \
+                         str(settings.compliance_limit) + "," + \
+                         str(settings.averaging_samples) + "," + \
+                         str(settings.user_defined_field) + "," + \
+                         str(settings.with_field_reversal) + "," + \
+                         str(settings.resistivity) + "," + \
+                         str(settings.blanking_time) + "," + \
+                         str(settings.sample_thickness)
+        self.command(command_string)
 
     def run_dc_hall_hbar_measurement(self, settings):
         """Performs a DC hall measurement for a Hall Bar sample.
@@ -726,9 +770,24 @@ class FastHall(XIPInstrument):
             Args:
                 settings(DCHallParameters)
         """
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("HALL:HBAR:DC:START ", parameter_list)
-        self.command(scpi_parameter_string)
+        if settings.with_field_reversal != 'DEF':
+            settings.with_field_reversal = int(settings.with_field_reversal)
+
+        command_string = "HALL:HBAR:DC:START " + \
+                         str(settings.excitation_type) + "," + \
+                         str(settings.excitation_value) + "," + \
+                         str(settings.excitation_range) + "," + \
+                         str(settings.excitation_measurement_range) + "," + \
+                         str(settings.measurement_range) + "," + \
+                         str(settings.compliance_limit) + "," + \
+                         str(settings.averaging_samples) + "," + \
+                         str(settings.user_defined_field) + "," + \
+                         str(settings.with_field_reversal) + "," + \
+                         str(settings.resistivity) + "," + \
+                         str(settings.blanking_time) + "," + \
+                         str(settings.sample_thickness)
+        self.command(command_string)
+
 
     # Resistivity Measurement Methods
     def run_resistivity_vdp_measurement(self, settings):
@@ -737,9 +796,18 @@ class FastHall(XIPInstrument):
             Args:
                 settings(ResistivityManualParameters)
         """
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("RESISTIVITY:START ", parameter_list)
-        self.command(scpi_parameter_string)
+        command_string = "RESISTIVITY:START " + \
+                         str(settings.excitation_type) + "," + \
+                         str(settings.excitation_value) + "," + \
+                         str(settings.excitation_range) + "," + \
+                         str(settings.excitation_measurement_range) + "," + \
+                         str(settings.measurement_range) + "," + \
+                         str(settings.compliance_limit) + "," + \
+                         str(settings.max_samples) + "," + \
+                         str(settings.blanking_time) + "," + \
+                         str(settings.sample_thickness) + "," + \
+                         str(settings.min_snr)
+        self.command(command_string)
 
     def run_resistivity_vdp_measurement_optimized(self, settings):
         """Performs a resistivity measurement that uses the last run contact check measurement's excitation type,
@@ -749,9 +817,12 @@ class FastHall(XIPInstrument):
             Args:
                 settings(ResistivityOptimizedParameters)
         """
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("RESISTIVITY:START:LINK ", parameter_list)
-        self.command(scpi_parameter_string)
+        command_string = "RESISTIVITY:START:LINK " + \
+                         str(settings.measurement_range) + "," + \
+                         str(settings.sample_thickness) + "," + \
+                         str(settings.min_snr) + "," + \
+                         str(settings.max_samples)
+        self.command(command_string)
 
     def run_resistivity_hbar_measurement(self, settings):
         """Performs a resistivity measurement on a hall bar sample.
@@ -760,9 +831,20 @@ class FastHall(XIPInstrument):
                 settings(ResistivityManualParameters)
 
         """
-        parameter_list = list(settings.__dict__.values())
-        scpi_parameter_string = _generate_scpi_run_string("RESISTIVITY:HBAR:START ", parameter_list)
-        self.command(scpi_parameter_string)
+        command_string = "RESISTIVITY:HBAR:START " + \
+                         str(settings.excitation_type) + "," + \
+                         str(settings.excitation_value) + "," + \
+                         str(settings.excitation_range) + "," + \
+                         str(settings.excitation_measurement_range) + "," + \
+                         str(settings.measurement_range) + "," + \
+                         str(settings.compliance_limit) + "," + \
+                         str(settings.width) + "," + \
+                         str(settings.separation) + "," + \
+                         str(settings.max_samples) + "," + \
+                         str(settings.blanking_time) + "," + \
+                         str(settings.sample_thickness) + "," + \
+                         str(settings.min_snr)
+        self.command(command_string)
 
 # Result Methods
     def get_contact_check_setup_results(self):
