@@ -788,7 +788,6 @@ class FastHall(XIPInstrument):
                          str(settings.sample_thickness)
         self.command(command_string)
 
-
     # Resistivity Measurement Methods
     def run_resistivity_vdp_measurement(self, settings):
         """Performs a resistivity measurement on a Van der Pauw sample.
@@ -972,7 +971,10 @@ class FastHall(XIPInstrument):
                    'voltage_average': float(result_values[18]),
                    'voltage_standard_error': float(result_values[19]),
                    'current_average': float(result_values[20]),
-                   'current_standard_error': float(result_values[21])}
+                   'current_standard_error': float(result_values[21]),
+                   'in_compliance': bool(int(result_values[22])),
+                   'voltage_overload': bool(int(result_values[23])),
+                   'current_overload': bool(int(result_values[24]))}
         return results
 
     def get_dc_hall_setup_results(self):
@@ -1008,7 +1010,10 @@ class FastHall(XIPInstrument):
                    'carrier_concentration_standard_error': float(result_values[24]),
                    'standard_carrier_concentration_standard_error': float(result_values[25]),
                    'mobility_average': float(result_values[26]),
-                   'mobility_standard_error': float(result_values[27])
+                   'mobility_standard_error': float(result_values[27]),
+                   'in_compliance': bool(int(result_values[28])),
+                   'voltage_overload': bool(int(result_values[29])),
+                   'current_overload': bool(int(result_values[30]))
                    }
         return results
 
@@ -1045,7 +1050,10 @@ class FastHall(XIPInstrument):
             'geometry_B_sheet_resistivity_average': float(result_values[23]),
             'geometry_B_resistivity_standard_error': float(result_values[24]),
             'geometry_B_sheet_resistivity_standard_error': float(result_values[25]),
-            'geometry_B_F_value': float(result_values[26])
+            'geometry_B_F_value': float(result_values[26]),
+            'in_compliance': bool(int(result_values[27])),
+            'voltage_overload': bool(int(result_values[28])),
+            'current_overload': bool(int(result_values[29]))
         }
         return results
 
