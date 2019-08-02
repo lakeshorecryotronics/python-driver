@@ -1,6 +1,7 @@
 from tests.utils import TestWithFakeFastHall, TestWithRealFastHall
-from lakeshore.fast_hall import ContactCheckManualParameters, ContactCheckOptimizedParameters, FastHallManualParameters, \
-    FastHallOptimizedParameters, FourWireParameters, DCHallParameters, ResistivityManualParameters, ResistivityOptimizedParameters
+from lakeshore.fast_hall import ContactCheckManualParameters, ContactCheckOptimizedParameters, \
+    FastHallManualParameters, FastHallOptimizedParameters, FourWireParameters, DCHallParameters, \
+    ResistivityManualParameters, ResistivityOptimizedParameters
 
 class TestResets(TestWithFakeFastHall):
     def test_reset_measurement_settings(self):
@@ -89,7 +90,7 @@ class TestContactCheckRun(TestWithFakeFastHall):
     def test_contact_check_manual_default(self):
         self.fake_connection.setup_response('No error')
         parameters = ContactCheckManualParameters(excitation_type='VOLTAGE', excitation_start_value=-5,
-                                            excitation_end_value=5, compliance_limit=10e-3, number_of_points=25)
+                                                  excitation_end_value=5, compliance_limit=10e-3, number_of_points=25)
         self.dut.run_contact_check_vdp_measurement_manual(parameters)
         self.assertIn('CCHECK:START:MANUAL VOLTAGE,-5,5,AUTO,AUTO,0.01,25,DEF,DEF',
                       self.fake_connection.get_outgoing_message())
@@ -97,9 +98,9 @@ class TestContactCheckRun(TestWithFakeFastHall):
     def test_contact_check_manual_non_default(self):
         self.fake_connection.setup_response('No error')
         parameters = ContactCheckManualParameters(excitation_type='CURRENT', excitation_start_value=-10e-6,
-                                            excitation_end_value=10e-6, excitation_range=10e-6,
-                                            measurement_range=100e-3, compliance_limit=5, number_of_points=50,
-                                            min_r_squared=0.9799, blanking_time=3)
+                                                  excitation_end_value=10e-6, excitation_range=10e-6,
+                                                  measurement_range=100e-3, compliance_limit=5, number_of_points=50,
+                                                  min_r_squared=0.9799, blanking_time=3)
         self.dut.run_contact_check_vdp_measurement_manual(parameters)
         self.assertIn('CCHECK:START:MANUAL CURRENT,-1e-05,1e-05,1e-05,0.1,5,50,0.9799,3',
                       self.fake_connection.get_outgoing_message())
@@ -107,7 +108,7 @@ class TestContactCheckRun(TestWithFakeFastHall):
     def test_contact_check_hbar_default(self):
         self.fake_connection.setup_response('No error')
         parameters = ContactCheckManualParameters(excitation_type='VOLTAGE', excitation_start_value=-5,
-                                            excitation_end_value=5, compliance_limit=10e-3, number_of_points=50)
+                                                  excitation_end_value=5, compliance_limit=10e-3, number_of_points=50)
         self.dut.run_contact_check_hbar_measurement(parameters)
         self.assertIn('CCHECK:HBAR:START VOLTAGE,-5,5,AUTO,AUTO,0.01,50,DEF,DEF',
                       self.fake_connection.get_outgoing_message())
@@ -115,10 +116,10 @@ class TestContactCheckRun(TestWithFakeFastHall):
     def test_contact_check_hbar_non_default(self):
         self.fake_connection.setup_response('No error')
         parameters = ContactCheckManualParameters(excitation_type='CURRENT', excitation_start_value=-10e-6,
-                                            excitation_end_value=10e-6, excitation_range=10e-6,
-                                            measurement_range=100e-3,
-                                            compliance_limit=1.5, number_of_points=20, min_r_squared=0.9899,
-                                            blanking_time='MIN')
+                                                  excitation_end_value=10e-6, excitation_range=10e-6,
+                                                  measurement_range=100e-3,
+                                                  compliance_limit=1.5, number_of_points=20, min_r_squared=0.9899,
+                                                  blanking_time='MIN')
         self.dut.run_contact_check_hbar_measurement(parameters)
         self.assertIn('CCHECK:HBAR:START CURRENT,-1e-05,1e-05,1e-05,0.1,1.5,20,0.9899,MIN',
                       self.fake_connection.get_outgoing_message())
@@ -128,16 +129,17 @@ class TestFastHallRun(TestWithFakeFastHall):
     def test_run_fasthall_vdp_default_parameters(self):
         self.fake_connection.setup_response('No error')
         parameters = FastHallManualParameters(excitation_type='VOLTAGE', excitation_value=1, compliance_limit=10e-6,
-                                  user_defined_field=0.5)
+                                              user_defined_field=0.5)
         self.dut.run_fasthall_vdp_measurement(parameters)
         self.assertIn('FASTHALL:START VOLTAGE,1,AUTO,AUTO,AUTO,1e-05,0.5,DEF,DEF,DEF,DEF,DEF,DEF',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_fasthall_vdp_mixed_parameters(self):
         self.fake_connection.setup_response('No error')
-        parameters = FastHallManualParameters(excitation_type='CURRENT', excitation_value=10e-3, excitation_range='AUTO',
-                                  excitation_measurement_range='AUTO', measurement_range='AUTO', compliance_limit=1.5,
-                                  user_defined_field=0.5, max_samples=200, blanking_time='MAX')
+        parameters = FastHallManualParameters(excitation_type='CURRENT', excitation_value=10e-3, excitation_range='AUTO'
+                                              , excitation_measurement_range='AUTO', measurement_range='AUTO',
+                                              compliance_limit=1.5, user_defined_field=0.5, max_samples=200,
+                                              blanking_time='MAX')
         self.dut.run_fasthall_vdp_measurement(parameters)
         self.assertIn('FASTHALL:START CURRENT,0.01,AUTO,AUTO,AUTO,1.5,0.5,200,DEF,MAX,DEF,DEF,DEF',
                       self.fake_connection.get_outgoing_message())
@@ -145,10 +147,10 @@ class TestFastHallRun(TestWithFakeFastHall):
     def test_run_fasthall_vdp_non_default(self):
         self.fake_connection.setup_response('No error')
         parameters = FastHallManualParameters(excitation_type='CURRENT', excitation_value=10e-3, excitation_range=20e-3,
-                                  excitation_measurement_range=30e-3, measurement_range=40e-3, compliance_limit=1.5,
-                                  user_defined_field=0.5, max_samples=200, resistivity=0.216,
-                                  blanking_time='MIN', averaging_samples=100, sample_thickness=5e-3,
-                                  min_hall_voltage_snr=500)
+                                              excitation_measurement_range=30e-3, measurement_range=40e-3,
+                                              compliance_limit=1.5, user_defined_field=0.5, max_samples=200,
+                                              resistivity=0.216, blanking_time='MIN', averaging_samples=100,
+                                              sample_thickness=5e-3, min_hall_voltage_snr=500)
         self.dut.run_fasthall_vdp_measurement(parameters)
         self.assertIn('FASTHALL:START CURRENT,0.01,0.02,0.03,0.04,1.5,0.5,200,0.216,MIN,100,0.005,500',
                       self.fake_connection.get_outgoing_message())
@@ -178,7 +180,7 @@ class TestFourWireRun(TestWithFakeFastHall):
     def test_run_four_wire_default_parameters(self):
         self.fake_connection.setup_response('No error')
         parameters = FourWireParameters(contact_point1=1, contact_point2=2, contact_point3=3, contact_point4=4,
-                               excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=1.5)
+                                        excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=1.5)
         self.dut.run_four_wire_measurement(parameters)
         self.assertIn('FWIRE:START 1,2,3,4,CURRENT,0.01,AUTO,AUTO,AUTO,1.5',
                       self.fake_connection.get_outgoing_message())
@@ -186,9 +188,9 @@ class TestFourWireRun(TestWithFakeFastHall):
     def test_run_four_wire_mixed_parameters(self):
         self.fake_connection.setup_response('No error')
         parameters = FourWireParameters(contact_point1=5, contact_point2=6, contact_point3=3, contact_point4=1,
-                               excitation_type='CURRENT', excitation_value=500e-6, excitation_range=1e-3,
-                                excitation_measurement_range=1e-3, measurement_range=1.0, compliance_limit=1.5,
-                               max_samples=200, excitation_reversal=False)
+                                        excitation_type='CURRENT', excitation_value=500e-6, excitation_range=1e-3,
+                                        excitation_measurement_range=1e-3, measurement_range=1.0, compliance_limit=1.5,
+                                        max_samples=200, excitation_reversal=False)
         self.dut.run_four_wire_measurement(parameters)
         self.assertIn('FWIRE:START 5,6,3,1,CURRENT,0.0005,0.001,0.001,1.0,1.5,DEF,200,DEF,0',
                       self.fake_connection.get_outgoing_message())
@@ -196,9 +198,9 @@ class TestFourWireRun(TestWithFakeFastHall):
     def test_run_four_wire_non_default(self):
         self.fake_connection.setup_response('No error')
         parameters = FourWireParameters(contact_point1=5, contact_point2=6, contact_point3=3, contact_point4=1,
-                               excitation_type='CURRENT', excitation_value=500e-6, excitation_range=1e-3,
-                               measurement_range=1.0, excitation_measurement_range=1e-3, compliance_limit=1.5,
-                               blanking_time='MAX', max_samples=200, min_snr=50, excitation_reversal=False)
+                                        excitation_type='CURRENT', excitation_value=500e-6, excitation_range=1e-3,
+                                        measurement_range=1.0, excitation_measurement_range=1e-3, compliance_limit=1.5,
+                                        blanking_time='MAX', max_samples=200, min_snr=50, excitation_reversal=False)
         self.dut.run_four_wire_measurement(parameters)
         self.assertIn('FWIRE:START 5,6,3,1,CURRENT,0.0005,0.001,0.001,1.0,1.5,MAX,200,50,0',
                       self.fake_connection.get_outgoing_message())
@@ -208,7 +210,7 @@ class TestDCHallRun(TestWithFakeFastHall):
     def test_run_dc_hall_vdp_default_parameters(self):
         self.fake_connection.setup_response('No error')
         parameters = DCHallParameters(excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=1.5,
-                                 averaging_samples=100, user_defined_field=0.5)
+                                      averaging_samples=100, user_defined_field=0.5)
         self.dut.run_dc_hall_vdp_measurement(parameters)
         self.assertIn('HALL:DC:START CURRENT,0.01,AUTO,AUTO,AUTO,1.5,100,0.5,DEF,DEF,DEF,DEF',
                       self.fake_connection.get_outgoing_message())
@@ -254,7 +256,7 @@ class TestDCHallRun(TestWithFakeFastHall):
         self.fake_connection.setup_response('No error')
         parameters = DCHallParameters(excitation_type='CURRENT', excitation_value=10e-3, excitation_range=20e-3,
                                   excitation_measurement_range=30e-3, measurement_range=4, compliance_limit=5,
-                                  averaging_samples=200, user_defined_field=0.5, with_field_reversal=0,
+                                  averaging_samples=200, user_defined_field=0.5, with_field_reversal=False,
                                   resistivity=0.216, blanking_time=3, sample_thickness=9e-3)
         self.dut.run_dc_hall_hbar_measurement(parameters)
         self.assertIn('HALL:HBAR:DC:START CURRENT,0.01,0.02,0.03,4,5,200,0.5,0,0.216,3,0.009',

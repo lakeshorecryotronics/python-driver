@@ -10,6 +10,7 @@ The [Lake Shore](https://www.lakeshore.com) python driver allows users to quickl
 ## Supported Products
 * [F41 and F71 Teslameters](https://www.lakeshore.com/products/Gaussmeters/F71-F41-teslameters/Pages/Overview.aspx)
 * [155 Precision I/V Source](https://www.lakeshore.com/products/measureready/model-155/Pages/Overview.aspx) 
+* [M91 FastHall Controller](https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-instruments/measureready-m91-fasthall-measurement-controller) 
 
 
 ## Getting Started
