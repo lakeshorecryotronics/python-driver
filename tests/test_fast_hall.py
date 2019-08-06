@@ -77,7 +77,7 @@ class TestContactCheckRun(TestWithFakeFastHall):
         self.fake_connection.setup_response('No error')
         parameters = ContactCheckOptimizedParameters()
         self.dut.run_contact_check_vdp_measurement_auto(parameters)
-        self.assertIn('CCHECK:START DEF,DEF,DEF,DEF', self.fake_connection.get_outgoing_message())
+        self.assertIn('CCHECK:START 0.1,10,11,0.9999', self.fake_connection.get_outgoing_message())
 
     def test_contact_check_auto_non_default(self):
         self.fake_connection.setup_response('No error')
@@ -92,7 +92,7 @@ class TestContactCheckRun(TestWithFakeFastHall):
         parameters = ContactCheckManualParameters(excitation_type='VOLTAGE', excitation_start_value=-5,
                                                   excitation_end_value=5, compliance_limit=10e-3, number_of_points=25)
         self.dut.run_contact_check_vdp_measurement_manual(parameters)
-        self.assertIn('CCHECK:START:MANUAL VOLTAGE,-5,5,AUTO,AUTO,0.01,25,DEF,DEF',
+        self.assertIn('CCHECK:START:MANUAL VOLTAGE,-5,5,AUTO,AUTO,0.01,25,0.9999,0.002',
                       self.fake_connection.get_outgoing_message())
 
     def test_contact_check_manual_non_default(self):
@@ -110,7 +110,7 @@ class TestContactCheckRun(TestWithFakeFastHall):
         parameters = ContactCheckManualParameters(excitation_type='VOLTAGE', excitation_start_value=-5,
                                                   excitation_end_value=5, compliance_limit=10e-3, number_of_points=50)
         self.dut.run_contact_check_hbar_measurement(parameters)
-        self.assertIn('CCHECK:HBAR:START VOLTAGE,-5,5,AUTO,AUTO,0.01,50,DEF,DEF',
+        self.assertIn('CCHECK:HBAR:START VOLTAGE,-5,5,AUTO,AUTO,0.01,50,0.9999,0.002',
                       self.fake_connection.get_outgoing_message())
 
     def test_contact_check_hbar_non_default(self):
@@ -131,7 +131,7 @@ class TestFastHallRun(TestWithFakeFastHall):
         parameters = FastHallManualParameters(excitation_type='VOLTAGE', excitation_value=1, compliance_limit=10e-6,
                                               user_defined_field=0.5)
         self.dut.run_fasthall_vdp_measurement(parameters)
-        self.assertIn('FASTHALL:START VOLTAGE,1,AUTO,AUTO,AUTO,1e-05,0.5,DEF,DEF,DEF,DEF,DEF,DEF',
+        self.assertIn('FASTHALL:START VOLTAGE,1,AUTO,AUTO,AUTO,1e-05,0.5,100,"NaN",0.002,60,0,30',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_fasthall_vdp_mixed_parameters(self):
@@ -141,7 +141,7 @@ class TestFastHallRun(TestWithFakeFastHall):
                                               measurement_range='AUTO', compliance_limit=1.5, user_defined_field=0.5,
                                               max_samples=200, blanking_time='MAX')
         self.dut.run_fasthall_vdp_measurement(parameters)
-        self.assertIn('FASTHALL:START CURRENT,0.01,AUTO,AUTO,AUTO,1.5,0.5,200,DEF,MAX,DEF,DEF,DEF',
+        self.assertIn('FASTHALL:START CURRENT,0.01,AUTO,AUTO,AUTO,1.5,0.5,200,"NaN",MAX,60,0,3',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_fasthall_vdp_non_default(self):
@@ -159,13 +159,13 @@ class TestFastHallRun(TestWithFakeFastHall):
         self.fake_connection.setup_response('No error')
         parameters = FastHallOptimizedParameters(user_defined_field=0.5)
         self.dut.run_fasthall_vdp_measurement_optimized(parameters)
-        self.assertIn('FASTHALL:START:LINK 0.5,DEF,DEF,DEF,DEF,DEF', self.fake_connection.get_outgoing_message())
+        self.assertIn('FASTHALL:START:LINK 0.5,AUTO,100,30,60,DEF', self.fake_connection.get_outgoing_message())
 
     def test_run_fasthall_vdp_link_mixed_parameters(self):
         self.fake_connection.setup_response('No error')
         parameters = FastHallOptimizedParameters(user_defined_field=0.5, averaging_samples=100)
         self.dut.run_fasthall_vdp_measurement_optimized(parameters)
-        self.assertIn('FASTHALL:START:LINK 0.5,DEF,DEF,DEF,100,DEF', self.fake_connection.get_outgoing_message())
+        self.assertIn('FASTHALL:START:LINK 0.5,AUTO,100,30,100,DEF', self.fake_connection.get_outgoing_message())
 
     def test_run_fasthall_vdp_link_non_default(self):
         self.fake_connection.setup_response('No error')
@@ -192,7 +192,7 @@ class TestFourWireRun(TestWithFakeFastHall):
                                         excitation_measurement_range=1e-3, measurement_range=1.0, compliance_limit=1.5,
                                         max_samples=200, excitation_reversal=False)
         self.dut.run_four_wire_measurement(parameters)
-        self.assertIn('FWIRE:START 5,6,3,1,CURRENT,0.0005,0.001,0.001,1.0,1.5,DEF,200,DEF,0',
+        self.assertIn('FWIRE:START 5,6,3,1,CURRENT,0.0005,0.001,0.001,1.0,1.5,0.002,200,30,0',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_four_wire_non_default(self):
@@ -212,7 +212,7 @@ class TestDCHallRun(TestWithFakeFastHall):
         parameters = DCHallParameters(excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=1.5,
                                       averaging_samples=100, user_defined_field=0.5)
         self.dut.run_dc_hall_vdp_measurement(parameters)
-        self.assertIn('HALL:DC:START CURRENT,0.01,AUTO,AUTO,AUTO,1.5,100,0.5,DEF,DEF,DEF,DEF',
+        self.assertIn('HALL:DC:START CURRENT,0.01,AUTO,AUTO,AUTO,1.5,100,0.5,1,"NaN",0.002,0',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_dc_hall_vdp_mixed_parameters(self):
@@ -222,7 +222,7 @@ class TestDCHallRun(TestWithFakeFastHall):
                                       averaging_samples=100, user_defined_field=0.5, with_field_reversal=False,
                                       blanking_time='MIN', sample_thickness=0.003)
         self.dut.run_dc_hall_vdp_measurement(parameters)
-        self.assertIn('HALL:DC:START CURRENT,0.01,0.01,0.01,1,1.5,100,0.5,0,DEF,MIN,0.003',
+        self.assertIn('HALL:DC:START CURRENT,0.01,0.01,0.01,1,1.5,100,0.5,0,"NaN",MIN,0.003',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_dc_hall_vdp_non_default(self):
@@ -240,7 +240,7 @@ class TestDCHallRun(TestWithFakeFastHall):
         parameters = DCHallParameters(excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=1.5,
                                       averaging_samples=100, user_defined_field=0.5)
         self.dut.run_dc_hall_hbar_measurement(parameters)
-        self.assertIn('HALL:HBAR:DC:START CURRENT,0.01,AUTO,AUTO,AUTO,1.5,100,0.5,DEF,DEF,DEF,DEF',
+        self.assertIn('HALL:HBAR:DC:START CURRENT,0.01,AUTO,AUTO,AUTO,1.5,100,0.5,1,"NaN",0.002,0',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_dc_hall_hbar_mixed_parameters(self):
@@ -250,7 +250,7 @@ class TestDCHallRun(TestWithFakeFastHall):
                                       averaging_samples=200, user_defined_field=0.5, resistivity=0.216,
                                       blanking_time='MAX')
         self.dut.run_dc_hall_hbar_measurement(parameters)
-        self.assertIn('HALL:HBAR:DC:START CURRENT,0.01,0.02,0.03,4,5,200,0.5,DEF,0.216,MAX,DEF',
+        self.assertIn('HALL:HBAR:DC:START CURRENT,0.01,0.02,0.03,4,5,200,0.5,1,0.216,MAX,0',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_dc_hall_hbar_non_default(self):
@@ -269,7 +269,7 @@ class TestResistivityRun(TestWithFakeFastHall):
         self.fake_connection.setup_response('No error')
         parameters = ResistivityManualParameters(excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=5)
         self.dut.run_resistivity_vdp_measurement(parameters)
-        self.assertIn('RESISTIVITY:START CURRENT,0.01,AUTO,AUTO,AUTO,5,DEF,DEF,DEF,DEF',
+        self.assertIn('RESISTIVITY:START CURRENT,0.01,AUTO,AUTO,AUTO,5,100,0.002,0,30',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_resistivity_vdp_mixed_parameters(self):
@@ -278,7 +278,7 @@ class TestResistivityRun(TestWithFakeFastHall):
                                                  excitation_measurement_range=3, measurement_range=4e-3,
                                                  compliance_limit=500e-6, blanking_time='MIN', min_snr=70)
         self.dut.run_resistivity_vdp_measurement(parameters)
-        self.assertIn('RESISTIVITY:START VOLTAGE,1,2,3,0.004,0.0005,DEF,MIN,DEF,70',
+        self.assertIn('RESISTIVITY:START VOLTAGE,1,2,3,0.004,0.0005,100,MIN,0,70',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_resistivity_vdp_non_default(self):
@@ -295,13 +295,13 @@ class TestResistivityRun(TestWithFakeFastHall):
         self.fake_connection.setup_response('No error')
         parameters = ResistivityOptimizedParameters()
         self.dut.run_resistivity_vdp_measurement_optimized(parameters)
-        self.assertIn('RESISTIVITY:START:LINK DEF,DEF,DEF,DEF', self.fake_connection.get_outgoing_message())
+        self.assertIn('RESISTIVITY:START:LINK AUTO,0,30,100', self.fake_connection.get_outgoing_message())
 
     def test_run_resistivity_vdp_link_mixed_parameters(self):
         self.fake_connection.setup_response('No error')
         parameters = ResistivityOptimizedParameters(sample_thickness=5e-3, max_samples=500)
         self.dut.run_resistivity_vdp_measurement_optimized(parameters)
-        self.assertIn('RESISTIVITY:START:LINK DEF,0.005,DEF,500', self.fake_connection.get_outgoing_message())
+        self.assertIn('RESISTIVITY:START:LINK AUTO,0.005,30,500', self.fake_connection.get_outgoing_message())
 
     def test_run_resistivity_vdp_link_non_default(self):
         self.fake_connection.setup_response('No error')
@@ -315,7 +315,7 @@ class TestResistivityRun(TestWithFakeFastHall):
         parameters = ResistivityManualParameters(excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=5,
                                                  width=1e-3, separation=2e-3)
         self.dut.run_resistivity_hbar_measurement(parameters)
-        self.assertIn('RESISTIVITY:HBAR:START CURRENT,0.01,AUTO,AUTO,AUTO,5,0.001,0.002,DEF,DEF,DEF,DEF',
+        self.assertIn('RESISTIVITY:HBAR:START CURRENT,0.01,AUTO,AUTO,AUTO,5,0.001,0.002,100,0.002,0,30',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_resistivity_hbar_mixed_parameters(self):
@@ -325,7 +325,7 @@ class TestResistivityRun(TestWithFakeFastHall):
                                                  measurement_range='AUTO', compliance_limit=5, width=6e-3,
                                                  separation=7e-3, blanking_time='MAX', min_snr=11)
         self.dut.run_resistivity_hbar_measurement(parameters)
-        self.assertIn('RESISTIVITY:HBAR:START CURRENT,0.01,AUTO,AUTO,AUTO,5,0.006,0.007,DEF,MAX,DEF,11',
+        self.assertIn('RESISTIVITY:HBAR:START CURRENT,0.01,AUTO,AUTO,AUTO,5,0.006,0.007,100,MAX,0,11',
                       self.fake_connection.get_outgoing_message())
 
     def test_run_resistivity_hbar_non_default(self):

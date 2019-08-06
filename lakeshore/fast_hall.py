@@ -89,8 +89,8 @@ class ContactCheckManualParameters:
                  number_of_points,
                  excitation_range='AUTO',
                  measurement_range='AUTO',
-                 min_r_squared='DEF',
-                 blanking_time='DEF'):
+                 min_r_squared=0.9999,
+                 blanking_time=2e-3):
         """The constructor for ContackCheckManualParameters class.
             Args:
                 excitation_type (str):
@@ -126,12 +126,12 @@ class ContactCheckManualParameters:
                     The number of points to measure between the excitation start and end. 0 - 100
 
                 min_r_squared (float):
-                    The minimum R^2 desired DEFault = 0.9999.
+                    The minimum R^2 desired. Default is 0.9999.
 
                 blanking_time (float or str):
                     * The time in seconds to wait for hardware to settle before gathering readings. Range of time is
                       0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
-                    * "DEF" = 2 ms
+                    * "DEF" (Default) = 2 ms
                     * "MIN" = 0.5 ms
                     * "MAX" = 300 s
                     * floating point number of seconds
@@ -150,35 +150,35 @@ class ContactCheckManualParameters:
 class ContactCheckOptimizedParameters:
     """Class object representing parameters used for optimized Contact Check run methods"""
     def __init__(self,
-                 max_current='DEF',
-                 max_voltage='DEF',
-                 number_of_points='DEF',
-                 min_r_squared='DEF'):
+                 max_current=100e-3,
+                 max_voltage=10,
+                 number_of_points=11,
+                 min_r_squared=0.9999):
         """The constructor for ContactCheckOptimizedParameters class.
             Args:
                 max_current(float or str):
                     * A 'not to exceed' output current value for the auto algorithm to use. Options are:
                     * "MIN" = 1 uA
                     * "MAX" = 100 mA
-                    * "DEF" = 100 mA
+                    * "DEF" (Default) = 100 mA
                     * floating point number of amps
 
                 max_voltage(float or str):
                     * A 'not to exceed' output voltage value for the auto algorithm to use. Options are:
                     * "MIN" = 1 V
                     * "MAX" = 10 V
-                    * "DEF" = 10 V
+                    * "DEF" (Default) = 10 V
                     * floating point number of volts
 
                 number_of_points(int or str):
                     * The number of points to measure between the excitation start and end. Options are:
                     * "MIN" = 2
                     * "MAX" = 100
-                    * "DEF" = 11
+                    * "DEF" (Default) = 11
                     * integer number of points
 
                 min_r_squared(float):
-                    The minimum R^2 desired DEFault = 0.9999.
+                    The minimum R^2 desired. Default is 0.9999.
         """
         self.max_current = max_current
         self.max_voltage = max_voltage
@@ -196,12 +196,12 @@ class FastHallManualParameters:
                  excitation_range='AUTO',
                  excitation_measurement_range='AUTO',
                  measurement_range='AUTO',
-                 max_samples='DEF',
-                 resistivity='DEF',
-                 blanking_time='DEF',
-                 averaging_samples='DEF',
-                 sample_thickness='DEF',
-                 min_hall_voltage_snr='DEF'):
+                 max_samples=100,
+                 resistivity='"NaN"',
+                 blanking_time=2e-3,
+                 averaging_samples=60,
+                 sample_thickness=0,
+                 min_hall_voltage_snr=30):
         """The constructor for FastHallManualParameters class
             Args:
                 excitation_type (str):
@@ -241,35 +241,35 @@ class FastHallManualParameters:
                     The field, in units of Tesla, the sample is being subjected to. Used for calculations.
 
                 max_samples(int):
-                    When minimumSnr is omitted or INFinity, the total number of samples to average 1 - 1000 When
-                    minimumSnr is specified, the maximum number of samples to average 10 - 1000 DEFault = 100
+                    When minimumSnr is omitted or Infinity ('INF'), the total number of samples to average 1 - 1000 When
+                    minimumSnr is specified, the maximum number of samples to average 10 - 1000. Default is 100
 
-                resistivity (float or str):
-                    * The resistivity of the sample in units of Ohm*Meters (bulk) of Ohms Per Square (sheet). Used for
-                     calculations. Measure this value using the RESistivity SCPI subsystem. Options are:
-                    * "DEF" = Nan: defaults to not a number which will propagate through calculated values
-                    * floating point number of resistivity in Ohm*Meters
+                resistivity (float):
+                    The resistivity of the sample in units of Ohm*Meters (bulk) of Ohms Per Square (sheet). Used for
+                    calculations. Measure this value using the RESistivity SCPI subsystem. Defaults to 'Nan' (not a
+                    number) which will propagate through calculated values
+
 
                 blanking_time (float or str):
                     * The time in seconds to wait for hardware to settle before gathering readings. Range of time is
                       0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
-                    * "DEF" = 2 ms
+                    * "DEF" (Default) = 2 ms
                     * "MIN" = 0.5 ms
                     * "MAX" = 300 s
                     * floating point number in seconds
 
                 averaging_samples (int):
                     The number of voltage compensation samples to average. Only applied for excitation type voltage.
-                    1 - 120 DEFault = 60
+                    1 - 120. Default is 60.
 
                 sample_thickness (float):
-                    Thickness of the sample in meters. 0 to 10E-3 m DEFault = 0 m
+                    Thickness of the sample in meters. 0 to 10E-3 m Default is 0 m
 
                 min_hall_voltage_snr (float or str):
                     * The desired signal to noise ratio of the measurement calculated using average hall voltage / error
                       of mean 1 - 1000. Options are:
-                    * "INF"
-                    * "DEF" = 30
+                    * "INF" (Infinity)
+                    * "DEF" (Default) = 30
                     * floating point number to represent the ratio
         """
         self.excitation_type = excitation_type
@@ -291,10 +291,10 @@ class FastHallOptimizedParameters:
     """Class object representing parameters used for running optimized FastHall measurements"""
     def __init__(self,
                  user_defined_field,
-                 measurement_range='DEF',
-                 max_samples='DEF',
-                 min_hall_voltage_snr='DEF',
-                 averaging_samples='DEF',
+                 measurement_range='AUTO',
+                 max_samples=100,
+                 min_hall_voltage_snr=30,
+                 averaging_samples=60,
                  sample_thickness='DEF'):
         """The constructor for FastHallOptimizedParameters class
             Args:
@@ -303,25 +303,26 @@ class FastHallOptimizedParameters:
 
                 measurement_range (float or str):
                     For voltage excitation, specify the current measurement range 0 to 100e-3 A For current
-                    excitation, specify the voltage measurement range 0 to 10.0 V. DEF = AUTO
+                    excitation, specify the voltage measurement range 0 to 10.0 V. Defaults to 'AUTO'
 
                 max_samples(int):
-                    When minimumSnr is omitted or INFinity, the total number of samples to average 1 - 1000
-                    When minimumSnr is specified, the maximum number of samples to average 10 - 1000 DEFault = 100
-
-                averaging_samples (int):
-                    The number of voltage compensation samples to average. Only applied for excitation type voltage.
-                    1 - 120 DEFault = 60
-
-                sample_thickness (float):
-                    Thickness of the sample in meters. 0 to 10E-3 m DEFault = 0 m
+                    When minimumSnr is omitted or Infinity ('INF'), the total number of samples to average 1 - 1000
+                    When minimumSnr is specified, the maximum number of samples to average 10 - 1000 Defaults to 100
 
                 min_hall_voltage_snr (float or str):
                     * The desired signal to noise ratio of the measurement calculated using average hall voltage / error
                       of mean 1 - 1000. Options are:
-                    * "INF"
-                    * "DEF" = 30
+                    * "INF" (Infinity)
+                    * "DEF" (Default) = 30
                     * floating point number to represent the ratio
+
+                averaging_samples (int):
+                    The number of voltage compensation samples to average. Only applied for excitation type voltage.
+                    1 - 120. Defaults to 60
+
+                sample_thickness (float):
+                    Thickness of the sample in meters. 0 to 10E-3 m Default is the last run resistivity measurement's
+                    sample thickness.
         """
         self.user_defined_field = user_defined_field
         self.measurement_range = measurement_range
@@ -344,10 +345,10 @@ class FourWireParameters:
                  excitation_range='AUTO',
                  excitation_measurement_range='AUTO',
                  measurement_range='AUTO',
-                 blanking_time='DEF',
-                 max_samples='DEF',
-                 min_snr='DEF',
-                 excitation_reversal='DEF'):
+                 blanking_time=2e-3,
+                 max_samples=100,
+                 min_snr=30,
+                 excitation_reversal=True):
         """The constructor for FourWireParameter class.
             Args:
                 contact_point1 (int):
@@ -400,20 +401,20 @@ class FourWireParameters:
                 blanking_time (float or str):
                     * The time in seconds to wait for hardware to settle before gathering readings. Range of time is
                       0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
-                    * "DEF" = 2 ms
+                    * "DEF" (Default)= 2 ms
                     * "MIN" = 0.5 ms
                     * "MAX" = 300 s
                     * floating point number in seconds
 
                 max_samples(int):
-                    When minimumSnr is omitted or INFinity, the total number of samples to average 1 - 1000 When
-                    minimumSnr is specified, the maximum number of samples to average 10 - 1000 DEFault = 100
+                    When minimumSnr is omitted or Infinity, the total number of samples to average 1 - 1000 When
+                    minimumSnr is specified, the maximum number of samples to average 10 - 1000. Default is 100
 
                 min_snr (float or str):
                     * The desired signal to noise ratio of the measurement resistance, calculated using measurement
                       average / error of mean 1 - 1000. Options are:
-                    * "INF"
-                    * "DEF" = 30
+                    * "INF" (Infinity)
+                    * "DEF" (Default)= 30
                     * floating point number to represent the ratio
 
                 excitation_reversal (bool):
@@ -432,7 +433,7 @@ class FourWireParameters:
         self.blanking_time = blanking_time
         self.max_samples = max_samples
         self.min_snr = min_snr
-        self.excitation_reversal = excitation_reversal
+        self.excitation_reversal = str(int(excitation_reversal))
 
 
 class DCHallParameters:
@@ -446,10 +447,10 @@ class DCHallParameters:
                  excitation_range='AUTO',
                  excitation_measurement_range='AUTO',
                  measurement_range='AUTO',
-                 with_field_reversal='DEF',
-                 resistivity='DEF',
-                 blanking_time='DEF',
-                 sample_thickness='DEF'):
+                 with_field_reversal=True,
+                 resistivity='"NaN"',
+                 blanking_time=2e-3,
+                 sample_thickness=0):
         """The constructor for DCHallParameters.
             Args:
                 excitation_type (str):
@@ -488,24 +489,27 @@ class DCHallParameters:
                 averaging_samples(int):
                     The number of samples to average 1-1000
 
+                user_defined_field(float):
+                    The field, in units of Tesla, the sample is being subjected to. Used for calculations.
+
                 with_field_reversal (bool):
-                    Specifies whether or not to apply reversal field. DEFault=true
+                    Specifies whether or not to apply reversal field. Default is true
 
                 resistivity(float):
                     The resistivity of the sample in units of Ohm*Meters (bulk) of Ohms Per Square (sheet). Used for
-                    calculations. Measure this value using the RESistivity SCPI subsystem. Defaults to not a number
-                    which will propagate through calculated values. DEFault = NaN
+                    calculations. Measure this value using the RESistivity SCPI subsystem. Defaults to 'NaN' (not a
+                    number) which will propagate through calculated values.
 
                 blanking_time (float or str):
                     * The time in seconds to wait for hardware to settle before gathering readings. Range of time is
                       0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
-                    * "DEF" = 2 ms
+                    * "DEF" (Default) = 2 ms
                     * "MIN" = 0.5 ms
                     * "MAX" = 300 s
                     * floating point number in seconds
 
                 sample_thickness (float):
-                    Thickness of the sample in meters. 0 to 10e-3 m. DEFault = 0m
+                    Thickness of the sample in meters. 0 to 10e-3 m. Default is 0m
             """
 
         self.excitation_type = excitation_type
@@ -516,7 +520,7 @@ class DCHallParameters:
         self.compliance_limit = compliance_limit
         self.averaging_samples = averaging_samples
         self.user_defined_field = user_defined_field
-        self.with_field_reversal = with_field_reversal
+        self.with_field_reversal = str(int(with_field_reversal))
         self.resistivity = resistivity
         self.blanking_time = blanking_time
         self.sample_thickness = sample_thickness
@@ -531,10 +535,10 @@ class ResistivityManualParameters:
                  excitation_range='AUTO',
                  excitation_measurement_range='AUTO',
                  measurement_range='AUTO',
-                 max_samples='DEF',
-                 blanking_time='DEF',
-                 sample_thickness='DEF',
-                 min_snr='DEF',
+                 max_samples=100,
+                 blanking_time=2e-3,
+                 sample_thickness=0,
+                 min_snr=30,
                  **kwargs):
         """The constructor for ResistivityManualParameters class.
             Args:
@@ -572,29 +576,29 @@ class ResistivityManualParameters:
                     specify the voltage compliance 1.00 to 10.0 V
 
                 max_samples(int):
-                    When minimumSnr is omitted or INFinity, the total number of samples to average 1 - 1000 When
-                    minimumSnr is specified, the maximum number of samples to average 10 - 1000 DEFault = 100
+                    When minimumSnr is omitted or Infinity ('INF'), the total number of samples to average 1 - 1000 When
+                    minimumSnr is specified, the maximum number of samples to average 10 - 1000. Default is 100
 
                 blanking_time (float or str):
                     * The time in seconds to wait for hardware to settle before gathering readings. Range of time is
                       0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
-                    * "DEF" = 2 ms
+                    * "DEF" (Default) = 2 ms
                     * "MIN" = 0.5 ms
                     * "MAX" = 300 s
                     * floating point number in seconds
 
                 averaging_samples (int):
                     The number of voltage compensation samples to average. Only applied for excitation type voltage.
-                    1 - 120 DEFault = 60
+                    1 - 120. Default is 60
 
                 sample_thickness (float):
-                    Thickness of the sample in meters. 0 to 10E-3 m DEFault = 0 m
+                    Thickness of the sample in meters. 0 to 10E-3 m. Default is 0 m
 
                 min_snr (float or str):
                     * The desired signal to noise ratio of the measurement calculated using average resistivity / error
                       of mean 1 - 1000. Options are:
-                    * "INF"
-                    * "DEF" = 30
+                    * "INF" (Infinity)
+                    * "DEF" (Default) = 30
                     * floating point number to represent the ratio
 
             Kwargs:
@@ -622,32 +626,32 @@ class ResistivityManualParameters:
 class ResistivityOptimizedParameters:
     """Class object representing parameters used for running manual Resistivity measurements"""
     def __init__(self,
-                 measurement_range='DEF',
-                 sample_thickness='DEF',
-                 min_snr='DEF',
-                 max_samples='DEF'):
+                 measurement_range='AUTO',
+                 sample_thickness=0,
+                 min_snr=30,
+                 max_samples=100):
         """The constructor for ResistivityOptimizedParameters class.
             Args:
                 measurement_range (float or str):
                     * Measurement range based on the excitation type. Options are:
-                    * "DEF" = "AUTO": sets the range to the best fit range for a given excitation value
+                    * "AUTO": sets the range to the best fit range for a given excitation value
                     * floating point number of
                         - amps in the range of 0 to 100e-3A: voltage excitation
                         - volts in the range of 0 to 10.0V: current excitation
 
                 sample_thickness (float):
-                    Thickness of the sample in meters. 0 to 10E-3 m DEFault = 0 m
+                    Thickness of the sample in meters. 0 to 10E-3 m. Default is 0 m
 
                 min_snr (float or str):
                     * The desired signal to noise ratio of the measurement calculated using average resistivity / error
                       of mean 1 - 1000. Options are:
-                    * "INF"
-                    * "DEF" = 30
+                    * "INF" (Infinity)
+                    * "DEF" (Default)= 30
                     * floating point number to represent the ratio
 
                 max_samples(int):
-                    When minimumSnr is omitted or INFinity, the total number of samples to average 1 - 1000 When
-                    minimumSnr is specified, the maximum number of samples to average 10 - 1000 DEFault = 100
+                    When minimumSnr is omitted or Infinity ('INF'), the total number of samples to average 1 - 1000 When
+                    minimumSnr is specified, the maximum number of samples to average 10 - 1000 Default is 100
         """
 
         self.measurement_range = measurement_range
@@ -803,8 +807,6 @@ class FastHall(XIPInstrument):
             Args:
                 settings(FourWireParameters)
         """
-        if settings.excitation_reversal != 'DEF':
-            settings.excitation_reversal = int(settings.excitation_reversal)
         command_string = "FWIRE:START " + \
                          str(settings.contact_point1) + "," + \
                          str(settings.contact_point2) + "," + \
@@ -830,9 +832,6 @@ class FastHall(XIPInstrument):
                 settings(DCHallParameters)
 
         """
-        if settings.with_field_reversal != 'DEF':
-            settings.with_field_reversal = int(settings.with_field_reversal)
-
         command_string = "HALL:DC:START " + \
                          str(settings.excitation_type) + "," + \
                          str(settings.excitation_value) + "," + \
@@ -854,9 +853,6 @@ class FastHall(XIPInstrument):
             Args:
                 settings(DCHallParameters)
         """
-        if settings.with_field_reversal != 'DEF':
-            settings.with_field_reversal = int(settings.with_field_reversal)
-
         command_string = "HALL:HBAR:DC:START " + \
                          str(settings.excitation_type) + "," + \
                          str(settings.excitation_value) + "," + \
@@ -1007,11 +1003,11 @@ class FastHall(XIPInstrument):
                                             compliance_limit=float(results[7]),
                                             max_samples=int(results[8]),
                                             user_defined_field=float(results[9]),
-                                            resistivity=float(results[11]),
-                                            blanking_time=float(results[12]),
-                                            averaging_samples=int(results[13]),
-                                            sample_thickness=float(results[14]),
-                                            min_hall_voltage_snr=float(results[15]))
+                                            resistivity=float(results[10]),
+                                            blanking_time=float(results[11]),
+                                            averaging_samples=int(results[12]),
+                                            sample_thickness=float(results[13]),
+                                            min_hall_voltage_snr=float(results[14]))
         return settings
 
     def get_fasthall_measurement_results(self):
