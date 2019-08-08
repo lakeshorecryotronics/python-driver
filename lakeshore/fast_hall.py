@@ -1,6 +1,7 @@
 """Implements functionality unique to the Lake Shore M91 Fast Hall"""
 
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
+import json
 
 
 # TODO: update register enums once they are finalized
@@ -343,8 +344,8 @@ class FourWireParameters:
                  excitation_value,
                  compliance_limit,
                  excitation_range='AUTO',
-                 excitation_measurement_range='AUTO',
                  measurement_range='AUTO',
+                 excitation_measurement_range='AUTO',
                  blanking_time=2e-3,
                  max_samples=100,
                  min_snr=30,
@@ -380,19 +381,19 @@ class FourWireParameters:
                         - volts in the range of 0 to 10.0V for voltage excitation,
                         - amps in the range of -100e-3 to 100e-3 A for current excitation
 
-                excitation_measurement_range (float or str):
-                    * Excitation measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - volts in the range of 0 to 10.0V: voltage excitation
-                        - amps in the range of -100e-3 to 100e-3 A: current excitation
-
                 measurement_range (float or str):
                     * Measurement range based on the excitation type. Options are:
                     * "AUTO": sets the range to the best fit range for a given excitation value
                     * floating point number of
                         - amps in the range of 0 to 100e-3A: voltage excitation
                         - volts in the range of 0 to 10.0V: current excitation
+
+                excitation_measurement_range (float or str):
+                    * Excitation measurement range based on the excitation type. Options are:
+                    * "AUTO": sets the range to the best fit range for a given excitation value
+                    * floating point number of
+                        - volts in the range of 0 to 10.0V: voltage excitation
+                        - amps in the range of -100e-3 to 100e-3 A: current excitation
 
                 compliance_limit (float):
                     For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
@@ -427,8 +428,8 @@ class FourWireParameters:
         self.excitation_type = excitation_type
         self.excitation_value = excitation_value
         self.excitation_range = excitation_range
-        self.excitation_measurement_range = excitation_measurement_range
         self.measurement_range = measurement_range
+        self.excitation_measurement_range = excitation_measurement_range
         self.compliance_limit = compliance_limit
         self.blanking_time = blanking_time
         self.max_samples = max_samples
@@ -815,8 +816,8 @@ class FastHall(XIPInstrument):
                          str(settings.excitation_type) + "," + \
                          str(settings.excitation_value) + "," + \
                          str(settings.excitation_range) + "," + \
-                         str(settings.excitation_measurement_range) + "," + \
                          str(settings.measurement_range) + "," + \
+                         str(settings.excitation_measurement_range) + "," + \
                          str(settings.compliance_limit) + "," + \
                          str(settings.blanking_time) + "," + \
                          str(settings.max_samples) + "," + \
@@ -927,253 +928,175 @@ class FastHall(XIPInstrument):
     def get_contact_check_setup_results(self):
         """Returns an object representing the setup results of the last run Contact Check measurement"""
 
-        # Parse the query string into a list of individual result values
-        results = self.query('CCHECK:RESULT?').rsplit(',')
+        # Parse the JSON query string into a dictionary with only the setup results
+        json_results = self.query('CCHECK:RESULT:JSON? 0')
+        setup_results = json.loads(json_results).get('Setup')
 
         # Generate a  Contact Check settings object using the setup result values as the initialization parameters
-        settings = ContactCheckManualParameters(excitation_type=results[2],
-                                                excitation_start_value=float(results[3]),
-                                                excitation_end_value=float(results[4]),
-                                                excitation_range=float(results[5]),
-                                                measurement_range=float(results[6]),
-                                                compliance_limit=float(results[7]),
-                                                number_of_points=int(results[8]),
-                                                min_r_squared=float(results[9]),
-                                                blanking_time=float(results[10]))
+        settings = ContactCheckManualParameters(excitation_type=setup_results.get('ExcitationType'),
+                                                excitation_start_value=setup_results.get('ExcitationValueStart'),
+                                                excitation_end_value=setup_results.get('ExcitationValueEnd'),
+                                                excitation_range=setup_results.get('ExcitationRange'),
+                                                measurement_range=setup_results.get('MeasurementRange'),
+                                                compliance_limit=setup_results.get('ComplianceLimit'),
+                                                number_of_points=setup_results.get('NumberOfPoints'),
+                                                min_r_squared=setup_results.get('MinimumRSquared'),
+                                                blanking_time=setup_results.get('BlankingTimeInSeconds'))
         return settings
 
     def get_contact_check_measurement_results(self):
         """Returns a dictionary representing the results of the last run Contact Check measurement"""
 
-        # Parse the query string into a list of individual result values
-        result_values = self.query('CCHECK:RESULT?').rsplit(',')
+        # Parse the JSON query string into a dictionary
+        json_results = self.query('CCHECK:RESULT:JSON? 0')
+        measurement_results = json.loads(json_results)
 
-        # Remove the setup result values
-        del result_values[0:11]
+        # Remove the setup data from the results dictionary
+        measurement_results.pop('Setup')
 
-        # Split the list of values into a list of subsets with length 7, representing the measurements per contact pair
-        measurements_list = [result_values[i:i+7] for i in range(0, len(result_values), 7)]
-
-        # Pop off the remaining three values (packed in one list) that represent the overload status values
-        overload_status_list = measurements_list.pop()
-
-        # Initialize the dictionary to be empty
-        results = {}
-
-        # Number of groupings (length of the list) correlates to the number of contact pairs. 4-Van der Pauw, 6-Hall Bar
-        contact_pairs = ['contact_pair_A_', 'contact_pair_B_', 'contact_pair_C_', 'contact_pair_D_']
-        if len(measurements_list) == 6:
-            contact_pairs.extend(['contact_pair_E_', 'contact_pair_F_'])
-
-        # Loop through each contact pair to add every measurement and its corresponding value to the results dictionary
-        for pair, pair_measurements in zip(contact_pairs, measurements_list):
-            pair_results = {
-                pair + 'offset': float(pair_measurements[0]),
-                pair + 'slope': float(pair_measurements[1]),
-                pair + 'r_squared': float(pair_measurements[2]),
-                pair + 'r_squared_passed': bool(int(pair_measurements[3])),
-                pair + 'in_compliance': bool(int(pair_measurements[4])),
-                pair + 'voltage_overload': bool(int(pair_measurements[5])),
-                pair + 'current_overload': bool(int(pair_measurements[6]))
-            }
-            results.update(pair_results)
-
-        # Add the overload status information to the results dictionary
-        overload_status_results = {
-            'in_compliance': bool(int(overload_status_list[0])),
-            'voltage_overload': bool(int(overload_status_list[1])),
-            'current_overload': bool(int(overload_status_list[2]))
-        }
-        results.update(overload_status_results)
-
-        return results
+        return measurement_results
 
     def get_fasthall_setup_results(self):
         """Returns an object representing the setup results of the last run FastHall measurement"""
 
-        # Parse the query string into a list of individual result values
-        results = self.query('FASTHALL:RESULT?').rsplit(',')
+        # Parse the JSON query string into a dictionary with only the setup results
+        json_results = self.query('FASTHALL:RESULT:JSON? 0')
+        setup_results = json.loads(json_results).get('Setup')
 
         # Generate a FastHall settings object using the setup result values as the initialization parameters
-        settings = FastHallManualParameters(excitation_type=results[2],
-                                            excitation_value=float(results[3]),
-                                            excitation_range=float(results[4]),
-                                            excitation_measurement_range=float(results[5]),
-                                            measurement_range=float(results[6]),
-                                            compliance_limit=float(results[7]),
-                                            max_samples=int(results[8]),
-                                            user_defined_field=float(results[9]),
-                                            resistivity=float(results[10]),
-                                            blanking_time=float(results[11]),
-                                            averaging_samples=int(results[12]),
-                                            sample_thickness=float(results[13]),
-                                            min_hall_voltage_snr=float(results[14]))
+        settings = FastHallManualParameters(excitation_type=setup_results.get('ExcitationType'),
+                                            excitation_value=setup_results.get('ExcitationValue'),
+                                            excitation_range=setup_results.get('ExcitationRange'),
+                                            excitation_measurement_range=
+                                            setup_results.get('ExcitationMeasurementRange'),
+                                            measurement_range=setup_results.get('MeasurementRange'),
+                                            compliance_limit=setup_results.get('ComplianceLimit'),
+                                            max_samples=setup_results.get('MeasurementRange'),
+                                            user_defined_field=setup_results.get('UserDefinedFieldReadingInTesla'),
+                                            resistivity=setup_results.get('Resistivity'),
+                                            blanking_time=setup_results.get('BlankingTimeInSeconds'),
+                                            averaging_samples=
+                                            setup_results.get('NumberOfVoltageCompensationSamplesToAverage'),
+                                            sample_thickness=setup_results.get('SampleThicknessInMeters'),
+                                            min_hall_voltage_snr=setup_results.get('HallVoltageSnr'))
         return settings
 
     def get_fasthall_measurement_results(self):
         """Returns a dictionary representing the results of the last run FastHall measurement"""
 
-        # Parse the query string into a list of individual result values
-        result_values = self.query('FASTHALL:RESULT?').rsplit(',')
+        # Parse the JSON query string into a dictionary
+        json_results = self.query('FASTHALL:RESULT:JSON? 0')
+        measurement_results = json.loads(json_results)
 
-        # Generate a dictionary by assigning specific result values to the corresponding result names
-        results = {'hall_voltage_average': float(result_values[15]),
-                   'hall_voltage_standard_error': float(result_values[16]),
-                   'hall_voltage_snr': float(result_values[17]),
-                   'carrier_type': result_values[18],
-                   'P_type_count': int(result_values[19]),
-                   'N_type_count': int(result_values[20]),
-                   'carrier_concentration_average': float(result_values[21]),
-                   'sheet_carrier_concentration_average': float(result_values[22]),
-                   'carrier_concentration_standard_error': float(result_values[23]),
-                   'sheet_carrier_concentration_standard_error': float(result_values[24]),
-                   'hall_coefficient_average': float(result_values[25]),
-                   'sheet_hall_coefficient_average':  float(result_values[26]),
-                   'hall_coefficient_standard_error': float(result_values[27]),
-                   'sheet_hall_coefficient_standard_error': float(result_values[28]),
-                   'mobility_average': float(result_values[29]),
-                   'mobility_standard_error': float(result_values[30]),
-                   'in_compliance': bool(int(result_values[31])),
-                   'voltage_overload': bool(int(result_values[32])),
-                   'current_overload': bool(int(result_values[33]))}
-        return results
+        # Remove the setup data from the results dictionary
+        measurement_results.pop('Setup')
+
+        return measurement_results
 
     def get_four_wire_setup_results(self):
         """Returns an object representing the setup results of the last run Four Wire measurement"""
 
-        # Parse the query string into a list of individual result values
-        results = self.query('FWIRE:RESULT?').rsplit(',')
+        # Parse the JSON query string into a dictionary with only the setup results
+        json_results = self.query('FWIRE:RESULT:JSON? 0')
+        setup_results = json.loads(json_results).get('Setup')
 
         # Generate a Four Wire settings object using the setup result values as the initialization parameters
-        settings = FourWireParameters(contact_point1=int(results[2]),
-                                      contact_point2=int(results[3]),
-                                      contact_point3=int(results[4]),
-                                      contact_point4=int(results[5]),
-                                      excitation_type=results[6],
-                                      excitation_value=float(results[7]),
-                                      excitation_range=float(results[8]),
-                                      excitation_measurement_range=float(results[9]),
-                                      measurement_range=float(results[10]),
-                                      compliance_limit=float(results[11]),
-                                      blanking_time=float(results[12]),
-                                      max_samples=int(results[13]),
-                                      min_snr=float(results[14]),
-                                      excitation_reversal=bool(int(results[15])))
+        settings = FourWireParameters(contact_point1=setup_results.get('ContactPairExcitation').get('Point1'),
+                                      contact_point2=setup_results.get('ContactPairExcitation').get('Point2'),
+                                      contact_point3=setup_results.get('ContactPairSense').get('Point1'),
+                                      contact_point4=setup_results.get('ContactPairSense').get('Point2'),
+                                      excitation_type=setup_results.get('ExcitationType'),
+                                      excitation_value=setup_results.get('ExcitationValue'),
+                                      excitation_range=setup_results.get('ExcitationRange'),
+                                      measurement_range=setup_results.get('MeasurementRange'),
+                                      excitation_measurement_range=setup_results.get('ExcitationMeasurementRange'),
+                                      compliance_limit=setup_results.get('ComplianceLimit'),
+                                      blanking_time=setup_results.get('BlankingTimeInSeconds'),
+                                      max_samples=setup_results.get('MaximumNumberOfSamples'),
+                                      min_snr=setup_results.get('MinimumResistanceSnr'),
+                                      excitation_reversal=setup_results.get('UseExcitationReversal'))
         return settings
 
     def get_four_wire_measurement_results(self):
         """Returns a dictionary representing the results of the last run Four Wire measurement"""
 
-        # Parse the query string into a list of individual result values
-        result_values = self.query('FWIRE:RESULT?').rsplit(',')
+        # Parse the JSON query string into a dictionary
+        json_results = self.query('FWIRE:RESULT:JSON? 0')
+        measurement_results = json.loads(json_results)
 
-        # Generate a dictionary by assigning specific result values to the corresponding result names
-        results = {'resistance_average': float(result_values[16]),
-                   'resistance_standard_error': float(result_values[17]),
-                   'voltage_average': float(result_values[18]),
-                   'voltage_standard_error': float(result_values[19]),
-                   'current_average': float(result_values[20]),
-                   'current_standard_error': float(result_values[21]),
-                   'in_compliance': bool(int(result_values[22])),
-                   'voltage_overload': bool(int(result_values[23])),
-                   'current_overload': bool(int(result_values[24]))}
-        return results
+        # Remove the setup data from the results dictionary
+        measurement_results.pop('Setup')
+
+        return measurement_results
 
     def get_dc_hall_setup_results(self):
         """Returns a dictionary representing the setup results of the last run Hall measurement"""
 
-        # Parse the query string into a list of individual result values
-        results = self.query('HALL:DC:RESULT?').rsplit(',')
+        # Parse the JSON query string into a dictionary with only the setup results
+        json_results = self.query('HALL:DC:RESULT:JSON? 0')
+        setup_results = json.loads(json_results).get('Setup')
 
         # Generate a DC Hall settings object using the setup result values as the initialization parameters
-        settings = DCHallParameters(excitation_type=results[2],
-                                    excitation_value=float(results[3]),
-                                    excitation_range=float(results[4]),
-                                    excitation_measurement_range=float(results[5]),
-                                    measurement_range=float(results[6]),
-                                    compliance_limit=float(results[7]),
-                                    averaging_samples=int(results[8]),
-                                    user_defined_field=float(results[9]),
-                                    resistivity=float(results[10]),
-                                    blanking_time=float(results[11]),
-                                    sample_thickness=float(results[12]))
+        settings = DCHallParameters(excitation_type=setup_results.get('ExcitationType'),
+                                    excitation_value=setup_results.get('ExcitationValue'),
+                                    excitation_range=setup_results.get('ExcitationRange'),
+                                    excitation_measurement_range=setup_results.get('ExcitationMeasurementRange'),
+                                    measurement_range=setup_results.get('MeasurementRange'),
+                                    compliance_limit=setup_results.get('ComplianceLimit'),
+                                    averaging_samples=setup_results.get('NumberOfSamplesToAverage'),
+                                    user_defined_field=setup_results.get('UserDefinedFieldReadingInTesla'),
+                                    with_field_reversal=setup_results.get('WithFieldReversal'),
+                                    resistivity=setup_results.get('Resistivity'),
+                                    blanking_time=setup_results.get('BlankingTimeInSeconds'),
+                                    sample_thickness=setup_results.get('SampleThicknessInMeters'))
         return settings
 
     def get_dc_hall_measurement_results(self):
         """Returns a dictionary representing the results of the last run Hall measurement"""
 
-        # Parse the query string into a list of individual result values
-        result_values = self.query('HALL:DC:RESULT?').rsplit(',')
+        # Parse the JSON query string into a dictionary
+        json_results = self.query('HALL:DC:RESULT:JSON? 0')
+        measurement_results = json.loads(json_results)
 
-        # Generate a dictionary by assigning specific result values to the corresponding result names
-        results = {'hall_voltage_average': float(result_values[13]),
-                   'hall_voltage_standard_error': float(result_values[14]),
-                   'hall_coefficient_average': float(result_values[15]),
-                   'sheet_hall_coefficient_average': float(result_values[16]),
-                   'hall_coefficient_standard_error': float(result_values[17]),
-                   'sheet_hall_coefficient_standard_error': float(result_values[18]),
-                   'carrier_type': result_values[19],
-                   'P_type_count': int(result_values[20]),
-                   'N_type_count': int(result_values[21]),
-                   'carrier_concentration_average': float(result_values[22]),
-                   'sheet_carrier_concentration_average': float(result_values[23]),
-                   'carrier_concentration_standard_error': float(result_values[24]),
-                   'standard_carrier_concentration_standard_error': float(result_values[25]),
-                   'mobility_average': float(result_values[26]),
-                   'mobility_standard_error': float(result_values[27]),
-                   'in_compliance': bool(int(result_values[28])),
-                   'voltage_overload': bool(int(result_values[29])),
-                   'current_overload': bool(int(result_values[30]))
-                   }
-        return results
+        # Remove the setup data from the results dictionary
+        measurement_results.pop('Setup')
+
+        return measurement_results
 
     def get_resistivity_setup_results(self):
         """Returns an object representing the setup results of the last run Resistivity measurement"""
 
-        # Parse the query string into a list of individual result values
-        results = self.query('RESISTIVITY:RESULT?').rsplit(',')
+        # Parse the JSON query string into a dictionary with only the setup results
+        json_results = self.query('RESISTIVITY:RESULT:JSON? 0')
+        setup_results = json.loads(json_results).get('Setup')
 
         # Generate a Resistivity settings object using the setup result values as the initialization parameters
-        settings = ResistivityManualParameters(excitation_type=results[2],
-                                               excitation_value=float(results[3]),
-                                               excitation_range=float(results[4]),
-                                               excitation_measurement_range=float(results[5]),
-                                               measurement_range=float(results[6]),
-                                               compliance_limit=float(results[7]),
-                                               max_samples=int(results[8]),
-                                               blanking_time=float(results[9]),
-                                               sample_thickness=float(results[10]),
-                                               min_snr=float(results[11]))
+        settings = ResistivityManualParameters(setup_results.get('ExcitationType'),
+                                               excitation_value=setup_results.get('ExcitationValue'),
+                                               excitation_range=setup_results.get('ExcitationRange'),
+                                               excitation_measurement_range=
+                                               setup_results.get('ExcitationMeasurementRange'),
+                                               measurement_range=setup_results.get('MeasurementRange'),
+                                               compliance_limit=setup_results.get('ComplianceLimit'),
+                                               width=setup_results.get('SampleWidthInMeters'),
+                                               separation=setup_results.get('SampleArmSeparationInMeters'),
+                                               max_samples=setup_results.get('MaxNumberOfSamples'),
+                                               blanking_time=setup_results.get('BlankingTimeInSeconds'),
+                                               sample_thickness=setup_results.get('SampleThicknessInMeters'),
+                                               min_snr=setup_results.get('MinimumSnr'))
         return settings
 
     def get_resistivity_measurement_results(self):
         """Returns a dictionary representing the results of the last run Resistivity measurement"""
 
-        # Parse the query string into a list of individual result values
-        result_values = self.query('RESISTIVITY:RESULT?').rsplit(',')
+        # Parse the JSON query string into a dictionary
+        json_results = self.query('RESISTIVITY:RESULT:JSON? 0')
+        measurement_results = json.loads(json_results)
 
-        # Generate a dictionary by assigning specific result values to the corresponding result names
-        results = {
-            'resistivity_average': float(result_values[12]),
-            'sheet_resistivity_average': float(result_values[13]),
-            'resistivity_standard_error': float(result_values[14]),
-            'sheet_resistivity_standard_error': float(result_values[15]),
-            'resistivity_snr': float(result_values[16]),
-            'geometry_A_resistivity_average': float(result_values[17]),
-            'geometry_A_sheet_resistivity_average': float(result_values[18]),
-            'geometry_A_resistivity_standard_error': float(result_values[19]),
-            'geometry_A_sheet_resistivity_standard_error': float(result_values[20]),
-            'geometry_A_F_value': float(result_values[21]),
-            'geometry_B_resistivity_average': float(result_values[22]),
-            'geometry_B_sheet_resistivity_average': float(result_values[23]),
-            'geometry_B_resistivity_standard_error': float(result_values[24]),
-            'geometry_B_sheet_resistivity_standard_error': float(result_values[25]),
-            'geometry_B_F_value': float(result_values[26]),
-            'in_compliance': bool(int(result_values[27])),
-            'voltage_overload': bool(int(result_values[28])),
-            'current_overload': bool(int(result_values[29]))
-        }
-        return results
+        # Remove the setup data from the results dictionary
+        measurement_results.pop('Setup')
+
+        return measurement_results
 
     def reset_contact_check_measurement(self):
         """Resets the measurement to a not run state, canceling any running measurement"""
