@@ -3,7 +3,7 @@ from lakeshore import FastHall, ContactCheckManualParameters
 # Connect to the first available FastHall over USB
 my_fast_hall = FastHall()
 
-# Initialize the Contact Check parameter class with desired settings to run a manual Contact Check measurement
+# Create a contact check parameters object with desired settings to run a manual Contact Check measurement
 ccheck_settings = ContactCheckManualParameters(excitation_type='CURRENT',
                                                excitation_start_value=-10e-6,
                                                excitation_end_value=10e-6,
@@ -17,13 +17,13 @@ file.write('Contact Check of Van der Pauw Sample with Varying Current Excitation
 file.write('Contact Pair 1-2\n')
 file.write(' , Offset, Slope, R Squared, R Squared Passed, In Compliance, Voltage Overload, Current Overload\n')
 
-# Create a list of varying excitation ranges
+# Create a list of current excitation ranges
 excitation_ranges = [10e-3, 10e-4, 10e-5, 10e-6]
 
 # Run a separate Contact Check measurement and collect results for each range in the list of excitation ranges
 for range_value in excitation_ranges:
 
-    # Set the value of the excitation range by assigning the contact check parameter object attribute, excitaiton_range
+    # Set the value of the excitation range
     ccheck_settings.excitation_range = range_value
 
     # Write the specific excitation range that is being used
