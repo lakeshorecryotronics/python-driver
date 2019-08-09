@@ -1,7 +1,7 @@
 """Implements functionality unique to the Lake Shore M91 Fast Hall"""
 
-from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 import json
+from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 
 # TODO: update register enums once they are finalized
@@ -713,7 +713,7 @@ class FastHall(XIPInstrument):
         """Continues the DC hall measurement if it's in a waiting state """
         self.command("HALL:DC:CONTINUE")
 
-    def run_contact_check_vdp_measurement_auto(self, settings):
+    def start_contact_check_vdp_optimized(self, settings):
         """Automatically determines excitation value and ranges. Then runs contact check on all 4 pairs.
 
             Args:
@@ -726,7 +726,7 @@ class FastHall(XIPInstrument):
                          str(settings.min_r_squared)
         self.command(command_string)
 
-    def run_contact_check_vdp_measurement_manual(self, settings):
+    def start_contact_check_vdp(self, settings):
         """Performs a contact check measurement on contact pairs 1-2, 2-3, 3-4, and 4-1.
 
             Args:
@@ -744,7 +744,7 @@ class FastHall(XIPInstrument):
                          str(settings.blanking_time)
         self.command(command_string)
 
-    def run_contact_check_hbar_measurement(self, settings):
+    def start_contact_check_hbar(self, settings):
         """Performs a contact check measurement on contact pairs 5-6, 5-1, 5-2, 5-3, 5-4, and 6-1
 
             Args:
@@ -762,7 +762,7 @@ class FastHall(XIPInstrument):
                          str(settings.blanking_time)
         self.command(command_string)
 
-    def run_fasthall_vdp_measurement(self, settings):
+    def start_fasthall_vdp(self, settings):
         """Performs a FastHall measurement.
 
             Args:
@@ -784,7 +784,7 @@ class FastHall(XIPInstrument):
                          str(settings.min_hall_voltage_snr)
         self.command(command_string)
 
-    def run_fasthall_vdp_measurement_optimized(self, settings):
+    def start_fasthall_vdp_optimized(self, settings):
         """Performs a FastHall (measurement that uses the last run contact check measurement's excitation type,
         compliance limit, blanking time, excitation range, and the largest absolute value of the start and end
         excitation values along with the last run resistivity measurement's resistivity average and sample thickness.
@@ -801,7 +801,7 @@ class FastHall(XIPInstrument):
                          str(settings.sample_thickness)
         self.command(command_string)
 
-    def run_four_wire_measurement(self, settings):
+    def start_four_wire(self, settings):
         """Performs a Four wire measurement. Excitation is sourced from Contact Point 1 to Contact Point 2. Voltage is
         measured/sensed between contact point 3 and contact point 4.
 
@@ -825,7 +825,7 @@ class FastHall(XIPInstrument):
                          str(settings.excitation_reversal)
         self.command(command_string)
 
-    def run_dc_hall_vdp_measurement(self, settings):
+    def start_dc_hall_vdp(self, settings):
 
         """Performs a DC hall measurement for a Hall Bar sample.
 
@@ -869,7 +869,7 @@ class FastHall(XIPInstrument):
                          str(settings.sample_thickness)
         self.command(command_string)
 
-    def run_resistivity_vdp_measurement(self, settings):
+    def start_resistivity_vdp(self, settings):
         """Performs a resistivity measurement on a Van der Pauw sample.
 
             Args:
@@ -888,7 +888,7 @@ class FastHall(XIPInstrument):
                          str(settings.min_snr)
         self.command(command_string)
 
-    def run_resistivity_vdp_measurement_optimized(self, settings):
+    def start_resistivity_vdp_optimized(self, settings):
         """Performs a resistivity measurement that uses the last run contact check measurement's excitation type,
         compliance limit, blanking time, excitation range, and the largest absolute value of the start and end
         excitation values.
@@ -903,7 +903,7 @@ class FastHall(XIPInstrument):
                          str(settings.max_samples)
         self.command(command_string)
 
-    def run_resistivity_hbar_measurement(self, settings):
+    def start_resistivity_hbar(self, settings):
         """Performs a resistivity measurement on a hall bar sample.
 
             Args:
@@ -953,6 +953,8 @@ class FastHall(XIPInstrument):
 
         # Remove the setup data from the results dictionary
         measurement_results.pop('Setup')
+        measurement_results.pop('OptimizationSetup')
+        measurement_results.pop('OptimizationDiagnostics')
 
         return measurement_results
 
@@ -967,16 +969,16 @@ class FastHall(XIPInstrument):
         settings = FastHallManualParameters(excitation_type=setup_results.get('ExcitationType'),
                                             excitation_value=setup_results.get('ExcitationValue'),
                                             excitation_range=setup_results.get('ExcitationRange'),
-                                            excitation_measurement_range=
-                                            setup_results.get('ExcitationMeasurementRange'),
+                                            excitation_measurement_range=setup_results.get('ExcitationMeasurementRange'
+                                                                                           ),
                                             measurement_range=setup_results.get('MeasurementRange'),
                                             compliance_limit=setup_results.get('ComplianceLimit'),
                                             max_samples=setup_results.get('MeasurementRange'),
                                             user_defined_field=setup_results.get('UserDefinedFieldReadingInTesla'),
                                             resistivity=setup_results.get('Resistivity'),
                                             blanking_time=setup_results.get('BlankingTimeInSeconds'),
-                                            averaging_samples=
-                                            setup_results.get('NumberOfVoltageCompensationSamplesToAverage'),
+                                            averaging_samples=setup_results.get('NumberOfVoltageCompensationSamplesTo\
+                                            Average'),
                                             sample_thickness=setup_results.get('SampleThicknessInMeters'),
                                             min_hall_voltage_snr=setup_results.get('HallVoltageSnr'))
         return settings
@@ -1074,8 +1076,8 @@ class FastHall(XIPInstrument):
         settings = ResistivityManualParameters(setup_results.get('ExcitationType'),
                                                excitation_value=setup_results.get('ExcitationValue'),
                                                excitation_range=setup_results.get('ExcitationRange'),
-                                               excitation_measurement_range=
-                                               setup_results.get('ExcitationMeasurementRange'),
+                                               excitation_measurement_range=setup_results.get('Excitation\
+                                               MeasurementRange'),
                                                measurement_range=setup_results.get('MeasurementRange'),
                                                compliance_limit=setup_results.get('ComplianceLimit'),
                                                width=setup_results.get('SampleWidthInMeters'),
