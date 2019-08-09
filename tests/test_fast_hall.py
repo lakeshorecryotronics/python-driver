@@ -239,7 +239,7 @@ class TestDCHallRun(TestWithFakeFastHall):
         self.fake_connection.setup_response('No error')
         parameters = DCHallParameters(excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=1.5,
                                       averaging_samples=100, user_defined_field=0.5)
-        self.dut.run_dc_hall_hbar_measurement(parameters)
+        self.dut.start_dc_hall_hbar(parameters)
         self.assertIn('HALL:HBAR:DC:START CURRENT,0.01,AUTO,AUTO,AUTO,1.5,100,0.5,1,"NaN",0.002,0',
                       self.fake_connection.get_outgoing_message())
 
@@ -249,7 +249,7 @@ class TestDCHallRun(TestWithFakeFastHall):
                                       excitation_measurement_range=30e-3, measurement_range=4, compliance_limit=5,
                                       averaging_samples=200, user_defined_field=0.5, resistivity=0.216,
                                       blanking_time='MAX')
-        self.dut.run_dc_hall_hbar_measurement(parameters)
+        self.dut.start_dc_hall_hbar(parameters)
         self.assertIn('HALL:HBAR:DC:START CURRENT,0.01,0.02,0.03,4,5,200,0.5,1,0.216,MAX,0',
                       self.fake_connection.get_outgoing_message())
 
@@ -259,7 +259,7 @@ class TestDCHallRun(TestWithFakeFastHall):
                                       excitation_measurement_range=30e-3, measurement_range=4, compliance_limit=5,
                                       averaging_samples=200, user_defined_field=0.5, with_field_reversal=False,
                                       resistivity=0.216, blanking_time=3, sample_thickness=9e-3)
-        self.dut.run_dc_hall_hbar_measurement(parameters)
+        self.dut.start_dc_hall_hbar(parameters)
         self.assertIn('HALL:HBAR:DC:START CURRENT,0.01,0.02,0.03,4,5,200,0.5,0,0.216,3,0.009',
                       self.fake_connection.get_outgoing_message())
 

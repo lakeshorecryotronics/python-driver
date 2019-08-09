@@ -848,7 +848,7 @@ class FastHall(XIPInstrument):
                          str(settings.sample_thickness)
         self.command(command_string)
 
-    def run_dc_hall_hbar_measurement(self, settings):
+    def start_dc_hall_hbar(self, settings):
         """Performs a DC hall measurement for a Hall Bar sample.
 
             Args:
@@ -1099,6 +1099,199 @@ class FastHall(XIPInstrument):
         measurement_results.pop('Setup')
 
         return measurement_results
+
+    def run_complete_contact_check_optimized(self, settings):
+        """Performs a contact check measurement and then returns the corresponding measurement results.
+
+            Args:
+                settings(ContactCheckOptimizedParameters)
+
+            Returns:
+                The measurement results as a dictionary.
+        """
+
+        # Run an optimized contact check
+        self.start_contact_check_vdp_optimized(settings)
+
+        # Loop until measurement has stopped running
+        while self.get_contact_check_running_status():
+            pass
+
+        # Collect and return results
+        results = self.get_contact_check_measurement_results()
+        return results
+
+    def run_complete_contact_check_manual(self, settings, sample_type):
+        """Performs a manual contact check measurement and then returns the corresponding measurement results.
+
+            Args:
+                settings(ContactCheckManualParameters)
+
+                sample_type(str):
+                    * Indicates sample type. Options are:
+                    * "VDP" (Van der Pauw sample)
+                    * "HBAR" (Hall Bar sample)
+
+            Returns:
+                The measurement results as a dictionary.
+        """
+
+        # Run specific measurement based on sample type
+        if sample_type == "VDP":
+            self.start_contact_check_vdp(settings)
+        elif sample_type == "HBAR":
+            self.start_contact_check_hbar(settings)
+
+        #  Loop until measurement has stopped running
+        while self.get_contact_check_running_status():
+            pass
+
+        # Collect and return results
+        results = self.get_contact_check_measurement_results()
+        return results
+
+    def run_complete_fasthall_optimized(self, settings):
+        """Performs an optimized FastHall measurement and then returns the corresponding measurement results.
+
+            Args:
+                settings(FastHallOptimizedParameters)
+
+            Returns:
+                The measurement results as a dictionary.
+        """
+
+        # Run optimized FastHall measurement
+        self.start_fasthall_vdp_optimized(settings)
+
+        # Loop until measurement has stopped running
+        while self.get_fasthall_running_status():
+            pass
+
+        # Collect and return results
+        results = self.get_fasthall_measurement_results()
+        return results
+
+    def run_complete_fasthall_manual(self, settings):
+        """Performs a manual FastHall measurement and then returns the corresponding measurement results.
+
+            Args:
+                settings(FastHallManualParameters)
+
+            Returns:
+                The measurement results as a dictionary.
+        """
+
+        # Run manual FastHall measurement
+        self.start_fasthall_vdp(settings)
+
+        # Loop until measurement has stopped running
+        while self.get_fasthall_running_status():
+            pass
+
+        # Collect and return results
+        results = self.get_fasthall_measurement_results()
+        return results
+
+    def run_complete_four_wire(self, settings):
+        """Performs a Four Wire measurement and then returns the corresponding measurement results.
+
+            Args:
+                settings(FourWireParameters)
+
+            Returns:
+                The measurement results as a dictionary.
+        """
+
+        # Run Four Wire measurement
+        self.start_four_wire(settings)
+
+        # Loop until measurement has stopped running
+        while self.get_four_wire_running_status():
+            pass
+
+        # Collect and return results
+        results = self.get_four_wire_measurement_results()
+        return results
+
+    def run_complete_dc_hall(self, settings, sample_type):
+        """Performs a DC Hall measurement and then returns the corresponding measurement results.
+
+            Args:
+                settings(DCHallParameters)
+
+                sample_type(str):
+                    * Indicates sample type. Options are:
+                    * "VDP" (Van der Pauw sample)
+                    * "HBAR" (Hall Bar sample)
+
+            Returns:
+                The measurement results as a dictionary.
+        """
+
+        # Run specific measurement based on sample type
+        if sample_type == "VDP":
+            self.start_dc_hall_vdp(settings)
+        elif sample_type == "HBAR":
+            self.start_dc_hall_hbar(settings)
+
+        # Loop until measurement has stopped running or waiting
+        while self.get_dc_hall_running_status() or self.get_dc_hall_waiting_status():
+            if self.get_dc_hall_waiting_status():
+                self.continue_dc_hall()
+
+        # Collect and return results
+        results = self.get_dc_hall_measurement_results()
+        return results
+
+    def run_complete_resistivity_optimized(self, settings):
+        """Performs an optimized resistivity measurement and then returns the corresponding measurement results.
+
+            Args:
+                settings(ResistivityOptimizedParameters)
+
+            Returns:
+                The measurement results as a dictionary.
+        """
+
+        # Run an optimized resistivity measurement
+        self.start_resistivity_vdp_optimized(settings)
+
+        # Loop until measurement has stopped running
+        while self.get_resistivity_running_status():
+            pass
+
+        # Collect and return results
+        results = self.get_resistivity_measurement_results()
+        return results
+
+    def run_complete_resistivity_manual(self, settings, sample_type):
+        """Performs a manual resistivity measurement and then returns the corresponding measurement results.
+
+            Args:
+                settings(ResistivityManualParameters)
+
+                sample_type(str):
+                    * Indicates sample type. Options are:
+                    * "VDP" (Van der Pauw sample)
+                    * "HBAR" (Hall Bar sample)
+
+            Returns:
+                The measurement results as a dictionary.
+        """
+
+        # Run specific measurement based on sample type
+        if sample_type == "VDP":
+            self.start_resistivity_vdp(settings)
+        elif sample_type == "HBAR":
+            self.start_resistivity_hbar(settings)
+
+        # Loop until measurement has stopped running
+        while self.get_resistivity_running_status():
+            pass
+
+        # Collect and return results
+        results = self.get_resistivity_measurement_results()
+        return results
 
     def reset_contact_check_measurement(self):
         """Resets the measurement to a not run state, canceling any running measurement"""
