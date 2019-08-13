@@ -14,4 +14,4 @@ Sweeping 155 precision source parameters
 
 Running FastHall contact check measurements and recording data to a CSV file
 ----------------------------------------------------------------------------
-.. literalinclude:: examples/fasthall_record_measurement_data_example.py
+.. literalinclude:: examples/fasthall_record_contact_check_data_example.py
