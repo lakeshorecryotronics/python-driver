@@ -5,7 +5,7 @@ M91 Fast Hall Controller
 The Lake Shore M91 Fast Hall controller makes high speed Hall measurements for materials characterization. More information about the instrument can be found `on our website`_ including the manual which has a list of all SCPI commands and queries.
 on our website: https://www.lakeshore.com/products/MeasureReady/fast-hall.aspx
 
-For an example script, check out :ref:`example_scripts`.
+For a example scripts, check out :ref:`example_scripts`.
 
 .. _on our website: https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-instruments/measureready-m91-fasthall-measurement-controller
 
