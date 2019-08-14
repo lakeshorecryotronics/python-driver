@@ -4,20 +4,15 @@ import json
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 
-# TODO: update register enums once they are finalized
 class FastHallOperationRegister(RegisterBase):
     """Class object representing the operation status register"""
 
     bit_names = [
         "",
-        "settling",
-        "ranging",
-        "measurement_complete",
-        "waiting_for_trigger",
         "",
-        "field_control_ramping",
-        "field_measurement_enabled",
-        "transient"
+        "",
+        "",
+        "measuring_Done"
     ]
 
     def __init__(self,
@@ -42,17 +37,20 @@ class FastHallQuestionableRegister(RegisterBase):
 
     bit_names = [
         "source_in_compliance_or_at_current_limit",
+        "negative_resistivity",
         "",
-        "field_control_slew_rate_limit",
-        "field_control_at_voltage_limit",
+        "",
+        "",
         "current_measurement_overload",
         "voltage_measurement_overload",
-        "invalid_probe",
-        "invalid_calibration",
+        "",
+        "",
         "inter_processor_communication_error",
-        "field_measurement_communication_error",
-        "probe_eeprom_read_error",
-        "r2_less_than_minimum_allowable"
+        "",
+        "",
+        "r2_less_than_minimum_allowable",
+        "f_value_out_of_acceptable_range",
+        "geometry_out_of_acceptable_range"
     ]
 
     def __init__(self,
