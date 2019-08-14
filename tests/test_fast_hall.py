@@ -1,7 +1,7 @@
 from tests.utils import TestWithFakeFastHall, TestWithRealFastHall
 from lakeshore.fast_hall import ContactCheckManualParameters, ContactCheckOptimizedParameters, \
-    FastHallManualParameters, FastHallOptimizedParameters, FourWireParameters, DCHallParameters, \
-    ResistivityManualParameters, ResistivityOptimizedParameters
+    FastHallManualParameters, FastHallLinkParameters, FourWireParameters, DCHallParameters, \
+    ResistivityManualParameters, ResistivityLinkParameters
 
 class TestResets(TestWithFakeFastHall):
     def test_reset_measurement_settings(self):
@@ -157,22 +157,22 @@ class TestFastHallRun(TestWithFakeFastHall):
 
     def test_run_fasthall_vdp_link_default_parameters(self):
         self.fake_connection.setup_response('No error')
-        parameters = FastHallOptimizedParameters(user_defined_field=0.5)
-        self.dut.start_fasthall_vdp_optimized(parameters)
+        parameters = FastHallLinkParameters(user_defined_field=0.5)
+        self.dut.start_fasthall_link_vdp(parameters)
         self.assertIn('FASTHALL:START:LINK 0.5,AUTO,100,30,60,DEF', self.fake_connection.get_outgoing_message())
 
     def test_run_fasthall_vdp_link_mixed_parameters(self):
         self.fake_connection.setup_response('No error')
-        parameters = FastHallOptimizedParameters(user_defined_field=0.5, averaging_samples=100)
-        self.dut.start_fasthall_vdp_optimized(parameters)
+        parameters = FastHallLinkParameters(user_defined_field=0.5, averaging_samples=100)
+        self.dut.start_fasthall_link_vdp(parameters)
         self.assertIn('FASTHALL:START:LINK 0.5,AUTO,100,30,100,DEF', self.fake_connection.get_outgoing_message())
 
     def test_run_fasthall_vdp_link_non_default(self):
         self.fake_connection.setup_response('No error')
-        parameters = FastHallOptimizedParameters(user_defined_field=0.5, measurement_range=10e-3, max_samples=500,
-                                                 min_hall_voltage_snr=50, averaging_samples=100,
-                                                 sample_thickness=2e-3)
-        self.dut.start_fasthall_vdp_optimized(parameters)
+        parameters = FastHallLinkParameters(user_defined_field=0.5, measurement_range=10e-3, max_samples=500,
+                                            min_hall_voltage_snr=50, averaging_samples=100,
+                                            sample_thickness=2e-3)
+        self.dut.start_fasthall_link_vdp(parameters)
         self.assertIn('FASTHALL:START:LINK 0.5,0.01,500,50,100,0.002', self.fake_connection.get_outgoing_message())
 
 
@@ -293,21 +293,21 @@ class TestResistivityRun(TestWithFakeFastHall):
 
     def test_run_resistivity_vdp_link_default(self):
         self.fake_connection.setup_response('No error')
-        parameters = ResistivityOptimizedParameters()
-        self.dut.start_resistivity_vdp_optimized(parameters)
+        parameters = ResistivityLinkParameters()
+        self.dut.start_resistivity_link_vdp(parameters)
         self.assertIn('RESISTIVITY:START:LINK AUTO,0,30,100', self.fake_connection.get_outgoing_message())
 
     def test_run_resistivity_vdp_link_mixed_parameters(self):
         self.fake_connection.setup_response('No error')
-        parameters = ResistivityOptimizedParameters(sample_thickness=5e-3, max_samples=500)
-        self.dut.start_resistivity_vdp_optimized(parameters)
+        parameters = ResistivityLinkParameters(sample_thickness=5e-3, max_samples=500)
+        self.dut.start_resistivity_link_vdp(parameters)
         self.assertIn('RESISTIVITY:START:LINK AUTO,0.005,30,500', self.fake_connection.get_outgoing_message())
 
     def test_run_resistivity_vdp_link_non_default(self):
         self.fake_connection.setup_response('No error')
-        parameters = ResistivityOptimizedParameters(measurement_range=10e-3, sample_thickness=2e-3, min_snr=300,
-                                                    max_samples=400)
-        self.dut.start_resistivity_vdp_optimized(parameters)
+        parameters = ResistivityLinkParameters(measurement_range=10e-3, sample_thickness=2e-3, min_snr=300,
+                                               max_samples=400)
+        self.dut.start_resistivity_link_vdp(parameters)
         self.assertIn('RESISTIVITY:START:LINK 0.01,0.002,300,400', self.fake_connection.get_outgoing_message())
 
     def test_run_resistivity_hbar_default_parameters(self):

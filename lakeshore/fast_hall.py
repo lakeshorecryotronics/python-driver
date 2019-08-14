@@ -286,8 +286,8 @@ class FastHallManualParameters:
         self.min_hall_voltage_snr = min_hall_voltage_snr
 
 
-class FastHallOptimizedParameters:
-    """Class object representing parameters used for running optimized FastHall measurements"""
+class FastHallLinkParameters:
+    """Class object representing parameters used for running FastHall Link measurements"""
     def __init__(self,
                  user_defined_field,
                  measurement_range='AUTO',
@@ -295,7 +295,7 @@ class FastHallOptimizedParameters:
                  min_hall_voltage_snr=30,
                  averaging_samples=60,
                  sample_thickness='DEF'):
-        """The constructor for FastHallOptimizedParameters class
+        """The constructor for FastHallLinkParameters class
             Args:
                 user_defined_field (float):
                     The field, in units of Tesla, the sample is being subjected to. Used for calculations.
@@ -622,14 +622,14 @@ class ResistivityManualParameters:
         self.min_snr = min_snr
 
 
-class ResistivityOptimizedParameters:
+class ResistivityLinkParameters:
     """Class object representing parameters used for running manual Resistivity measurements"""
     def __init__(self,
                  measurement_range='AUTO',
                  sample_thickness=0,
                  min_snr=30,
                  max_samples=100):
-        """The constructor for ResistivityOptimizedParameters class.
+        """The constructor for ResistivityLinkParameters class.
             Args:
                 measurement_range (float or str):
                     * Measurement range based on the excitation type. Options are:
@@ -782,13 +782,13 @@ class FastHall(XIPInstrument):
                          str(settings.min_hall_voltage_snr)
         self.command(command_string)
 
-    def start_fasthall_vdp_optimized(self, settings):
+    def start_fasthall_link_vdp(self, settings):
         """Performs a FastHall (measurement that uses the last run contact check measurement's excitation type,
         compliance limit, blanking time, excitation range, and the largest absolute value of the start and end
         excitation values along with the last run resistivity measurement's resistivity average and sample thickness.
 
             Args:
-                settings (FastHallOptimizedParameters)
+                settings (FastHallLinkParameters)
         """
         command_string = "FASTHALL:START:LINK " + \
                          str(settings.user_defined_field) + "," + \
@@ -886,13 +886,13 @@ class FastHall(XIPInstrument):
                          str(settings.min_snr)
         self.command(command_string)
 
-    def start_resistivity_vdp_optimized(self, settings):
+    def start_resistivity_link_vdp(self, settings):
         """Performs a resistivity measurement that uses the last run contact check measurement's excitation type,
         compliance limit, blanking time, excitation range, and the largest absolute value of the start and end
         excitation values.
 
             Args:
-                settings(ResistivityOptimizedParameters)
+                settings(ResistivityLinkParameters)
         """
         command_string = "RESISTIVITY:START:LINK " + \
                          str(settings.measurement_range) + "," + \
@@ -1148,18 +1148,18 @@ class FastHall(XIPInstrument):
         results = self.get_contact_check_measurement_results()
         return results
 
-    def run_complete_fasthall_optimized(self, settings):
-        """Performs an optimized FastHall measurement and then returns the corresponding measurement results.
+    def run_complete_fasthall_link(self, settings):
+        """Performs a FastHall Link measurement and then returns the corresponding measurement results.
 
             Args:
-                settings(FastHallOptimizedParameters)
+                settings(FastHallLinkParameters)
 
             Returns:
                 The measurement results as a dictionary.
         """
 
-        # Run optimized FastHall measurement
-        self.start_fasthall_vdp_optimized(settings)
+        # Run FastHall Link measurement
+        self.start_fasthall_link_vdp(settings)
 
         # Loop until measurement has stopped running
         while self.get_fasthall_running_status():
@@ -1241,18 +1241,18 @@ class FastHall(XIPInstrument):
         results = self.get_dc_hall_measurement_results()
         return results
 
-    def run_complete_resistivity_optimized(self, settings):
-        """Performs an optimized resistivity measurement and then returns the corresponding measurement results.
+    def run_complete_resistivity_link(self, settings):
+        """Performs a resistivity link measurement and then returns the corresponding measurement results.
 
             Args:
-                settings(ResistivityOptimizedParameters)
+                settings(ResistivityLinkParameters)
 
             Returns:
                 The measurement results as a dictionary.
         """
 
-        # Run an optimized resistivity measurement
-        self.start_resistivity_vdp_optimized(settings)
+        # Run a resistivity link measurement
+        self.start_resistivity_link_vdp(settings)
 
         # Loop until measurement has stopped running
         while self.get_resistivity_running_status():
