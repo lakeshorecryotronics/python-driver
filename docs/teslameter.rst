@@ -2,7 +2,9 @@
 
 F41 & F71 Teslameters
 =====================
-The Lake Shore single-axis (F41) and multi-axis (F71) Teslameters provide highly accurate field strength measurements. More information about the instrument can be found `on our website`_ including the manual which has a list of all SCPI commands and queries.
+The Lake Shore single-axis (F41) and multi-axis (F71) Teslameters provide highly accurate field strength measurements.
+
+More information about the instrument can be found `on our website`_ including the manual which has a list of all SCPI commands and queries.
 
 For an example script, check out :ref:`example_scripts`.
 

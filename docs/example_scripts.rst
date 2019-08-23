@@ -11,3 +11,11 @@ Streaming teslameter data to a CSV file
 Sweeping 155 precision source parameters
 ----------------------------------------
 .. literalinclude:: examples/precision_source_sweep_example.py
+
+Running FastHall contact check measurements and recording data to a CSV file
+----------------------------------------------------------------------------
+.. literalinclude:: examples/fasthall_record_contact_check_data_example.py
+
+Doing a complete sample analysis with FastHall
+----------------------------------------------------------------------------
+.. literalinclude:: examples/fasthall_full_sample_analysis.py

@@ -1,10 +1,10 @@
 from tempfile import TemporaryFile
 from time import sleep
 
-from tests.utils import TestWithRealDUT, TestWithFakeDUT
+from tests.utils import TestWithRealTeslameter, TestWithFakeTeslameter
 
 
-class TestBufferedFieldData(TestWithRealDUT):
+class TestBufferedFieldData(TestWithRealTeslameter):
     def test_stream_buffered_data_provides_correct_number_of_points(self):
         iterable = self.dut.stream_buffered_data(1, 10)
 
@@ -34,7 +34,7 @@ class TestBufferedFieldData(TestWithRealDUT):
                 self.assertEqual(len(row.split(',')), 9)
 
 
-class TestBasicReadings(TestWithFakeDUT):
+class TestBasicReadings(TestWithFakeTeslameter):
     def test_get_dc_field(self):
         self.fake_connection.setup_response('123.456;No error')
         response = self.dut.get_dc_field()
@@ -102,7 +102,7 @@ class TestBasicReadings(TestWithFakeDUT):
         self.assertIn('SENS:RELATIVE:BASELINE 123.456', self.fake_connection.get_outgoing_message())
 
 
-class TestTemperatureCompensation(TestWithFakeDUT):
+class TestTemperatureCompensation(TestWithFakeTeslameter):
     def test_get_temperature(self):
         self.fake_connection.setup_response('23.5;No error')
         response = self.dut.get_temperature()
@@ -138,7 +138,7 @@ class TestTemperatureCompensation(TestWithFakeDUT):
         self.assertIn('SENS:TCOM:MTEM?', self.fake_connection.get_outgoing_message())
 
 
-class TestProbeInformation(TestWithFakeDUT):
+class TestProbeInformation(TestWithFakeTeslameter):
     def test_get_probe_information(self):
         probe_data = {'model_number': '7547',
                       'serial_number': '1234567',
@@ -161,7 +161,7 @@ class TestProbeInformation(TestWithFakeDUT):
         self.assertDictEqual(probe_data, response)
 
 
-class TestFieldMeasurementConfiguration(TestWithFakeDUT):
+class TestFieldMeasurementConfiguration(TestWithFakeTeslameter):
     def test_configure_field_measurement_defaults(self):
         self.fake_connection.setup_response('No error')
         self.fake_connection.setup_response('No error')
@@ -213,7 +213,7 @@ class TestFieldMeasurementConfiguration(TestWithFakeDUT):
         self.assertIn('UNIT:FIELD?', self.fake_connection.get_outgoing_message())
 
 
-class TestFieldControl(TestWithFakeDUT):
+class TestFieldControl(TestWithFakeTeslameter):
     def test_configure_field_control_limits(self):
         self.fake_connection.setup_response('No error')
         self.fake_connection.setup_response('No error')
@@ -310,7 +310,7 @@ class TestFieldControl(TestWithFakeDUT):
         self.assertIn('SOURCE:FIELD:OPL:VOLTAGE?', self.fake_connection.get_outgoing_message())
 
 
-class TestAnalogOut(TestWithFakeDUT):
+class TestAnalogOut(TestWithFakeTeslameter):
     def test_set_analog_output(self):
         self.fake_connection.setup_response('No error')
         self.dut.set_analog_output('YRAW')
@@ -323,7 +323,7 @@ class TestAnalogOut(TestWithFakeDUT):
         self.assertIn('SOURCE:AOUT?', self.fake_connection.get_outgoing_message())
 
 
-class TestResets(TestWithFakeDUT):
+class TestResets(TestWithFakeTeslameter):
     def test_reset_measurement_settings(self):
         self.fake_connection.setup_response('No error')
         self.dut.reset_measurement_settings()
@@ -335,7 +335,7 @@ class TestResets(TestWithFakeDUT):
         self.assertIn('SYSTEM:FACTORYRESET', self.fake_connection.get_outgoing_message())
 
 
-class TestStatusRegisters(TestWithRealDUT):
+class TestStatusRegisters(TestWithRealTeslameter):
     def test_modification_of_operation_register(self):
         self.dut.modify_operation_register_mask('ranging', False)
 
