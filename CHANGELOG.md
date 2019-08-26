@@ -1,5 +1,9 @@
 Change Log
 ==========
+Release 1.2.0
+-------------
+Added:
+ - Support for M91 FastHall Measurement Controller
 
 Release 1.1.0
 -------------
