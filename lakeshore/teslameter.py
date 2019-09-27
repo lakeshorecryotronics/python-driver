@@ -491,7 +491,7 @@ class Teslameter(XIPInstrument):
         )
         self.command("SOURCE:AOUT " + analog_output_mode)
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def set_analog_output_signal(self, analog_output_mode):
         """Configures what signal is provided by the analog output BNC
 
@@ -510,7 +510,7 @@ class Teslameter(XIPInstrument):
         """
         self.command("SOURCE:AOUT " + analog_output_mode)
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def configure_corrected_analog_output_scaling(self, scale_factor, baseline):
         """Configures the conversion between field reading and analog output voltage.
 
@@ -524,7 +524,7 @@ class Teslameter(XIPInstrument):
         """
         self.command("SOURCE:AOUT:SFACTOR " + str(scale_factor), "SOURCE:AOUT:BASELINE " + str(baseline))
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def get_corrected_analog_output_scaling(self):
         """Returns the scale factor and baseline of the corrected analog out."""
         return float(self.query("SOURCE:AOUT:SFACTOR?")), float(self.query("SOURCE:AOUT:BASELINE?"))
@@ -541,12 +541,12 @@ class Teslameter(XIPInstrument):
         """Returns what signal is being provided by the analog output"""
         return self.query("SOURCE:AOUT?")
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def enable_high_frequency_filters(self):
         """Applies filtering to the high frequency RMS measurements"""
         self.command("SENSE:FILT 1")
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def disable_high_frequency_filters(self):
         """Turns off filtering of the high frequency mode measurements"""
         self.command("SENSE:FILT 0")
@@ -563,17 +563,17 @@ class Teslameter(XIPInstrument):
         """
         self.command("SENSE:FILT:TYPE " + str(filter_type))
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def get_frequency_filter_type(self):
         """Returns the type of filter that is or will be applied to the high frequency measurements"""
         return self.query("SENSE:FILTER:TYPE?")
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def get_low_pass_filter_cutoff(self):
         """Returns the cutoff frequency setting of the low pass filter"""
         return float(self.query("SENSE:FILTER:LPASS:CUTOFF?"))
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def set_low_pass_filter_cutoff(self, cutoff_frequency):
         """Configures the low pass filter cutoff
 
@@ -582,12 +582,12 @@ class Teslameter(XIPInstrument):
         """
         self.command("SENSE:FILTER:LPASS:CUTOFF " + str(cutoff_frequency))
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def get_high_pass_filter_cutoff(self):
         """Returns the cutoff frequency setting of the low pass filter"""
         return float(self.query("SENSE:FILTER:HPASS:CUTOFF?"))
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def set_high_pass_filter_cutoff(self, cutoff_frequency):
         """Configures the high pass filter cutoff
 
@@ -596,56 +596,52 @@ class Teslameter(XIPInstrument):
         """
         self.command("SENSE:FILTER:HPASS:CUTOFF " + str(cutoff_frequency))
 
-    # @requires_firmware_version("1.6")
-    def get_band_pass_filter_span(self):
-        """Returns the center and width of the band pass filter"""
-        return float(self.query("SENSE:FILTER:BPASS:CENTER?")), float(self.query("SENSE:FILTER:BPASS:WIDTH?"))
+    @requires_firmware_version("1.6.2019092002")
+    def get_band_pass_filter_center(self):
+        """Returns the center of the band pass filter"""
+        return float(self.query("SENSE:FILTER:BPASS:CENTER?"))
 
     @requires_firmware_version("1.6")
-    def set_band_pass_filter_span(self, center_frequency, width=1):
+    def set_band_pass_filter_center(self, center_frequency):
         """Configures the band pass filter parameters
 
             Args:
                 center_frequency (float):
                     The frequency at which the gain of the filter is 1
-
-                width (float):
-                    The width of the filter as multiples of the minimum width of 1
         """
         self.command("SENSE:FILTER:BPASS:CENTER " + str(center_frequency))
-        self.command("SENSE:FILTER:BPASS:WIDTH " + str(width))
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def enable_qualifier(self):
         """Enables the qualifier"""
         self.command("SENSE:QUALIFIER 1")
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def disable_qualifier(self):
         """Disables the qualifier"""
         self.command("SENSE:QUALIFIER 0")
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def is_qualifier_condition_met(self):
         """Returns whether the qualifier condition is met"""
         return bool(int(self.query("SENSE:QUALIFIER:CONDITION?")))
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def enable_qualifier_latching(self):
         """Enables the qualifier condition latching"""
         self.command("SENSE:QUALIFIER:LATCH 1")
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def disable_qualifier_latching(self):
         """Disables the qualifier condition latching"""
         self.command("SENSE:QUALIFIER:LATCH 0")
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def reset_qualifier_latch(self):
         """Resets the condition status of the qualifier"""
         self.command("SENSE:QUALIFIER:LRESET")
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def get_qualifier_threshold(self):
         """Returns the threshold mode and field threshold values"""
         response = self.query("SENSE:QUALIFIER:THRESHOLD?")
@@ -658,7 +654,7 @@ class Teslameter(XIPInstrument):
             threshold = (mode, threshold_field_low, threshold_field_upper)
         return threshold
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def configure_qualifier_threshold(self, mode, lower_field, upper_field=None):
         """Sets the threshold condition of the qualifier.
 
