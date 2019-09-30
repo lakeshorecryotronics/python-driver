@@ -394,20 +394,18 @@ class TestFilters(TestWithFakeTeslameter):
         self.dut.set_high_pass_filter_cutoff(4321)
         self.assertIn('SENSE:FILTER:HPASS:CUTOFF 4321', self.fake_connection.get_outgoing_message())
 
-    def test_get_band_pass_filter_span(self):
+    def test_get_band_pass_filter_center(self):
         self.fake_connection.setup_response('8675;No error')
         self.fake_connection.setup_response('2;No error')
-        response = self.dut.get_band_pass_filter_span()
-        self.assertEqual(response, (8675, 2))
+        response = self.dut.get_band_pass_filter_center()
+        self.assertEqual(response, 8675)
         self.assertIn('SENSE:FILTER:BPASS:CENTER?', self.fake_connection.get_outgoing_message())
-        self.assertIn('SENSE:FILTER:BPASS:WIDTH?', self.fake_connection.get_outgoing_message())
 
-    def test_set_band_pass_filter_span(self):
+    def test_set_band_pass_filter_center(self):
         self.fake_connection.setup_response('No error')
         self.fake_connection.setup_response('No error')
-        self.dut.set_band_pass_filter_span(8675, 2)
+        self.dut.set_band_pass_filter_center(8675)
         self.assertIn('SENSE:FILTER:BPASS:CENTER 8675', self.fake_connection.get_outgoing_message())
-        self.assertIn('SENSE:FILTER:BPASS:WIDTH 2', self.fake_connection.get_outgoing_message())
 
 
 class TestQualifier(TestWithFakeTeslameter):
