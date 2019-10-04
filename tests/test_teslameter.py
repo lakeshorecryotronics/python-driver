@@ -311,16 +311,22 @@ class TestFieldControl(TestWithFakeTeslameter):
 
 
 class TestAnalogOut(TestWithFakeTeslameter):
-    def test_set_analog_output(self):
+    def test_set_analog_output_signal(self):
+
         self.fake_connection.setup_response('No error')
-        self.dut.set_analog_output('YRAW')
+        self.dut.set_analog_output_signal('YRAW')
         self.assertIn('SOURCE:AOUT YRAW', self.fake_connection.get_outgoing_message())
 
     def test_get_analog_output(self):
         self.fake_connection.setup_response('ZRAW;No error')
-        response = self.dut.get_analog_output()
+        response = self.dut.get_analog_output_signal()
         self.assertEqual(response, 'ZRAW')
         self.assertIn('SOURCE:AOUT?', self.fake_connection.get_outgoing_message())
+
+    def test_configure_analog_out_scaling(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.configure_corrected_analog_output_scaling(1, 0)
+        self.assertIn('SOURCE:AOUT:SFACTOR 1;:SOURCE:AOUT:BASELINE 0', self.fake_connection.get_outgoing_message())
 
 
 class TestResets(TestWithFakeTeslameter):
@@ -342,3 +348,110 @@ class TestStatusRegisters(TestWithRealTeslameter):
         response = self.dut.get_operation_event_enable_mask()
 
         self.assertEqual(response.ranging, False)
+
+
+class TestFilters(TestWithFakeTeslameter):
+    def test_enable_high_frequency_filters(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.enable_high_frequency_filters()
+        self.assertIn('SENSE:FILT 1', self.fake_connection.get_outgoing_message())
+
+    def test_disable_high_frequency_filters(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.disable_high_frequency_filters()
+        self.assertIn('SENSE:FILT 0', self.fake_connection.get_outgoing_message())
+
+    def test_set_frequency_filter_type(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_frequency_filter_type("HPASS")
+        self.assertIn('SENSE:FILT:TYPE HPASS', self.fake_connection.get_outgoing_message())
+
+    def test_get_frequency_filter_type(self):
+        self.fake_connection.setup_response('HPASS;No error')
+        response = self.dut.get_frequency_filter_type()
+        self.assertEqual(response, 'HPASS')
+        self.assertIn('SENSE:FILTER:TYPE?', self.fake_connection.get_outgoing_message())
+
+    def test_get_low_pass_filter_cutoff(self):
+        self.fake_connection.setup_response('1234;No error')
+        response = self.dut.get_low_pass_filter_cutoff()
+        self.assertEqual(response, 1234)
+        self.assertIn('SENSE:FILTER:LPASS:CUTOFF?', self.fake_connection.get_outgoing_message())
+
+    def test_set_low_pass_filter_cutoff(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_low_pass_filter_cutoff(1234)
+        self.assertIn('SENSE:FILTER:LPASS:CUTOFF 1234', self.fake_connection.get_outgoing_message())
+
+    def test_get_high_pass_filter_cutoff(self):
+        self.fake_connection.setup_response('4321;No error')
+        response = self.dut.get_high_pass_filter_cutoff()
+        self.assertEqual(response, 4321)
+        self.assertIn('SENSE:FILTER:HPASS:CUTOFF?', self.fake_connection.get_outgoing_message())
+
+    def test_set_high_pass_filter_cutoff(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_high_pass_filter_cutoff(4321)
+        self.assertIn('SENSE:FILTER:HPASS:CUTOFF 4321', self.fake_connection.get_outgoing_message())
+
+    def test_get_band_pass_filter_center(self):
+        self.fake_connection.setup_response('8675;No error')
+        self.fake_connection.setup_response('2;No error')
+        response = self.dut.get_band_pass_filter_center()
+        self.assertEqual(response, 8675)
+        self.assertIn('SENSE:FILTER:BPASS:CENTER?', self.fake_connection.get_outgoing_message())
+
+    def test_set_band_pass_filter_center(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('No error')
+        self.dut.set_band_pass_filter_center(8675)
+        self.assertIn('SENSE:FILTER:BPASS:CENTER 8675', self.fake_connection.get_outgoing_message())
+
+
+class TestQualifier(TestWithFakeTeslameter):
+    def test_enable_qualifier(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.enable_qualifier()
+        self.assertIn('SENSE:QUALIFIER 1', self.fake_connection.get_outgoing_message())
+
+    def test_disable_qualifier(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.disable_qualifier()
+        self.assertIn('SENSE:QUALIFIER 0', self.fake_connection.get_outgoing_message())
+
+    def test_is_qualifier_condition_met(self):
+        self.fake_connection.setup_response('0;No error')
+        response = self.dut.is_qualifier_condition_met()
+        self.assertEqual(response, False)
+        self.assertIn('SENSE:QUALIFIER:CONDITION?', self.fake_connection.get_outgoing_message())
+
+    def test_enable_qualifier_latching(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.enable_qualifier_latching()
+        self.assertIn('SENSE:QUALIFIER:LATCH 1', self.fake_connection.get_outgoing_message())
+
+    def test_disable_qualifier_latching(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.disable_qualifier_latching()
+        self.assertIn('SENSE:QUALIFIER:LATCH 0', self.fake_connection.get_outgoing_message())
+
+    def test_reset_qualifier_latch(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.reset_qualifier_latch()
+        self.assertIn('SENSE:QUALIFIER:LRESET', self.fake_connection.get_outgoing_message())
+
+    def test_get_qualifier_threshold(self):
+        self.fake_connection.setup_response('BETWeen,-1.23,4.56;No error')
+        response = self.dut.get_qualifier_configuration()
+        self.assertEqual(response, ('BETWeen', -1.23, 4.56))
+        self.assertIn('SENSE:QUALIFIER:THRESHOLD?', self.fake_connection.get_outgoing_message())
+
+    def test_set_qualifier_threshold(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.configure_qualifier('OUTSIDE', -1.23, 4.56)
+        self.assertIn('SENSE:QUALIFIER:THRESHOLD OUTSIDE,-1.23,4.56', self.fake_connection.get_outgoing_message())
+
+    def test_set_latching(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_qualifier_latching_setting(1)
+        self.assertIn('SENSE:QUALIFIER:LATCH 1', self.fake_connection.get_outgoing_message())
