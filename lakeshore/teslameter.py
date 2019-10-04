@@ -551,7 +551,7 @@ class Teslameter(XIPInstrument):
         """Turns off filtering of the high frequency mode measurements"""
         self.command("SENSE:FILT 0")
 
-    @requires_firmware_version("1.6")
+    @requires_firmware_version("1.6.2019092002")
     def set_frequency_filter_type(self, filter_type):
         """Configures which filter is applied to the high frequency measurements
 
@@ -637,12 +637,27 @@ class Teslameter(XIPInstrument):
         self.command("SENSE:QUALIFIER:LATCH 0")
 
     @requires_firmware_version("1.6.2019092002")
+    def get_qualifier_latching_setting(self):
+        """Returns whether the qualifier latches"""
+        return self.query("SENSE:QUALIFIER:LATCH?")
+
+    @requires_firmware_version("1.6.2019092002")
+    def set_qualifier_latching_setting(self, latching):
+        """Sets whether the qualifier latches
+
+            Args:
+                latching (bool):
+                    Determines whether the qualifier latches
+        """
+        self.command("SENSE:QUALIFIER:LATCH " + str(latching))
+
+    @requires_firmware_version("1.6.2019092002")
     def reset_qualifier_latch(self):
         """Resets the condition status of the qualifier"""
         self.command("SENSE:QUALIFIER:LRESET")
 
     @requires_firmware_version("1.6.2019092002")
-    def get_qualifier_threshold(self):
+    def get_qualifier_configuration(self):
         """Returns the threshold mode and field threshold values"""
         response = self.query("SENSE:QUALIFIER:THRESHOLD?")
         elements = response.split(',')
@@ -655,7 +670,7 @@ class Teslameter(XIPInstrument):
         return threshold
 
     @requires_firmware_version("1.6.2019092002")
-    def configure_qualifier_threshold(self, mode, lower_field, upper_field=None):
+    def configure_qualifier(self, mode, lower_field, upper_field=None):
         """Sets the threshold condition of the qualifier.
 
             Args:

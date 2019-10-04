@@ -442,11 +442,16 @@ class TestQualifier(TestWithFakeTeslameter):
 
     def test_get_qualifier_threshold(self):
         self.fake_connection.setup_response('BETWeen,-1.23,4.56;No error')
-        response = self.dut.get_qualifier_threshold()
+        response = self.dut.get_qualifier_configuration()
         self.assertEqual(response, ('BETWeen', -1.23, 4.56))
         self.assertIn('SENSE:QUALIFIER:THRESHOLD?', self.fake_connection.get_outgoing_message())
 
     def test_set_qualifier_threshold(self):
         self.fake_connection.setup_response('No error')
-        self.dut.configure_qualifier_threshold('OUTSIDE', -1.23, 4.56)
+        self.dut.configure_qualifier('OUTSIDE', -1.23, 4.56)
         self.assertIn('SENSE:QUALIFIER:THRESHOLD OUTSIDE,-1.23,4.56', self.fake_connection.get_outgoing_message())
+
+    def test_set_latching(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_qualifier_latching_setting(1)
+        self.assertIn('SENSE:QUALIFIER:LATCH 1', self.fake_connection.get_outgoing_message())
