@@ -74,6 +74,13 @@ class TestBasicReadings(TestWithFakeTeslameter):
             self.assertAlmostEqual(expected, actual)
         self.assertIn('FETCH:MAX?;:FETCH:MIN?', self.fake_connection.get_outgoing_message())
 
+    def test_get_max_min_peaks(self):
+        self.fake_connection.setup_response('10;-10;No error')
+        response = self.dut.get_max_min_peaks()
+        for expected, actual in zip([10, -10], response):
+            self.assertAlmostEqual(expected, actual)
+        self.assertIn('FETCH:MAXP?;:FETCH:MINP?', self.fake_connection.get_outgoing_message())
+
     def test_reset_max_min(self):
         self.fake_connection.setup_response('No error')
         self.dut.reset_max_min()

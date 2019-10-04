@@ -259,6 +259,14 @@ class Teslameter(XIPInstrument):
 
         return [float(separated_response[0]), float(separated_response[1])]
 
+    def get_max_min_peaks(self):
+        """Returns the maximum and minimum peak field readings respectively."""
+
+        response = self.query("FETCH:MAXP?", "FETCH:MINP?")
+        separated_response = response.split(";")
+
+        return [float(separated_response[0]), float(separated_response[1])]
+
     def reset_max_min(self):
         """Resets the maximum and minimum field readings to the present field reading."""
         self.command("SENS:MRESET")
