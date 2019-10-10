@@ -230,9 +230,9 @@ class Teslameter(XIPInstrument):
 
         response = self.query("FETCH:DC? ALL")
 
-        xyz_values = (float(channel_value) for channel_value in response.split(","))
+        xyz_values = [float(channel_value) for channel_value in response.split(",")]
 
-        return xyz_values
+        return tuple(xyz_values)
 
     def get_rms_field(self):
         """Returns the RMS field reading."""
@@ -243,9 +243,9 @@ class Teslameter(XIPInstrument):
 
         response = self.query("FETCH:RMS? ALL")
 
-        xyz_values = (float(channel_value) for channel_value in response.split(","))
+        xyz_values = [float(channel_value) for channel_value in response.split(",")]
 
-        return xyz_values
+        return tuple(xyz_values)
 
     def get_frequency(self):
         """Returns the field frequency reading."""
