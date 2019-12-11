@@ -1,5 +1,5 @@
 from tests.utils import TestWithFakeFastHall, TestWithRealFastHall
-from lakeshore.fast_hall import ContactCheckManualParameters, ContactCheckOptimizedParameters, \
+from lakeshore.M91 import ContactCheckManualParameters, ContactCheckOptimizedParameters, \
     FastHallManualParameters, FastHallLinkParameters, FourWireParameters, DCHallParameters, \
     ResistivityManualParameters, ResistivityLinkParameters
 

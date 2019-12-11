@@ -701,3 +701,7 @@ class Teslameter(XIPInstrument):
             self.command("SENSE:QUALIFIER:THRESHOLD " + mode + ',' + str(lower_field))
         else:
             self.command("SENSE:QUALIFIER:THRESHOLD " + mode + ',' + str(lower_field) + ',' + str(upper_field))
+
+
+F41 = Teslameter
+F71 = Teslameter

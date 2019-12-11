@@ -1311,3 +1311,6 @@ class FastHall(XIPInstrument):
     def reset_resistivity_measurement(self):
         """Resets the measurement to a not run state, canceling any running measurement"""
         self.command("RESISTIVITY:RESET")
+
+
+M91 = FastHall

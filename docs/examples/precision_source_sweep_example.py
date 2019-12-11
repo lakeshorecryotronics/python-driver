@@ -1,4 +1,4 @@
-from lakeshore.precision_source import PrecisionSource
+from lakeshore import PrecisionSource
 
 # The purpose of this script is to sweep frequency, amplitude, and offset of an output signal using
 # a Lake Shore AC/DC 155 Precision Source
