@@ -27,7 +27,7 @@ The following code will connect to a 155 Precision Source over USB and print wha
     print(my_instrument.query('*IDN?'))
 
 ## Documentation
-Detailed documentation of the driver and more example code is available [here](https://lake-shore-python-driver.readthedocs.io/en/latest/).
+[Click here to read the documentation and some example scripts](https://lake-shore-python-driver.readthedocs.io/en/latest/)
 
 ## Contribute
 We want your feedback!
@@ -40,3 +40,4 @@ Don't hesitate to create pull requests. They make the driver better for everyone
 * [Lake Shore website](https://www.lakeshore.com)
 * [GitHub repo](https://github.com/lakeshorecryotronics/python-driver)
 * [Change log](https://github.com/lakeshorecryotronics/python-driver/blob/master/CHANGELOG.md)
+* [Documentation](https://lake-shore-python-driver.readthedocs.io/en/latest/)
