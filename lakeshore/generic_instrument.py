@@ -54,7 +54,7 @@ class GenericInstrument:
             self.device_tcp.close()
 
     def command(self, command_string):
-        """Send a SCPI command or multiple commands to the instrument
+        """Send a command or multiple commands to the instrument
 
             Args:
                 command_string (str):
@@ -74,7 +74,7 @@ class GenericInstrument:
             self.logger.info('Sent command to %s: %s', self.serial_number, command_string)
 
     def query(self, query_string):
-        """Send a SCPI query or multiple queries to the instrument and return the response(s)
+        """Send a query to the instrument and return the response
 
             Args:
                 query_string (str):
