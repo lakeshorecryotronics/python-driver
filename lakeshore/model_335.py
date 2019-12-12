@@ -1,9 +1,11 @@
-from .generic_instrument import GenericInstrument
+"""Implements functionality unique to the Lake Shore model 335 temperature controller"""
 import serial
+
+from .generic_instrument import GenericInstrument
 
 
 class Model335(GenericInstrument):
-    # A class object representing the Lake Shore model 335 temperature controller
+    """A class object representing the Lake Shore model 335 temperature controller"""
 
     vid_pid = [(0x1FB9, 0x0300)]
 

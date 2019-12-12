@@ -1,8 +1,11 @@
 """This module implements a parent class that contains all functionality shared by Lake Shore XIP instruments."""
 
 import re
-from .generic_instrument import GenericInstrument
+
 import serial
+
+from .generic_instrument import GenericInstrument
+
 
 class RegisterBase:
     """Base class of the status register classes"""

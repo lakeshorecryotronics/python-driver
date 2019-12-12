@@ -1,9 +1,11 @@
-from .generic_instrument import GenericInstrument
+"""Implements functionality unique to the Lake Shore model 455 Gaussmeter"""
 import serial
+
+from .generic_instrument import GenericInstrument
 
 
 class Model455(GenericInstrument):
-    # A class object representing the Lake Shore model 455 Gaussmeter
+    """A class object representing the Lake Shore model 455 Gaussmeter"""
 
     vid_pid = [(0x1FB9, 0x0402)]
 

@@ -1,9 +1,11 @@
-from .generic_instrument import GenericInstrument
+"""Implements functionality unique to the Lake Shore model 121 programmable DC current source"""
 import serial
+
+from .generic_instrument import GenericInstrument
 
 
 class Model121(GenericInstrument):
-    # A class object representing the Lake Shore model 121 programmable DC current source
+    """A class object representing the Lake Shore model 121 programmable DC current source"""
 
     vid_pid = [(0x1FB9, 0x0100)]
 
