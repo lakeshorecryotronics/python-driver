@@ -37,7 +37,7 @@ class GenericInstrument:
                 self.device_serial = connection
 
         # Query the instrument identification information and store it in variables
-        idn_response = self.query('*IDN?').split(',')
+        idn_response = self._get_identity()
         self.firmware_version = idn_response[3]
         self.serial_number = idn_response[2]
         self.model_number = idn_response[1]
@@ -209,3 +209,6 @@ class GenericInstrument:
             raise Exception("Communication timed out")
 
         return response.rstrip()
+
+    def _get_identity(self):
+        return self.query('*IDN?').split(',')

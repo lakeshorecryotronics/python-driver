@@ -80,10 +80,10 @@ class XIPInstrumentException(Exception):
 class XIPInstrument(GenericInstrument):
     """Parent class that implements functionality shared by all XIP instruments"""
 
-    def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port, connection=None):
+    def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port, **kwargs):
         # Initialize values common to all XIP instruments
         GenericInstrument.__init__(self, serial_number, com_port, baud_rate, 8, 1, serial.PARITY_NONE, flow_control,
-                                   False, timeout, ip_address, tcp_port, connection)
+                                   False, timeout, ip_address, tcp_port, **kwargs)
         self.status_byte_register = StatusByteRegister
         self.standard_event_register = StandardEventRegister
         self.operation_register = None
@@ -430,3 +430,6 @@ class XIPInstrument(GenericInstrument):
     def factory_reset(self):
         """Resets all system information such as settings, wi-fi connections, date and time, etc."""
         self.command("SYSTEM:FACTORYRESET")
+
+    def _get_identity(self):
+        return self.query('*IDN?', check_errors=False).split(',')

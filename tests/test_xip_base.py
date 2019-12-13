@@ -13,13 +13,13 @@ class TestDiscovery(unittest.TestCase):
             self.fail('Exception raised unexpectedly.')
 
     def test_specified_serial_does_not_exist(self):
-        with self.assertRaisesRegex(XIPInstrumentException,
+        with self.assertRaisesRegex(Exception,
                                     r'No serial connections found with a matching COM port '
                                     r'and/or matching serial number'):
             Teslameter(serial_number='Fake')
 
     def test_specified_com_port_does_not_exist(self):
-        with self.assertRaisesRegex(XIPInstrumentException,
+        with self.assertRaisesRegex(Exception,
                                     r'No serial connections found with a matching COM port '
                                     r'and/or matching serial number'):
             Teslameter(com_port='COM99')
@@ -27,7 +27,7 @@ class TestDiscovery(unittest.TestCase):
     def test_tcp_connection(self):
         try:
             Teslameter(ip_address='192.168.0.12', tcp_port=7777)
-        except XIPInstrumentException:
+        except Exception:
             self.fail('Exception raised unexpectedly.')
 
 
@@ -39,7 +39,7 @@ class TestBasicComms(TestWithRealTeslameter):
         self.assertEqual(response.split(',')[0], 'Lake Shore')
 
     def test_timeout(self):
-        with self.assertRaisesRegex(XIPInstrumentException, r'Communication timed out'):
+        with self.assertRaisesRegex(Exception, r'Communication timed out'):
             self.dut.query('FAKEQUERY?', check_errors=False)
 
 
