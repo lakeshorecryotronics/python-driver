@@ -37,10 +37,14 @@ class GenericInstrument:
                 self.device_serial = connection
 
         # Query the instrument identification information and store it in variables
-        idn_response = self._get_identity()
-        self.firmware_version = idn_response[3]
-        self.serial_number = idn_response[2]
-        self.model_number = idn_response[1]
+        try:
+            idn_response = self._get_identity()
+            self.firmware_version = idn_response[3]
+            self.serial_number = idn_response[2]
+            self.model_number = idn_response[1]
+        except TimeoutError as error:
+            print('Instrument found but unable to communicate. Please check interface settings on the instrument.')
+            raise error
 
         # Check to make sure the serial number matches what was provided if connecting over TCP
         if ip_address is not None and serial_number is not None and serial_number != self.serial_number:
@@ -184,7 +188,7 @@ class GenericInstrument:
             try:
                 response = self.device_tcp.recv(4096).decode('utf-8')
             except socket.timeout:
-                raise Exception("Connection timed out")
+                raise TimeoutError("Connection timed out")
 
             # Add received information to the response
             total_response += response
@@ -206,7 +210,7 @@ class GenericInstrument:
 
         # If nothing is returned, raise a timeout error.
         if not response:
-            raise Exception("Communication timed out")
+            raise TimeoutError("Communication timed out")
 
         return response.rstrip()
 
