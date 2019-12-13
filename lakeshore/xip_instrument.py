@@ -4,7 +4,7 @@ import re
 
 import serial
 
-from .generic_instrument import GenericInstrument
+from .generic_instrument import GenericInstrument, InstrumentException
 
 
 class RegisterBase:
@@ -74,7 +74,7 @@ class StandardEventRegister(RegisterBase):
 
 
 class XIPInstrumentException(Exception):
-    """Names a new type of exception specific to instrument connectivity."""
+    """Names a new type of exception specific to XIP instrument connectivity."""
 
 
 class XIPInstrument(GenericInstrument):
@@ -119,7 +119,7 @@ class XIPInstrument(GenericInstrument):
                 elif self.device_tcp is not None:
                     self._tcp_command(command_string)
                 else:
-                    raise XIPInstrumentException("No connections configured")
+                    raise InstrumentException("No connections configured")
 
                 self.logger.info('Sent SCPI command to %s: %s', self.serial_number, command_string)
 
@@ -155,7 +155,7 @@ class XIPInstrument(GenericInstrument):
             elif self.device_tcp is not None:
                 response = self._tcp_query(query_string)
             else:
-                raise XIPInstrumentException("No connections configured")
+                raise InstrumentException("No connections configured")
 
             self.logger.info('Sent SCPI query to %s: %s', self.serial_number, query_string)
             self.logger.info('Received SCPI response from %s: %s', self.serial_number, response)

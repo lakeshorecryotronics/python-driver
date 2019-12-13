@@ -9,6 +9,10 @@ import serial
 from serial.tools.list_ports import comports
 
 
+class InstrumentException(Exception):
+    """Names a new type of exception specific to general instrument connectivity."""
+
+
 class GenericInstrument:
     """Parent class that implements functionality to connect to generic instruments"""
 
@@ -42,7 +46,7 @@ class GenericInstrument:
             self.firmware_version = idn_response[3]
             self.serial_number = idn_response[2]
             self.model_number = idn_response[1]
-        except TimeoutError as error:
+        except InstrumentException as error:
             print('Instrument found but unable to communicate. Please check interface settings on the instrument.')
             raise error
 
@@ -188,7 +192,7 @@ class GenericInstrument:
             try:
                 response = self.device_tcp.recv(4096).decode('utf-8')
             except socket.timeout:
-                raise TimeoutError("Connection timed out")
+                raise InstrumentException("Connection timed out")
 
             # Add received information to the response
             total_response += response
@@ -210,7 +214,7 @@ class GenericInstrument:
 
         # If nothing is returned, raise a timeout error.
         if not response:
-            raise TimeoutError("Communication timed out")
+            raise InstrumentException("Communication timed out")
 
         return response.rstrip()
 
