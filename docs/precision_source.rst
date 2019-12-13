@@ -10,7 +10,7 @@ More information about the instrument can be found `on our website`_ including t
 
 Instrument methods
 ------------------
-.. module:: lakeshore.precision_source
+.. module:: lakeshore.model_155
 
 .. autoclass:: PrecisionSource
     :member-order: bysource
