@@ -6,7 +6,6 @@ from .M91 import FastHall, FastHallOperationRegister, FastHallQuestionableRegist
     DCHallParameters, ResistivityManualParameters, ResistivityLinkParameters, M91
 from .model_155 import PrecisionSource, PrecisionSourceOperationRegister, PrecisionSourceQuestionableRegister, Model155
 from .model_121 import Model121
-from .model_218 import Model218
 from .model_224 import Model224
 from .model_240 import Model240
 from .model_335 import Model335
