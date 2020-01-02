@@ -10,9 +10,9 @@ class Model372(GenericInstrument):
     vid_pid = [(0x1FB9, 0x0305)]
 
     def __init__(self,
+                 baud_rate,
                  serial_number=None,
                  com_port=None,
-                 baud_rate=57600,
                  data_bits=7,
                  stop_bits=1,
                  parity=serial.PARITY_ODD,
