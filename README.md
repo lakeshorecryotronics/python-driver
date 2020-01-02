@@ -8,10 +8,25 @@
 The [Lake Shore](https://www.lakeshore.com) python driver allows users to quickly and easily communicate with Lake Shore instruments. It automatically establishes a connection and provides a variety of functions specific to the product that configure settings and acquire measurements. 
 
 ## Supported Products
+Advanced support
 * [F41 and F71 Teslameters](https://www.lakeshore.com/products/Gaussmeters/F71-F41-teslameters/Pages/Overview.aspx)
 * [155 Precision I/V Source](https://www.lakeshore.com/products/measureready/model-155/Pages/Overview.aspx) 
 * [M91 FastHall Controller](https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-instruments/measureready-m91-fasthall-measurement-controller) 
 
+Basic support
+* [Model 121 Programmable DC Current Source](https://www.lakeshore.com/products/categories/overview/temperature-products/ac-and-dc-current-sources/model-121-programmable-dc-current-source)
+* [Model 224 Temperature Monitor](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-monitors/model-224-temperature-monitor)
+* [Model 240 Input Modules](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-modules/240-series-input-modules)
+* [Model 335 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-335-cryogenic-temperature-controller)
+* [Model 336 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-336-cryogenic-temperature-controller)
+* [Model 350 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-350-cryogenic-temperature-controller)
+* [Model 372 AC Resistance Bridge](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-372-ac-resistance-bridge-temperature-controller)
+* [Model 425 Gaussmeter](https://www.lakeshore.com/products/categories/overview/magnetic-products/gaussmeters-teslameters/model-425-gaussmeter)
+* [Model 455 Gaussmeter](https://www.lakeshore.com/products/categories/overview/discontinued-products/discontinued-products/model-455-dsp-gaussmeter)
+* [Model 475 Gaussmeter](https://www.lakeshore.com/products/categories/overview/magnetic-products/gaussmeters-teslameters/model-475-dsp-gaussmeter)
+* [Model 625 Superconducting Magnet Power Supply](https://www.lakeshore.com/products/categories/overview/material-characterization-products/superconducting-magnet-power-supply/model-625-superconducting-magnet-power-supply)
+* [Model 643 Electromagnet Power Supply](https://www.lakeshore.com/products/categories/overview/material-characterization-products/electromagnet-power-supplies/model-643-electromagnet-power-supply)
+* [Model 648 Electromagnet Power Supply](https://www.lakeshore.com/products/categories/overview/material-characterization-products/electromagnet-power-supplies/model-648-electromagnet-power-supply)
 
 ## Getting Started
 Install the driver using [pip](https://pip.pypa.io/en/stable/quickstart/):
