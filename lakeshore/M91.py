@@ -1313,4 +1313,5 @@ class FastHall(XIPInstrument):
         self.command("RESISTIVITY:RESET")
 
 
+# Create an alias using the product name
 M91 = FastHall

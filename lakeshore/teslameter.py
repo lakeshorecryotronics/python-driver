@@ -703,5 +703,6 @@ class Teslameter(XIPInstrument):
             self.command("SENSE:QUALIFIER:THRESHOLD " + mode + ',' + str(lower_field) + ',' + str(upper_field))
 
 
+# Create an aliases using the product names
 F41 = Teslameter
 F71 = Teslameter

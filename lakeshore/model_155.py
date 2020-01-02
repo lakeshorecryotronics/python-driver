@@ -466,4 +466,5 @@ class PrecisionSource(XIPInstrument):
         self.command("SOURCE:CURRENT:AC:VRANGE 10")
 
 
+# Create an alias using the product name
 Model155 = PrecisionSource
