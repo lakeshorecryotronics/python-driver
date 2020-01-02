@@ -46,15 +46,15 @@ class GenericInstrument:
             self.firmware_version = idn_response[3]
             self.serial_number = idn_response[2]
             self.model_number = idn_response[1]
-        except InstrumentException as error:
-            print('Instrument found but unable to communicate. Please check interface settings on the instrument.')
-            raise error
+        except InstrumentException('Instrument found but unable to communicate. ' +
+                                   'Please check interface settings on the instrument.'):
+            raise
 
         # Check to make sure the serial number matches what was provided if connecting over TCP
         if ip_address is not None and serial_number is not None and serial_number != self.serial_number:
-            raise Exception("Instrument found but the serial number does not match. " +
-                            "serial number provided is " + serial_number +
-                            ", serial number found is " + self.serial_number)
+            raise InstrumentException("Instrument found but the serial number does not match. " +
+                                      "serial number provided is " + serial_number +
+                                      ", serial number found is " + self.serial_number)
 
     def __del__(self):
         if self.device_serial is not None:
