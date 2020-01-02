@@ -1,4 +1,5 @@
 """Python driver for Lake Shore instruments"""
+from .generic_instrument import InstrumentException
 from .xip_instrument import XIPInstrumentException
 from .teslameter import Teslameter, TeslameterOperationRegister, TeslameterQuestionableRegister, F41, F71
 from .M91 import FastHall, FastHallOperationRegister, FastHallQuestionableRegister, ContactCheckManualParameters,\
