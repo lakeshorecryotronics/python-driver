@@ -1,11 +1,11 @@
-"""Implements functionality unique to the Lake Shore model 372 AC bridge and temperature controller"""
+"""Implements functionality unique to the Lake Shore Model 372 AC bridge and temperature controller"""
 import serial
 
 from .generic_instrument import GenericInstrument
 
 
 class Model372(GenericInstrument):
-    """A class object representing the Lake Shore model 372 AC bridge and temperature controller"""
+    """A class object representing the Lake Shore Model 372 AC bridge and temperature controller"""
 
     vid_pid = [(0x1FB9, 0x0305)]
 

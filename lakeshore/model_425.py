@@ -1,11 +1,11 @@
-"""Implements functionality unique to the Lake Shore model 425 Gaussmeter"""
+"""Implements functionality unique to the Lake Shore Model 425 Gaussmeter"""
 import serial
 
 from .generic_instrument import GenericInstrument
 
 
 class Model425(GenericInstrument):
-    """A class object representing the Lake Shore model 425 Gaussmeter"""
+    """A class object representing the Lake Shore Model 425 Gaussmeter"""
 
     vid_pid = [(0x1FB9, 0x0401)]
 

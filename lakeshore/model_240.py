@@ -1,11 +1,11 @@
-"""Implements functionality unique to the Lake Shore model 240 temperature monitor"""
+"""Implements functionality unique to the Lake Shore Model 240 input modules"""
 import serial
 
 from .generic_instrument import GenericInstrument
 
 
 class Model240(GenericInstrument):
-    """A class object representing the Lake Shore model 240 temperature monitor"""
+    """A class object representing the Lake Shore Model 240 input modules"""
 
     vid_pid = [(0x1FB9, 0x0205)]
 

@@ -1,11 +1,11 @@
-"""Implements functionality unique to the Lake Shore model 643 electromagnet magnet power supply"""
+"""Implements functionality unique to the Lake Shore Model 643 electromagnet magnet power supply"""
 import serial
 
 from .generic_instrument import GenericInstrument
 
 
 class Model643(GenericInstrument):
-    """A class object representing the Lake Shore model 643 electromagnet magnet power supply"""
+    """A class object representing the Lake Shore Model 643 electromagnet magnet power supply"""
 
     vid_pid = [(0x1FB9, 0x0601)]
 

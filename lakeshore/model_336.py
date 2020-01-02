@@ -1,11 +1,11 @@
-"""Implements functionality unique to the Lake Shore model 336 temperature controller"""
+"""Implements functionality unique to the Lake Shore Model 336 cryogenic temperature controller"""
 import serial
 
 from .generic_instrument import GenericInstrument
 
 
 class Model336(GenericInstrument):
-    """A class object representing the Lake Shore model 336 temperature controller"""
+    """A class object representing the Lake Shore Model 336 cryogenic temperature controller"""
 
     vid_pid = [(0x1FB9, 0x0301)]
 
