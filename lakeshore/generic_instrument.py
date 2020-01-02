@@ -46,8 +46,8 @@ class GenericInstrument:
             self.firmware_version = idn_response[3]
             self.serial_number = idn_response[2]
             self.model_number = idn_response[1]
-        except InstrumentException('Instrument found but unable to communicate. ' +
-                                   'Please check interface settings on the instrument.'):
+        except InstrumentException:
+            print('Instrument found but unable to communicate. Please check interface settings on the instrument.')
             raise
 
         # Check to make sure the serial number matches what was provided if connecting over TCP
@@ -101,7 +101,7 @@ class GenericInstrument:
             elif self.device_tcp is not None:
                 response = self._tcp_query(query_string)
             else:
-                raise Exception("No connections configured")
+                raise InstrumentException("No connections configured")
 
             self.logger.info('Sent query to %s: %s', self.serial_number, query_string)
             self.logger.info('Received response from %s: %s', self.serial_number, response)
@@ -162,9 +162,9 @@ class GenericInstrument:
                         break
         else:
             if com_port is None and serial_number is None:
-                raise Exception("No serial connections found")
+                raise InstrumentException("No serial connections found")
             else:
-                raise Exception(
+                raise InstrumentException(
                     "No serial connections found with a matching COM port and/or matching serial number")
 
     def disconnect_usb(self):
