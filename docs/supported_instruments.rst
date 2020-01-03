@@ -12,24 +12,6 @@ Magnetics Instruments
     teslameter
     model_425
 
-Temperature Monitors
---------------------
-.. toctree::
-    :maxdepth: 1
-
-    model_224
-    model_240
-
-Temperature Controllers
------------------------
-.. toctree::
-    :maxdepth: 1
-
-    model_335
-    model_336
-    model_350
-    model_372
-
 Magnet System Power Supplies
 ----------------------------
 .. toctree::
@@ -45,6 +27,24 @@ Materials Characterization
     :maxdepth: 1
 
     fast_hall
+
+Temperature Controllers
+-----------------------
+.. toctree::
+    :maxdepth: 1
+
+    model_335
+    model_336
+    model_350
+    model_372
+
+Temperature Monitors
+--------------------
+.. toctree::
+    :maxdepth: 1
+
+    model_224
+    model_240
 
 Sources
 -------
