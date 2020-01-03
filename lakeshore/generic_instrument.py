@@ -63,7 +63,7 @@ class GenericInstrument:
             self.device_tcp.close()
 
     def command(self, command_string):
-        """Send a command or multiple commands to the instrument
+        """Send a command to the instrument
 
             Args:
                 command_string (str):
