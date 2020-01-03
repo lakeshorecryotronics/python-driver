@@ -16,8 +16,6 @@ Table of contents
    installation
    getting_started
    advanced
-   teslameter
-   precision_source
-   fast_hall
+   supported_instruments
    example_scripts
 

@@ -1,6 +1,6 @@
 .. _precision_source:
 
-155 Precision Current and Voltage Source
+Model 155 Precision Current and Voltage Source
 ========================================
 The Lake Shore 155 is a low noise, high precision current and voltage source.
 
