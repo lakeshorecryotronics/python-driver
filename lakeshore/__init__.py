@@ -14,6 +14,5 @@ from .model_336 import Model336
 from .model_350 import Model350
 from .model_372 import Model372
 from .model_425 import Model425
-from .model_625 import Model625
 from .model_643 import Model643
 from .model_648 import Model648

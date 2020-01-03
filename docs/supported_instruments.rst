@@ -17,7 +17,6 @@ Magnet System Power Supplies
 .. toctree::
     :maxdepth: 1
 
-    model_625
     model_643
     model_648
 
