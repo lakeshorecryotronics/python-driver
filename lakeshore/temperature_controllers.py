@@ -2,7 +2,6 @@
 instruments."""
 
 from enum import IntEnum
-from time import sleep
 import serial
 from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase
 
@@ -703,7 +702,6 @@ class TemperatureController(GenericInstrument):
         self.command("ATUNE {},{}".format(output, mode))
 
         # Ensure autotune starts without error
-        sleep(1)
         self._autotune_error()
 
     def _set_contrast_level(self, contrast_level):
@@ -1284,7 +1282,7 @@ class TemperatureController(GenericInstrument):
                     * "integral": float
                         * Integral term in PID control.
 
-                    * "derivative": float
+                    * "ramp_rate": float
                         * Derivative term in PID control
 
         """
@@ -1292,7 +1290,7 @@ class TemperatureController(GenericInstrument):
         pid_values = pid_values.split(",")
         return {"gain": float(pid_values[0]),
                 "integral": float(pid_values[1]),
-                "derivative": float(pid_values[2])}
+                "ramp_rate": float(pid_values[2])}
 
     def set_setpoint_ramp_parameter(self, output, ramp_enable, rate_value):
         """Sets the control loop of a particular output
