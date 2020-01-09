@@ -1,4 +1,5 @@
 """This module implements a parent class that contains basic functionality for communicating with Lake Shore instruments."""
+
 import logging
 import select
 import socket

@@ -2,7 +2,11 @@ import logging
 from collections import deque
 
 import unittest2 as unittest
+<<<<<<< HEAD
 from lakeshore import Teslameter, FastHall, Model372, Model335, Model240, Model224, SSMSystem
+=======
+from lakeshore import Teslameter, FastHall, Model372, Model335, Model240
+>>>>>>> b3a1e04... Create the temperature instrument base
 
 fake_dut_comms_log = logging.getLogger('fake_dut_comms')
 
@@ -104,6 +108,7 @@ class TestWithFakeModel335(unittest.TestCase):
         self.fake_connection.setup_response('1')
         self.dut = Model335(connection=self.fake_connection, baud_rate=56700)
         self.fake_connection.reset()  # Clear startup activity
+<<<<<<< HEAD
 
 
 class TestWithFakeModel224(unittest.TestCase):
@@ -147,3 +152,5 @@ class TestWithFakeSSMSMeasureModule(unittest.TestCase):
         self.dut_system = SSMSystem(connection=self.fake_connection)
         self.dut_module = self.dut_system.get_measure_module(1)
         self.fake_connection.reset()  # Clear startup activity
+=======
+>>>>>>> b3a1e04... Create the temperature instrument base
