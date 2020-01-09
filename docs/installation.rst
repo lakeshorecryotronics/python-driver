@@ -22,7 +22,7 @@ The driver can be installed directly within the Spyder IDE. To do this, first en
 version 7.3 or greater of IPython. You can check the version by looking at the console window when opening the IDE,
 see image below for details:
 
-.. image:: /images/Ipython_info.PNG
+.. image:: images/Ipython_info.PNG
 
 If the version is below 7.3, open an anaconda prompt and type::
 
