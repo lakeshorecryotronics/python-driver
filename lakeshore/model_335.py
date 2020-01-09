@@ -296,12 +296,7 @@ class Model335InputReadingStatus(RegisterBase):
         "sensor_units_overrange"
     ]
 
-    def __init__(self,
-                 invalid_reading,
-                 temp_underrange,
-                 temp_overrange,
-                 sensor_units_zero,
-                 sensor_units_overrange):
+    def __init__(self, invalid_reading, temp_underrange, temp_overrange, sensor_units_zero, sensor_units_overrange):
         self.invalid_reading = invalid_reading
         self.temp_underrange = temp_underrange
         self.temp_overrange = temp_overrange

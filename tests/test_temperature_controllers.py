@@ -1,6 +1,7 @@
 from tests.utils import TestWithFakeModel372
 from lakeshore import temperature_controllers, InstrumentException
-from lakeshore.temperature_controllers import CurveFormat, CurveTemperatureCoefficient, CurveHeader
+from lakeshore.temperature_controllers import CurveFormat, CurveTemperatureCoefficient, CurveHeader, \
+    StandardEventRegister, OperationEvent
 
 
 class TestBasicMethods(TestWithFakeModel372):
@@ -404,3 +405,72 @@ class TestCurveMethods(TestWithFakeModel372):
         response = self.dut.get_curve_data_point(15, 7)
         self.assertAlmostEqual(response, (2.58, 9.68, 15.84))
         self.assertIn("CRVPT? 15,7", self.fake_connection.get_outgoing_message())
+
+
+class TestRegisterMethods(TestWithFakeModel372):
+    # TODO: Add instrument specific register tests once merged
+
+    def test_get_standard_event_enable_mask(self):
+        self.fake_connection.setup_response('20')
+        response = self.dut.get_standard_event_enable_mask()
+        register = StandardEventRegister(False, True, True, False, False)
+        self.assertEqual(register.operation_complete, response.operation_complete)
+        self.assertEqual(register.query_error, response.query_error)
+        self.assertEqual(register.execution_error, response.execution_error)
+        self.assertEqual(register.command_error, response.command_error)
+        self.assertEqual(register.power_on, response.power_on)
+        self.assertIn("*ESE?", self.fake_connection.get_outgoing_message())
+
+    def test_set_standard_event_enable_mask(self):
+        self.fake_connection.setup_response('0')
+        register = StandardEventRegister(True, False, False, True, False)
+        self.dut.set_standard_event_enable_mask(register)
+        self.assertIn("*ESE 33", self.fake_connection.get_outgoing_message())
+
+    def test_get_operation_condition(self):
+        self.fake_connection.setup_response('28;0')
+        register = OperationEvent(False, False, True, True, True, False, False, False) # LSB to MSB
+        response = self.dut._get_operation_condition()
+        self.assertEqual(register.alarm, response.alarm)
+        self.assertEqual(register.sensor_overload, response.sensor_overload)
+        self.assertEqual(register.loop_2_ramp_done, response.loop_2_ramp_done)
+        self.assertEqual(register.loop_1_ramp_done, response.loop_1_ramp_done)
+        self.assertEqual(register.new_sensor_reading, response.new_sensor_reading)
+        self.assertEqual(register.autotune_process_completed, response.autotune_process_completed)
+        self.assertEqual(register.calibration_error, response.calibration_error)
+        self.assertEqual(register.processor_communication_error, response.processor_communication_error)
+        self.assertIn("OPST?", self.fake_connection.get_outgoing_message())
+
+    def test_get_operation_event_enable(self):
+        self.fake_connection.setup_response('208;0')
+        register = OperationEvent(False, False, False, False, True, False, True, True)
+        response = self.dut._get_operation_event_enable()
+        self.assertEqual(register.alarm, response.alarm)
+        self.assertEqual(register.sensor_overload, response.sensor_overload)
+        self.assertEqual(register.loop_2_ramp_done, response.loop_2_ramp_done)
+        self.assertEqual(register.loop_1_ramp_done, response.loop_1_ramp_done)
+        self.assertEqual(register.new_sensor_reading, response.new_sensor_reading)
+        self.assertEqual(register.autotune_process_completed, response.autotune_process_completed)
+        self.assertEqual(register.calibration_error, response.calibration_error)
+        self.assertEqual(register.processor_communication_error, response.processor_communication_error)
+        self.assertIn("OPSTE?", self.fake_connection.get_outgoing_message())
+
+    def test_set_operation_event_enable(self):
+        self.fake_connection.setup_response('0')
+        register = OperationEvent(True, False, True, False, True, False, True, False)
+        self.dut._set_operation_event_enable(register)
+        self.assertIn("OPSTE 85", self.fake_connection.get_outgoing_message())
+
+    def test_get_operation_event_enable(self):
+        self.fake_connection.setup_response('142;0')
+        register = OperationEvent(False, True, True, True, False, False, False, True)
+        response = self.dut._get_operation_event()
+        self.assertEqual(register.alarm, response.alarm)
+        self.assertEqual(register.sensor_overload, response.sensor_overload)
+        self.assertEqual(register.loop_2_ramp_done, response.loop_2_ramp_done)
+        self.assertEqual(register.loop_1_ramp_done, response.loop_1_ramp_done)
+        self.assertEqual(register.new_sensor_reading, response.new_sensor_reading)
+        self.assertEqual(register.autotune_process_completed, response.autotune_process_completed)
+        self.assertEqual(register.calibration_error, response.calibration_error)
+        self.assertEqual(register.processor_communication_error, response.processor_communication_error)
+        self.assertIn("OPSTR?", self.fake_connection.get_outgoing_message())

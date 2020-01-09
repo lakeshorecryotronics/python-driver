@@ -335,16 +335,6 @@ class Model224ReadingStatusRegister(RegisterBase):
         self.sensor_units_over_range = sensor_units_over_range
 
 
-def _error_check(error_code):
-    event_register = Model224StandardEventRegister.from_integer(error_code)
-    if event_register.query_error:
-        raise InstrumentException('Query Error')
-    elif event_register.command_error:
-        raise InstrumentException('Command Error: Invalid Command or Query')
-    elif event_register.execution_error:
-        raise InstrumentException('Execution Error: Instrument not able to execute command or query.')
-
-
 class Model224(GenericInstrument):
     """A class object representing the Lake Shore Model 224 temperature monitor"""
 
@@ -367,6 +357,16 @@ class Model224(GenericInstrument):
         # Call the parent init, then fill in values specific to the 224
         GenericInstrument.__init__(self, serial_number, com_port, baud_rate, data_bits, stop_bits, parity, flow_control,
                                    handshaking, timeout, ip_address, tcp_port, **kwargs)
+
+    @staticmethod
+    def _error_check(error_code):
+        event_register = Model224StandardEventRegister.from_integer(error_code)
+        if event_register.query_error:
+            raise InstrumentException('Query Error')
+        elif event_register.command_error:
+            raise InstrumentException('Command Error: Invalid Command or Query')
+        elif event_register.execution_error:
+            raise InstrumentException('Execution Error: Instrument not able to execute command or query.')
 
     def command(self, *commands, **kwargs):
         """Send a SCPI command or multiple commands to the instrument
