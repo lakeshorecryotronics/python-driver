@@ -26,7 +26,7 @@ see image below for details:
 
 If the version is below 7.3, open an anaconda prompt and type::
 
-    pip install IPython
+    pip install IPython --upgrade
 
 Back in the Spyder console, type::
 
