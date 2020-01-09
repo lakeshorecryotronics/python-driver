@@ -12,7 +12,7 @@ For a example scripts, check out :ref:`example_scripts`.
 
 Instrument methods
 ------------------
-.. module:: lakeshore.fast_hall
+.. module:: lakeshore.M91
 
 .. autoclass:: FastHall
     :member-order: bysource

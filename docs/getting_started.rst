@@ -8,9 +8,9 @@ A simple example
 ----------------
 ::
 
-    from lakeshore import PrecisionSource
+    from lakeshore import Model155
 
-    my_instrument = PrecisionSource()
+    my_instrument = Model155()
     print(my_instrument.query('*IDN?'))
 
 Making Connections
@@ -31,15 +31,21 @@ or the COM port it is connected to::
 
     my_specific_instrument = FastHall(com_port='COM7')
 
+Some instruments have configurable baud rates. For these instruments the baud rate is a required parameter::
+
+    from lakeshore import Model372
+
+    my_instrument = Model372(9600)
+
 Connecting over TCP
 ~~~~~~~~~~~~~~~~~~~
 By default, the driver will try to connect to the instrument over a serial USB connection.
 
-Connecting to an instrument over TCP requires knowledge of its IP address. On a XIP instrument the IP address can be found through the front panel interface and used like so::
+Connecting to an instrument over TCP requires knowledge of its IP address. The IP address can typically be found through the front panel interface and used like so::
 
-    from lakeshore import PrecisionSource
+    from lakeshore import Model155
 
-    my_network_connected_instrument = PrecisionSource(ip_address='10.1.2.34')
+    my_network_connected_instrument = Model155(ip_address='10.1.2.34')
 
 Commands and queries
 --------------------
@@ -47,16 +53,18 @@ All Lake Shore instruments supported by the Python driver have :func:`~lakeshore
 
 The Python driver makes it simple to send the instrument a command or query::
 
-    from lakeshore import PrecisionSource
+    from lakeshore import Model155
 
-    my_instrument = PrecisionSource()
+    my_instrument = Model155()
 
     my_instrument.command('SOURCE:FUNCTION:MODE SIN')
     print(my_instrument.query('SOURCE:FUNCTION:MODE?'))
 
+SCPI commands and queries
+-------------------------
 Grouping multiple commands & queries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-To simplify, speed up, or simultaneously send multiple commands or queries simply separate them with commas::
+Instruments that support SCPI allow for multiple commands or queries, simply separate them with commas::
 
     from lakeshore import Teslameter
 
@@ -68,7 +76,7 @@ The commands will execute in the order they are listed. The response to each que
 
 Checking for SCPI errors
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Both the command and query methods will automatically check the SCPI error queue for invalid commands or parameters. If you would like to disable error checking, such as in situations where you need a faster response rate, it can be turned off with an optional argument::
+For instruments that support SCPI, both the command and query methods will automatically check the SCPI error queue for invalid commands or parameters. If you would like to disable error checking, such as in situations where you need a faster response rate, it can be turned off with an optional argument::
 
     from lakeshore import Teslameter
 

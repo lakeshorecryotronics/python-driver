@@ -1,7 +1,7 @@
 .. _precision_source:
 
-155 Precision Current and Voltage Source
-========================================
+Model 155 Precision Current and Voltage Source
+==============================================
 The Lake Shore 155 is a low noise, high precision current and voltage source.
 
 More information about the instrument can be found `on our website`_ including the manual which has a list of all SCPI commands and queries.
@@ -10,7 +10,7 @@ More information about the instrument can be found `on our website`_ including t
 
 Instrument methods
 ------------------
-.. module:: lakeshore.precision_source
+.. module:: lakeshore.model_155
 
 .. autoclass:: PrecisionSource
     :member-order: bysource
