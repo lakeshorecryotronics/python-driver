@@ -1,5 +1,21 @@
 Change Log
 ==========
+Release 1.3.0
+-------------
+Added:
+- Basic support for the Model 425 Gaussmeter
+- Basic support for the Model 643 Electromagnet Power Supply
+- Basic support for the Model 648 Electromagnet Power Supply
+- Basic support for the Model 335 Cryogenic Temperature Controller
+- Basic support for the Model 336 Cryogenic Temperature Controller
+- Basic support for the Model 350 Cryogenic Temperature Controller
+- Basic support for the Model 372 AC Resistance Bridge
+- Basic support for the Model 224 Temperature Monitor
+- Basic support for the Model 240 Input Modules
+- Basic support for the Model 121 Programmable DC Current Source
+- Official product name aliases for instrument classes
+
+ 
 Release 1.2.0
 -------------
 Added:
