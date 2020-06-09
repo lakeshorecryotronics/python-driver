@@ -8,9 +8,10 @@ from .fast_hall_controller import FastHall, FastHallOperationRegister, FastHallQ
 from .model_155 import PrecisionSource, PrecisionSourceOperationRegister, PrecisionSourceQuestionableRegister, Model155
 from .model_121 import Model121
 from .model_224 import *
-from .model_240 import Model240
+from .model_240 import *
 from .model_335 import *
 from .model_336 import *
+from .model_336 import Model336
 from .model_350 import Model350
 from .model_372 import *
 from .model_425 import Model425
