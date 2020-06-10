@@ -101,6 +101,7 @@ class TestWithFakeModel335(unittest.TestCase):
     def setUp(self):
         self.fake_connection = FakeDutConnection()
         self.fake_connection.setup_response('LSCI,MODEL335,FakeSerial/FakeOption,999.999.999')  # Simulate maximum version so all methods are allowed
+        self.fake_connection.setup_response('1')
         self.dut = Model335(connection=self.fake_connection, baud_rate=56700)
         self.fake_connection.reset()  # Clear startup activity
 
