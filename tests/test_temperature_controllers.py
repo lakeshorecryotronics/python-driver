@@ -1,10 +1,11 @@
 from tests.utils import TestWithFakeModel372
 from lakeshore import temperature_controllers, InstrumentException
-from lakeshore.temperature_controllers import CurveFormat, CurveTemperatureCoefficient, CurveHeader, \
-    StandardEventRegister, OperationEvent
+from lakeshore.model_372 import Model372CurveFormat, Model372CurveTemperatureCoefficient, Model372CurveHeader, \
+    Model372StandardEventRegister, Model372OperationEventRegister
 
 
 class TestBasicMethods(TestWithFakeModel372):
+
     def test_get_kelvin_reading(self):
         self.fake_connection.setup_response('273.2;0')
         response = self.dut.get_kelvin_reading("1")
@@ -33,11 +34,11 @@ class TestBasicMethods(TestWithFakeModel372):
 
     def test_set_curve_header(self):
         self.fake_connection.setup_response('0;0')
-        curve_header = CurveHeader('Curve1', '1234',
-                                   CurveFormat.VOLTS_PER_KELVIN,
-                                   12.3, CurveTemperatureCoefficient.NEGATIVE)
+        curve_header = Model372CurveHeader('Curve1', '1234',
+                                            Model372CurveFormat.OHM_PER_KELVIN,
+                                            12.3, Model372CurveTemperatureCoefficient.NEGATIVE)
         self.dut.set_curve_header(2, curve_header)
-        self.assertIn('CRVHDR 2,"Curve1","1234",2,12.3,1;*ESR?', self.fake_connection.get_outgoing_message())
+        self.assertIn('CRVHDR 2,"Curve1","1234",3,12.3,1;*ESR?', self.fake_connection.get_outgoing_message())
 
     def test_get_temperature_limit(self):
         self.fake_connection.setup_response('1234;0')
@@ -159,15 +160,6 @@ class TestBasicMethods(TestWithFakeModel372):
                                                          r'input type'):
             self.dut.set_input_curve("A", 24)
 
-    def test_get_filter(self):
-        expected_response = {'filter_enable': True,
-                             'data_points': 20,
-                             'reset_threshold': 10}
-        self.fake_connection.setup_response('1,20,10;0')
-        response = self.dut._get_filter(1)
-        self.assertDictEqual(response, expected_response)
-        self.assertIn("FILTER? 1", self.fake_connection.get_outgoing_message())
-
     def test_get_sensor_reading(self):
         self.fake_connection.setup_response('123.45;0')
         response = self.dut.get_sensor_reading(2)
@@ -188,11 +180,10 @@ class TestBasicMethods(TestWithFakeModel372):
         self.assertIn("CRVPT? 1,2", self.fake_connection.get_outgoing_message())
 
     def test_get_curve_header(self):
-        curve_header = CurveHeader('Curve1', '1234', CurveFormat.VOLTS_PER_KELVIN, 12.3,
-                                   CurveTemperatureCoefficient.NEGATIVE)
-        self.fake_connection.setup_response('Curve1,1234,2,12.3,1;0')
+        curve_header = Model372CurveHeader('Curve1', '1234', Model372CurveFormat.OHM_PER_KELVIN, 12.3,
+                                            Model372CurveTemperatureCoefficient.NEGATIVE)
+        self.fake_connection.setup_response('Curve1,1234,3,12.3,1;0')
         response = self.dut.get_curve_header(2)
-
         self.assertEqual(response.curve_name, curve_header.curve_name)
         self.assertEqual(response.serial_number, curve_header.serial_number)
         self.assertEqual(response.temperature_limit, curve_header.temperature_limit)
@@ -203,6 +194,7 @@ class TestBasicMethods(TestWithFakeModel372):
 
 
 class TestDictionaryMethods(TestWithFakeModel372):
+
     def test_get_alarm_status(self):
         alarm_status = {'high_state_enabled': False,
                         'low_state_enabled': True}
@@ -263,25 +255,6 @@ class TestDictionaryMethods(TestWithFakeModel372):
 
 
 class TestObjectMethods(TestWithFakeModel372):
-    def test_set_alarm_parameters(self):
-        alarm_settings = temperature_controllers.AlarmSettings(15.5, 1.34, 3.14, False, False, True)
-        self.fake_connection.setup_response('0')
-        self.dut.set_alarm_parameters(1, True, alarm_settings)
-        self.assertIn('ALARM 1,1,15.5,1.34,3.14,0,0,1', self.fake_connection.get_outgoing_message())
-
-    def test_get_alarm_parameters(self):
-        alarm_settings = temperature_controllers.AlarmSettings(15.5, 1.34, 3.14, False, False, True)
-        self.fake_connection.setup_response('1,15.5,1.34,3.14,0,0,1;0')
-        response = self.dut.get_alarm_parameters(1)
-        # Compare all variables
-        self.assertAlmostEqual(response.high_value, alarm_settings.high_value)
-        self.assertAlmostEqual(response.low_value, alarm_settings.low_value)
-        self.assertAlmostEqual(response.deadband, alarm_settings.deadband)
-        self.assertEqual(response.latch_enable, alarm_settings.latch_enable)
-        self.assertEqual(response.visible, alarm_settings.visible)
-        self.assertEqual(response.audible, alarm_settings.audible)
-
-        self.assertIn('ALARM? 1', self.fake_connection.get_outgoing_message())
 
     def test_get_heater_status(self):
         heater_status = temperature_controllers.HeaterError(2)
@@ -335,6 +308,7 @@ class TestObjectMethods(TestWithFakeModel372):
 
 
 class TestErrorChecking(TestWithFakeModel372):
+
     def test_execution_error(self):
         # Response for command call with status register error
         self.fake_connection.setup_response('123;16')
@@ -384,6 +358,7 @@ class TestErrorChecking(TestWithFakeModel372):
 
 
 class TestCurveMethods(TestWithFakeModel372):
+
     def test_set_curve_data_point(self):
         self.fake_connection.setup_response('0')
         self.dut.set_curve_data_point(22,1,2.86,9.252)
@@ -408,12 +383,11 @@ class TestCurveMethods(TestWithFakeModel372):
 
 
 class TestRegisterMethods(TestWithFakeModel372):
-    # TODO: Add instrument specific register tests once merged
 
     def test_get_standard_event_enable_mask(self):
         self.fake_connection.setup_response('20')
         response = self.dut.get_standard_event_enable_mask()
-        register = StandardEventRegister(False, True, True, False, False)
+        register = Model372StandardEventRegister(False, True, True, False, False)
         self.assertEqual(register.operation_complete, response.operation_complete)
         self.assertEqual(register.query_error, response.query_error)
         self.assertEqual(register.execution_error, response.execution_error)
@@ -423,13 +397,13 @@ class TestRegisterMethods(TestWithFakeModel372):
 
     def test_set_standard_event_enable_mask(self):
         self.fake_connection.setup_response('0')
-        register = StandardEventRegister(True, False, False, True, False)
+        register = Model372StandardEventRegister(True, False, False, True, False)
         self.dut.set_standard_event_enable_mask(register)
         self.assertIn("*ESE 33", self.fake_connection.get_outgoing_message())
 
     def test_get_operation_condition(self):
         self.fake_connection.setup_response('28;0')
-        register = OperationEvent(False, False, True, True, True, False, False, False) # LSB to MSB
+        register = Model372OperationEventRegister(False, False, True, True, True, False, False, False) # LSB to MSB
         response = self.dut._get_operation_condition()
         self.assertEqual(register.alarm, response.alarm)
         self.assertEqual(register.sensor_overload, response.sensor_overload)
@@ -443,7 +417,7 @@ class TestRegisterMethods(TestWithFakeModel372):
 
     def test_get_operation_event_enable(self):
         self.fake_connection.setup_response('208;0')
-        register = OperationEvent(False, False, False, False, True, False, True, True)
+        register = Model372OperationEventRegister(False, False, False, False, True, False, True, True)
         response = self.dut._get_operation_event_enable()
         self.assertEqual(register.alarm, response.alarm)
         self.assertEqual(register.sensor_overload, response.sensor_overload)
@@ -457,13 +431,13 @@ class TestRegisterMethods(TestWithFakeModel372):
 
     def test_set_operation_event_enable(self):
         self.fake_connection.setup_response('0')
-        register = OperationEvent(True, False, True, False, True, False, True, False)
+        register = Model372OperationEventRegister(True, False, True, False, True, False, True, False)
         self.dut._set_operation_event_enable(register)
         self.assertIn("OPSTE 85", self.fake_connection.get_outgoing_message())
 
     def test_get_operation_event_enable(self):
         self.fake_connection.setup_response('142;0')
-        register = OperationEvent(False, True, True, True, False, False, False, True)
+        register = Model372OperationEventRegister(False, True, True, True, False, False, False, True)
         response = self.dut._get_operation_event()
         self.assertEqual(register.alarm, response.alarm)
         self.assertEqual(register.sensor_overload, response.sensor_overload)

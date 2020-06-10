@@ -496,8 +496,8 @@ class TemperatureController(GenericInstrument):
         """
         response = self.query("CRVHDR? {}".format(curve_number))
         curve_header = response.split(",")
-        return CurveHeader(str(curve_header[0]),
-                           str(curve_header[1]),
+        return CurveHeader(curve_header[0],
+                           curve_header[1],
                            self._curve_format_enums(int(curve_header[2])),
                            float(curve_header[3]),
                            self._curve_coefficient_enums(int(curve_header[4])))

@@ -23,3 +23,11 @@ Doing a complete sample analysis with the M91 Fast Hall
 Using calibration curves with a temperature instrument
 ------------------------------------------------------
 .. literalinclude:: examples/temperature_monitor_curve_example.py
+
+Setting up a sensor and recording data with the 372 AC Resistance Bridge
+------------------------------------------------------------------------
+.. literalinclude:: examples/372_record_data_example.py
+
+Setting up a control loop with the 372 AC Resistance Bridge
+-----------------------------------------------------------
+.. literalinclude:: examples/372_control_loop_example.py
