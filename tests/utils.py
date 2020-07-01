@@ -40,6 +40,7 @@ class TestWithFakeTeslameter(unittest.TestCase):
     def setUp(self):
         self.fake_connection = FakeDutConnection()
         self.fake_connection.setup_response('LSCI,F71,FakeSerial,999.999.999')  # Simulate maximum version so all methods are allowed
+        self.fake_connection.setup_response('No error')
         self.dut = Teslameter(connection=self.fake_connection)
         self.fake_connection.reset()  # Clear startup activity
 
@@ -62,6 +63,7 @@ class TestWithFakeFastHall(unittest.TestCase):
     def setUp(self):
         self.fake_connection = FakeDutConnection()
         self.fake_connection.setup_response('LSCI,M91,FakeSerial,999.999.999')  # Simulate maximum version so all methods are allowed
+        self.fake_connection.setup_response('No error')
         self.dut = FastHall(connection=self.fake_connection)
         self.fake_connection.reset()  # Clear startup activity
 

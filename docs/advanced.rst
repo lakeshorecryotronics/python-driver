@@ -62,3 +62,12 @@ or by using the *set* functions to define the states of all bits in the register
 
     my_instrument.set_questionable_event_enable_mask(register_mask)
 
+Instrument initialization options
+---------------------------------
+Keep communication errors on initialization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+By default the error flags or queue will be reset upon connecting to an instrument. If this behavior is not desired use the following optional parameter like so::
+
+        from lakeshore import Teslameter
+
+        my_instrument = Teslameter(clear_errors_on_init=False)
