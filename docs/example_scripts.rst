@@ -19,3 +19,7 @@ Running M91 Fast Hall contact check measurements and recording data to a CSV fil
 Doing a complete sample analysis with the M91 Fast Hall
 -------------------------------------------------------
 .. literalinclude:: examples/fasthall_full_sample_analysis.py
+
+Using calibration curves with a temperature instrument
+------------------------------------------------------
+.. literalinclude:: examples/temperature_monitor_curve_example.py
