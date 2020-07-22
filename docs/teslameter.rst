@@ -18,3 +18,17 @@ Instrument methods
     :member-order: bysource
     :members:
     :inherited-members:
+
+
+Instrument classes
+------------------
+
+This page outlines the objects and classes used to update settings, interact with
+registers, and input multiple parameters to a method in the Teslameter driver.
+
+.. module:: lakeshore.teslameter
+
+.. autoclass:: TeslameterOperationRegister
+    :members:
+
+    .. automethod:: __init__
