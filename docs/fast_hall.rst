@@ -34,5 +34,14 @@ methods of the M91.
 
     .. automethod:: __init__
 
+.. autoclass:: ContactCheckManualParameters
+    :members:
+
+    .. automethod:: __init__
+
+.. autoclass:: ContactCheckOptimizedParameters
+    :members:
+
+    .. automethod:: __init__
 
 
