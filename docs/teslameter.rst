@@ -37,4 +37,15 @@ This page outlines the objects and classes used to interact with registers in th
 
     .. automethod:: __init__
 
+.. module:: lakeshore.xip_instrument
+
+.. autoclass:: StatusByteRegister
+    :members:
+
+    .. automethod:: __init__
+
+.. autoclass:: StandardEventRegister
+    :members:
+
+    .. automethod:: __init__
 
