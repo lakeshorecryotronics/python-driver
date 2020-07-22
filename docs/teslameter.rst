@@ -23,8 +23,7 @@ Instrument methods
 Instrument classes
 ------------------
 
-This page outlines the objects and classes used to update settings, interact with
-registers, and input multiple parameters to a method in the Teslameter driver.
+This page outlines the objects and classes used to interact with registers in the Teslameter driver.
 
 .. module:: lakeshore.teslameter
 
