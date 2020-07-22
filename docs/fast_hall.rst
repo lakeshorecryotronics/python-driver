@@ -21,7 +21,7 @@ Instrument methods
 
 
 Instrument classes
-__________________
+------------------
 
 This page outlines the classes and objects used to interact with various settings and
 methods of the M91.
