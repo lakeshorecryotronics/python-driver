@@ -29,3 +29,10 @@ methods of the M91.
 
     .. automethod:: __init__
 
+.. autoclass:: FastHallQuestionableRegister
+    :members:
+
+    .. automethod:: __init__
+
+
+
