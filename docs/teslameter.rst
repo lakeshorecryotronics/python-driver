@@ -32,3 +32,10 @@ registers, and input multiple parameters to a method in the Teslameter driver.
     :members:
 
     .. automethod:: __init__
+
+.. autoclass:: TeslameterQuestionableRegister
+    :members:
+
+    .. automethod:: __init__
+
+
