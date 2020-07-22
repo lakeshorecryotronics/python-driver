@@ -18,3 +18,14 @@ Instrument methods
     :member-order: bysource
     :members:
     :inherited-members:
+
+Instrument classes
+__________________
+This page outlines the classes and objects used to interact with various settings and
+methods of the M91.
+
+.. autoclass:: FastHallOperationRegister
+    :members:
+
+    .. automethod:: __init__
+
