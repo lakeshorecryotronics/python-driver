@@ -76,8 +76,6 @@ methods of the M91.
 
     .. automethod:: __init__
 
-.. module:: lakeshore.xip_instrument
-
 .. autoclass:: StatusByteRegister
     :members:
 

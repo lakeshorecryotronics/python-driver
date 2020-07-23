@@ -25,8 +25,6 @@ Instrument classes
 
 This page outlines the objects and classes used to interact with registers in the Teslameter driver.
 
-.. module:: lakeshore.teslameter
-
 .. autoclass:: TeslameterOperationRegister
     :members:
 
@@ -36,8 +34,6 @@ This page outlines the objects and classes used to interact with registers in th
     :members:
 
     .. automethod:: __init__
-
-.. module:: lakeshore.xip_instrument
 
 .. autoclass:: StatusByteRegister
     :members:
