@@ -26,8 +26,6 @@ Instrument classes
 This page outlines the classes and objects used to interact with various settings and
 methods of the M91.
 
-.. module:: lakeshore.M91
-
 .. autoclass:: FastHallOperationRegister
     :members:
 
