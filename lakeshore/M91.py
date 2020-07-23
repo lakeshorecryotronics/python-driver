@@ -91,6 +91,7 @@ class ContactCheckManualParameters:
                  min_r_squared=0.9999,
                  blanking_time=2e-3):
         """The constructor for ContackCheckManualParameters class.
+
             Args:
                 excitation_type (str):
                     * The excitation type used for the measurement. Options are:
@@ -154,6 +155,7 @@ class ContactCheckOptimizedParameters:
                  number_of_points=11,
                  min_r_squared=0.9999):
         """The constructor for ContactCheckOptimizedParameters class.
+
             Args:
                 max_current(float or str):
                     * A 'not to exceed' output current value for the auto algorithm to use. Options are:
@@ -202,6 +204,7 @@ class FastHallManualParameters:
                  sample_thickness=0,
                  min_hall_voltage_snr=30):
         """The constructor for FastHallManualParameters class
+
             Args:
                 excitation_type (str):
                     * The excitation type used for the measurement. Options are:
@@ -296,6 +299,7 @@ class FastHallLinkParameters:
                  averaging_samples=60,
                  sample_thickness='DEF'):
         """The constructor for FastHallLinkParameters class
+
             Args:
                 user_defined_field (float):
                     The field, in units of Tesla, the sample is being subjected to. Used for calculations.
@@ -349,6 +353,7 @@ class FourWireParameters:
                  min_snr=30,
                  excitation_reversal=True):
         """The constructor for FourWireParameter class.
+
             Args:
                 contact_point1 (int):
                     Excitation +. Valid contact points are: 1, 2, 3, 4, 5, or 6. Cannot be the same as Contact Point 2.
@@ -451,6 +456,7 @@ class DCHallParameters:
                  blanking_time=2e-3,
                  sample_thickness=0):
         """The constructor for DCHallParameters.
+
             Args:
                 excitation_type (str):
                     * The excitation type used for the measurement. Options are:
@@ -540,6 +546,7 @@ class ResistivityManualParameters:
                  min_snr=30,
                  **kwargs):
         """The constructor for ResistivityManualParameters class.
+
             Args:
                 excitation_type (str):
                     * The excitation type used for the measurement. Options are:
@@ -630,6 +637,7 @@ class ResistivityLinkParameters:
                  min_snr=30,
                  max_samples=100):
         """The constructor for ResistivityLinkParameters class.
+
             Args:
                 measurement_range (float or str):
                     * Measurement range based on the excitation type. Options are:
