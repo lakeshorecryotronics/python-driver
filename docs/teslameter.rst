@@ -28,12 +28,8 @@ This page outlines the objects and classes used to interact with registers in th
 .. autoclass:: TeslameterOperationRegister
     :members:
 
-    .. automethod:: __init__
-
 .. autoclass:: TeslameterQuestionableRegister
     :members:
-
-    .. automethod:: __init__
 
 .. autoclass:: StatusByteRegister
     :noindex:

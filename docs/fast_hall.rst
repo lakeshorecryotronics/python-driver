@@ -29,12 +29,8 @@ methods of the M91.
 .. autoclass:: FastHallOperationRegister
     :members:
 
-    .. automethod:: __init__
-
 .. autoclass:: FastHallQuestionableRegister
     :members:
-
-    .. automethod:: __init__
 
 .. autoclass:: ContactCheckManualParameters
     :members:
