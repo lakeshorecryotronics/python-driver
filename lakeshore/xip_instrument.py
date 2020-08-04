@@ -88,6 +88,9 @@ class XIPInstrument(GenericInstrument):
         self.standard_event_register = StandardEventRegister
         self.operation_register = None
         self.questionable_register = None
+        clear_errors_on_init = kwargs.get('clear_errors_on_init', True)
+        if clear_errors_on_init:
+            self.command('SYSTem:ERRor:CLEar', check_errors=False)
 
     def command(self, *commands, **kwargs):
         """Send a SCPI command or multiple commands to the instrument
