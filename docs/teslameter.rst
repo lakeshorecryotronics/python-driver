@@ -18,3 +18,28 @@ Instrument methods
     :member-order: bysource
     :members:
     :inherited-members:
+
+
+Instrument classes
+------------------
+
+This page outlines the objects and classes used to interact with registers in the Teslameter driver.
+
+.. autoclass:: TeslameterOperationRegister
+    :members:
+
+.. autoclass:: TeslameterQuestionableRegister
+    :members:
+
+.. autoclass:: StatusByteRegister
+    :noindex:
+    :members:
+
+    .. automethod:: __init__
+
+.. autoclass:: StandardEventRegister
+    :noindex:
+    :members:
+
+    .. automethod:: __init__
+
