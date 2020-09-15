@@ -4,16 +4,7 @@ import re
 
 import serial
 
-from .generic_instrument import GenericInstrument, InstrumentException
-
-
-class RegisterBase:
-    """Base class of the status register classes"""
-
-    bit_names = []
-
-    def __str__(self):
-        return str(vars(self))
+from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase
 
 
 class StatusByteRegister(RegisterBase):
@@ -318,41 +309,6 @@ class XIPInstrument(GenericInstrument):
     def reset_status_register_masks(self):
         """Resets status register masks to preset values"""
         self.command("STATus:PRESet", check_errors=False)
-
-    @staticmethod
-    def _interpret_status_register(integer_representation, register):
-        """Translates the integer representation of a register state into a named array"""
-
-        # Create a dictionary to temporarily store the bit states
-        bit_states = {}
-
-        # Assign the boolean value of each bit in the integer to the corresponding status register bit name
-        for count, bit_name in enumerate(register.bit_names):
-            if bit_name:
-                mask = 0b1 << count
-                bit_states[bit_name] = bool(int(integer_representation) & mask)
-
-        return register(**bit_states)
-
-    @staticmethod
-    def _configure_status_register(mask_register):
-        """Translates from a named array to an integer representation value"""
-
-        # Check whether an integer was passed. If so, return it.
-        if isinstance(mask_register, int):
-            return mask_register
-
-        # If a class was passed, call a function to turn it back into an integer representation
-        integer_representation = 0
-
-        # Add up the boolean values of a list of named instrument states
-        # while being careful to account for unnamed entries in the register bit names list
-        for count, bit_name in enumerate(mask_register.bit_names):
-
-            if bit_name:
-                integer_representation += int(getattr(mask_register, bit_name)) << count
-
-        return integer_representation
 
     def modify_service_request_mask(self, bit_name, value):
         """Gets the service request enable mask, changes a bit, and sets the register.

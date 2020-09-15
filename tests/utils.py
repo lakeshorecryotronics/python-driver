@@ -2,8 +2,7 @@ import logging
 from collections import deque
 
 import unittest2 as unittest
-
-from lakeshore import Teslameter, FastHall
+from lakeshore import Teslameter, FastHall, Model372, Model335, Model240
 
 fake_dut_comms_log = logging.getLogger('fake_dut_comms')
 
@@ -79,3 +78,28 @@ class TestWithRealFastHall(unittest.TestCase):
 
     def tearDown(self):
         self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard any errors left in the queue
+
+
+class TestWithFakeModel240(unittest.TestCase):
+    def setUp(self):
+        self.fake_connection = FakeDutConnection()
+        self.fake_connection.setup_response('LSCI,MODEL240/utils.py,LSA22VS,1.4')
+        self.dut = Model240(connection=self.fake_connection)
+        self.fake_connection.reset()
+
+
+class TestWithFakeModel372(unittest.TestCase):
+    def setUp(self):
+        self.fake_connection = FakeDutConnection()
+        self.fake_connection.setup_response('LSCI,MODEL372,LSA22VS,1.4')
+        self.fake_connection.setup_response('1')
+        self.dut = Model372(connection=self.fake_connection, baud_rate=56700)
+        self.fake_connection.reset()
+
+
+class TestWithFakeModel335(unittest.TestCase):
+    def setUp(self):
+        self.fake_connection = FakeDutConnection()
+        self.fake_connection.setup_response('LSCI,MODEL335,FakeSerial/FakeOption,999.999.999')  # Simulate maximum version so all methods are allowed
+        self.dut = Model335(connection=self.fake_connection, baud_rate=56700)
+        self.fake_connection.reset()  # Clear startup activity

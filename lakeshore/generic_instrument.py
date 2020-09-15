@@ -13,6 +13,15 @@ class InstrumentException(Exception):
     """Names a new type of exception specific to general instrument connectivity."""
 
 
+class RegisterBase:
+    """Base class of the status register classes"""
+
+    bit_names = []
+
+    def __str__(self):
+        return str(vars(self))
+
+
 class GenericInstrument:
     """Parent class that implements functionality to connect to generic instruments"""
 
@@ -26,6 +35,7 @@ class GenericInstrument:
         self.device_tcp = None
         self.dut_lock = Lock()
         self.serial_number = None
+        self.option_card_serial = None
 
         # Raise an error if serial and TCP parameters are passed. Otherwise connect to the instrument using one of them.
         if ip_address is not None:
@@ -44,7 +54,10 @@ class GenericInstrument:
         try:
             idn_response = self._get_identity()
             self.firmware_version = idn_response[3]
-            self.serial_number = idn_response[2]
+            serial_string = idn_response[2].split("/")
+            self.serial_number = serial_string[0]
+            if len(serial_string) == 2:
+                self.option_card_serial = serial_string[1]
             self.model_number = idn_response[1]
         except InstrumentException:
             print('Instrument found but unable to communicate. Please check interface settings on the instrument.')
@@ -107,6 +120,41 @@ class GenericInstrument:
             self.logger.info('Received response from %s: %s', self.serial_number, response)
 
         return response
+
+    @staticmethod
+    def _interpret_status_register(integer_representation, register):
+        """Translates the integer representation of a register state into a named array"""
+
+        # Create a dictionary to temporarily store the bit states
+        bit_states = {}
+
+        # Assign the boolean value of each bit in the integer to the corresponding status register bit name
+        for count, bit_name in enumerate(register.bit_names):
+            if bit_name:
+                mask = 0b1 << count
+                bit_states[bit_name] = bool(int(integer_representation) & mask)
+
+        return register(**bit_states)
+
+    @staticmethod
+    def _configure_status_register(mask_register):
+        """Translates from a named array to an integer representation value"""
+
+        # Check whether an integer was passed. If so, return it.
+        if isinstance(mask_register, int):
+            return mask_register
+
+        # If a class was passed, call a function to turn it back into an integer representation
+        integer_representation = 0
+
+        # Add up the boolean values of a list of named instrument states
+        # while being careful to account for unnamed entries in the register bit names list
+        for count, bit_name in enumerate(mask_register.bit_names):
+
+            if bit_name:
+                integer_representation += int(getattr(mask_register, bit_name)) << count
+
+        return integer_representation
 
     def connect_tcp(self, ip_address, tcp_port, timeout):
         """Establishes a TCP connection with the instrument on the specified IP address"""
