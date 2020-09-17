@@ -2,7 +2,7 @@ import logging
 from collections import deque
 
 import unittest2 as unittest
-from lakeshore import Teslameter, FastHall, Model372, Model335, Model240
+from lakeshore import Teslameter, FastHall, Model372, Model335, Model240, Model224
 
 fake_dut_comms_log = logging.getLogger('fake_dut_comms')
 
@@ -102,4 +102,12 @@ class TestWithFakeModel335(unittest.TestCase):
         self.fake_connection = FakeDutConnection()
         self.fake_connection.setup_response('LSCI,MODEL335,FakeSerial/FakeOption,999.999.999')  # Simulate maximum version so all methods are allowed
         self.dut = Model335(connection=self.fake_connection, baud_rate=56700)
+        self.fake_connection.reset()  # Clear startup activity
+
+
+class TestWithFakeModel224(unittest.TestCase):
+    def setUp(self):
+        self.fake_connection = FakeDutConnection()
+        self.fake_connection.setup_response('LSCI,MODEL224,LSA22VS,1.4')
+        self.dut = Model224(connection=self.fake_connection)
         self.fake_connection.reset()  # Clear startup activity

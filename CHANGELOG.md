@@ -1,5 +1,13 @@
 Change Log
 ==========
+Release 1.4.0
+-------------
+Added:
+- Full support for the Model 224 temperature monitor
+
+Changed:
+- Renamed M91.py to fast_hall_controller.py to maintain convention and avoid using the same name as the class.
+
 Release 1.3.0
 -------------
 Added:
