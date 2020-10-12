@@ -12,12 +12,12 @@ Instrument methods
     :members:
     :inherited-members:
 
-.. autoclass:: SourcePod
+.. autoclass:: SourceModule
     :member-order: bysource
     :members:
     :inherited-members:
 
-.. autoclass:: MeasurePod
+.. autoclass:: MeasureModule
     :member-order: bysource
     :members:
     :inherited-members:
