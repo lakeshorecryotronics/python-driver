@@ -4,7 +4,7 @@ import struct
 from base64 import b64decode
 from threading import Lock
 
-from lakeshore.xip_instrument import XIPInstrument, XIPInstrumentException
+from lakeshore.xip_instrument import XIPInstrument, XIPInstrumentException, RegisterBase
 
 
 class SSMSystem(XIPInstrument):
@@ -79,7 +79,15 @@ class SSMSystem(XIPInstrument):
 
     @staticmethod
     def _locate_module_by_name(module_name, set_of_modules):
-        module_names = [module.get_name() for module in set_of_modules]
+        module_names = []
+        for module in set_of_modules:
+            try:
+                module_names.append(module.get_name())
+            except XIPInstrumentException as exception:
+                if '-241,"Hardware missing;' not in str(exception):
+                    raise
+                module_names.append(None)
+
         num_matches = len([name for name in module_names if name == module_name])
 
         if num_matches < 1:
@@ -345,17 +353,17 @@ class SSMSystem(XIPInstrument):
     def get_head_self_cal_status(self):
         """Returns the status of the last head self calibration"""
 
-        return self.command('CALibration:SCALibration:STATus?')
+        self.command('CALibration:SCALibration:STATus?')
 
     def run_head_self_calibration(self):
         """"Runs a self calibration for the head"""
 
-        return self.command('CALibration:SCALibration:RUN')
+        self.command('CALibration:SCALibration:RUN')
 
     def reset_head_self_calibration(self):
         """"Restore the factory self calibration"""
 
-        return self.command('CALibration:SCALibration:RESet')
+        self.command('CALibration:SCALibration:RESet')
 
     def set_mon_out_manual_level(self, manual_level):
         """Set the manual level of monitor out when the mode is MANUAL
@@ -379,8 +387,8 @@ class SSMSystem(XIPInstrument):
             manual_level (float):
                     The new monitor out manual level
 
-                mon_out_state (bool):
-                    The new monitor out state (True to enable monitor out, False to disable monitor out)
+            mon_out_state (bool):
+                The new monitor out state (True to enable monitor out, False to disable monitor out)
         """
 
         self.set_mon_out_manual_level(manual_level)
@@ -445,12 +453,12 @@ class SourceModule(BaseModule):
     def run_self_cal(self):
         """Run a self calibration for the module"""
 
-        return self.device.command('SOURce{}:SCALibration:RUN'.format(self.module_number))
+        self.device.command('SOURce{}:SCALibration:RUN'.format(self.module_number))
 
     def reset_self_cal(self):
         """Restore factory self calibration for the module"""
 
-        return self.device.command('SOURce{}:SCALibration:RESet'.format(self.module_number))
+        self.device.command('SOURce{}:SCALibration:RESet'.format(self.module_number))
 
     def get_enable_state(self):
         """Returns the output state of the module"""
@@ -487,7 +495,7 @@ class SourceModule(BaseModule):
 
             Args:
                 excitation_mode (str):
-                    The new excitation mode ('CURRENT' or "VOLTAGE')
+                    The new excitation mode ('CURRENT' or 'VOLTAGE')
         """
 
         self.device.command('SOURce{}:FUNCtion:MODE {}'.format(self.module_number, excitation_mode))
@@ -981,6 +989,96 @@ class SourceModule(BaseModule):
 
         return bool(int(self.device.query('SOURce{}:VOLTage:PROTection:TRIPped?'.format(self.module_number))))
 
+    def get_present_questionable_status(self):
+        """Returns the names of the questionable status register bits and their values"""
+
+        response = self.device.query('STATus:QUEStionable:SOURce{}:CONDition?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+
+        return status_register
+
+    def get_questionable_events(self):
+        """Returns the names of questionable event status register bits that are currently high.
+        The event register is latching and values are reset when queried."""
+
+        response = self.device.query('STATus:QUEStionable:SOURce{}:EVENt?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+
+        return status_register
+
+    def get_questionable_event_enable_mask(self):
+        """Returns the names of the questionable event enable register bits and their values.
+        These values determine which questionable bits propagate to the questionable event register."""
+
+        response = self.device.query('STATus:QUEStionable:SOURce{}:ENABle?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+
+        return status_register
+
+    def set_questionable_event_enable_mask(self, register_mask):
+        """Configures the values of the questionable event enable register bits.
+        These values determine which questionable bits propagate to the questionable event register.
+
+            Args:
+                register_mask ([Instrument]QuestionableRegister):
+                    An instrument specific QuestionableRegister class object with all bits configured true or false.
+        """
+
+        integer_representation = self.device._configure_status_register(register_mask)
+        self.device.command('STATus:QUEStionable:SOURce{}:ENABle {}'.format(self.module_number, integer_representation), check_errors=False)
+
+    def get_present_operation_status(self):
+        """Returns the names of the operation status register bits and their values"""
+
+        response = self.device.query('STATus:OPERation:SOURce{}:CONDition?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemSourceModuleOperationRegister)
+
+        return status_register
+
+    def get_operation_events(self):
+        """Returns the names of operation event status register bits that are currently high.
+        The event register is latching and values are reset when queried."""
+
+        response = self.device.query('STATus:OPERation:SOURce{}:EVENt?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemSourceModuleOperationRegister)
+
+        return status_register
+
+    def get_operation_event_enable_mask(self):
+        """Returns the names of the operation event enable register bits and their values.
+        These values determine which operation bits propagate to the operation event register."""
+
+        response = self.device.query('STATus:OPERation:SOURce{}:ENABle?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemSourceModuleOperationRegister)
+
+        return status_register
+
+    def set_operation_event_enable_mask(self, register_mask):
+        """Configures the values of the operation event enable register bits.
+        These values determine which operation bits propagate to the operation event register.
+
+            Args:
+                register_mask ([Instrument]OperationRegister):
+                    An instrument specific OperationRegister class object with all bits configured true or false.
+        """
+
+        integer_representation = self.device._configure_status_register(register_mask)
+        self.device.command('STATus:OPERation:SOURce{}:ENABle {}'.format(self.module_number, integer_representation), check_errors=False)
+
+    def get_identify_state(self):
+        """Returns the identification state for the given pod."""
+        response = bool(int(self.device.query('SOURce{}:IDENtify?'.format(self.module_number), check_errors=False)))
+        return response
+
+    def set_identify_state(self, state):
+        """Returns the identification state for the given pod.
+
+            Args:
+                state (bool):
+                    The desired state for the LED, 1 for identify, 0 for normal state
+        """
+        self.device.command('SOURce{}:IDENtify {}'.format(self.module_number, int(state)), check_errors=False)
+
 
 class MeasureModule(BaseModule):
     """Class for interaction with a specific measure channel of the M81 instrument"""
@@ -1018,12 +1116,12 @@ class MeasureModule(BaseModule):
     def run_self_cal(self):
         """Run a self calibration for the module"""
 
-        return self.device.command('SENSe{}:SCALibration:RUN'.format(self.module_number))
+        self.device.command('SENSe{}:SCALibration:RUN'.format(self.module_number))
 
     def reset_self_cal(self):
         """Restore factory self calibration for the module"""
 
-        return self.device.command('SENSe{}:SCALibration:RESet'.format(self.module_number))
+        self.device.command('SENSe{}:SCALibration:RESet'.format(self.module_number))
 
     def get_averaging_time(self):
         """Returns the averaging time of the module in Power Line Cycles. Not relevant in Lock In mode."""
@@ -1194,7 +1292,7 @@ class MeasureModule(BaseModule):
 
         return bool(int(self.device.query('SENSe{}:CURRent:RANGe:AUTO?'.format(self.module_number))))
 
-    def configure_i_range(self, autorange, max_level):
+    def configure_i_range(self, autorange, max_level=None):
         """Configure current ranging for the module
 
             Args:
@@ -1473,3 +1571,231 @@ class MeasureModule(BaseModule):
         """Returns the present lock status of the PLL. True if locked, False if unlocked."""
 
         return bool(int(self.device.query('FETCh:SENSe{}:LIA:LOCK?'.format(self.module_number))))
+
+    def get_present_questionable_status(self):
+        """Returns the names of the questionable status register bits and their values"""
+
+        response = self.device.query('STATus:QUEStionable:SENSe{}:CONDition?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+
+        return status_register
+
+    def get_questionable_events(self):
+        """Returns the names of questionable event status register bits that are currently high.
+        The event register is latching and values are reset when queried."""
+
+        response = self.device.query('STATus:QUEStionable:SENSe{}:EVENt?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+
+        return status_register
+
+    def get_questionable_event_enable_mask(self):
+        """Returns the names of the questionable event enable register bits and their values.
+        These values determine which questionable bits propagate to the questionable event register."""
+
+        response = self.device.query('STATus:QUEStionable:SENSe{}:ENABle?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+
+        return status_register
+
+    def set_questionable_event_enable_mask(self, register_mask):
+        """Configures the values of the questionable event enable register bits.
+        These values determine which questionable bits propagate to the questionable event register.
+
+            Args:
+                register_mask ([Instrument]QuestionableRegister):
+                    An instrument specific QuestionableRegister class object with all bits configured true or false.
+        """
+
+        integer_representation = self.device._configure_status_register(register_mask)
+        self.device.command('STATus:QUEStionable:SENSe{}:ENABle {}'.format(self.module_number, integer_representation), check_errors=False)
+
+    def get_present_operation_status(self):
+        """Returns the names of the operation status register bits and their values"""
+
+        response = self.device.query('STATus:OPERation:SENSe{}:CONDition?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemMeasureModuleOperationRegister)
+
+        return status_register
+
+    def get_operation_events(self):
+        """Returns the names of operation event status register bits that are currently high.
+        The event register is latching and values are reset when queried."""
+
+        response = self.device.query('STATus:OPERation:SENSe{}:EVENt?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemMeasureModuleOperationRegister)
+
+        return status_register
+
+    def get_operation_event_enable_mask(self):
+        """Returns the names of the operation event enable register bits and their values.
+        These values determine which operation bits propagate to the operation event register."""
+
+        response = self.device.query('STATus:OPERation:SENSe{}:ENABle?'.format(self.module_number), check_errors=False)
+        status_register = self.device._interpret_status_register(response, SSMSystemMeasureModuleOperationRegister)
+
+        return status_register
+
+    def set_operation_event_enable_mask(self, register_mask):
+        """Configures the values of the operaiton event enable register bits.
+        These values determine which operaiton bits propagate to the operaiton event register.
+
+            Args:
+                register_mask ([Instrument]OperationRegister):
+                    An instrument specific OperationRegister class object with all bits configured true or false.
+        """
+
+        integer_representation = self.device._configure_status_register(register_mask)
+        self.device.command('STATus:OPERation:SENSe{}:ENABle {}'.format(self.module_number, integer_representation), check_errors=False)
+
+    def get_identify_state(self):
+        """Returns the identification state for the given pod."""
+        response = bool(int(self.device.query('SENSe{}:IDENtify?'.format(self.module_number), check_errors=False)))
+        return response
+
+    def set_identify_state(self, state):
+        """Returns the identification state for the given pod.
+
+            Args:
+                state (bool):
+                    The desired state for the LED, 1 for identify, 0 for normal state
+        """
+        self.device.command('SENSe{}:IDENtify {}'.format(self.module_number, int(state)), check_errors=False)
+
+
+class SSMSystemQuestionableRegister(RegisterBase):
+    """Class object representing the questionable status register"""
+
+    bit_names = [
+        "s1_summary",
+        "s2_summary",
+        "s3_summary",
+        "m1_summary",
+        "m2_summary",
+        "m3_summary",
+        "critical_startup_error",
+        "critical_runtime_error",
+        "heartbeat",
+        "calibration",
+        "data_stream_overflow"
+    ]
+
+    # pylint: disable=too-many-arguments
+    def __init__(self,
+                 s1_summary,
+                 s2_summary,
+                 s3_summary,
+                 m1_summary,
+                 m2_summary,
+                 m3_summary,
+                 critical_startup_error,
+                 critical_runtime_error,
+                 heartbeat,
+                 calibration,
+                 data_stream_overflow):
+        super().__init__()
+        self.s1_summary = s1_summary
+        self.s2_summary = s2_summary
+        self.s3_summary = s3_summary
+        self.m1_summary = m1_summary
+        self.m2_summary = m2_summary
+        self.m3_summary = m3_summary
+        self.critical_startup_error = critical_startup_error
+        self.critical_runtime_error = critical_runtime_error
+        self.heartbeat = heartbeat
+        self.calibration = calibration
+        self.data_stream_overflow = data_stream_overflow
+
+
+class SSMSystemModuleQuestionableRegister(RegisterBase):
+    """Class object representing the questionable status register of a module"""
+
+    bit_names = [
+        "read_error",
+        "unrecognized_pod_error",
+        "port_direction_error",
+        "factory_calibration_failure",
+        "self_calibration_failure"
+    ]
+
+    def __init__(
+            self,
+            read_error=False,
+            unrecognized_pod_error=False,
+            port_direction_error=False,
+            factory_calibration_failure=False,
+            self_calibration_failure=False):
+        super().__init__()
+        self.read_error = read_error
+        self.unrecognized_pod_error = unrecognized_pod_error
+        self.port_direction_error = port_direction_error
+        self.factory_calibration_failure = factory_calibration_failure
+        self.self_calibration_failure = self_calibration_failure
+
+
+class SSMSystemOperationRegister(RegisterBase):
+    """Class object representing the operation status register"""
+
+    bit_names = [
+        "s1_summary",
+        "s2_summary",
+        "s3_summary",
+        "m1_summary",
+        "m2_summary",
+        "m3_summary",
+        "data_stream_in_progress"
+    ]
+
+    def __init__(self,
+                 s1_summary,
+                 s2_summary,
+                 s3_summary,
+                 m1_summary,
+                 m2_summary,
+                 m3_summary,
+                 data_stream_in_progress):
+        super().__init__()
+        self.s1_summary = s1_summary
+        self.s2_summary = s2_summary
+        self.s3_summary = s3_summary
+        self.m1_summary = m1_summary
+        self.m2_summary = m2_summary
+        self.m3_summary = m3_summary
+        self.data_stream_in_progress = data_stream_in_progress
+
+
+class SSMSystemSourceModuleOperationRegister(RegisterBase):
+    """Class object representing the operation status register of a source module"""
+
+    bit_names = [
+        "v_limit",
+        "i_limit"
+    ]
+
+    def __init__(
+            self,
+            v_limit,
+            i_limit):
+        super().__init__()
+        self.v_limit = v_limit
+        self.i_limit = i_limit
+
+
+class SSMSystemMeasureModuleOperationRegister(RegisterBase):
+    """Class object representing the operation status register of a measure module"""
+
+    bit_names = [
+        "overload",
+        "settling",
+        "unlocked"
+    ]
+
+    def __init__(
+            self,
+            overload,
+            settling,
+            unlocked):
+        super().__init__()
+        self.overload = overload
+        self.settling = settling
+        self.unlocked = unlocked
