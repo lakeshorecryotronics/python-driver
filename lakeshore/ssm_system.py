@@ -54,6 +54,7 @@ class SSMSystem(XIPInstrument):
             raise IndexError('Invalid port number. Must be between 1 and {}'.format(self.get_num_source_channels()))
 
     def get_source_pod(self, port_number):
+        """alias of get_source_module"""
         return self.get_source_module(port_number)
 
     def get_source_module_by_name(self, module_name):
@@ -70,6 +71,7 @@ class SSMSystem(XIPInstrument):
             raise IndexError('Invalid port number. Must be between 1 and {}'.format(self.get_num_measure_channels()))
 
     def get_measure_pod(self, port_number):
+        """alias of get_measure_module"""
         return self.get_measure_module(port_number)
 
     def get_measure_module_by_name(self, module_name):
@@ -124,10 +126,10 @@ class SSMSystem(XIPInstrument):
     }
 
     data_source_lookup = {}
-    for mnemonic, f in data_source_types.items():
+    for mnemonic, channel_index in data_source_types.items():
         short_form = ''.join(c for c in mnemonic if not c.islower())
-        data_source_lookup[mnemonic.upper()] = f
-        data_source_lookup[short_form.upper()] = f
+        data_source_lookup[mnemonic.upper()] = channel_index
+        data_source_lookup[short_form.upper()] = channel_index
 
     def get_multiple(self, *data_sources):
         """Gets a list of values corresponding to the input data sources.

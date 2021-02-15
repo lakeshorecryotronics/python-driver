@@ -21,3 +21,25 @@ Instrument methods
     :member-order: bysource
     :members:
     :inherited-members:
+
+
+Instrument classes
+------------------
+
+This page outlines the classes and objects used to interact with various settings and
+methods of the M81.
+
+.. autoclass:: SSMSystemQuestionableRegister
+    :members:
+
+.. autoclass:: SSMSystemModuleQuestionableRegister
+    :members:
+
+.. autoclass:: SSMSystemOperationRegister
+    :members:
+
+.. autoclass:: SSMSystemSourceModuleOperationRegister
+    :members:
+
+.. autoclass:: SSMSystemMeasureModuleOperationRegister
+    :members:
