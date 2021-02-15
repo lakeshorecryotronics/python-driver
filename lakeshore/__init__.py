@@ -16,5 +16,6 @@ from .model_372 import Model372
 from .model_425 import Model425
 from .model_643 import Model643
 from .model_648 import Model648
+from .ssm_system import SSMSystem, SSMSystemQuestionableRegister, SSMSystemModuleQuestionableRegister, \
+    SSMSystemOperationRegister, SSMSystemSourceModuleOperationRegister, SSMSystemMeasureModuleOperationRegister
 ##from .precision_source import PrecisionSource, PrecisionSourceOperationRegister, PrecisionSourceQuestionableRegister
-from .ssm_system import SSMSystem

@@ -135,7 +135,7 @@ class SSMSystem(XIPInstrument):
         """Gets a list of values corresponding to the input data sources.
 
             Args:
-                *data_sources (str, int): Variable length list of pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
+                data_sources (str, int): Variable length list of pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
 
             Returns:
                 Tuple of values corresponding to the given data sources
@@ -147,12 +147,12 @@ class SSMSystem(XIPInstrument):
         return tuple((self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
 
     def stream_data(self, rate, num_points, *data_sources):
-        """Generator object to stream data from the instrument.
+        r"""Generator object to stream data from the instrument.
 
             Args:
                 rate (int): Desired transfer rate in points/sec.
                 num_points (int): Number of points to return. None to stream indefinitely.
-                *data_sources (str, int): Variable length list of pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
+                data_sources (str, int): Variable length list of pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
 
             Yields:
                 A single row of stream data as a tuple
@@ -193,12 +193,12 @@ class SSMSystem(XIPInstrument):
                 raise XIPInstrumentException('Data loss occurred during this data stream.')
 
     def get_data(self, rate, num_points, *data_sources):
-        """Like stream_data, but returns a list.
+        r"""Like stream_data, but returns a list.
 
             Args:
                 rate (int): Desired transfer rate in points/sec.
                 num_points (int): Number of points to return.
-                *data_sources (str, int): Variable length list of pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
+                data_sources (str, int): Variable length list of pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
 
             Returns:
                 All available stream data as a list of tuples
@@ -206,7 +206,7 @@ class SSMSystem(XIPInstrument):
 
         return list(self.stream_data(rate, num_points, *data_sources))
 
-    def log_data_to_csv_file(self, rate, num_points, file, *data_sources, write_header=True):
+    def log_data_to_csv_file(self, rate, num_points, file, *data_sources, **kwargs):
         """Like stream_data, but logs directly to a CSV file.
 
             Args:
@@ -216,6 +216,7 @@ class SSMSystem(XIPInstrument):
                 data_sources (str, int): Pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
                 write_header (bool): If true, a header row is written with column names.
         """
+        write_header = kwargs.pop('write_header', True)
 
         if write_header:
             self._configure_stream_elements(data_sources)
@@ -386,11 +387,11 @@ class SSMSystem(XIPInstrument):
         """Configures the monitor output for manual mode
 
             Args:
-            manual_level (float):
+                manual_level (float):
                     The new monitor out manual level
 
-            mon_out_state (bool):
-                The new monitor out state (True to enable monitor out, False to disable monitor out)
+                mon_out_state (bool):
+                    The new monitor out state (True to enable monitor out, False to disable monitor out)
         """
 
         self.set_mon_out_manual_level(manual_level)
@@ -410,10 +411,10 @@ class SourceModule(BaseModule):
     """Class for interaction with a specific source channel of the M81 instrument"""
 
     def get_multiple(self, *data_sources):
-        """Gets a list of values corresponding to the input data sources for this module.
+        r"""Gets a list of values corresponding to the input data sources for this module.
 
             Args:
-                *data_sources str: Variable length list of DATASOURCE_MNEMONIC.
+                data_sources str: Variable length list of DATASOURCE_MNEMONIC.
 
             Returns:
                 Tuple of values corresponding to the given data sources for this module
@@ -995,7 +996,7 @@ class SourceModule(BaseModule):
         """Returns the names of the questionable status register bits and their values"""
 
         response = self.device.query('STATus:QUEStionable:SOURce{}:CONDition?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+        status_register = SSMSystemModuleQuestionableRegister.from_integer(response)
 
         return status_register
 
@@ -1004,7 +1005,7 @@ class SourceModule(BaseModule):
         The event register is latching and values are reset when queried."""
 
         response = self.device.query('STATus:QUEStionable:SOURce{}:EVENt?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+        status_register = SSMSystemModuleQuestionableRegister.from_integer(response)
 
         return status_register
 
@@ -1013,7 +1014,7 @@ class SourceModule(BaseModule):
         These values determine which questionable bits propagate to the questionable event register."""
 
         response = self.device.query('STATus:QUEStionable:SOURce{}:ENABle?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+        status_register = SSMSystemModuleQuestionableRegister.from_integer(response)
 
         return status_register
 
@@ -1026,14 +1027,14 @@ class SourceModule(BaseModule):
                     An instrument specific QuestionableRegister class object with all bits configured true or false.
         """
 
-        integer_representation = self.device._configure_status_register(register_mask)
+        integer_representation = register_mask.to_integer()
         self.device.command('STATus:QUEStionable:SOURce{}:ENABle {}'.format(self.module_number, integer_representation), check_errors=False)
 
     def get_present_operation_status(self):
         """Returns the names of the operation status register bits and their values"""
 
         response = self.device.query('STATus:OPERation:SOURce{}:CONDition?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemSourceModuleOperationRegister)
+        status_register = SSMSystemSourceModuleOperationRegister.from_integer(response)
 
         return status_register
 
@@ -1042,7 +1043,7 @@ class SourceModule(BaseModule):
         The event register is latching and values are reset when queried."""
 
         response = self.device.query('STATus:OPERation:SOURce{}:EVENt?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemSourceModuleOperationRegister)
+        status_register = SSMSystemSourceModuleOperationRegister.from_integer(response)
 
         return status_register
 
@@ -1051,7 +1052,7 @@ class SourceModule(BaseModule):
         These values determine which operation bits propagate to the operation event register."""
 
         response = self.device.query('STATus:OPERation:SOURce{}:ENABle?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemSourceModuleOperationRegister)
+        status_register = SSMSystemSourceModuleOperationRegister.from_integer(response)
 
         return status_register
 
@@ -1064,7 +1065,7 @@ class SourceModule(BaseModule):
                     An instrument specific OperationRegister class object with all bits configured true or false.
         """
 
-        integer_representation = self.device._configure_status_register(register_mask)
+        integer_representation = register_mask.to_integer()
         self.device.command('STATus:OPERation:SOURce{}:ENABle {}'.format(self.module_number, integer_representation), check_errors=False)
 
     def get_identify_state(self):
@@ -1507,10 +1508,10 @@ class MeasureModule(BaseModule):
         self.set_lock_in_fir_state(use_fir)
 
     def get_multiple(self, *data_sources):
-        """Gets a list of values corresponding to the input data sources for this module.
+        r"""Gets a list of values corresponding to the input data sources for this module.
 
             Args:
-                *data_sources str: Variable length list of DATASOURCE_MNEMONIC.
+                data_sources (str): Variable length list of DATASOURCE_MNEMONIC.
 
             Returns:
                 Tuple of values corresponding to the given data sources for this module
@@ -1578,7 +1579,7 @@ class MeasureModule(BaseModule):
         """Returns the names of the questionable status register bits and their values"""
 
         response = self.device.query('STATus:QUEStionable:SENSe{}:CONDition?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+        status_register = SSMSystemModuleQuestionableRegister.from_integer(response)
 
         return status_register
 
@@ -1587,7 +1588,7 @@ class MeasureModule(BaseModule):
         The event register is latching and values are reset when queried."""
 
         response = self.device.query('STATus:QUEStionable:SENSe{}:EVENt?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+        status_register = SSMSystemModuleQuestionableRegister.from_integer(response)
 
         return status_register
 
@@ -1596,7 +1597,7 @@ class MeasureModule(BaseModule):
         These values determine which questionable bits propagate to the questionable event register."""
 
         response = self.device.query('STATus:QUEStionable:SENSe{}:ENABle?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemModuleQuestionableRegister)
+        status_register = SSMSystemModuleQuestionableRegister.from_integer(response)
 
         return status_register
 
@@ -1609,14 +1610,14 @@ class MeasureModule(BaseModule):
                     An instrument specific QuestionableRegister class object with all bits configured true or false.
         """
 
-        integer_representation = self.device._configure_status_register(register_mask)
+        integer_representation = register_mask.to_integer()
         self.device.command('STATus:QUEStionable:SENSe{}:ENABle {}'.format(self.module_number, integer_representation), check_errors=False)
 
     def get_present_operation_status(self):
         """Returns the names of the operation status register bits and their values"""
 
         response = self.device.query('STATus:OPERation:SENSe{}:CONDition?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemMeasureModuleOperationRegister)
+        status_register = SSMSystemMeasureModuleOperationRegister.from_integer(response)
 
         return status_register
 
@@ -1625,7 +1626,7 @@ class MeasureModule(BaseModule):
         The event register is latching and values are reset when queried."""
 
         response = self.device.query('STATus:OPERation:SENSe{}:EVENt?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemMeasureModuleOperationRegister)
+        status_register = SSMSystemMeasureModuleOperationRegister.from_integer(response)
 
         return status_register
 
@@ -1634,7 +1635,7 @@ class MeasureModule(BaseModule):
         These values determine which operation bits propagate to the operation event register."""
 
         response = self.device.query('STATus:OPERation:SENSe{}:ENABle?'.format(self.module_number), check_errors=False)
-        status_register = self.device._interpret_status_register(response, SSMSystemMeasureModuleOperationRegister)
+        status_register = SSMSystemMeasureModuleOperationRegister.from_integer(response)
 
         return status_register
 
@@ -1647,7 +1648,7 @@ class MeasureModule(BaseModule):
                     An instrument specific OperationRegister class object with all bits configured true or false.
         """
 
-        integer_representation = self.device._configure_status_register(register_mask)
+        integer_representation = register_mask.to_integer()
         self.device.command('STATus:OPERation:SENSe{}:ENABle {}'.format(self.module_number, integer_representation), check_errors=False)
 
     def get_identify_state(self):
@@ -1695,7 +1696,6 @@ class SSMSystemQuestionableRegister(RegisterBase):
                  heartbeat,
                  calibration,
                  data_stream_overflow):
-        super().__init__()
         self.s1_summary = s1_summary
         self.s2_summary = s2_summary
         self.s3_summary = s3_summary
@@ -1727,7 +1727,6 @@ class SSMSystemModuleQuestionableRegister(RegisterBase):
             port_direction_error=False,
             factory_calibration_failure=False,
             self_calibration_failure=False):
-        super().__init__()
         self.read_error = read_error
         self.unrecognized_pod_error = unrecognized_pod_error
         self.port_direction_error = port_direction_error
@@ -1756,7 +1755,6 @@ class SSMSystemOperationRegister(RegisterBase):
                  m2_summary,
                  m3_summary,
                  data_stream_in_progress):
-        super().__init__()
         self.s1_summary = s1_summary
         self.s2_summary = s2_summary
         self.s3_summary = s3_summary
@@ -1778,7 +1776,6 @@ class SSMSystemSourceModuleOperationRegister(RegisterBase):
             self,
             v_limit,
             i_limit):
-        super().__init__()
         self.v_limit = v_limit
         self.i_limit = i_limit
 
@@ -1797,7 +1794,6 @@ class SSMSystemMeasureModuleOperationRegister(RegisterBase):
             overload,
             settling,
             unlocked):
-        super().__init__()
         self.overload = overload
         self.settling = settling
         self.unlocked = unlocked

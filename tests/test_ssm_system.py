@@ -3,6 +3,7 @@ from lakeshore import ssm_system
 from base64 import b64encode
 from struct import pack
 from os import remove
+import sys
 
 
 class TestSSMSSYSTEM(TestWithFakeSSMS):
@@ -21,7 +22,7 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
     def test_get_source_module_valid_port(self):
         self.fake_connection.setup_response('No error')
         response = self.dut.get_source_module(1)
-        self.assertEqual(type(response), ssm_system.SourceModule)
+        self.assertTrue(isinstance(response, ssm_system.SourceModule))
 
     def test_get_source_module_invalid_port(self):
         self.fake_connection.setup_response('3;No error')
@@ -31,19 +32,19 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
     def test_get_source_pod(self):
         self.fake_connection.setup_response('No error')
         response = self.dut.get_source_pod(1)
-        self.assertEqual(type(response), ssm_system.SourceModule)
+        self.assertTrue(isinstance(response, ssm_system.SourceModule))
 
     def test_get_source_module_by_name(self):
         self.fake_connection.setup_response('Module_name1;No error')
         self.fake_connection.setup_response('Module_name2;No error')
         self.fake_connection.setup_response('Module_name3;No error')
         response = self.dut.get_source_module_by_name('Module_name1')
-        self.assertEqual(type(response), ssm_system.SourceModule)
+        self.assertTrue(isinstance(response, ssm_system.SourceModule))
 
     def test_get_measure_module(self):
         self.fake_connection.setup_response('No error')
         response = self.dut.get_measure_module(1)
-        self.assertEqual(type(response), ssm_system.MeasureModule)
+        self.assertTrue(isinstance(response, ssm_system.MeasureModule))
 
     def test_get_measure_pod(self):
         self.fake_connection.setup_response('No error')
@@ -53,7 +54,7 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
         self.fake_connection.setup_response('Module_name2;No error')
         self.fake_connection.setup_response('Module_name3;No error')
         response = self.dut.get_measure_module_by_name('Module_name1')
-        self.assertEqual(type(response), ssm_system.MeasureModule)
+        self.assertTrue(isinstance(response, ssm_system.MeasureModule))
 
     def test_get_measure_module_invalid_port(self):
         self.fake_connection.setup_response('3;No error')
@@ -68,18 +69,20 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
 
     def test_stream_data(self):
         """Test stream data"""
-        binary_format = '<?d'
-        pack_data = [(False, 45.6521), (True, 1.258), (False, 65.8974)]
-        my_data = list()
-        for data in pack_data:
-            my_data.append(pack(binary_format, data[0], data[1]))
 
-        data_bytes = bytes()
-        for packet in my_data:
-            data_bytes += packet
+        list_data = [(False, 45.6521), (True, 1.258), (False, 65.8974)]
 
-        encoded_data = b64encode(data_bytes)
-        encoded_data = str(encoded_data)[2:-1]
+        my_data = []
+        for data in list_data:
+            for value in data:
+                my_data.append(value)
+
+        list_format = '<?d?d?d'
+        pack_data = pack(list_format, *my_data)
+        if sys.version_info[0] < 3:
+            encoded_data = str(b64encode(pack_data))
+        else:
+            encoded_data = str(b64encode(pack_data))[2:-1]
 
         # Response for trace reset command
         self.fake_connection.setup_response('No error')
@@ -92,7 +95,7 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
         # Response for bytes per row query
         self.fake_connection.setup_response('9;No error')
         # Response for binary format
-        self.fake_connection.setup_response('?d;No error')
+        self.fake_connection.setup_response('\"?d\";No error')
         # Response for trace start
         self.fake_connection.setup_response('No error')
         # Response for trace data, check errors set to false
@@ -101,9 +104,11 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
         self.fake_connection.setup_response('0;No error')
 
         response = self.dut.stream_data(10, 3, ("MX", 1), ("MY", 2), ("MR", 3))
-        for i, data in enumerate(response):
-            self.assertEqual(data, pack_data[i])
+        response_list = []
+        for data in response:
+            response_list.append(data)
 
+        self.assertEqual(response_list, list_data)
         self.assertIn('TRACe:RESEt', self.fake_connection.get_outgoing_message())
         self.assertIn('TRACe:FORMat:ELEMents MX,1,MY,2,MR,3', self.fake_connection.get_outgoing_message())
         self.assertIn('TRACe:FORMat:ENCOding B64', self.fake_connection.get_outgoing_message())
@@ -114,18 +119,20 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
 
     def test_get_data(self):
         """Test get data"""
-        binary_format = '<?d'
-        pack_data = [(True, 12.568), (False, 0.258), (True, 15.74)]
-        my_data = list()
-        for data in pack_data:
-            my_data.append(pack(binary_format, data[0], data[1]))
 
-        data_bytes = bytes()
-        for packet in my_data:
-            data_bytes += packet
+        list_data = [(True, 12.568), (False, 0.258), (True, 15.74)]
 
-        encoded_data = b64encode(data_bytes)
-        encoded_data = str(encoded_data)[2:-1]
+        my_data = []
+        for data in list_data:
+            for value in data:
+                my_data.append(value)
+
+        list_format = '<?d?d?d'
+        pack_data = pack(list_format, *my_data)
+        if sys.version_info[0] < 3:
+            encoded_data = str(b64encode(pack_data))
+        else:
+            encoded_data = str(b64encode(pack_data))[2:-1]
 
         # Response for trace reset command
         self.fake_connection.setup_response('No error')
@@ -147,8 +154,11 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
         self.fake_connection.setup_response('0;No error')
 
         response = self.dut.get_data(10, 3, ("MX", 1), ("MY", 2), ("MR", 3))
-        self.assertEqual(response, pack_data)
+        response_list = []
+        for data in response:
+            response_list.append(data)
 
+        self.assertEqual(response_list, list_data)
         self.assertIn('TRACe:RESEt', self.fake_connection.get_outgoing_message())
         self.assertIn('TRACe:FORMat:ELEMents MX,1,MY,2,MR,3', self.fake_connection.get_outgoing_message())
         self.assertIn('TRACe:FORMat:ENCOding B64', self.fake_connection.get_outgoing_message())
@@ -160,24 +170,24 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
     def test_log_data_to_csv_file(self):
         """Test CSV log"""
 
-        # Create B64 encoded data
-        binary_format = '<?d'
-        pack_data = [(True, 21.545), (False, 0.25), (True, 165.53)]
-        my_data = list()
-        for data in pack_data:
-            my_data.append(pack(binary_format, data[0], data[1]))
+        list_data = [(True, 21.545), (False, 0.25), (True, 165.53)]
 
-        data_bytes = bytes()
-        for packet in my_data:
-            data_bytes += packet
+        my_data = []
+        for data in list_data:
+            for value in data:
+                my_data.append(value)
 
-        encoded_data = b64encode(data_bytes)
-        encoded_data = str(encoded_data)[2:-1]
+        list_format = '<?d?d?d'
+        pack_data = pack(list_format, *my_data)
+        if sys.version_info[0] < 3:
+            encoded_data = str(b64encode(pack_data))
+        else:
+            encoded_data = str(b64encode(pack_data))[2:-1]
 
         # Create a CSV file identical to the expected output
         with open('expected_log_data.csv', 'w') as csv_file:
             csv_file.write('MX,1\n')
-            for row in pack_data:
+            for row in list_data:
                 csv_file.write(','.join(str(x) for x in row) + '\n')
 
         # Response for format elements

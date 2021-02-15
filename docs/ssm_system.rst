@@ -5,6 +5,9 @@ Synchronous Source Measure System
 
 Instrument methods
 ------------------
+
+Instrument methods are grouped into three classes: SSMsystem, SourceModule, and MeasureModule
+
 .. module:: lakeshore.ssm_system
 
 .. autoclass:: SSMSystem
