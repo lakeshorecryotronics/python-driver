@@ -188,7 +188,7 @@ class CurveHeader:
         self.coefficient = coefficient
 
 
-class _StandardEventRegister(RegisterBase):
+class StandardEventRegister(RegisterBase):
     """Class object representing the standard event register"""
 
     bit_names = [
@@ -215,7 +215,7 @@ class _StandardEventRegister(RegisterBase):
         self.power_on = power_on
 
 
-class _OperationEvent(RegisterBase):
+class OperationEvent(RegisterBase):
     """Class object representing the status byte register LSB to MSB"""
 
     bit_names = [
@@ -268,6 +268,16 @@ class TemperatureController(GenericInstrument):
         # Call the parent init, then fill in values specific to temperature controllers
         GenericInstrument.__init__(self, serial_number, com_port, baud_rate, 7, 1, serial.PARITY_ODD,
                                    False, False, timeout, ip_address, tcp_port, **kwargs)
+
+    @staticmethod
+    def _error_check(error_code):
+        event_register = StandardEventRegister.from_integer(error_code)
+        if event_register.query_error:
+            raise InstrumentException('Query Error')
+        elif event_register.command_error:
+            raise InstrumentException('Command Error: Invalid Command or Query')
+        elif event_register.execution_error:
+            raise InstrumentException('Execution Error: Instrument not able to execute command or query.')
 
     def command(self, *commands, **kwargs):
         """Send a SCPI command or multiple commands to the instrument
@@ -322,32 +332,23 @@ class TemperatureController(GenericInstrument):
 
         return response
 
-    def _error_check(self, error_code):
-        event_register = self._interpret_status_register(error_code, _StandardEventRegister)
-        if event_register.query_error:
-            raise InstrumentException('Query Error')
-        elif event_register.command_error:
-            raise InstrumentException('Command Error: Invalid Command or Query')
-        elif event_register.execution_error:
-            raise InstrumentException('Execution Error: Instrument not able to execute command or query.')
-
     def get_standard_event_enable_mask(self):
         """Returns the names of the standard event enable register bits and their values.
         These values determine which bits propagate to the standard event register"""
 
-        response = self.query("*ESE?")
-        return self._interpret_status_register(response, _StandardEventRegister)
+        response = self.query("*ESE?", check_errors=False)
+        return StandardEventRegister.from_integer(response)
 
     def set_standard_event_enable_mask(self, register_mask):
         """Configures values of the standard event enable register bits.
         These values determine which bits propagate to the standard event register
 
             Args:
-                register_mask (_StandardEventRegister):
-                    * An _StandardEventRegister class object with all bits set to a value
+                register_mask (StandardEventRegister):
+                    * An StandardEventRegister class object with all bits set to a value
 
         """
-        integer_representation = self._configure_status_register(register_mask)
+        integer_representation = register_mask.to_integer()
         self.command("*ESE " + str(integer_representation))
 
     def clear_interface_command(self):
@@ -370,20 +371,20 @@ class TemperatureController(GenericInstrument):
                     * A service_request_enable class object with all bits configured
 
         """
-        integer_representation = self._configure_status_register(register_mask)
+        integer_representation = register_mask.to_integer()
         self.command("*SRE " + str(integer_representation))
 
     def get_service_request(self):
         """Returns the status byte register bits and their values as a class instance"""
 
         response = self.query("*SRE?")
-        return self._interpret_status_register(response, self.service_request_enable)
+        return self.service_request_enable.from_integer(response)
 
     def get_status_byte(self):
         """Returns the status flag bits as a class instance without resetting the register"""
 
         response = self.query("*STB?")
-        return self._interpret_status_register(response, self.status_byte_register)
+        return self.status_byte_register.from_integer(response)
 
     def get_self_test(self):
         """Instrument self test result completed at power up
@@ -1196,14 +1197,14 @@ class TemperatureController(GenericInstrument):
         """Returns the names of the operation condition register bits and their values."""
 
         response = self.query("OPST?")
-        return self._interpret_status_register(response, _OperationEvent)
+        return OperationEvent.from_integer(response)
 
     def _get_operation_event_enable(self):
         """Returns the names of the operation event enable register and their values.
         These values determine which bits propagate to the operation condition register."""
 
         response = self.query("OPSTE?")
-        return self._interpret_status_register(response, _OperationEvent)
+        return OperationEvent.from_integer(response)
 
     def _set_operation_event_enable(self, register_mask):
         """Configures values of the operation event enable register bits.
@@ -1214,14 +1215,14 @@ class TemperatureController(GenericInstrument):
                     * An OperationEvent class object with all bits configured true or false
 
         """
-        integer_representation = self._configure_status_register(register_mask)
+        integer_representation = register_mask.to_integer()
         self.command("OPSTE {}".format(integer_representation))
 
     def _get_operation_event(self):
         """Returns the names of the operation event register bits and their values."""
 
         response = self.query("OPSTR?")
-        status_register = self._interpret_status_register(response, _OperationEvent)
+        status_register = OperationEvent.from_integer(response)
         return status_register
 
     def set_heater_pid(self, output, gain, integral, derivative):

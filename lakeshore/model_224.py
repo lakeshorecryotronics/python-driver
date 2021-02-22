@@ -3,7 +3,7 @@
 from enum import IntEnum
 import serial
 from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase
-from .temperature_controllers import _StandardEventRegister
+from .temperature_controllers import StandardEventRegister
 
 
 class Model224AlarmParameters:
@@ -259,7 +259,7 @@ class Model224CurveHeader:
         self.coefficient = coefficient
 
 
-Model224StandardEventRegister = _StandardEventRegister
+Model224StandardEventRegister = StandardEventRegister
 
 
 class Model224ServiceRequestRegister(RegisterBase):
@@ -335,6 +335,16 @@ class Model224ReadingStatusRegister(RegisterBase):
         self.sensor_units_over_range = sensor_units_over_range
 
 
+def _error_check(error_code):
+    event_register = Model224StandardEventRegister.from_integer(error_code)
+    if event_register.query_error:
+        raise InstrumentException('Query Error')
+    elif event_register.command_error:
+        raise InstrumentException('Command Error: Invalid Command or Query')
+    elif event_register.execution_error:
+        raise InstrumentException('Execution Error: Instrument not able to execute command or query.')
+
+
 class Model224(GenericInstrument):
     """A class object representing the Lake Shore Model 224 temperature monitor"""
 
@@ -408,26 +418,17 @@ class Model224(GenericInstrument):
         if check_errors:
             response_list = response.split(';')
             error_code = response_list.pop()
-            self._error_check(error_code)
+            _error_check(error_code)
             response = ';'.join(response_list)
 
         return response
-
-    def _error_check(self, error_code):
-        event_register = self._interpret_status_register(error_code, Model224StandardEventRegister)
-        if event_register.query_error:
-            raise InstrumentException('Query Error')
-        elif event_register.command_error:
-            raise InstrumentException('Command Error: Invalid Command or Query')
-        elif event_register.execution_error:
-            raise InstrumentException('Execution Error: Instrument not able to execute command or query.')
 
     def get_standard_event_enable_mask(self):
         """Returns the names of the standard event enable register bits and their values.
         These values determine which bits propagate to the standard event register"""
 
         response = self.query("*ESE?")
-        status_register = self._interpret_status_register(response, Model224StandardEventRegister)
+        status_register = Model224StandardEventRegister.from_integer(response)
         return status_register
 
     def set_standard_event_enable_mask(self, register_mask):
@@ -440,7 +441,7 @@ class Model224(GenericInstrument):
 
         """
 
-        integer_representation = self._configure_status_register(register_mask)
+        integer_representation = register_mask.to_integer()
         self.command("*ESE " + str(integer_representation))
 
     def clear_interface_command(self):
@@ -463,21 +464,21 @@ class Model224(GenericInstrument):
                     A Model224ServiceRequestRegister class object with all bits configured
         """
 
-        integer_representation = self._configure_status_register(register_mask)
+        integer_representation = register_mask.to_integer()
         self.command("*SRE " + str(integer_representation))
 
     def get_service_request(self):
         """Returns the status byte register bits and their values as a class instance"""
 
         response = self.query("*SRE?")
-        status_register = self._interpret_status_register(response, Model224ServiceRequestRegister)
+        status_register = Model224ServiceRequestRegister.from_integer(response)
         return status_register
 
     def get_status_byte(self):
         """Returns the status flag bits as a class instance without resetting the register"""
 
         response = self.query("*STB?")
-        status_flag = self._interpret_status_register(response, Model224StatusByteRegister)
+        status_flag = Model224StatusByteRegister.from_integer(response)
         return status_flag
 
     def get_self_test(self):
@@ -521,7 +522,7 @@ class Model224(GenericInstrument):
                     sensor_units_zero: bool, sensor_units_over_range: bool}
         """
         flag_code = int(self.query("RDGST? {}".format(input_channel)))
-        reading_status = self._interpret_status_register(flag_code, Model224ReadingStatusRegister)
+        reading_status = Model224ReadingStatusRegister.from_integer(flag_code)
         return reading_status
 
     def get_kelvin_reading(self, input_channel):
