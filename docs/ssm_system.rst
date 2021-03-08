@@ -1,7 +1,7 @@
 .. _ssm_system:
 
-Synchronous Source Measure System
-=================================
+M81 Synchronous Source Measure System
+=====================================
 
 Instrument methods
 ------------------
@@ -26,10 +26,10 @@ Instrument methods are grouped into three classes: SSMsystem, SourceModule, and 
     :inherited-members:
 
 
-Instrument classes
-------------------
+Instrument registers
+--------------------
 
-This page outlines the classes and objects used to interact with various settings and
+This page outlines the registers used to interact with various settings and
 methods of the M81.
 
 .. autoclass:: SSMSystemQuestionableRegister

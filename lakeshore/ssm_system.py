@@ -7,6 +7,139 @@ from threading import Lock
 from lakeshore.xip_instrument import XIPInstrument, XIPInstrumentException, RegisterBase
 
 
+class SSMSystemQuestionableRegister(RegisterBase):
+    """Class object representing the questionable status register"""
+
+    bit_names = [
+        "s1_summary",
+        "s2_summary",
+        "s3_summary",
+        "m1_summary",
+        "m2_summary",
+        "m3_summary",
+        "critical_startup_error",
+        "critical_runtime_error",
+        "heartbeat",
+        "calibration",
+        "data_stream_overflow"
+    ]
+
+    # pylint: disable=too-many-arguments
+    def __init__(self,
+                 s1_summary,
+                 s2_summary,
+                 s3_summary,
+                 m1_summary,
+                 m2_summary,
+                 m3_summary,
+                 critical_startup_error,
+                 critical_runtime_error,
+                 heartbeat,
+                 calibration,
+                 data_stream_overflow):
+        self.s1_summary = s1_summary
+        self.s2_summary = s2_summary
+        self.s3_summary = s3_summary
+        self.m1_summary = m1_summary
+        self.m2_summary = m2_summary
+        self.m3_summary = m3_summary
+        self.critical_startup_error = critical_startup_error
+        self.critical_runtime_error = critical_runtime_error
+        self.heartbeat = heartbeat
+        self.calibration = calibration
+        self.data_stream_overflow = data_stream_overflow
+
+
+class SSMSystemModuleQuestionableRegister(RegisterBase):
+    """Class object representing the questionable status register of a module"""
+
+    bit_names = [
+        "read_error",
+        "unrecognized_pod_error",
+        "port_direction_error",
+        "factory_calibration_failure",
+        "self_calibration_failure"
+    ]
+
+    def __init__(
+            self,
+            read_error=False,
+            unrecognized_pod_error=False,
+            port_direction_error=False,
+            factory_calibration_failure=False,
+            self_calibration_failure=False):
+        self.read_error = read_error
+        self.unrecognized_pod_error = unrecognized_pod_error
+        self.port_direction_error = port_direction_error
+        self.factory_calibration_failure = factory_calibration_failure
+        self.self_calibration_failure = self_calibration_failure
+
+
+class SSMSystemOperationRegister(RegisterBase):
+    """Class object representing the operation status register"""
+
+    bit_names = [
+        "s1_summary",
+        "s2_summary",
+        "s3_summary",
+        "m1_summary",
+        "m2_summary",
+        "m3_summary",
+        "data_stream_in_progress"
+    ]
+
+    def __init__(self,
+                 s1_summary,
+                 s2_summary,
+                 s3_summary,
+                 m1_summary,
+                 m2_summary,
+                 m3_summary,
+                 data_stream_in_progress):
+        self.s1_summary = s1_summary
+        self.s2_summary = s2_summary
+        self.s3_summary = s3_summary
+        self.m1_summary = m1_summary
+        self.m2_summary = m2_summary
+        self.m3_summary = m3_summary
+        self.data_stream_in_progress = data_stream_in_progress
+
+
+class SSMSystemSourceModuleOperationRegister(RegisterBase):
+    """Class object representing the operation status register of a source module"""
+
+    bit_names = [
+        "v_limit",
+        "i_limit"
+    ]
+
+    def __init__(
+            self,
+            v_limit,
+            i_limit):
+        self.v_limit = v_limit
+        self.i_limit = i_limit
+
+
+class SSMSystemMeasureModuleOperationRegister(RegisterBase):
+    """Class object representing the operation status register of a measure module"""
+
+    bit_names = [
+        "overload",
+        "settling",
+        "unlocked"
+    ]
+
+    def __init__(
+            self,
+            overload,
+            settling,
+            unlocked):
+        self.overload = overload
+        self.settling = settling
+        self.unlocked = unlocked
+
+
 class SSMSystem(XIPInstrument):
     """Class for interaction with the M81 instrument"""
 
@@ -24,10 +157,9 @@ class SSMSystem(XIPInstrument):
 
         # Call the parent init, then fill in values specific to SSM
         XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port, **kwargs)
-        # self.status_byte_register = StatusByteRegister
-        # self.standard_event_register = StandardEventRegister
-        # self.operation_register = TeslameterOperationRegister
-        # self.questionable_register = TeslameterQuestionableRegister
+
+        self.operation_register = SSMSystemOperationRegister
+        self.questionable_register = SSMSystemQuestionableRegister
 
         # Instantiate modules
         self.source_modules = [SourceModule(i + 1, self) for i in range(self.get_num_source_channels())]
@@ -1664,136 +1796,3 @@ class MeasureModule(BaseModule):
                     The desired state for the LED, 1 for identify, 0 for normal state
         """
         self.device.command('SENSe{}:IDENtify {}'.format(self.module_number, int(state)), check_errors=False)
-
-
-class SSMSystemQuestionableRegister(RegisterBase):
-    """Class object representing the questionable status register"""
-
-    bit_names = [
-        "s1_summary",
-        "s2_summary",
-        "s3_summary",
-        "m1_summary",
-        "m2_summary",
-        "m3_summary",
-        "critical_startup_error",
-        "critical_runtime_error",
-        "heartbeat",
-        "calibration",
-        "data_stream_overflow"
-    ]
-
-    # pylint: disable=too-many-arguments
-    def __init__(self,
-                 s1_summary,
-                 s2_summary,
-                 s3_summary,
-                 m1_summary,
-                 m2_summary,
-                 m3_summary,
-                 critical_startup_error,
-                 critical_runtime_error,
-                 heartbeat,
-                 calibration,
-                 data_stream_overflow):
-        self.s1_summary = s1_summary
-        self.s2_summary = s2_summary
-        self.s3_summary = s3_summary
-        self.m1_summary = m1_summary
-        self.m2_summary = m2_summary
-        self.m3_summary = m3_summary
-        self.critical_startup_error = critical_startup_error
-        self.critical_runtime_error = critical_runtime_error
-        self.heartbeat = heartbeat
-        self.calibration = calibration
-        self.data_stream_overflow = data_stream_overflow
-
-
-class SSMSystemModuleQuestionableRegister(RegisterBase):
-    """Class object representing the questionable status register of a module"""
-
-    bit_names = [
-        "read_error",
-        "unrecognized_pod_error",
-        "port_direction_error",
-        "factory_calibration_failure",
-        "self_calibration_failure"
-    ]
-
-    def __init__(
-            self,
-            read_error=False,
-            unrecognized_pod_error=False,
-            port_direction_error=False,
-            factory_calibration_failure=False,
-            self_calibration_failure=False):
-        self.read_error = read_error
-        self.unrecognized_pod_error = unrecognized_pod_error
-        self.port_direction_error = port_direction_error
-        self.factory_calibration_failure = factory_calibration_failure
-        self.self_calibration_failure = self_calibration_failure
-
-
-class SSMSystemOperationRegister(RegisterBase):
-    """Class object representing the operation status register"""
-
-    bit_names = [
-        "s1_summary",
-        "s2_summary",
-        "s3_summary",
-        "m1_summary",
-        "m2_summary",
-        "m3_summary",
-        "data_stream_in_progress"
-    ]
-
-    def __init__(self,
-                 s1_summary,
-                 s2_summary,
-                 s3_summary,
-                 m1_summary,
-                 m2_summary,
-                 m3_summary,
-                 data_stream_in_progress):
-        self.s1_summary = s1_summary
-        self.s2_summary = s2_summary
-        self.s3_summary = s3_summary
-        self.m1_summary = m1_summary
-        self.m2_summary = m2_summary
-        self.m3_summary = m3_summary
-        self.data_stream_in_progress = data_stream_in_progress
-
-
-class SSMSystemSourceModuleOperationRegister(RegisterBase):
-    """Class object representing the operation status register of a source module"""
-
-    bit_names = [
-        "v_limit",
-        "i_limit"
-    ]
-
-    def __init__(
-            self,
-            v_limit,
-            i_limit):
-        self.v_limit = v_limit
-        self.i_limit = i_limit
-
-
-class SSMSystemMeasureModuleOperationRegister(RegisterBase):
-    """Class object representing the operation status register of a measure module"""
-
-    bit_names = [
-        "overload",
-        "settling",
-        "unlocked"
-    ]
-
-    def __init__(
-            self,
-            overload,
-            settling,
-            unlocked):
-        self.overload = overload
-        self.settling = settling
-        self.unlocked = unlocked

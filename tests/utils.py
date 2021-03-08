@@ -2,8 +2,7 @@ import logging
 from collections import deque
 
 import unittest2 as unittest
-from lakeshore import Teslameter, FastHall, Model372, Model335, Model240, Model224, SSMSystem, ssm_system
-from lakeshore.xip_instrument import XIPInstrument
+from lakeshore import Teslameter, FastHall, Model372, Model335, Model240, Model224, SSMSystem
 
 fake_dut_comms_log = logging.getLogger('fake_dut_comms')
 
