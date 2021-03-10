@@ -3,10 +3,10 @@
 M81 Synchronous Source Measure System
 =====================================
 
-Instrument methods
-------------------
-
 Instrument methods are grouped into three classes: SSMsystem, SourceModule, and MeasureModule
+
+SSMS Instrument methods
+-----------------------
 
 .. module:: lakeshore.ssm_system
 
@@ -15,10 +15,20 @@ Instrument methods are grouped into three classes: SSMsystem, SourceModule, and 
     :members:
     :inherited-members:
 
+Source Module methods
+---------------------
+
+.. module:: lakeshore.ssm_source_module
+
 .. autoclass:: SourceModule
     :member-order: bysource
     :members:
     :inherited-members:
+
+Measure Module methods
+----------------------
+
+.. module:: lakeshore.ssm_measure_module
 
 .. autoclass:: MeasureModule
     :member-order: bysource
@@ -32,17 +42,17 @@ Instrument registers
 This page outlines the registers used to interact with various settings and
 methods of the M81.
 
-.. autoclass:: SSMSystemQuestionableRegister
+.. autoclass:: lakeshore.ssm_system.SSMSystemOperationRegister
     :members:
 
-.. autoclass:: SSMSystemModuleQuestionableRegister
+.. autoclass:: lakeshore.ssm_system.SSMSystemQuestionableRegister
     :members:
 
-.. autoclass:: SSMSystemOperationRegister
+.. autoclass:: lakeshore.ssm_base_module.SSMSystemModuleQuestionableRegister
     :members:
 
-.. autoclass:: SSMSystemSourceModuleOperationRegister
+.. autoclass:: lakeshore.ssm_source_module.SSMSystemSourceModuleOperationRegister
     :members:
 
-.. autoclass:: SSMSystemMeasureModuleOperationRegister
+.. autoclass:: lakeshore.ssm_measure_module.SSMSystemMeasureModuleOperationRegister
     :members:

@@ -12,6 +12,7 @@ Advanced support
 * [F41 and F71 Teslameters](https://www.lakeshore.com/products/Gaussmeters/F71-F41-teslameters/Pages/Overview.aspx)
 * [155 Precision I/V Source](https://www.lakeshore.com/products/measureready/model-155/Pages/Overview.aspx) 
 * [M91 FastHall Controller](https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-instruments/measureready-m91-fasthall-measurement-controller) 
+* [M81 Synchronous Source Measure System](https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-m81-synchronous-source-measure-system/measureready-m81-synchronous-source-measure-system)
 
 Basic support
 * [Model 121 Programmable DC Current Source](https://www.lakeshore.com/products/categories/overview/temperature-products/ac-and-dc-current-sources/model-121-programmable-dc-current-source)

@@ -1,5 +1,5 @@
 from tests.utils import TestWithFakeSSMS, TestWithFakeSSMSSourceModule, TestWithFakeSSMSMeasureModule
-from lakeshore import ssm_system
+from lakeshore import ssm_system, ssm_measure_module, ssm_source_module, ssm_base_module
 from base64 import b64encode
 from struct import pack
 from os import remove
@@ -867,7 +867,7 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
     def test_set_questionable_event_enable_mask(self):
         self.fake_connection.setup_response('No error')
         # Arguments go from LSB to MSB
-        register = ssm_system.SSMSystemModuleQuestionableRegister(False, True, True, False, True)
+        register = ssm_base_module.SSMSystemModuleQuestionableRegister(False, True, True, False, True)
         self.dut_module.set_questionable_event_enable_mask(register)
         self.assertIn('STATus:QUEStionable:SOURce1:ENABle 22', self.fake_connection.get_outgoing_message())
 
@@ -894,7 +894,7 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
 
     def test_set_operation_event_enable_mask(self):
         self.fake_connection.setup_response('No error')
-        register = ssm_system.SSMSystemSourceModuleOperationRegister(False, False)
+        register = ssm_source_module.SSMSystemSourceModuleOperationRegister(False, False)
         self.dut_module.set_operation_event_enable_mask(register)
         self.assertIn('STATus:OPERation:SOURce1:ENABle 0', self.fake_connection.get_outgoing_message())
 
@@ -1178,6 +1178,18 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.dut_module.set_lock_in_time_constant(0.025)
         self.assertIn('SENSe1:LIA:TIMEconstant 0.025', self.fake_connection.get_outgoing_message())
 
+    def test_lock_in_settle_time(self):
+        self.fake_connection.setup_response("63.41;No error")
+        response = self.dut_module.get_lock_in_settle_time()
+        self.assertEqual(response, 63.41)
+        self.assertIn('SENSe1:LIA:STIMe? 0.01', self.fake_connection.get_outgoing_message())
+
+    def test_lock_in_equivalent_noise_bandwidth(self):
+        self.fake_connection.setup_response("125.25;No error")
+        response = self.dut_module.get_lock_in_equivalent_noise_bandwidth()
+        self.assertEqual(response, 125.25)
+        self.assertIn('SENSe1:LIA:ENBW?', self.fake_connection.get_outgoing_message())
+
     def test_get_lock_in_rolloff(self):
         self.fake_connection.setup_response('R6;No error')
         response = self.dut_module.get_lock_in_rolloff()
@@ -1358,7 +1370,7 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
     def test_set_questionable_event_enable_mask(self):
         self.fake_connection.setup_response('No error')
         # Arguments go from LSB to MSB
-        register = ssm_system.SSMSystemModuleQuestionableRegister(False, True, True, False, True)
+        register = ssm_base_module.SSMSystemModuleQuestionableRegister(False, True, True, False, True)
         self.dut_module.set_questionable_event_enable_mask(register)
         self.assertIn('STATus:QUEStionable:SENSe1:ENABle 22', self.fake_connection.get_outgoing_message())
 
@@ -1388,7 +1400,7 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
 
     def test_set_operation_event_enable_mask(self):
         self.fake_connection.setup_response('No error')
-        register = ssm_system.SSMSystemMeasureModuleOperationRegister(False, False, True)
+        register = ssm_measure_module.SSMSystemMeasureModuleOperationRegister(False, False, True)
         self.dut_module.set_operation_event_enable_mask(register)
         self.assertIn('STATus:OPERation:SENSe1:ENABle 4', self.fake_connection.get_outgoing_message())
 
