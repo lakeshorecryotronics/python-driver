@@ -26,6 +26,7 @@ Materials Characterization
     :maxdepth: 1
 
     fast_hall
+    ssm_system
 
 Temperature Controllers
 -----------------------
