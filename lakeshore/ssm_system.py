@@ -7,6 +7,7 @@ from threading import Lock
 from lakeshore.xip_instrument import XIPInstrument, XIPInstrumentException, RegisterBase
 from lakeshore.ssm_measure_module import MeasureModule
 from lakeshore.ssm_source_module import SourceModule
+from lakeshore.sleep_inhibitor import SleepInhibitor
 
 
 class SSMSystemOperationRegister(RegisterBase):
@@ -232,7 +233,10 @@ class SSMSystem(XIPInstrument):
                 A single row of stream data as a tuple
         """
 
+        standby_lock = SleepInhibitor()
+
         with self.stream_lock:
+            standby_lock.inhibit()
             self.command('TRACe:RESEt')
             self._configure_stream_elements(data_sources)
             self.command('TRACe:FORMat:ENCOding B64')
@@ -263,6 +267,7 @@ class SSMSystem(XIPInstrument):
 
             overflow_occurred = bool(int(self.query('TRACe:DATA:OVERflow?', check_errors=True)))
 
+            standby_lock.release()
             if overflow_occurred:
                 raise XIPInstrumentException('Data loss occurred during this data stream.')
 
