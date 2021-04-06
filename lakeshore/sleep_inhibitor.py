@@ -54,13 +54,13 @@ class LinuxInhibitor:
         u"""Inhibit Linux distributions from sleeping"""
 
         import subprocess
-        subprocess.run([self.COMMAND, u'mask', *self.ARGS])
+        subprocess.run([self.COMMAND, u'mask'] + self.ARGS)
 
     def release(self):
         u"""Allow Linux distributions to sleep"""
 
         import subprocess
-        subprocess.run([self.COMMAND, u'unmask', *self.ARGS])
+        subprocess.run([self.COMMAND, u'unmask'] + self.ARGS)
 
 
 class MacInhibitor:
