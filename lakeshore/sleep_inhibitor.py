@@ -1,7 +1,10 @@
 u"""Sleep inhibitor to keep the operating system alive while streaming data"""
 
 from __future__ import absolute_import
+
+import ctypes
 import platform
+import subprocess
 
 
 class WindowsInhibitor:
@@ -22,7 +25,6 @@ class WindowsInhibitor:
     def inhibit():
         u"""Inhibit Windows from sleeping"""
 
-        import ctypes
         print(u"Preventing Windows from going to sleep")
         ctypes.windll.kernel32.SetThreadExecutionState(
             WindowsInhibitor.ES_CONTINUOUS |
@@ -32,7 +34,6 @@ class WindowsInhibitor:
     def release():
         u"""Allow Windows to sleep again"""
 
-        import ctypes
         print(u"Allowing Windows to go to sleep")
         ctypes.windll.kernel32.SetThreadExecutionState(
             WindowsInhibitor.ES_CONTINUOUS)
@@ -53,13 +54,11 @@ class LinuxInhibitor:
     def inhibit(self):
         u"""Inhibit Linux distributions from sleeping"""
 
-        import subprocess
         subprocess.run([self.COMMAND, u'mask'] + self.ARGS)
 
     def release(self):
         u"""Allow Linux distributions to sleep"""
 
-        import subprocess
         subprocess.run([self.COMMAND, u'unmask'] + self.ARGS)
 
 
@@ -81,8 +80,7 @@ class MacInhibitor:
     def inhibit(self):
         u"""Inhibit Mac from sleeping"""
 
-        from subprocess import Popen, PIPE
-        self._process = Popen([self.COMMAND], stdin=PIPE, stdout=PIPE)
+        self._process = subprocess.Popen([self.COMMAND], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
     def release(self):
         u"""Allow Mac to sleep"""
