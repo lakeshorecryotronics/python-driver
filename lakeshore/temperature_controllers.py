@@ -48,35 +48,35 @@ class AlarmSettings:
         self.alarm_enable = alarm_enable
 
 
-class _RelayControlMode(IntEnum):
+class RelayControlMode(IntEnum):
     """Relay operating mode enumeration"""
     RELAY_OFF = 0
     RELAY_ON = 1
     ALARMS = 2
 
 
-class _RelayControlAlarm(IntEnum):
+class RelayControlAlarm(IntEnum):
     """Enumeration of the setting determining which alarm(s) cause a relay to close in alarm mode."""
     LOW_ALARM = 0
     HIGH_ALARM = 1
     BOTH_ALARMS = 2
 
 
-class _InterfaceMode(IntEnum):
+class InterfaceMode(IntEnum):
     """Enumeration for the mode of the remote interface"""
     LOCAL = 0
     REMOTE = 1
     REMOTE_LOCAL_LOCK = 2
 
 
-class _HeaterError(IntEnum):
+class HeaterError(IntEnum):
     """Enumeration for possible errors flagged by the heater"""
     NO_ERROR = 0
     HEATER_OPEN_LOAD = 1
     HEATER_SHORT = 2
 
 
-class _CurveFormat(IntEnum):
+class CurveFormat(IntEnum):
     """Enumerations specify formats for temperature sensor curves"""
     MILLIVOLT_PER_KELVIN = 1
     VOLTS_PER_KELVIN = 2
@@ -84,13 +84,13 @@ class _CurveFormat(IntEnum):
     LOG_OHMS_PER_KELVIN = 4
 
 
-class _CurveTemperatureCoefficients(IntEnum):
+class CurveTemperatureCoefficient(IntEnum):
     """Enumerations specify positive/negative temperature sensor curve coefficients"""
     NEGATIVE = 1
     POSITIVE = 2
 
 
-class _BrightnessLevel(IntEnum):
+class BrightnessLevel(IntEnum):
     """Enumerator to specify the brightness level of an instrument display"""
     QUARTER = 0
     HALF = 1
@@ -98,51 +98,58 @@ class _BrightnessLevel(IntEnum):
     FULL = 3
 
 
-class _AutotuneMode(IntEnum):
+class AutotuneMode(IntEnum):
     """Enumerator used to represent the different autotune control modes"""
     P_ONLY = 0
     P_I = 1
     P_I_D = 2
 
 
-class _HeaterResistance(IntEnum):
+class HeaterResistance(IntEnum):
+    """Enumerator used to represent the different heater resistances"""
     HEATER_25_OHM = 1
     HEATER_50_OHM = 2
 
 
-class _Polarity(IntEnum):
+class Polarity(IntEnum):
+    """Enumerator for unipolar or bipolar output operation"""
     UNIPOLAR = 0
     BIPOLAR = 1
 
 
-class _DiodeCurrent(IntEnum):
+class DiodeCurrent(IntEnum):
+    """Enumerator used to represent diode current ranges"""
     TEN_MICROAMPS = 0
     ONE_MILLIAMP = 1
 
 
-class _HeaterOutputUnits(IntEnum):
+class HeaterOutputUnits(IntEnum):
+    """Enumerator used to represent heater output unit settings"""
     CURRENT = 1
     POWER = 2
 
 
-class _Interface(IntEnum):
+class Interface(IntEnum):
+    """Enumerator used to represent remote interface communication methods"""
     USB = 0
     ETHERNET = 1
     IEEE488 = 2
 
 
-class _InputSensorUnits(IntEnum):
+class InputSensorUnits(IntEnum):
+    """Enumerator used to represent temperature sensor unit options"""
     KELVIN = 1
     CELSIUS = 2
     SENSOR = 3
 
 
-class _ControlTypes(IntEnum):
+class ControlTypes(IntEnum):
+    """Enumerator used to represent the control type settings"""
     AUTO_OFF = 0
     CONTINUOUS = 1
 
 
-class _LanStatus(IntEnum):
+class LanStatus(IntEnum):
     """Represents the different status states for the lan connection"""
     STATIC_IP = 0
     DHCP = 1
@@ -154,6 +161,19 @@ class _LanStatus(IntEnum):
     MODULE_ERROR = 7
     ACQUIRING_ADDRESS = 8
     ETHERNET_DISABLED = 9
+
+
+class DisplayFields(IntEnum):
+    """Enumeration of the possible number of fields to include in a custom display mode."""
+    LARGE_2 = 0
+    LARGE_4 = 1
+    SMALL_8 = 2
+
+
+class DisplayFieldsSize(IntEnum):
+    """Enumeration of the display fields when mode is set to all inputs."""
+    SMALL = 0
+    LARGE = 1
 
 
 class CurveHeader:
@@ -177,7 +197,7 @@ class CurveHeader:
                     * Specifies the curve temperature limit in Kelvin
 
                 coefficient (IntEnum):
-                    * Member of instrument's CurveTemperatureCoefficients IntEnum class
+                    * Member of instrument's CurveTemperatureCoefficient IntEnum class
                     * Specifies the curve temperature coefficient
 
         """
@@ -252,12 +272,12 @@ class TemperatureController(GenericInstrument):
     """Base class for all temperature controller instruments"""
 
     # Enum aliases
-    _relay_control_mode_enum = _RelayControlMode
+    _relay_control_mode_enum = RelayControlMode
     _input_channel_enum = IntEnum
     _display_units_enum = IntEnum
-    _heater_error_enum = _HeaterError
-    _curve_format_enums = _CurveFormat
-    _curve_coefficient_enums = _CurveTemperatureCoefficients
+    _heater_error_enum = HeaterError
+    _curve_format_enums = CurveFormat
+    _curve_coefficient_enums = CurveTemperatureCoefficient
 
     # Initiate instrument specific registers
     status_byte_register = None
@@ -345,7 +365,7 @@ class TemperatureController(GenericInstrument):
 
             Args:
                 register_mask (StandardEventRegister):
-                    * An StandardEventRegister class object with all bits set to a value
+                    An StandardEventRegister class object with all bits set to a value
 
         """
         integer_representation = register_mask.to_integer()
@@ -467,7 +487,7 @@ class TemperatureController(GenericInstrument):
         """Returns parameters set on a particular user curve header
 
             Args:
-                curve_number:
+                curve_number (int):
                     * Specifies a curve to retrieve
 
             Returns:
@@ -720,7 +740,7 @@ class TemperatureController(GenericInstrument):
                     * A member of the instrument's BrightnessLevel IntEnum class
 
         """
-        return _BrightnessLevel(int(self.query("BRIGT?")))
+        return BrightnessLevel(int(self.query("BRIGT?")))
 
     def _get_celsius_reading(self, channel):
         """Returns the temperature in celsius of any channel
@@ -742,8 +762,8 @@ class TemperatureController(GenericInstrument):
                     * Specifies which sensor input to configure
                     * "A" - "D"
 
-                excitation_current (Model336DiodeCurrent):
-                    * A member of the Model336DiodeCurrent IntEnum class
+                excitation_current (IntEnum):
+                    * A member of the instrument's DiodeCurrent IntEnum class
 
         """
         self.command("DIOCUR {},{}".format(channel, excitation_current))
@@ -757,13 +777,13 @@ class TemperatureController(GenericInstrument):
                     * "A" - "D"
 
             Return:
-                (Model336DiodeCurrent):
-                    * A member of the Model336DiodeCurrent IntEnum class
+                (IntEnum):
+                    * A member of the instrument's DiodeCurrent IntEnum class
                     * Diode excitation current
 
         """
         response = int(self.query("DIOCUR? {}".format(channel)))
-        return _DiodeCurrent(response)
+        return DiodeCurrent(response)
 
     def set_display_field_settings(self, field, input_channel, display_units):
         """Configures a display field when the display is in custom mode.
@@ -955,7 +975,7 @@ class TemperatureController(GenericInstrument):
 
         """
         interface_response = self.query("INTSEL?")
-        return _Interface(int(interface_response))
+        return Interface(int(interface_response))
 
     def set_led_state(self, state):
         """Sets the front panel LEDs to on or off.
@@ -1050,7 +1070,7 @@ class TemperatureController(GenericInstrument):
 
         """
         mode = int(self.query("MODE?"))
-        return _InterfaceMode(mode)
+        return InterfaceMode(mode)
 
     def set_manual_output(self, output, value):
         """When instrument is in closed loop PID, Zone, or Open Loop modes a manual output may be set
@@ -1183,7 +1203,7 @@ class TemperatureController(GenericInstrument):
 
         """
         ethernet = self.query("NETID?").split(",")
-        return {"lan_status": _LanStatus(int(ethernet[0])),
+        return {"lan_status": LanStatus(int(ethernet[0])),
                 "ip_address": ethernet[1],
                 "sub_mask": ethernet[2],
                 "gateway": ethernet[3],
@@ -1387,7 +1407,7 @@ class TemperatureController(GenericInstrument):
         """
         relay_config = self.query("RELAY? {}".format(relay_number)).split(",")
         activating_input_channel = relay_config[1]
-        alarm_relay_trigger_type = _RelayControlAlarm(int(relay_config[2]))
+        alarm_relay_trigger_type = RelayControlAlarm(int(relay_config[2]))
         return {'activating_input_channel': activating_input_channel,
                 'alarm_relay_trigger_type': alarm_relay_trigger_type}
 
