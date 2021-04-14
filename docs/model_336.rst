@@ -70,14 +70,6 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: Model336DisplaySetupCustom
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336DisplaySetupAllInputs
-    :members:
-    :undoc-members:
-
 .. autoclass:: Model336InputSensorType
     :members:
     :undoc-members:
@@ -175,6 +167,14 @@ the instrument.
     :undoc-members:
 
 .. autoclass:: Model336AlarmSettings
+    :members:
+    :undoc-members:
+
+.. autoclass:: Model336DisplayFields
+    :members:
+    :undoc-members:
+
+.. autoclass:: Model336DisplayFieldsSize
     :members:
     :undoc-members:
 

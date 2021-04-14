@@ -25,10 +25,10 @@ Model336LanStatus = LanStatus
 Model336Interface = Interface
 Model336CurveHeader = CurveHeader
 Model336AlarmSettings = AlarmSettings
-Model336StandardEventRegister = StandardEventRegister
-Model336OperationEvent = OperationEvent
 Model336DisplayFields = DisplayFields
 Model336DisplayFieldsSize = DisplayFieldsSize
+Model336StandardEventRegister = StandardEventRegister
+Model336OperationEvent = OperationEvent
 
 
 class Model336InputChannel(IntEnum):
@@ -279,12 +279,7 @@ class Model336InputReadingStatus(RegisterBase):
         "sensor_units_overrange"
     ]
 
-    def __init__(self,
-                 invalid_reading,
-                 temp_underrange,
-                 temp_overrange,
-                 sensor_units_zero,
-                 sensor_units_overrange):
+    def __init__(self, invalid_reading, temp_underrange, temp_overrange, sensor_units_zero, sensor_units_overrange):
         self.invalid_reading = invalid_reading
         self.temp_underrange = temp_underrange
         self.temp_overrange = temp_overrange
