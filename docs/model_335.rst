@@ -12,6 +12,10 @@ Example Scripts
 ===============
 Below are a few example scripts for the Model 335 that use the Lake Shore Python driver.
 
+Setting a temperature curve
+---------------------------
+.. literalinclude:: examples/temperature_monitor_curve_example.py
+
 Recording data with the Model 335
 ---------------------------------
 .. literalinclude:: examples/335_record_data_example.py

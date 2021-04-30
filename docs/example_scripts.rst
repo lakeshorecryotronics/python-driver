@@ -4,10 +4,6 @@ Example Scripts
 ===============
 Below are a few example scripts that use the Lake Shore Python driver.
 
-Streaming F41/F71 teslameter data to a CSV file
------------------------------------------------
-.. literalinclude:: examples/teslameter_record_data_example.py
-
 Sweeping Model 155 precision source parameters
 ----------------------------------------------
 .. literalinclude:: examples/precision_source_sweep_example.py
@@ -26,7 +22,7 @@ Using calibration curves with a temperature instrument
 
 Setting up a sensor and recording data with the 372 AC Resistance Bridge
 ------------------------------------------------------------------------
-.. literalinclude:: examples/372_record_data_example.py
+.. literalinclude:: examples/372_input_setup_example.py
 
 Setting up a control loop with the 372 AC Resistance Bridge
 -----------------------------------------------------------

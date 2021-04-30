@@ -12,6 +12,10 @@ Example Scripts
 ===============
 Below are a few example scripts for the Model 372 that use the Lake Shore Python driver.
 
+Setting a temperature curve
+---------------------------
+.. literalinclude:: examples/temperature_monitor_curve_example.py
+
 Using enums to configure an input sensor
 ----------------------------------------
 .. literalinclude:: examples/372_input_setup_example.py

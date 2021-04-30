@@ -6,9 +6,15 @@ The Lake Shore Model 224 measures up to 12 temperature sensor channels.
 
 More information about the instrument can be found `on our website`_ including the manual which has a list of all commands and queries.
 
-For an example script, check out :ref:`example_scripts`.
-
 .. _on our website: https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-monitors/model-224-temperature-monitor
+
+Example Scripts
+===============
+Below is an example script for the Model 224 that uses the Lake Shore Python driver.
+
+Configuring the model 224 with a temperature curve
+--------------------------------------------------
+.. literalinclude:: examples/temperature_monitor_curve_example.py
 
 Instrument methods
 ------------------
