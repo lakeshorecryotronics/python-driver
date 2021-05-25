@@ -241,7 +241,7 @@ class TestDictionaryMethods(TestWithFakeModel372):
     def test_get_heater_pid(self):
         pid = {'gain': 34.56,
                'integral': 56.78,
-               'derivative': 98.76}
+               'ramp_rate': 98.76}
 
         self.fake_connection.setup_response('34.56,56.78,98.76;0')
         response = self.dut.get_heater_pid(2)

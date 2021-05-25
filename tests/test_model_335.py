@@ -228,7 +228,7 @@ class TestBasicQueries(TestWithFakeModel335):
         response = self.dut.get_heater_pid(1)
         pid_settings = {"gain": 4.25,
                         "integral": 6.1,
-                        "derivative": 0}
+                        "ramp_rate": 0}
         self.assertDictEqual(response, pid_settings)
 
     def test_get_output_2_polarity(self):
