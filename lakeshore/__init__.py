@@ -12,7 +12,7 @@ from .model_240 import Model240
 from .model_335 import *
 from .model_336 import *
 from .model_350 import Model350
-from .model_372 import Model372
+from .model_372 import *
 from .model_425 import Model425
 from .model_643 import Model643
 from .model_648 import Model648

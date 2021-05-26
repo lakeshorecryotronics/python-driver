@@ -6,9 +6,15 @@ The Lake Shore single-axis (F41) and multi-axis (F71) Teslameters provide highly
 
 More information about the instrument can be found `on our website`_ including the manual which has a list of all SCPI commands and queries.
 
-For an example script, check out :ref:`example_scripts`.
-
 .. _on our website: https://www.lakeshore.com/products/Gaussmeters/F71-F41-teslameters/Pages/Overview.aspx
+
+Example Scripts
+===============
+Below are a few example scripts for the Teslameters that use the Lake Shore Python driver.
+
+Streaming F41/F71 teslameter data to a CSV file
+-----------------------------------------------
+.. literalinclude:: examples/teslameter_record_data_example.py
 
 Instrument methods
 ------------------
