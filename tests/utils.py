@@ -83,7 +83,7 @@ class TestWithRealFastHall(unittest.TestCase):
 class TestWithFakeModel240(unittest.TestCase):
     def setUp(self):
         self.fake_connection = FakeDutConnection()
-        self.fake_connection.setup_response('LSCI,MODEL240/utils.py,LSA22VS,1.4')
+        self.fake_connection.setup_response('LSCI,MODEL240,LSA22VS,1.4')
         self.dut = Model240(connection=self.fake_connection)
         self.fake_connection.reset()
 
