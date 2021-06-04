@@ -29,4 +29,3 @@ Table of contents
    getting_started
    advanced
    supported_instruments
-   example_scripts
