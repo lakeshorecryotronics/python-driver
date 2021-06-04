@@ -16,6 +16,9 @@ Streaming F41/F71 teslameter data to a CSV file
 -----------------------------------------------
 .. literalinclude:: examples/teslameter_record_data_example.py
 
+Classes and methods
+===================
+
 Instrument methods
 ------------------
 .. module:: lakeshore.teslameter

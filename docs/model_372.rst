@@ -24,6 +24,8 @@ Setting up a control loop with the model 372
 --------------------------------------------
 .. literalinclude:: examples/372_control_loop_example.py
 
+Classes and methods
+===================
 
 Instrument methods
 ------------------

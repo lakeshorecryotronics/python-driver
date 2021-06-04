@@ -20,6 +20,9 @@ Setting up heater outputs on the Model 336
 ------------------------------------------
 .. literalinclude:: examples/336_heater_setup_example.py
 
+Classes and methods
+===================
+
 Instrument methods
 ------------------
 .. module:: lakeshore.model_336

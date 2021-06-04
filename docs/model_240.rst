@@ -20,6 +20,9 @@ Model 240 Profibus Configuration Example
 ----------------------------------------
 .. literalinclude:: examples/240_profislot_config_example.py
 
+Classes and methods
+===================
+
 Instrument methods
 ------------------
 .. module:: lakeshore.model_240
