@@ -3,7 +3,7 @@
 import struct
 from base64 import b64decode
 from threading import Lock
-from wakepy import set_keepawake, unset_keepawake
+from wakepy import keepawake
 
 from lakeshore.xip_instrument import XIPInstrument, XIPInstrumentException, RegisterBase
 from lakeshore.ssm_measure_module import MeasureModule
@@ -234,38 +234,36 @@ class SSMSystem(XIPInstrument):
         """
 
         with self.stream_lock:
-            set_keepawake(keep_screen_awake=True)
-            self.command('TRACe:RESEt')
-            self._configure_stream_elements(data_sources)
-            self.command('TRACe:FORMat:ENCOding B64')
-            self.command('TRACe:RATE {}'.format(rate))
+            with keepawake(keep_screen_awake=True):
+                self.command('TRACe:RESEt')
+                self._configure_stream_elements(data_sources)
+                self.command('TRACe:FORMat:ENCOding B64')
+                self.command('TRACe:RATE {}'.format(rate))
 
-            bytes_per_row = int(self.query('TRACe:FORMat:ENCOding:B64:BCOunt?'))
-            binary_format = '<' + self.query('TRACe:FORMat:ENCOding:B64:BFORmat?').strip('\"')
+                bytes_per_row = int(self.query('TRACe:FORMat:ENCOding:B64:BCOunt?'))
+                binary_format = '<' + self.query('TRACe:FORMat:ENCOding:B64:BFORmat?').strip('\"')
 
-            if num_points is not None:
-                self.command('TRACe:STARt {}'.format(num_points))
-            else:
-                self.command('TRACe:STARt')
+                if num_points is not None:
+                    self.command('TRACe:STARt {}'.format(num_points))
+                else:
+                    self.command('TRACe:STARt')
 
-            num_collected = 0
-            while num_points is None or num_collected < num_points:
-                b64_string = ''
-                while not b64_string:
-                    b64_string = self.query('TRACe:DATA:ALL?', check_errors=False)
+                num_collected = 0
+                while num_points is None or num_collected < num_points:
+                    b64_string = ''
+                    while not b64_string:
+                        b64_string = self.query('TRACe:DATA:ALL?', check_errors=False)
 
-                new_bytes = b64decode(b64_string)
-                rows = [new_bytes[i:i + bytes_per_row] for i in range(0, len(new_bytes), bytes_per_row)]
+                    new_bytes = b64decode(b64_string)
+                    rows = [new_bytes[i:i + bytes_per_row] for i in range(0, len(new_bytes), bytes_per_row)]
 
-                for row in rows:
-                    data = struct.unpack(binary_format, row)
-                    num_collected += 1
+                    for row in rows:
+                        data = struct.unpack(binary_format, row)
+                        num_collected += 1
 
-                    yield data
+                        yield data
 
             overflow_occurred = bool(int(self.query('TRACe:DATA:OVERflow?', check_errors=True)))
-
-            unset_keepawake()
             if overflow_occurred:
                 raise XIPInstrumentException('Data loss occurred during this data stream.')
 
