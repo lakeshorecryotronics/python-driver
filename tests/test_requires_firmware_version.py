@@ -1,4 +1,4 @@
-import unittest2 as unittest  # Python 2 compatability
+import unittest
 from lakeshore.requires_firmware_version import requires_firmware_version
 from lakeshore import XIPInstrumentException
 

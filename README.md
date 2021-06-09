@@ -3,7 +3,6 @@
 [![Build Status](https://lakeshorecryotronics.visualstudio.com/Lake%20Shore%20Dev/_apis/build/status/Python%20Driver?branchName=master)](https://lakeshorecryotronics.visualstudio.com/Lake%20Shore%20Dev/_build/latest?definitionId=138?branchName=master)
 [![Documentation Status](https://readthedocs.org/projects/lake-shore-python-driver/badge/?version=latest)](https://lake-shore-python-driver.readthedocs.io/en/latest/?badge=latest)
 [![PyPI Version](https://img.shields.io/pypi/v/lakeshore.svg)](https://pypi.org/project/lakeshore/)
-![Python Support](https://img.shields.io/pypi/pyversions/lakeshore.svg)
 
 The [Lake Shore](https://www.lakeshore.com) python driver allows users to quickly and easily communicate with Lake Shore instruments. It automatically establishes a connection and provides a variety of functions specific to the product that configure settings and acquire measurements. 
 

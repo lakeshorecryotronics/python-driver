@@ -71,7 +71,16 @@ class XIPInstrumentException(Exception):
 class XIPInstrument(GenericInstrument):
     """Parent class that implements functionality shared by all XIP instruments"""
 
-    def __init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port, **kwargs):
+    def __init__(self,
+                 serial_number,
+                 com_port,
+                 baud_rate,
+                 flow_control,
+                 timeout,
+                 ip_address,
+                 tcp_port,
+                 clear_errors_on_init=True,
+                 **kwargs):
         # Initialize values common to all XIP instruments
         GenericInstrument.__init__(self, serial_number, com_port, baud_rate, 8, 1, serial.PARITY_NONE, flow_control,
                                    False, timeout, ip_address, tcp_port, **kwargs)
@@ -79,11 +88,10 @@ class XIPInstrument(GenericInstrument):
         self.standard_event_register = StandardEventRegister
         self.operation_register = None
         self.questionable_register = None
-        clear_errors_on_init = kwargs.get('clear_errors_on_init', True)
         if clear_errors_on_init:
             self.command('SYSTem:ERRor:CLEar', check_errors=False)
 
-    def command(self, *commands, **kwargs):
+    def command(self, *commands, check_errors=True):
         """Send a SCPI command or multiple commands to the instrument
 
             Args:
@@ -95,8 +103,6 @@ class XIPInstrument(GenericInstrument):
                     Chooses whether to query the SCPI error queue and raise errors as exceptions. True by default.
 
         """
-
-        check_errors = kwargs.get("check_errors", True)
 
         # Group all commands into a single string with SCPI delimiters.
         command_string = ";:".join(commands)
@@ -117,7 +123,7 @@ class XIPInstrument(GenericInstrument):
 
                 self.logger.info('Sent SCPI command to %s: %s', self.serial_number, command_string)
 
-    def query(self, *queries, **kwargs):
+    def query(self, *queries, check_errors=True):
         """Send a SCPI query or multiple queries to the instrument and return the response(s)
 
             Args:
@@ -132,8 +138,6 @@ class XIPInstrument(GenericInstrument):
                The instrument query response as a string.
 
         """
-
-        check_errors = kwargs.get("check_errors", True)
 
         # Group all commands and queries a single string with SCPI delimiters.
         query_string = ";:".join(queries)

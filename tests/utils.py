@@ -1,7 +1,7 @@
 import logging
 from collections import deque
 
-import unittest2 as unittest
+import unittest
 from lakeshore import Teslameter, FastHall, Model372, Model335, Model240, Model224, Model336, SSMSystem
 
 fake_dut_comms_log = logging.getLogger('fake_dut_comms')

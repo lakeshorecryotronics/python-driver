@@ -22,6 +22,5 @@ setup(
     install_requires=['pyserial>=3.0',
                       'iso8601',
                       "enum34;python_version<'3.4'"],
-    classifiers=['Programming Language :: Python :: 2.7',
-                 'Programming Language :: Python :: 3']
+    classifiers=['Programming Language :: Python :: 3']
 )
