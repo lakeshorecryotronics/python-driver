@@ -5,6 +5,17 @@ M81 Synchronous Source Measure System
 
 Instrument methods are grouped into three classes: SSMsystem, SourceModule, and MeasureModule
 
+Example Scripts
+===============
+Below are a few example scripts for the M81 SSM system that use the Lake Shore Python driver.
+
+Making a lock in measurement of resistance using a BCS-10 and VM-10
+-------------------------------------------------------------------
+.. literalinclude:: examples/M81_lock_in_resistance_measurement.py
+
+Classes and methods
+===================
+
 SSMS Instrument methods
 -----------------------
 

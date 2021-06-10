@@ -24,6 +24,9 @@ Setting up autotune on the Model 335
 ------------------------------------
 .. literalinclude:: examples/335_autotune_example.py
 
+Classes and methods
+===================
+
 Instrument methods
 ------------------
 .. module:: lakeshore.model_335
