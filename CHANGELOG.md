@@ -4,9 +4,16 @@ Release 1.4.0
 -------------
 Added:
 - Full support for the Model 224 temperature monitor
+- Full support for the Model 240 temperature monitor
+- Full support for the Model 335 temperature controller
+- Full support for the Model 336 temperature controller
+- Full support for the Model 372 temperature controller
+- Full support for the M81 synchronous source measure system
 
 Changed:
 - Renamed M91.py to fast_hall_controller.py to maintain convention and avoid using the same name as the class.
+- SCPI error queue cleared by default upon initial connection
+- Improved documentation
 
 Release 1.3.0
 -------------
