@@ -122,7 +122,7 @@ class SourceModule(BaseModule):
         self.set_excitation_mode('CURRent')
 
     def go_to_voltage_mode(self):
-        """Sets the excitation mode of the module to 'CURRENT'"""
+        """Sets the excitation mode of the module to 'VOLTAGE'"""
 
         self.set_excitation_mode('VOLTage')
 
@@ -136,7 +136,7 @@ class SourceModule(BaseModule):
 
             Args:
                 shape (str):
-                    The new signal shape ('DC' or 'SINUSOID')
+                    The new signal shape ('DC', 'SINUSOID', 'TRIANGLE', 'SQUARE')
         """
 
         self.device.command('SOURce{}:FUNCtion:SHAPe {}'.format(self.module_number, shape))
