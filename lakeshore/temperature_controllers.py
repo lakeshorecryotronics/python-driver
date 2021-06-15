@@ -298,7 +298,7 @@ class TemperatureController(GenericInstrument):
         elif event_register.execution_error:
             raise InstrumentException('Execution Error: Instrument not able to execute command or query.')
 
-    def command(self, *commands, **kwargs):
+    def command(self, *commands, check_errors=True):
         """Send a SCPI command or multiple commands to the instrument
 
             Args:
@@ -310,7 +310,6 @@ class TemperatureController(GenericInstrument):
                     * Chooses whether to check for and raise errors after sending a command. True by default.
 
         """
-        check_errors = kwargs.get("check_errors", True)
 
         # Group all commands and queries a single string with SCPI delimiters.
         command_string = ";:".join(commands)
@@ -321,7 +320,7 @@ class TemperatureController(GenericInstrument):
             command_string += ";*OPC?"
             self.query(command_string, check_errors=False)
 
-    def query(self, *queries, **kwargs):
+    def query(self, *queries, check_errors=True):
         """Send a query to the instrument and return the response
 
             Args:
@@ -332,7 +331,6 @@ class TemperatureController(GenericInstrument):
                * The instrument query response as a string.
 
         """
-        check_errors = kwargs.get("check_errors", True)
 
         # Group all commands and queries a single string with SCPI delimiters.
         query_string = ";:".join(queries)

@@ -5,9 +5,7 @@ Installation
 
 Python version
 --------------
-The Lake Shore Python driver is compatible with Python 2.7 and above. We recommend using the latest version of Python 3.
-
-If you are using Python 2 you may need to `install pip`_.
+The Lake Shore Python driver is compatible with Python 3.x.
 
 Install the Lake Shore Python driver
 ------------------------------------
