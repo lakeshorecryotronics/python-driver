@@ -9,26 +9,26 @@ More information about the instrument can be found `on our website`_ including t
 .. _on our website: https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-335-cryogenic-temperature-controller
 
 Example Scripts
-===============
+---------------
 Below are a few example scripts for the Model 335 that use the Lake Shore Python driver.
 
 Setting a temperature curve
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/temperature_monitor_curve_example.py
 
 Recording data with the Model 335
----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/335_record_data_example.py
 
 Setting up autotune on the Model 335
-------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/335_autotune_example.py
 
 Classes and methods
-===================
+-------------------
 
-Instrument methods
-------------------
+Instrument class methods
+~~~~~~~~~~~~~~~~~~~~~~~~
 .. module:: lakeshore.model_335
 
 .. autoclass:: Model335
@@ -36,9 +36,9 @@ Instrument methods
     :members:
     :inherited-members:
 
-Instrument Classes
-------------------
-This page outlines the classes used to interact with methods which return or
+Settings classes
+~~~~~~~~~~~~~~~~~~
+This section outlines the classes used to interact with methods which return or
 accept an argument of a class object, specific to the Lake Shore model 335.
 
 .. autoclass:: Model335InputSensorSettings
@@ -51,9 +51,9 @@ accept an argument of a class object, specific to the Lake Shore model 335.
 
     .. automethod:: __init__
 
-Enum classes used with the model 335
-------------------------------------
-This page describes the Enum type objects that have been created to represent
+Enumeration objects
+-------------------
+This section describes the Enum type objects that have been created to represent
 various settings of the model 335 that are used as an argument or return to
 the instrument. The purpose of these enum types is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
@@ -235,9 +235,9 @@ the instrument.
     :members:
     :undoc-members:
 
-Register classes used with the model 335
-----------------------------------------
-This page describes the register objects. Each bit in the register
+Register classes
+~~~~~~~~~~~~~~~~
+This section describes the register objects. Each bit in the register
 is represented as a member of the register's class
 
 .. autoclass:: Model335StatusByteRegister

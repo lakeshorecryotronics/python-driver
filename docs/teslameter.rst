@@ -9,18 +9,18 @@ More information about the instrument can be found `on our website`_ including t
 .. _on our website: https://www.lakeshore.com/products/Gaussmeters/F71-F41-teslameters/Pages/Overview.aspx
 
 Example Scripts
-===============
+_______________
 Below are a few example scripts for the Teslameters that use the Lake Shore Python driver.
 
 Streaming F41/F71 teslameter data to a CSV file
------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/teslameter_record_data_example.py
 
 Classes and methods
-===================
+___________________
 
-Instrument methods
-------------------
+Instrument class methods
+~~~~~~~~~~~~~~~~~~~~~~~~
 .. module:: lakeshore.teslameter
 
 .. autoclass:: Teslameter
@@ -29,8 +29,8 @@ Instrument methods
     :inherited-members:
 
 
-Instrument classes
-------------------
+Register classes
+~~~~~~~~~~~~~~~~
 
 This page outlines the objects and classes used to interact with registers in the Teslameter driver.
 

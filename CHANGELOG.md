@@ -1,5 +1,16 @@
 Change Log
 ==========
+Release 1.5.0
+-------------
+Changed:
+- The computer will remain awake while streaming data from the M81
+
+Fixed:
+- Incorrect header levels in the docs
+
+Removed:
+- Support for python 2
+
 Release 1.4.0
 -------------
 Added:
@@ -11,7 +22,7 @@ Added:
 - Full support for the M81 synchronous source measure system
 
 Changed:
-- Renamed M91.py to fast_hall_controller.py to maintain convention and avoid using the same name as the class.
+- Renamed M91.py to fast_hall_controller.py to maintain convention and avoid using the same name as the class
 - SCPI error queue cleared by default upon initial connection
 - Improved documentation
 
