@@ -9,22 +9,22 @@ More information about the instrument can be found `on our website`_ including t
 .. _on our website: https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-335-cryogenic-temperature-controller
 
 Example Scripts
-===============
+---------------
 Below are a few example scripts for the Model 336 that use the Lake Shore Python driver.
 
 Using calibration curves with a temperature instrument
-------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/temperature_monitor_curve_example.py
 
 Setting up heater outputs on the Model 336
-------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/336_heater_setup_example.py
 
 Classes and methods
-===================
+-------------------
 
-Instrument methods
-------------------
+Instrument class methods
+~~~~~~~~~~~~~~~~~~~~~~~~
 .. module:: lakeshore.model_336
 
 .. autoclass:: Model336
@@ -32,9 +32,9 @@ Instrument methods
     :members:
     :inherited-members:
 
-Instrument Classes
-------------------
-This page outlines the classes used to interact with methods which return or
+Instrument classes
+~~~~~~~~~~~~~~~~~~
+This section outlines the classes used to interact with methods which return or
 accept an argument of a class object, specific to the Lake Shore model 336.
 
 .. autoclass:: Model336InputSensorSettings
@@ -57,11 +57,12 @@ accept an argument of a class object, specific to the Lake Shore model 336.
 
     .. automethod:: __init__
 
-Enum classes for the model 336
-------------------------------
+Enumeration Objects
+~~~~~~~~~~~~~~~~~~~
+
 This page describes the Enum type objects that have been created to represent
 various settings of the model 336 that are used as an argument or return to
-the instrument. The purpose of these enum types is to make the settings more
+the instrument. The purpose of these objects is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
 the instrument.
 
@@ -181,8 +182,8 @@ the instrument.
     :members:
     :undoc-members:
 
-Register classes used with the model 335
-----------------------------------------
+Register Classes
+~~~~~~~~~~~~~~~~
 This page describes the register objects. Each bit in the register
 is represented as a member of the register's class
 

@@ -9,26 +9,28 @@ More information about the instrument can be found `on our website`_ including t
 .. _on our website: https://www.lakeshore.com/products/categories/overview/temperature-products/ac-resistance-bridges/model-372-ac-resistance-bridge-temperature-controller
 
 Example Scripts
-===============
+---------------
+
 Below are a few example scripts for the Model 372 that use the Lake Shore Python driver.
 
 Setting a temperature curve
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/temperature_monitor_curve_example.py
 
 Using enums to configure an input sensor
-----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/372_input_setup_example.py
 
 Setting up a control loop with the model 372
---------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/372_control_loop_example.py
 
 Classes and methods
-===================
+-------------------
 
-Instrument methods
-------------------
+Instrument class methods
+~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. module:: lakeshore.model_372
 
 .. autoclass:: Model372
@@ -36,9 +38,10 @@ Instrument methods
     :members:
     :inherited-members:
 
-Instrument classes
-------------------
-This page describes the classes used throughout the 372 methods to interact
+Instrument settings classes and registers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section describes the classes used throughout the 372 methods to interact
 with instrument settings and other methods that use objects and classes.
 
 .. autoclass:: Model372InputChannelSettings
@@ -91,11 +94,12 @@ with instrument settings and other methods that use objects and classes.
 .. autoclass:: Model372ServiceRequestEnable
     :members:
 
-Enum Types
-----------
-This page describes the Enum type objects that have been created to represent
-various settings of the model 372 that are inputted as an int or single character
-to the instrument. The purpose of these enum types is to make the settings more
+Enumeration objects
+~~~~~~~~~~~~~~~~~~~
+
+This section describes the Enum type objects that have been created to represent
+various settings of the model 372 that are represented as an int or single character
+to the instrument. The purpose of these objects is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
 the instrument.
 

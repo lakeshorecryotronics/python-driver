@@ -71,3 +71,8 @@ By default the error flags or queue will be reset upon connecting to an instrume
         from lakeshore import Teslameter
 
         my_instrument = Teslameter(clear_errors_on_init=False)
+
+Python 2 compatibility
+----------------------
+Python 2 is no longer supported by the python software foundation. The most recent version of this driver that is fully compatible with python 2 is version 1.4.
+If your application requires the use of the python 2 interpreter, use version 1.4.
