@@ -1,7 +1,7 @@
 Change Log
 ==========
-Release 1.5.0
--------------
+Unreleased
+----------
 Changed:
 - The computer will remain awake while streaming data from the M81
 
