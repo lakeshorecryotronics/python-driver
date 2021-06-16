@@ -431,7 +431,7 @@ class SSMSystem(XIPInstrument):
     def get_head_self_cal_status(self):
         """Returns the status of the last head self calibration"""
 
-        self.command('CALibration:SCALibration:STATus?')
+        return self.query('CALibration:SCALibration:STATus?')
 
     def run_head_self_calibration(self):
         """"Runs a self calibration for the head"""

@@ -694,3 +694,17 @@ class SourceModule(BaseModule):
                     The desired state for the LED, 1 for identify, 0 for normal state
         """
         self.device.command('SOURce{}:IDENtify {}'.format(self.module_number, int(state)), check_errors=False)
+
+    def get_dark_mode_state(self):
+        """Returns the dark mode state for the given pod"""
+        response = self.device.query('SOURce{}:DMODe?'.format(self.module_number), cherk_errors=False)
+        return response
+
+    def set_dark_mode_state(self, state):
+        """Configures the dark mode state for the given pod.
+
+            Args:
+                state (bool):
+                    The desired operation for the LED, 1 for normal mode, 0 for dark mode
+        """
+        self.device.command('SOURce{}:DMODe {}'.format(self.module_number, state), check_errors=False)
