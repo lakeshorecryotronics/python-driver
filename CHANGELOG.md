@@ -1,5 +1,10 @@
 Change Log
 ==========
+Unreleased
+----------
+Fixed:
+- Readme now updated with which products are fully supported
+
 Release 1.5.0
 -------------
 Added:
