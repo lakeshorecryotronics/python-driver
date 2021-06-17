@@ -920,7 +920,7 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
     def test_set_name(self):
         self.fake_connection.setup_response('No error')
         self.dut_module.set_name('New_module_name')
-        self.assertIn('SOURce1:NAME "New_module_name"', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENSe1:NAME "New_module_name"', self.fake_connection.get_outgoing_message())
 
     def test_get_model(self):
         self.fake_connection.setup_response('CM-15;No error')
@@ -1269,31 +1269,31 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.fake_connection.setup_response('2.5;No error')
         response = self.dut_module.get_dc()
         self.assertEqual(response, 2.5)
-        self.assertIn('FETCh:SENSe1:DC?', self.fake_connection.get_outgoing_message())
+        self.assertIn('READ:SENSe1:DC?', self.fake_connection.get_outgoing_message())
 
     def test_get_rms(self):
         self.fake_connection.setup_response('12.5;No error')
         response = self.dut_module.get_rms()
         self.assertEqual(response, 12.5)
-        self.assertIn('FETCh:SENSe1:RMS?', self.fake_connection.get_outgoing_message())
+        self.assertIn('READ:SENSe1:RMS?', self.fake_connection.get_outgoing_message())
 
     def test_get_peak_to_peak(self):
         self.fake_connection.setup_response('4.2;No error')
         response = self.dut_module.get_peak_to_peak()
         self.assertEqual(response, 4.2)
-        self.assertIn('FETCh:SENSe1:PTPeak?', self.fake_connection.get_outgoing_message())
+        self.assertIn('READ:SENSe1:PTPeak?', self.fake_connection.get_outgoing_message())
 
     def test_get_positive_peak(self):
         self.fake_connection.setup_response('2.5;No error')
         response = self.dut_module.get_positive_peak()
         self.assertEqual(response, 2.5)
-        self.assertIn('FETCh:SENSe1:PPEak?', self.fake_connection.get_outgoing_message())
+        self.assertIn('READ:SENSe1:PPEak?', self.fake_connection.get_outgoing_message())
 
     def test_get_negative_peak(self):
         self.fake_connection.setup_response('6.32;No error')
         response = self.dut_module.get_negative_peak()
         self.assertEqual(response, 6.32)
-        self.assertIn('FETCh:SENSe1:NPEak?', self.fake_connection.get_outgoing_message())
+        self.assertIn('READ:SENSe1:NPEak?', self.fake_connection.get_outgoing_message())
 
     def test_get_lock_in_x(self):
         self.fake_connection.setup_response('0.21;No error')
