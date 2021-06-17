@@ -1,12 +1,16 @@
 Change Log
 ==========
-Unreleased
-----------
+Release 1.5.0
+-------------
+Added:
+- Dark mode get and set methods for the M81
+
 Changed:
 - The computer will remain awake while streaming data from the M81
 
 Fixed:
 - Incorrect header levels in the docs
+- A few bugs in the M81 driver
 
 Removed:
 - Support for python 2
