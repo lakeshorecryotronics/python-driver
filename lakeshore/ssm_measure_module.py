@@ -34,7 +34,7 @@ class MeasureModule(BaseModule):
     def set_name(self, new_name):
         """Set the name of the module"""
 
-        self.device.command('SOURce{}:NAME "{}"'.format(self.module_number, new_name))
+        self.device.command('SENSe{}:NAME "{}"'.format(self.module_number, new_name))
 
     def get_model(self):
         """Returns the model of the module (i.e. VM-10)"""
@@ -67,12 +67,12 @@ class MeasureModule(BaseModule):
         self.device.command('SENSe{}:SCALibration:RESet'.format(self.module_number))
 
     def get_averaging_time(self):
-        """Returns the averaging time of the module in Power Line Cycles. Not relevant in Lock In mode."""
+        """Returns the averaging time of the module in Power Line Cycles. Not relevant in lock-in mode."""
 
         return float(self.device.query('SENSe{}:NPLCycles?'.format(self.module_number)))
 
     def set_averaging_time(self, nplc):
-        """Sets the averaging time of the module. Not relevant in Lock In mode.
+        """Sets the averaging time of the module. Not relevant in lock-in mode.
 
             Args:
                 nplc (float):
@@ -156,7 +156,7 @@ class MeasureModule(BaseModule):
         return bool(int(self.device.query('SENSe{}:FILTer:STATe?'.format(self.module_number))))
 
     def get_lowpass_corner_frequency(self):
-        """Returns the low pass filter cuttoff frequency. 'NONE', 'F10', 'F30', 'F100', 'F300', 'F1000', 'F3000', 'F10000', or 'F30000'."""
+        """Returns the low pass filter cuttoff frequency. 'NONE', 'F10', 'F30', 'F100', 'F300', 'F1000', 'F3000', or 'F10000'."""
 
         return self.device.query('SENSe{}:FILTer:LPASs:FREQuency?'.format(self.module_number))
 
@@ -166,7 +166,7 @@ class MeasureModule(BaseModule):
         return self.device.query('SENSe{}:FILTer:LPASs:ATTenuation?'.format(self.module_number))
 
     def get_highpass_corner_frequency(self):
-        """Returns the high pass filter cuttoff frequency. 'NONE', 'F10', 'F30', 'F100', 'F300', 'F1000', 'F3000', 'F10000', or 'F30000'."""
+        """Returns the high pass filter cuttoff frequency. 'NONE', 'F10', 'F30', 'F100', 'F300', 'F1000', or 'F3000'."""
 
         return self.device.query('SENSe{}:FILTer:HPASs:FREQuency?'.format(self.module_number))
 
@@ -195,7 +195,7 @@ class MeasureModule(BaseModule):
 
             Args:
                 corner_frequency (str):
-                    The low pass corner frequency ('NONE', 'F10', 'F30', 'F100', 'F300', 'F1000', 'F3000', 'F10000', or 'F30000'). F10 = 10 Hz, etc.
+                    The low pass corner frequency ('NONE', 'F10', 'F30', 'F100', 'F300', 'F1000', 'F3000', or 'F10000'). F10 = 10 Hz, etc.
 
                 rolloff (str):
                     The low pass roll-off ('R6' or 'R12'). R6 = 6 dB/Octave, R12 = 12 dB/Octave.
@@ -210,7 +210,7 @@ class MeasureModule(BaseModule):
 
             Args:
                 corner_frequency (str):
-                    The high pass corner frequency ('NONE', 'F10', 'F30', 'F100', 'F300', 'F1000', 'F3000', 'F10000', or 'F30000'). F10 = 10 Hz, etc.
+                    The high pass corner frequency ('NONE', 'F10', 'F30', 'F100', 'F300', 'F1000', or 'F3000'). F10 = 10 Hz, etc.
 
                 rolloff (str):
                     The high pass roll-off ('R6' or 'R12'). R6 = 6 dB/Octave, R12 = 12 dB/Octave.
@@ -286,12 +286,12 @@ class MeasureModule(BaseModule):
                 self.device.command('SENSe{}:VOLTage:RANGe {}'.format(self.module_number, str(max_level)))
 
     def get_reference_source(self):
-        """Returns the lock in reference source. 'S1', 'S2', 'S3', 'RIN'."""
+        """Returns the lock-in reference source. 'S1', 'S2', 'S3', 'RIN'."""
 
         return self.device.query('SENSe{}:LIA:RSOurce?'.format(self.module_number))
 
     def set_reference_source(self, reference_source):
-        """Sets the lock in reference source
+        """Sets the lock-in reference source
 
             Args:
                 reference_source (str):
@@ -301,12 +301,12 @@ class MeasureModule(BaseModule):
         self.device.command('SENSe{}:LIA:RSOurce {}'.format(self.module_number, reference_source))
 
     def get_reference_harmonic(self):
-        """Returns the lock in reference harmonic"""
+        """Returns the lock-in reference harmonic"""
 
         return int(self.device.query('SENSe{}:LIA:DHARmonic?'.format(self.module_number)))
 
     def set_reference_harmonic(self, harmonic):
-        """Sets the lock in reference harmonic
+        """Sets the lock-in reference harmonic
 
             Args:
                 harmonic (int):
@@ -316,12 +316,12 @@ class MeasureModule(BaseModule):
         self.device.command('SENSe{}:LIA:DHARmonic {}'.format(self.module_number, str(harmonic)))
 
     def get_reference_phase_shift(self):
-        """Returns the lock in reference phase shift in degrees"""
+        """Returns the lock-in reference phase shift in degrees"""
 
         return float(self.device.query('SENSe{}:LIA:DPHase?'.format(self.module_number)))
 
     def set_reference_phase_shift(self, phase_shift):
-        """Sets the lock in reference phase shift
+        """Sets the lock-in reference phase shift
 
             Args:
                 phase_shift (float):
@@ -335,12 +335,12 @@ class MeasureModule(BaseModule):
         self.device.command('SENSe{}:LIA:DPHase:AUTO'.format(self.module_number))
 
     def get_lock_in_time_constant(self):
-        """Returns the lock in time constant in seconds"""
+        """Returns the lock-in time constant in seconds"""
 
         return float(self.device.query('SENSe{}:LIA:TIMEconstant?'.format(self.module_number)))
 
     def set_lock_in_time_constant(self, time_constant):
-        """Sets the lock in time constant
+        """Sets the lock-in time constant
 
             Args:
                 time_constant (float):
@@ -349,7 +349,7 @@ class MeasureModule(BaseModule):
         self.device.command('SENSe{}:LIA:TIMEconstant {}'.format(self.module_number, str(time_constant)))
 
     def get_lock_in_settle_time(self, settle_percent=0.01):
-        """Returns the lock in settle time in seconds
+        """Returns the lock-in settle time in seconds
 
             Args:
                 settle_percent (float)
@@ -363,12 +363,12 @@ class MeasureModule(BaseModule):
         return float(self.device.query('SENSe{}:LIA:ENBW?'.format(self.module_number)))
 
     def get_lock_in_rolloff(self):
-        """Returns the lock in PSD output filter roll-off for the present module. 'R6', 'R12', 'R18' or 'R24'."""
+        """Returns the lock-in PSD output filter roll-off for the present module. 'R6', 'R12', 'R18' or 'R24'."""
 
         return self.device.query('SENSe{}:LIA:ROLLoff?'.format(self.module_number))
 
     def set_lock_in_rolloff(self, rolloff):
-        """Sets the lock in PSD output filter roll-off
+        """Sets the lock-in PSD output filter roll-off
 
             Args:
                 rolloff (str):
@@ -378,12 +378,12 @@ class MeasureModule(BaseModule):
         self.device.command('SENSe{}:LIA:ROLLoff {}'.format(self.module_number, rolloff))
 
     def get_lock_in_fir_state(self):
-        """Returns the state of the lock in PSD output FIR filter"""
+        """Returns the state of the lock-in PSD output FIR filter"""
 
         return bool(int(self.device.query('SENSe{}:LIA:FIR:STATe?'.format(self.module_number))))
 
     def set_lock_in_fir_state(self, state):
-        """Sets the state of the lock in PSD output FIR filter
+        """Sets the state of the lock-in PSD output FIR filter
 
             Args:
                 state (bool):
@@ -393,12 +393,12 @@ class MeasureModule(BaseModule):
         self.device.command('SENSe{}:LIA:FIR:STATe {}'.format(self.module_number, str(int(state))))
 
     def enable_lock_in_fir(self):
-        """Sets the state of the lock in PSD output FIR filter to True."""
+        """Sets the state of the lock-in PSD output FIR filter to True."""
 
         self.set_lock_in_fir_state(True)
 
     def disable_lock_in_fir(self):
-        """Sets the state of the lock in PSD output FIR filter to False."""
+        """Sets the state of the lock-in PSD output FIR filter to False."""
 
         self.set_lock_in_fir_state(False)
 
@@ -431,23 +431,23 @@ class MeasureModule(BaseModule):
                                   reference_phase_shift=0.0,
                                   reference_harmonic=1,
                                   use_fir=True):
-        """Setup the module for Lock In measurment
+        """Setup the module for lock-in measurement
 
             Args:
                 reference_source (str):
-                    Lock in reference source ('S1', 'S2', 'S3', 'RIN')
+                    Lock-in reference source ('S1', 'S2', 'S3', 'RIN')
 
                 time_constant (float):
                     Time constant in seconds
 
                 rolloff (str):
-                    Lock in PSD output filter roll-off ('R6', 'R12', 'R18' or 'R12')
+                    Lock-in PSD output filter roll-off ('R6', 'R12', 'R18' or 'R12')
 
                 reference_phase_shift (float):
-                    Lock in reference phase shift in degrees
+                    Lock-in reference phase shift in degrees
 
                 reference_harmonic (int):
-                    Lock in reference harmonic. 1 is the fundamental frequency, 2 is twice the fundamental frequency, etc.
+                    Lock-in reference harmonic. 1 is the fundamental frequency, 2 is twice the fundamental frequency, etc.
 
                 use_fir (bool):
                     Enable or disable the PSD output FIR filter
@@ -462,7 +462,7 @@ class MeasureModule(BaseModule):
         self.set_lock_in_fir_state(use_fir)
 
     def get_multiple(self, *data_sources):
-        r"""Gets a list of values corresponding to the input data sources for this module.
+        """Gets a list of values corresponding to the input data sources for this module.
 
             Args:
                 data_sources (str): Variable length list of DATASOURCE_MNEMONIC.
@@ -475,47 +475,47 @@ class MeasureModule(BaseModule):
         return self.device.get_multiple(*elements)
 
     def get_dc(self):
-        """Returns the present DC indication in module units"""
+        """Returns the DC indication in module units"""
 
-        return float(self.device.query('FETCh:SENSe{}:DC?'.format(self.module_number)))
+        return float(self.device.query('READ:SENSe{}:DC?'.format(self.module_number)))
 
     def get_rms(self):
-        """Returns the present RMS indication in module units"""
+        """Returns the RMS indication in module units"""
 
-        return float(self.device.query('FETCh:SENSe{}:RMS?'.format(self.module_number)))
+        return float(self.device.query('READ:SENSe{}:RMS?'.format(self.module_number)))
 
     def get_peak_to_peak(self):
-        """Returns the present peak to peak indication in module units"""
+        """Returns the peak to peak indication in module units"""
 
-        return float(self.device.query('FETCh:SENSe{}:PTPeak?'.format(self.module_number)))
+        return float(self.device.query('READ:SENSe{}:PTPeak?'.format(self.module_number)))
 
     def get_positive_peak(self):
-        """Returns the present positive peak indication in module units"""
+        """Returns the positive peak indication in module units"""
 
-        return float(self.device.query('FETCh:SENSe{}:PPEak?'.format(self.module_number)))
+        return float(self.device.query('READ:SENSe{}:PPEak?'.format(self.module_number)))
 
     def get_negative_peak(self):
-        """Returns the present negative peak indication in module units"""
+        """Returns the negative peak indication in module units"""
 
-        return float(self.device.query('FETCh:SENSe{}:NPEak?'.format(self.module_number)))
+        return float(self.device.query('READ:SENSe{}:NPEak?'.format(self.module_number)))
 
     def get_lock_in_x(self):
-        """Returns the present X indication from the lock in"""
+        """Returns the present X indication from the lock-in"""
 
         return float(self.device.query('FETCh:SENSe{}:LIA:X?'.format(self.module_number)))
 
     def get_lock_in_y(self):
-        """Returns the present Y indication from the lock in"""
+        """Returns the present Y indication from the lock-in"""
 
         return float(self.device.query('FETCh:SENSe{}:LIA:Y?'.format(self.module_number)))
 
     def get_lock_in_r(self):
-        """Returns the present magnitude indication from the lock in"""
+        """Returns the present magnitude indication from the lock-in"""
 
         return float(self.device.query('FETCh:SENSe{}:LIA:R?'.format(self.module_number)))
 
     def get_lock_in_theta(self):
-        """Returns the present angle indication from the lock in"""
+        """Returns the present angle indication from the lock-in"""
 
         return float(self.device.query('FETCh:SENSe{}:LIA:THETa?'.format(self.module_number)))
 
@@ -618,3 +618,17 @@ class MeasureModule(BaseModule):
                     The desired state for the LED, 1 for identify, 0 for normal state
         """
         self.device.command('SENSe{}:IDENtify {}'.format(self.module_number, int(state)), check_errors=False)
+
+    def get_dark_mode_state(self):
+        """Returns the dark mode state for the given pod"""
+        response = self.device.query('SENSe{}:DMODe?'.format(self.module_number), cherk_errors=False)
+        return response
+
+    def set_dark_mode_state(self, state):
+        """Configures the dark mode state for the given pod.
+
+            Args:
+                state (bool):
+                    The desired operation for the LED, 1 for normal mode, 0 for dark mode
+        """
+        self.device.command('SENSe{}:DMODe {}'.format(self.module_number, state), check_errors=False)
