@@ -1,6 +1,6 @@
 # Lake Shore Python Driver
 
-[![Build Status](https://lakeshorecryotronics.visualstudio.com/Lake%20Shore%20Dev/_apis/build/status/Python%20Driver?branchName=master)](https://lakeshorecryotronics.visualstudio.com/Lake%20Shore%20Dev/_build/latest?definitionId=138?branchName=master)
+[![Build Status](https://lakeshorecryotronics.visualstudio.com/Lake%20Shore%20Dev/_apis/build/status/Python%20Driver?branchName=main)](https://lakeshorecryotronics.visualstudio.com/Lake%20Shore%20Dev/_build/latest?definitionId=138?branchName=main)
 [![Documentation Status](https://readthedocs.org/projects/lake-shore-python-driver/badge/?version=latest)](https://lake-shore-python-driver.readthedocs.io/en/latest/?badge=latest)
 [![PyPI Version](https://img.shields.io/pypi/v/lakeshore.svg)](https://pypi.org/project/lakeshore/)
 
@@ -51,5 +51,5 @@ Don't hesitate to create pull requests. They make the driver better for everyone
 ## Resources
 * [Lake Shore website](https://www.lakeshore.com)
 * [GitHub repo](https://github.com/lakeshorecryotronics/python-driver)
-* [Change log](https://github.com/lakeshorecryotronics/python-driver/blob/master/CHANGELOG.md)
+* [Change log](https://github.com/lakeshorecryotronics/python-driver/blob/main/CHANGELOG.md)
 * [Documentation](https://lake-shore-python-driver.readthedocs.io/en/latest/)
