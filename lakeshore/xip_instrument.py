@@ -189,7 +189,7 @@ class XIPInstrument(GenericInstrument):
         This register determines which bits propagate to the master summary status bit"""
 
         response = self.query("*SRE?", check_errors=False)
-        status_register = self.status_byte_register.to_integer(response)
+        status_register = self.status_byte_register.from_integer(response)
 
         return status_register
 
@@ -307,7 +307,7 @@ class XIPInstrument(GenericInstrument):
                     An instrument specific QuestionableRegister class object with all bits configured true or false.
         """
 
-        integer_representation = self.questionable_register.from_integer(register_mask)
+        integer_representation = self.questionable_register.to_integer(register_mask)
         self.command("STATus:QUEStionable:ENABle " + str(integer_representation), check_errors=False)
 
     def reset_status_register_masks(self):
