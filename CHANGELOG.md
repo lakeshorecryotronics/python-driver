@@ -1,5 +1,10 @@
 Change Log
 ==========
+Release 1.5.2
+-------------
+Fixed:
+- Bugs in the status register base methods
+
 Release 1.5.1
 -------------
 Fixed:
