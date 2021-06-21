@@ -8,6 +8,7 @@ from wakepy import keepawake
 from lakeshore.xip_instrument import XIPInstrument, XIPInstrumentException, RegisterBase
 from lakeshore.ssm_measure_module import MeasureModule
 from lakeshore.ssm_source_module import SourceModule
+from lakeshore.ssm_settings_profiles import SettingsProfiles
 
 
 class SSMSystemOperationRegister(RegisterBase):
@@ -115,6 +116,8 @@ class SSMSystem(XIPInstrument):
         # Instantiate modules
         self.source_modules = [SourceModule(i + 1, self) for i in range(self.get_num_source_channels())]
         self.measure_modules = [MeasureModule(i + 1, self) for i in range(self.get_num_measure_channels())]
+
+        self.settings_profiles = SettingsProfiles(self)
 
         self.stream_lock = Lock()
 
