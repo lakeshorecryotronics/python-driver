@@ -21,6 +21,9 @@ class SettingsProfiles:
         """Returns a list of the saved profile names."""
 
         response = self.device.query('PROFile:LIST?')
+        if not response:
+            return []
+
         return [profile.strip('"') for profile in response.split(',')]
 
     def get_description(self, name):

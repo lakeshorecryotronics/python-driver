@@ -1427,6 +1427,11 @@ class TestSettingsProfiles(TestWithFakeSSMS):
         profiles = self.dut.settings_profiles.get_list()
         self.assertListEqual(profiles, ['Profile 1', 'Profile 2', 'Profile 3'])
 
+    def test_get_list_empty(self):
+        self.fake_connection.setup_response(';No error')
+        profiles = self.dut.settings_profiles.get_list()
+        self.assertFalse(profiles)
+
     def test_get_description(self):
         self.fake_connection.setup_response('"Profile description";No error')
         response = self.dut.settings_profiles.get_description("Profile name")
