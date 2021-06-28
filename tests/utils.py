@@ -44,20 +44,6 @@ class TestWithFakeTeslameter(unittest.TestCase):
         self.fake_connection.reset()  # Clear startup activity
 
 
-class TestWithRealTeslameter(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        # Teslameter is used for these general tests on the HIL rig at this time
-        cls.dut = Teslameter()
-
-    @classmethod
-    def tearDownClass(cls):
-        del cls.dut
-
-    def tearDown(self):
-        self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard any errors left in the queue
-
-
 class TestWithFakeFastHall(unittest.TestCase):
     def setUp(self):
         self.fake_connection = FakeDutConnection()
@@ -65,19 +51,6 @@ class TestWithFakeFastHall(unittest.TestCase):
         self.fake_connection.setup_response('No error')
         self.dut = FastHall(connection=self.fake_connection)
         self.fake_connection.reset()  # Clear startup activity
-
-
-class TestWithRealFastHall(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.dut = FastHall(flow_control=False)  # TODO: Get a dut with flow control for the HIL rig then remove this.
-
-    @classmethod
-    def tearDownClass(cls):
-        del cls.dut
-
-    def tearDown(self):
-        self.dut.query('SYSTEM:ERROR:ALL?', check_errors=False)  # Discard any errors left in the queue
 
 
 class TestWithFakeModel240(unittest.TestCase):

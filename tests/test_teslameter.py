@@ -1,10 +1,19 @@
 from tempfile import TemporaryFile
 from time import sleep
 
-from tests.utils import TestWithRealTeslameter, TestWithFakeTeslameter
+from tests.utils import TestWithFakeTeslameter
 
 
-class TestBufferedFieldData(TestWithRealTeslameter):
+class TestBufferedFieldData(TestWithFakeTeslameter):
+    def setUp(self):
+        TestWithFakeTeslameter.setUp(self)
+
+        # Return no error for sampling rate command
+        self.fake_connection.setup_response('No error')
+        # Return 1 response for clearing buffer, then 100 responses
+        for _ in range(101):
+            self.fake_connection.setup_response('2021-06-28T19:42:10.696Z,123.456,123.456,123.456,123.456,123.456,0;')
+
     def test_stream_buffered_data_provides_correct_number_of_points(self):
         iterable = self.dut.stream_buffered_data(1, 10)
 
@@ -186,7 +195,8 @@ class TestFieldMeasurementConfiguration(TestWithFakeTeslameter):
         self.fake_connection.setup_response('No error')
         self.fake_connection.setup_response('No error')
 
-        self.dut.configure_field_measurement_setup(mode='AC', autorange=False, expected_field=123.456, averaging_samples=100)
+        self.dut.configure_field_measurement_setup(mode='AC', autorange=False, expected_field=123.456,
+                                                   averaging_samples=100)
 
         self.assertIn('SENS:MODE AC', self.fake_connection.get_outgoing_message())
         self.assertIn('SENS:RANGE:AUTO 0', self.fake_connection.get_outgoing_message())
@@ -319,7 +329,6 @@ class TestFieldControl(TestWithFakeTeslameter):
 
 class TestAnalogOut(TestWithFakeTeslameter):
     def test_set_analog_output_signal(self):
-
         self.fake_connection.setup_response('No error')
         self.dut.set_analog_output_signal('YRAW')
         self.assertIn('SOURCE:AOUT YRAW', self.fake_connection.get_outgoing_message())
@@ -348,12 +357,19 @@ class TestResets(TestWithFakeTeslameter):
         self.assertIn('SYSTEM:FACTORYRESET', self.fake_connection.get_outgoing_message())
 
 
-class TestStatusRegisters(TestWithRealTeslameter):
+class TestStatusRegisters(TestWithFakeTeslameter):
     def test_modification_of_operation_register(self):
+        # Return all used bits set, including ranging
+        self.fake_connection.setup_response('103')
+
         self.dut.modify_operation_register_mask('ranging', False)
+
+        # Return all used bits set, except ranging
+        self.fake_connection.setup_response('99')
 
         response = self.dut.get_operation_event_enable_mask()
 
+        self.assertIn('STATus:OPERation:ENABle 99', self.fake_connection.outgoing)
         self.assertEqual(response.ranging, False)
 
 

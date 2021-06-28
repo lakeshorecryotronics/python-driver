@@ -1,7 +1,8 @@
-from tests.utils import TestWithFakeFastHall, TestWithRealFastHall
+from tests.utils import TestWithFakeFastHall
 from lakeshore.fast_hall_controller import ContactCheckManualParameters, ContactCheckOptimizedParameters, \
     FastHallManualParameters, FastHallLinkParameters, FourWireParameters, DCHallParameters, \
     ResistivityManualParameters, ResistivityLinkParameters
+
 
 class TestResets(TestWithFakeFastHall):
     def test_reset_measurement_settings(self):
