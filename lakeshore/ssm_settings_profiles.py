@@ -75,7 +75,7 @@ class SettingsProfiles:
 
         self.device.command('PROFile:UPDate "{}"'.format(name))
 
-    def get_restore_is_valid(self, name):
+    def get_valid_for_restore(self, name):
         """Returns if a profile is valid to restore.
 
         Args:

@@ -1466,9 +1466,9 @@ class TestSettingsProfiles(TestWithFakeSSMS):
         self.dut.settings_profiles.update('Profile name')
         self.assertIn('PROFile:UPDate "Profile name"', self.fake_connection.get_outgoing_message())
 
-    def test_get_restore_is_valid(self):
+    def test_get_valid_for_restore(self):
         self.fake_connection.setup_response('1;No error')
-        response = self.dut.settings_profiles.get_restore_is_valid('Profile name')
+        response = self.dut.settings_profiles.get_valid_for_restore('Profile name')
         self.assertTrue(response)
         self.assertIn('PROFile:RESTore:VALid? "Profile name"', self.fake_connection.get_outgoing_message())
 
