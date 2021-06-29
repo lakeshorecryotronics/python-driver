@@ -1,5 +1,4 @@
 from tempfile import TemporaryFile
-from time import sleep
 
 from tests.utils import TestWithFakeTeslameter
 
@@ -195,8 +194,11 @@ class TestFieldMeasurementConfiguration(TestWithFakeTeslameter):
         self.fake_connection.setup_response('No error')
         self.fake_connection.setup_response('No error')
 
-        self.dut.configure_field_measurement_setup(mode='AC', autorange=False, expected_field=123.456,
-                                                   averaging_samples=100)
+        self.dut.configure_field_measurement_setup(
+            mode='AC',
+            autorange=False,
+            expected_field=123.456,
+            averaging_samples=100)
 
         self.assertIn('SENS:MODE AC', self.fake_connection.get_outgoing_message())
         self.assertIn('SENS:RANGE:AUTO 0', self.fake_connection.get_outgoing_message())
