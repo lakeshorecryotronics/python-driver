@@ -13,6 +13,10 @@ Making a lock in measurement of resistance using a BCS-10 and VM-10
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/M81_lock_in_resistance_measurement.py
 
+List settings profiles and restore a profile
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: examples/ssm_profiles_example.py
+
 Classes and methods
 ___________________
 
