@@ -46,6 +46,15 @@ Measure Module methods
     :members:
     :inherited-members:
 
+Settings Profiles methods
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. module:: lakeshore.ssm_settings_profiles
+
+.. autoclass:: SettingsProfiles
+    :member-order: bysource
+    :members:
+    :inherited-members:
 
 Instrument registers
 ~~~~~~~~~~~~~~~~~~~~
