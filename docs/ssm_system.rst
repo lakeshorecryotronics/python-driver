@@ -13,6 +13,10 @@ Making a lock in measurement of resistance using a BCS-10 and VM-10
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/M81_lock_in_resistance_measurement.py
 
+List settings profiles and restore a profile
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: examples/ssm_profiles_example.py
+
 Classes and methods
 ___________________
 
@@ -46,6 +50,15 @@ Measure Module methods
     :members:
     :inherited-members:
 
+Settings Profiles methods
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. module:: lakeshore.ssm_settings_profiles
+
+.. autoclass:: SettingsProfiles
+    :member-order: bysource
+    :members:
+    :inherited-members:
 
 Instrument registers
 ~~~~~~~~~~~~~~~~~~~~

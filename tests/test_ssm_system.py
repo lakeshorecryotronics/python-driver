@@ -1414,3 +1414,72 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.fake_connection.setup_response('No error')
         self.dut_module.set_identify_state(True)
         self.assertIn('SENSe1:IDENtify 1', self.fake_connection.get_outgoing_message())
+
+
+class TestSettingsProfiles(TestWithFakeSSMS):
+    def test_create(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.settings_profiles.create('New profile name', 'Profile description')
+        self.assertIn('PROFile:CREAte "New profile name", "Profile description"', self.fake_connection.get_outgoing_message())
+
+    def test_get_list(self):
+        self.fake_connection.setup_response('"Profile 1","Profile 2","Profile 3";No error')
+        profiles = self.dut.settings_profiles.get_list()
+        self.assertListEqual(profiles, ['Profile 1', 'Profile 2', 'Profile 3'])
+
+    def test_get_list_empty(self):
+        self.fake_connection.setup_response(';No error')
+        profiles = self.dut.settings_profiles.get_list()
+        self.assertFalse(profiles)
+
+    def test_get_description(self):
+        self.fake_connection.setup_response('"Profile description";No error')
+        response = self.dut.settings_profiles.get_description("Profile name")
+        self.assertEqual("Profile description", response)
+        self.assertIn('PROFile:DESCription? "Profile name"', self.fake_connection.get_outgoing_message())
+
+    def test_set_description(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.settings_profiles.set_description("Profile name", "Updated profile description")
+        self.assertIn('PROFile:DESCription "Profile name","Updated profile description"',
+                      self.fake_connection.get_outgoing_message())
+
+    def test_get_json(self):
+        self.fake_connection.setup_response('"{""Property"":""Value""}";No error')
+        response = self.dut.settings_profiles.get_json("Profile name")
+        expected = {"Property": "Value"}
+        self.assertEqual(expected, response)
+        self.assertIn('PROFile:JSON? "Profile name"', self.fake_connection.get_outgoing_message())
+
+    def test_rename(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.settings_profiles.rename('Profile name', 'New profile name')
+        self.assertIn('PROFile:REName "Profile name","New profile name"', self.fake_connection.get_outgoing_message())
+
+    def test_update(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.settings_profiles.update('Profile name')
+        self.assertIn('PROFile:UPDate "Profile name"', self.fake_connection.get_outgoing_message())
+
+    def test_get_valid_for_restore(self):
+        self.fake_connection.setup_response('1;No error')
+        response = self.dut.settings_profiles.get_valid_for_restore('Profile name')
+        self.assertTrue(response)
+        self.assertIn('PROFile:RESTore:VALid? "Profile name"', self.fake_connection.get_outgoing_message())
+
+    def test_restore(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.settings_profiles.restore('Profile name')
+        self.assertIn('PROFile:RESTore "Profile name"', self.fake_connection.get_outgoing_message())
+
+    def test_delete(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.settings_profiles.delete('Profile name')
+        self.assertIn('PROFile:DELete "Profile name"', self.fake_connection.get_outgoing_message())
+
+    def test_delete_all(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.settings_profiles.delete_all()
+        self.assertIn('PROFile:DELete:ALL', self.fake_connection.get_outgoing_message())
+
+
