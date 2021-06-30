@@ -14,29 +14,22 @@ class AlarmSettings:
 
             Args:
                 high_value (float):
-                    * Sets the value the source is checked against to activate the high alarm
-
+                    Sets the value the source is checked against to activate the high alarm
                 low_value (float):
-                    * Sets the value the source is checked against to activate low alarm.
-
+                    Sets the value the source is checked against to activate low alarm.
                 deadband (float):
-                    * Sets the value that the source must change outside of an alarm
+                    Sets the value that the source must change outside of an alarm
                     condition to deactivate an unlatched alarm.
-
                 latch_enable (bool):
                     * Specifies a latched alarm
                     * False = off, True = on
-
                 audible (bool):
-                    * Specifies if the internal speaker will beep when an alarm condition
-                    occurs
+                    * Specifies if the internal speaker will beep when an alarm condition occurs
                     * False = off, True = on
-
                 visible (bool):
                     * Specifies if the Alarm LED on the instrument front panel will blink
-                    when an alarm condition occurs
+                        when an alarm condition occurs
                     * False = off, True = on
-
         """
         self.high_value = high_value
         self.low_value = low_value

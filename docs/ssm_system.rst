@@ -17,11 +17,8 @@ List settings profiles and restore a profile
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/ssm_profiles_example.py
 
-Classes and methods
-___________________
-
 SSMS instrument methods
-~~~~~~~~~~~~~~~~~~~~~~~
+_______________________
 
 .. module:: lakeshore.ssm_system
 
@@ -31,7 +28,7 @@ SSMS instrument methods
     :inherited-members:
 
 Source Module methods
-~~~~~~~~~~~~~~~~~~~~~
+_____________________
 
 .. module:: lakeshore.ssm_source_module
 
@@ -41,7 +38,7 @@ Source Module methods
     :inherited-members:
 
 Measure Module methods
-~~~~~~~~~~~~~~~~~~~~~~
+______________________
 
 .. module:: lakeshore.ssm_measure_module
 
@@ -51,7 +48,7 @@ Measure Module methods
     :inherited-members:
 
 Settings Profiles methods
-~~~~~~~~~~~~~~~~~~~~~~~~~
+_________________________
 
 .. module:: lakeshore.ssm_settings_profiles
 
@@ -61,8 +58,7 @@ Settings Profiles methods
     :inherited-members:
 
 Instrument registers
-~~~~~~~~~~~~~~~~~~~~
-
+____________________
 This page outlines the registers used to interact with various settings and
 methods of the M81.
 

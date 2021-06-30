@@ -9,7 +9,7 @@ More information about the instrument can be found `on our website`_ including t
 .. _on our website: https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-instruments/measureready-m91-fasthall-measurement-controller
 
 Example Scripts
----------------
+_______________
 Below are a few example scripts for the M91 Fast Hall Controller that use the Lake Shore Python driver.
 
 Fast Hall Full Sample Analysis
@@ -20,11 +20,9 @@ Fast Hall Record Contact Check Data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/fasthall_record_contact_check_data_example.py
 
-Classes and methods
--------------------
 
 Instrument class methods
-~~~~~~~~~~~~~~~~~~~~~~~~
+________________________
 .. module:: lakeshore.fast_hall_controller
 
 .. autoclass:: FastHall
@@ -33,8 +31,8 @@ Instrument class methods
     :inherited-members:
 
 
-Instrument classes
-~~~~~~~~~~~~~~~~~~
+Settings classes
+________________
 
 This page outlines the classes and objects used to interact with various settings and
 methods of the M91.
