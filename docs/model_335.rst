@@ -183,10 +183,6 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: Model335HeaterResistance
-    :members:
-    :undoc-members:
-
 .. autoclass:: Model335HeaterOutputDisplay
     :members:
     :undoc-members:
@@ -247,9 +243,6 @@ is represented as a member of the register's class
     :members:
 
 .. autoclass:: Model335StandardEventRegister
-    :members:
-
-.. autoclass:: StandardEventRegister
     :members:
 
 .. autoclass:: Model335OperationEvent

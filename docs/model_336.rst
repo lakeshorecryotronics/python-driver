@@ -166,14 +166,6 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: Model336CurveHeader
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336AlarmSettings
-    :members:
-    :undoc-members:
-
 .. autoclass:: Model336DisplayFields
     :members:
     :undoc-members:
