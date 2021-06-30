@@ -1,5 +1,6 @@
 """Implements functionality unique to settings profiles"""
 
+import json
 
 class SettingsProfiles:
     """Class for interaction with settings profiles"""
@@ -45,16 +46,16 @@ class SettingsProfiles:
 
         self.device.command('PROFile:DESCription "{}","{}"'.format(name, description))
 
-    def get_json(self, name, pretty=False):
-        """Returns a JSON string representation of a given profile.
+    def get_json(self, name):
+        """Returns a JSON object of a given profile.
 
         Args:
             name (str): Name of the profile.
-            pretty (bool): True to format the JSON string with indentation and newlines, False for a single line
         """
 
-        response = self.device.query('PROFile:JSON? "{}",{}'.format(name, str(int(pretty))))
-        return response.strip('"').replace('""', '"')
+        response = self.device.query('PROFile:JSON? "{}"'.format(name))
+        json_string = response.strip('"').replace('""', '"')
+        return json.loads(json_string)
 
     def rename(self, name, new_name):
         """Rename a profile. New name must be unique.

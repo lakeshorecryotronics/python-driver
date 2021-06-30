@@ -1447,14 +1447,9 @@ class TestSettingsProfiles(TestWithFakeSSMS):
     def test_get_json(self):
         self.fake_connection.setup_response('"{""Property"":""Value""}";No error')
         response = self.dut.settings_profiles.get_json("Profile name")
-        self.assertEqual('{"Property":"Value"}', response)
-        self.assertIn('PROFile:JSON? "Profile name",0', self.fake_connection.get_outgoing_message())
-
-    def test_get_json_pretty(self):
-        self.fake_connection.setup_response('{};No error')
-        response = self.dut.settings_profiles.get_json('Profile name', True)
-        self.assertEqual('{}', response)
-        self.assertIn('PROFile:JSON? "Profile name",1', self.fake_connection.get_outgoing_message())
+        expected = {"Property": "Value"}
+        self.assertEqual(expected, response)
+        self.assertIn('PROFile:JSON? "Profile name"', self.fake_connection.get_outgoing_message())
 
     def test_rename(self):
         self.fake_connection.setup_response('No error')
