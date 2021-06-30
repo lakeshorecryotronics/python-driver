@@ -10,16 +10,14 @@ More information about the instrument can be found `on our website`_ including t
 
 Example Scripts
 _______________
-Below is an example script for the Model 224 that uses the Lake Shore Python driver.
 
 Configuring the model 224 with a temperature curve
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/temperature_monitor_curve_example.py
 
-Classes and methods
--------------------
+
 Instrument class methods
-~~~~~~~~~~~~~~~~~~~~~~~~
+________________________
 .. module:: lakeshore.model_224
 
 .. autoclass:: Model224
@@ -29,7 +27,7 @@ Instrument class methods
 
 
 Settings classes
-~~~~~~~~~~~~~~~~
+________________
 
 .. autoclass:: Model224AlarmParameters
     :members:
@@ -46,28 +44,9 @@ Settings classes
 
     .. automethod:: __init__
 
-Status registers
-~~~~~~~~~~~~~~~~
-
-.. autoclass:: Model224StandardEventRegister
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224ServiceRequestRegister
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224StatusByteRegister
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224ReadingStatusRegister
-    :members:
-    :undoc-members:
-
 Enumeration objects
-~~~~~~~~~~~~~~~~~~~
-This section describes the Enum type objects that have been created to represent
+___________________
+This section describes the Enum type objects that have been created to name
 various settings of the Model 224 series that are represented as an int or single character
 to the instrument. The purpose of these enum types is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
@@ -138,5 +117,29 @@ the instrument.
     :undoc-members:
 
 .. autoclass:: Model224SoftCalSensorTypes
+    :members:
+    :undoc-members:
+
+Status register classes
+_______________________
+
+.. autoclass:: Model224StandardEventRegister
+    :members:
+    :undoc-members:
+
+.. autoclass:: lakeshore.temperature_controllers.StandardEventRegister
+    :members:
+    :undoc-members:
+    :noindex:
+
+.. autoclass:: Model224ServiceRequestRegister
+    :members:
+    :undoc-members:
+
+.. autoclass:: Model224StatusByteRegister
+    :members:
+    :undoc-members:
+
+.. autoclass:: Model224ReadingStatusRegister
     :members:
     :undoc-members:

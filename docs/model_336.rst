@@ -9,7 +9,7 @@ More information about the instrument can be found `on our website`_ including t
 .. _on our website: https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-335-cryogenic-temperature-controller
 
 Example Scripts
----------------
+_______________
 Below are a few example scripts for the Model 336 that use the Lake Shore Python driver.
 
 Using calibration curves with a temperature instrument
@@ -20,11 +20,8 @@ Setting up heater outputs on the Model 336
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/336_heater_setup_example.py
 
-Classes and methods
--------------------
-
 Instrument class methods
-~~~~~~~~~~~~~~~~~~~~~~~~
+________________________
 .. module:: lakeshore.model_336
 
 .. autoclass:: Model336
@@ -32,8 +29,8 @@ Instrument class methods
     :members:
     :inherited-members:
 
-Instrument classes
-~~~~~~~~~~~~~~~~~~
+Settings classes
+________________
 This section outlines the classes used to interact with methods which return or
 accept an argument of a class object, specific to the Lake Shore model 336.
 
@@ -52,17 +49,26 @@ accept an argument of a class object, specific to the Lake Shore model 336.
 
     .. automethod:: __init__
 
+.. autoclass:: lakeshore.temperature_controllers.AlarmSettings
+    :members:
+
+    .. automethod:: __init__
+
 .. autoclass:: Model336CurveHeader
     :members:
 
     .. automethod:: __init__
 
-Enumeration Objects
-~~~~~~~~~~~~~~~~~~~
+.. autoclass:: lakeshore.temperature_controllers.CurveHeader
+    :members:
 
-This page describes the Enum type objects that have been created to represent
-various settings of the model 336 that are used as an argument or return to
-the instrument. The purpose of these objects is to make the settings more
+    .. automethod:: __init__
+
+Enumeration objects
+___________________
+This section describes the Enum type objects that have been created to name
+various settings of the Model 336 series that are represented as an int or single character
+to the instrument. The purpose of these enum types is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
 the instrument.
 
@@ -162,7 +168,15 @@ the instrument.
     :members:
     :undoc-members:
 
+.. autoclass:: lakeshore.temperature_controllers.LanStatus
+    :members:
+    :undoc-members:
+
 .. autoclass:: Model336Interface
+    :members:
+    :undoc-members:
+
+.. autoclass:: lakeshore.temperature_controllers.Interface
     :members:
     :undoc-members:
 
@@ -170,12 +184,20 @@ the instrument.
     :members:
     :undoc-members:
 
+.. autoclass:: lakeshore.temperature_controllers.DisplayFields
+    :members:
+    :undoc-members:
+
 .. autoclass:: Model336DisplayFieldsSize
     :members:
     :undoc-members:
 
+.. autoclass:: lakeshore.temperature_controllers.DisplayFieldsSize
+    :members:
+    :undoc-members:
+
 Register Classes
-~~~~~~~~~~~~~~~~
+________________
 This page describes the register objects. Each bit in the register
 is represented as a member of the register's class
 

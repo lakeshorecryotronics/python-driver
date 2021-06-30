@@ -16,11 +16,8 @@ Streaming F41/F71 teslameter data to a CSV file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/teslameter_record_data_example.py
 
-Classes and methods
-___________________
-
 Instrument class methods
-~~~~~~~~~~~~~~~~~~~~~~~~
+________________________
 .. module:: lakeshore.teslameter
 
 .. autoclass:: Teslameter
@@ -29,8 +26,8 @@ Instrument class methods
     :inherited-members:
 
 
-Register classes
-~~~~~~~~~~~~~~~~
+Status register classes
+_______________________
 
 This page outlines the objects and classes used to interact with registers in the Teslameter driver.
 

@@ -9,8 +9,7 @@ More information about the instrument can be found `on our website`_ including t
 .. _on our website: https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-335-cryogenic-temperature-controller
 
 Example Scripts
----------------
-Below are a few example scripts for the Model 335 that use the Lake Shore Python driver.
+_______________
 
 Setting a temperature curve
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -24,11 +23,8 @@ Setting up autotune on the Model 335
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/335_autotune_example.py
 
-Classes and methods
--------------------
-
 Instrument class methods
-~~~~~~~~~~~~~~~~~~~~~~~~
+________________________
 .. module:: lakeshore.model_335
 
 .. autoclass:: Model335
@@ -37,9 +33,7 @@ Instrument class methods
     :inherited-members:
 
 Settings classes
-~~~~~~~~~~~~~~~~~~
-This section outlines the classes used to interact with methods which return or
-accept an argument of a class object, specific to the Lake Shore model 335.
+________________
 
 .. autoclass:: Model335InputSensorSettings
     :members:
@@ -52,10 +46,10 @@ accept an argument of a class object, specific to the Lake Shore model 335.
     .. automethod:: __init__
 
 Enumeration objects
--------------------
-This section describes the Enum type objects that have been created to represent
-various settings of the model 335 that are used as an argument or return to
-the instrument. The purpose of these enum types is to make the settings more
+___________________
+This section describes the Enum type objects that have been created to name
+various settings of the Model 335 series that are represented as an int or single character
+to the instrument. The purpose of these enum types is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
 the instrument.
 
@@ -63,7 +57,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: RelayControlMode
+.. autoclass:: lakeshore.temperature_controllers.RelayControlMode
     :members:
     :undoc-members:
 
@@ -71,7 +65,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: RelayControlAlarm
+.. autoclass:: lakeshore.temperature_controllers.RelayControlAlarm
     :members:
     :undoc-members:
 
@@ -79,7 +73,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: InterfaceMode
+.. autoclass:: lakeshore.temperature_controllers.InterfaceMode
     :members:
     :undoc-members:
 
@@ -87,7 +81,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: HeaterError
+.. autoclass:: lakeshore.temperature_controllers.HeaterError
     :members:
     :undoc-members:
 
@@ -95,7 +89,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: CurveFormat
+.. autoclass:: lakeshore.temperature_controllers.CurveFormat
     :members:
     :undoc-members:
 
@@ -103,7 +97,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: CurveTemperatureCoefficient
+.. autoclass:: lakeshore.temperature_controllers.CurveTemperatureCoefficient
     :members:
     :undoc-members:
 
@@ -111,7 +105,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: AutotuneMode
+.. autoclass:: lakeshore.temperature_controllers.AutotuneMode
     :members:
     :undoc-members:
 
@@ -119,7 +113,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: HeaterResistance
+.. autoclass:: lakeshore.temperature_controllers.HeaterResistance
     :members:
     :undoc-members:
 
@@ -127,7 +121,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: HeaterOutputUnits
+.. autoclass:: lakeshore.temperature_controllers.HeaterOutputUnits
     :members:
     :undoc-members:
 
@@ -143,7 +137,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: Polarity
+.. autoclass:: lakeshore.temperature_controllers.Polarity
     :members:
     :undoc-members:
 
@@ -155,7 +149,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: InputSensorUnits
+.. autoclass:: lakeshore.temperature_controllers.InputSensorUnits
     :members:
     :undoc-members:
 
@@ -175,7 +169,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: BrightnessLevel
+.. autoclass:: lakeshore.temperature_controllers.BrightnessLevel
     :members:
     :undoc-members:
 
@@ -203,7 +197,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: ControlTypes
+.. autoclass:: lakeshore.temperature_controllers.ControlTypes
     :members:
     :undoc-members:
 
@@ -211,7 +205,7 @@ the instrument.
     :members:
     :undoc-members:
 
-.. autoclass:: DiodeCurrent
+.. autoclass:: lakeshore.temperature_controllers.DiodeCurrent
     :members:
     :undoc-members:
 
@@ -231,8 +225,8 @@ the instrument.
     :members:
     :undoc-members:
 
-Register classes
-~~~~~~~~~~~~~~~~
+Status register classes
+_______________________
 This section describes the register objects. Each bit in the register
 is represented as a member of the register's class
 
@@ -245,10 +239,13 @@ is represented as a member of the register's class
 .. autoclass:: Model335StandardEventRegister
     :members:
 
+.. autoclass:: lakeshore.temperature_controllers.StandardEventRegister
+    :members:
+
 .. autoclass:: Model335OperationEvent
     :members:
 
-.. autoclass:: OperationEvent
+.. autoclass:: lakeshore.temperature_controllers.OperationEvent
     :members:
 
 .. autoclass:: Model335InputReadingStatus
