@@ -70,8 +70,8 @@ class GenericInstrument:
         if ip_address is not None:
             if com_port is not None:
                 raise ValueError("Two different connection methods provided.")
-            else:
-                self.connect_tcp(ip_address, tcp_port, timeout)
+
+            self.connect_tcp(ip_address, tcp_port, timeout)
         else:
             if connection is None:
                 self.connect_usb(serial_number, com_port, baud_rate, data_bits, stop_bits, parity,
@@ -205,9 +205,9 @@ class GenericInstrument:
         else:
             if com_port is None and serial_number is None:
                 raise InstrumentException("No serial connections found")
-            else:
-                raise InstrumentException(
-                    "No serial connections found with a matching COM port and/or matching serial number")
+
+            raise InstrumentException(
+                "No serial connections found with a matching COM port and/or matching serial number")
 
     def disconnect_usb(self):
         """Disconnect the USB connection"""
@@ -233,8 +233,8 @@ class GenericInstrument:
             # Receive the data and raise an error on timeout
             try:
                 response = self.device_tcp.recv(4096).decode('utf-8')
-            except socket.timeout:
-                raise InstrumentException("Connection timed out")
+            except socket.timeout as ex:
+                raise InstrumentException("Connection timed out") from ex
 
             # Add received information to the response
             total_response += response

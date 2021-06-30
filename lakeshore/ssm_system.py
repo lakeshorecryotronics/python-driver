@@ -99,7 +99,15 @@ class SSMSystem(XIPInstrument):
                  **kwargs):
 
         # Call the parent init, then fill in values specific to SSM
-        XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port, **kwargs)
+        XIPInstrument.__init__(self,
+                               serial_number,
+                               com_port,
+                               baud_rate,
+                               flow_control,
+                               timeout,
+                               ip_address,
+                               tcp_port,
+                               **kwargs)
 
         self.operation_register = SSMSystemOperationRegister
         self.questionable_register = SSMSystemQuestionableRegister
@@ -126,7 +134,8 @@ class SSMSystem(XIPInstrument):
         try:
             return self.source_modules[port_number - 1]
         except IndexError:
-            raise IndexError('Invalid port number. Must be between 1 and {}'.format(self.get_num_source_channels()))
+            raise IndexError(
+                'Invalid port number. Must be between 1 and {}'.format(self.get_num_source_channels())) from None
 
     def get_source_pod(self, port_number):
         """alias of get_source_module"""
@@ -143,7 +152,8 @@ class SSMSystem(XIPInstrument):
         try:
             return self.measure_modules[port_number - 1]
         except IndexError:
-            raise IndexError('Invalid port number. Must be between 1 and {}'.format(self.get_num_measure_channels()))
+            raise IndexError(
+                'Invalid port number. Must be between 1 and {}'.format(self.get_num_measure_channels())) from None
 
     def get_measure_pod(self, port_number):
         """alias of get_measure_module"""
@@ -219,7 +229,8 @@ class SSMSystem(XIPInstrument):
         elements = ','.join('{},{}'.format(mnemonic, index) for (mnemonic, index) in data_sources)
         response_values_with_indices = enumerate(self.query('FETCh? {}'.format(elements)).split(','))
 
-        return tuple((self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
+        return tuple(
+            (self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
 
     def stream_data(self, rate, num_points, *data_sources):
         """Generator object to stream data from the instrument.

@@ -1371,7 +1371,7 @@ class Model372(TemperatureController):
         value = int(self.query("INTSEL?"))
         return Model372Interface(value)
 
-    def set_alarm_parameters(self, input_channel, alarm_enable, parameters=None):
+    def set_alarm_parameters(self, input_channel, alarm_enable, alarm_settings=None):
         """Sets an alarm on the specified channel as defined by parameters.
 
             Args:
@@ -1384,26 +1384,26 @@ class Model372(TemperatureController):
                 alarm_enable (bool)
                     * Defines whether to turn alarm on or off
 
-                parameters (Model372AlarmParameters)
+                alarm_settings (Model372AlarmParameters)
                     * Model372AlarmParameters object containing desired alarm settings
                     * Optional if alarm is disabled
 
         """
-        if parameters is not None:
-            if parameters.visible is None:
+        if alarm_settings is not None:
+            if alarm_settings.visible is None:
                 visible = ""
             else:
-                visible = int(parameters.visible)
+                visible = int(alarm_settings.visible)
 
-            if parameters.audible is None:
+            if alarm_settings.audible is None:
                 audible = ""
             else:
-                audible = int(parameters.audible)
+                audible = int(alarm_settings.audible)
 
             # extra 0 added for unused data source parameter
             self.command("ALARM {},{},0,{},{},{},{},{},{}".format(input_channel, int(alarm_enable),
-                                                                  parameters.high_value, parameters.low_value,
-                                                                  parameters.deadband, int(parameters.latch_enable),
+                                                                  alarm_settings.high_value, alarm_settings.low_value,
+                                                                  alarm_settings.deadband, int(alarm_settings.latch_enable),
                                                                   visible, audible))
         else:
             self.command("ALARM {},0,0,0,0,0,0,0".format(input_channel))
