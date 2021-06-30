@@ -363,9 +363,9 @@ class Model224(GenericInstrument):
         event_register = Model224StandardEventRegister.from_integer(error_code)
         if event_register.query_error:
             raise InstrumentException('Query Error')
-        elif event_register.command_error:
+        if event_register.command_error:
             raise InstrumentException('Command Error: Invalid Command or Query')
-        elif event_register.execution_error:
+        if event_register.execution_error:
             raise InstrumentException('Execution Error: Instrument not able to execute command or query.')
 
     def command(self, *commands, check_errors=True):

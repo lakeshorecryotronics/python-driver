@@ -2,16 +2,10 @@ import unittest
 
 # Teslameter is used for these general tests on the HIL rig at this time
 from lakeshore import Teslameter, XIPInstrumentException, InstrumentException
-from tests.utils import TestWithRealTeslameter, TestWithFakeTeslameter
+from tests.utils import TestWithFakeTeslameter
 
 
 class TestDiscovery(unittest.TestCase):
-    def test_normal_connection(self):
-        try:
-            Teslameter()
-        except XIPInstrumentException:
-            self.fail('Exception raised unexpectedly.')
-
     def test_specified_serial_does_not_exist(self):
         with self.assertRaisesRegex(InstrumentException,
                                     r'No serial connections found with a matching COM port '
@@ -23,24 +17,6 @@ class TestDiscovery(unittest.TestCase):
                                     r'No serial connections found with a matching COM port '
                                     r'and/or matching serial number'):
             Teslameter(com_port='COM99')
-
-    def test_tcp_connection(self):
-        try:
-            Teslameter(ip_address='192.168.0.12', tcp_port=7777)
-        except Exception:
-            self.fail('Exception raised unexpectedly.')
-
-
-class TestBasicComms(TestWithRealTeslameter):
-    def test_basic_query(self):
-        # Primarily tested on fake, just a spot check on real DUT
-        response = self.dut.query('*IDN?')
-
-        self.assertEqual(response.split(',')[0], 'Lake Shore')
-
-    def test_timeout(self):
-        with self.assertRaisesRegex(InstrumentException, r'Communication timed out'):
-            self.dut.query('FAKEQUERY?', check_errors=False)
 
 
 class TestCommands(TestWithFakeTeslameter):
