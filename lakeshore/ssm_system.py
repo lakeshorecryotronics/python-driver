@@ -3,12 +3,16 @@
 import struct
 from base64 import b64decode
 from threading import Lock
-from wakepy import keepawake
 
 from lakeshore.xip_instrument import XIPInstrument, XIPInstrumentException, RegisterBase
 from lakeshore.ssm_measure_module import MeasureModule
 from lakeshore.ssm_source_module import SourceModule
 from lakeshore.ssm_settings_profiles import SettingsProfiles
+
+try:
+    from wakepy import keepawake
+except NotImplementedError:
+    pass  # Proceed without wakepy on linux without systemd
 
 
 class SSMSystemOperationRegister(RegisterBase):
