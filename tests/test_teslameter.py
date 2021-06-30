@@ -11,7 +11,9 @@ class TestBufferedFieldData(TestWithFakeTeslameter):
         self.fake_connection.setup_response('No error')
         # Return 1 response for clearing buffer, then 100 responses
         for _ in range(101):
-            self.fake_connection.setup_response('2021-06-28T19:42:10.696Z,123.456,123.456,123.456,123.456,123.456,0;')
+            self.fake_connection.setup_response('2021-06-28T19:42:10.696Z,123.456,123.456,123.456,123.456,123.456,0;' +
+                                                '2021-06-28T19:42:10.696Z,123.456,123.456,123.456,123.456,123.456,0;' +
+                                                '2021-06-28T19:42:10.696Z,123.456,123.456,123.456,123.456,123.456,0;')
 
     def test_stream_buffered_data_provides_correct_number_of_points(self):
         iterable = self.dut.stream_buffered_data(1, 10)
