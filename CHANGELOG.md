@@ -1,5 +1,14 @@
 Change Log
 ==========
+Release 1.5.3
+-------------
+Added:
+- Settings profiles for the M81 SSM System
+
+Fixed:
+- Issue with public docs build causing classes and methods to not appear
+- All aliased classes are now properly documented
+
 Release 1.5.2
 -------------
 Fixed:
