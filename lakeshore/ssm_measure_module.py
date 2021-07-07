@@ -330,7 +330,7 @@ class MeasureModule(BaseModule):
         self.device.command('SENSe{}:LIA:DPHase {}'.format(self.module_number, str(phase_shift)))
 
     def auto_phase(self):
-        """Executes a one time adjustment of the reference phase shift such that the present phase measurement is zero. Coming in 0.3."""
+        """Executes a one time adjustment of the reference phase shift such that the present phase measurement is zero."""
 
         self.device.command('SENSe{}:LIA:DPHase:AUTO'.format(self.module_number))
 
