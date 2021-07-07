@@ -330,7 +330,7 @@ class MeasureModule(BaseModule):
         self.device.command('SENSe{}:LIA:DPHase {}'.format(self.module_number, str(phase_shift)))
 
     def auto_phase(self):
-        """Executes a one time adjustment of the reference phase shift such that the present phase indication is zero. Coming in 0.3."""
+        """Executes a one time adjustment of the reference phase shift such that the present phase measurement is zero. Coming in 0.3."""
 
         self.device.command('SENSe{}:LIA:DPHase:AUTO'.format(self.module_number))
 
@@ -475,47 +475,47 @@ class MeasureModule(BaseModule):
         return self.device.get_multiple(*elements)
 
     def get_dc(self):
-        """Returns the DC indication in module units"""
+        """Returns the DC measurement in module units"""
 
         return float(self.device.query('READ:SENSe{}:DC?'.format(self.module_number)))
 
     def get_rms(self):
-        """Returns the RMS indication in module units"""
+        """Returns the RMS measurement in module units"""
 
         return float(self.device.query('READ:SENSe{}:RMS?'.format(self.module_number)))
 
     def get_peak_to_peak(self):
-        """Returns the peak to peak indication in module units"""
+        """Returns the peak to peak measurement in module units"""
 
         return float(self.device.query('READ:SENSe{}:PTPeak?'.format(self.module_number)))
 
     def get_positive_peak(self):
-        """Returns the positive peak indication in module units"""
+        """Returns the positive peak measurement in module units"""
 
         return float(self.device.query('READ:SENSe{}:PPEak?'.format(self.module_number)))
 
     def get_negative_peak(self):
-        """Returns the negative peak indication in module units"""
+        """Returns the negative peak measurement in module units"""
 
         return float(self.device.query('READ:SENSe{}:NPEak?'.format(self.module_number)))
 
     def get_lock_in_x(self):
-        """Returns the present X indication from the lock-in"""
+        """Returns the present X measurement from the lock-in"""
 
         return float(self.device.query('FETCh:SENSe{}:LIA:X?'.format(self.module_number)))
 
     def get_lock_in_y(self):
-        """Returns the present Y indication from the lock-in"""
+        """Returns the present Y measurement from the lock-in"""
 
         return float(self.device.query('FETCh:SENSe{}:LIA:Y?'.format(self.module_number)))
 
     def get_lock_in_r(self):
-        """Returns the present magnitude indication from the lock-in"""
+        """Returns the present magnitude measurement from the lock-in"""
 
         return float(self.device.query('FETCh:SENSe{}:LIA:R?'.format(self.module_number)))
 
     def get_lock_in_theta(self):
-        """Returns the present angle indication from the lock-in"""
+        """Returns the present angle measurement from the lock-in"""
 
         return float(self.device.query('FETCh:SENSe{}:LIA:THETa?'.format(self.module_number)))
 
