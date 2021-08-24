@@ -1415,6 +1415,16 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.dut_module.set_identify_state(True)
         self.assertIn('SENSe1:IDENtify 1', self.fake_connection.get_outgoing_message())
 
+    def test_get_frequency_range_threshold(self):
+        self.fake_connection.setup_response('0.1;No error')
+        response = self.dut_module.get_frequency_range_threshold()
+        self.assertEqual(response, 0.1)
+        self.assertIn('SENSe1:FRTHreshold?', self.fake_connection.get_outgoing_message())
+
+    def test_set_frequency_range_threshold(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.set_frequency_range_threshold(0.9)
+        self.assertIn('SENSe1:FRTHreshold 0.9', self.fake_connection.get_outgoing_message())
 
 class TestSettingsProfiles(TestWithFakeSSMS):
     def test_create(self):
