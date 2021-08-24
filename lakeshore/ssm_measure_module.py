@@ -632,3 +632,23 @@ class MeasureModule(BaseModule):
                     The desired operation for the LED, 1 for normal mode, 0 for dark mode
         """
         self.device.command('SENSe{}:DMODe {}'.format(self.module_number, state), check_errors=False)
+
+    def get_frequency_range_threshold(self):
+        """Returns the frequency range threshold for the module. Frequency range threshold normalized to the -3 db
+           point. For example, a value of 0.1 means 10 % of the -3 db point.
+        """
+
+        return float(self.device.query('SENSe{}:FRTHreshold?'.format(self.module_number)))
+
+    def set_frequency_range_threshold(self, threshold):
+        """Sets the frequency range threshold for the specified module.
+        When the modules range is set to Auto, a range such that the frequency of the signal does not exceed the given
+        percentage of the bandwidth of the range will be chosen.
+
+        Args:
+            threshold (float):
+                Frequency range threshold normalized to the -3 db point with a valid range of 0.0 to 1.0.
+                For example, a value of 0.1 means 10 % of the -3 db point.
+        """
+
+        self.device.command('SENSe{}:FRTHreshold {}'.format(self.module_number, float(threshold)))
