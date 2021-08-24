@@ -566,10 +566,7 @@ class Model335(TemperatureController):
                     * [channel_A, channel_B]
 
         """
-        kelvin_reading = list()
-        kelvin_reading.append(float(self.query("KRDG? A")))
-        kelvin_reading.append(float(self.query("KRDG? B")))
-        return kelvin_reading
+        return [float(self.query("KRDG? A")), float(self.query("KRDG? B"))]
 
     def set_heater_output_mode(self, output, mode, channel, powerup_enable=False):
         """Configures the heater output mode.
