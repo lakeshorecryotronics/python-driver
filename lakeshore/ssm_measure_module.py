@@ -652,3 +652,4 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command('SENSe{}:FRTHreshold {}'.format(self.module_number, float(threshold)))
+        
