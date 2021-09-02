@@ -402,6 +402,21 @@ class MeasureModule(BaseModule):
 
         self.set_lock_in_fir_state(False)
 
+    def get_lock_in_fir_cycles(self):
+        """Returns the number of FIR cycles"""
+
+        return int(self.device.query('SENSe{}:LIA:FIR:CYCLes?'.format(self.module_number)))
+
+    def set_lock_in_fir_cycles(self, cycles):
+        """Sets the number of FIR cycles
+
+            Args:
+                cycles (int):
+                    The desired number of FIR cycles, between 1 and 100
+        """
+
+        self.device.commands('SENSe{}:LIA:FIR:CYCLes {}'.format(self.module_number, str(int(cycles))))
+
     def setup_dc_measurement(self, nplc=1):
         """Setup the module for DC measurement
 
