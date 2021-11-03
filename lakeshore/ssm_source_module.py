@@ -687,7 +687,7 @@ class SourceModule(BaseModule):
         return response
 
     def set_identify_state(self, state):
-        """Returns the identification state for the given pod.
+        """Configures the identification state for the given pod.
 
             Args:
                 state (bool):
@@ -708,3 +708,75 @@ class SourceModule(BaseModule):
                     The desired operation for the LED, 1 for normal mode, 0 for dark mode
         """
         self.device.command('SOURce{}:DMODe {}'.format(self.module_number, state), check_errors=False)
+
+    def get_voltage_output_limit_high(self):
+        """Returns the present voltage high output limit."""
+        response = float(self.device.query('SOURce{}:VOLTage:LIMit:HIGH?'.format(self.module_number), cherk_errors=False))
+        return response
+
+    def set_voltage_output_limit_high(self, limit):
+        """Configures the high voltage output limit.
+        The voltage output limits are a software defined limits preventing the user from entering an output which could 
+        potentially damage the module's load.
+        When the shape is not DC, the limit is applied to the sum of the offset and amplitude.
+        The high voltage output limit is bounded between -10 V and 10 V, and must be greater than the low voltage output limit.
+
+            Args:
+                limit (float):
+                    The desired high output limit.
+        """
+        self.device.command('SOURce{}:VOLTage:LIMit:HIGH {}'.format(self.module_number, str(limit)), check_errors=False)
+
+    def get_voltage_output_limit_low(self):
+        """Returns the present voltage low output limit."""
+        response = float(self.device.query('SOURce{}:VOLTage:LIMit:LOW?'.format(self.module_number), cherk_errors=False))
+        return response
+
+    def set_voltage_output_limit_low(self, limit):
+        """Configures the low voltage output limit.
+        The voltage output limits are a software defined limits preventing the user from entering an output which could
+         potentially damage the module's load.
+        When the shape is not DC, the limit is applied to the sum of the offset and amplitude.
+        The low voltage output limit is bounded between -10 V and 10 V, and must be less than the high voltage output limit.
+
+            Args:
+                limit (float):
+                    The desired low voltage output limit.
+        """
+        self.device.command('SOURce{}:VOLTage:LIMit:LOW {}'.format(self.module_number, str(limit)), check_errors=False)
+
+    def get_current_output_limit_high(self):
+        """Returns the present current high output limit."""
+        response = float(self.device.query('SOURce{}:CURRent:LIMit:HIGH?'.format(self.module_number), cherk_errors=False))
+        return response
+
+    def set_current_output_limit_high(self, limit):
+        """Configures the high current output limit.
+        The current output limits are a software defined limits preventing the user from entering an output which could
+         potentially damage the module's load.
+        When the shape is not DC, the limit is applied to the sum of the offset and amplitude.
+        The high current output limit is bounded between -10 V and 10 V, and must be greater than the low current output limit.
+
+            Args:
+                limit (float):
+                    The desired high output limit.
+        """
+        self.device.command('SOURce{}:CURRent:LIMit:HIGH {}'.format(self.module_number, str(limit)), check_errors=False)
+
+    def get_current_output_limit_low(self):
+        """Returns the present current low output limit."""
+        response = float(self.device.query('SOURce{}:CURRent:LIMit:LOW?'.format(self.module_number), cherk_errors=False))
+        return response
+
+    def set_current_output_limit_low(self, limit):
+        """Configures the low current output limit.
+        The current output limits are a software defined limits preventing the user from entering an output which could
+         potentially damage the module's load.
+        When the shape is not DC, the limit is applied to the sum of the offset and amplitude.
+        The low current output limit is bounded between -10 V and 10 V, and must be less than the high current output limit.
+
+            Args:
+                limit (float):
+                    The desired low current output limit.
+        """
+        self.device.command('SOURce{}:CURRent:LIMit:LOW {}'.format(self.module_number, str(limit)), check_errors=False)
