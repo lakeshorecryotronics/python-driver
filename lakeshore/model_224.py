@@ -517,7 +517,7 @@ class Model224(GenericInstrument):
                     {invalid_reading: bool, temperature_under_range: bool, temperature_over_range: bool,
                     sensor_units_zero: bool, sensor_units_over_range: bool}
         """
-        flag_code = int(self.query("RDGST? {}".format(input_channel)))
+        flag_code = int(self.query(f"RDGST? {input_channel}"))
         reading_status = Model224ReadingStatusRegister.from_integer(flag_code)
         return reading_status
 
@@ -540,7 +540,7 @@ class Model224(GenericInstrument):
 
         """
 
-        return float(self.query("KRDG? {}".format(input_channel)))
+        return float(self.query(f"KRDG? {input_channel}"))
 
     def get_sensor_reading(self, input_channel):
         """Returns the sensor reading in the sensor's units.
@@ -560,7 +560,7 @@ class Model224(GenericInstrument):
 
         """
 
-        return float(self.query("SRDG? {}".format(input_channel)))
+        return float(self.query(f"SRDG? {input_channel}"))
 
     def get_celsius_reading(self, input_channel):
         """Returns the given input's temperature reading in degrees Celsius.
@@ -573,7 +573,7 @@ class Model224(GenericInstrument):
                 (float):
                     Temperature readings in degrees Celsius
         """
-        return float(self.query("CRDG? " + str(input_channel)))
+        return float(self.query(f"CRDG? {input_channel}"))
 
     def get_all_inputs_celsius_reading(self):
         """Returns the temperature reading in degrees Celsius of all the inputs.
@@ -611,7 +611,7 @@ class Model224(GenericInstrument):
                     * The excitation current for the diode sensor.
 
         """
-        self.command("DIOCUR {},{}".format(input_channel, diode_current))
+        self.command(f"DIOCUR {input_channel},{diode_current}")
 
     def get_input_diode_excitation_current(self, input_channel):
         """Returns the diode excitation current for the given diode sensor.
@@ -625,7 +625,7 @@ class Model224(GenericInstrument):
                     A member of the Model224DiodeExcitationCurrent enum class.
 
         """
-        diode_current_int = int(self.query("DIOCUR? " + input_channel))
+        diode_current_int = int(self.query(f"DIOCUR? {input_channel}"))
         return Model224DiodeExcitationCurrent(diode_current_int)
 
     def set_sensor_name(self, channel, sensor_name):
@@ -645,7 +645,7 @@ class Model224(GenericInstrument):
 
         """
 
-        self.command("INNAME {},\"{}\"".format(channel, sensor_name))
+        self.command(f"INNAME {channel},\"{sensor_name}\"")
 
     def get_sensor_name(self, channel):
         """Returns the name of the sensor on the specified channel
@@ -665,7 +665,7 @@ class Model224(GenericInstrument):
 
         """
 
-        return self.query("INNAME? {}".format(channel))
+        return self.query(f"INNAME? {channel}")
 
     def set_display_contrast(self, contrast_level):
         """Sets the contrast level for the front panel display
@@ -678,7 +678,7 @@ class Model224(GenericInstrument):
 
         """
 
-        self.command("BRIGT {}".format(contrast_level))
+        self.command(f"BRIGT {contrast_level}")
 
     def get_display_contrast(self):
         """Returns the contrast level of front panel display
@@ -698,7 +698,7 @@ class Model224(GenericInstrument):
                 address (int):
                     * 1-30 (0 and 31 reserved)
         """
-        self.command("IEEE " + str(address))
+        self.command(f"IEEE {address}")
 
     def get_ieee_488(self):
         """Returns the IEEE address set
@@ -719,7 +719,7 @@ class Model224(GenericInstrument):
                     * False for off or True for on
 
         """
-        self.command("LEDS " + str(int(state)))
+        self.command(f"LEDS {str(int(state))}")
 
     def get_led_state(self):
         """Returns whether or not front panel LEDs are enabled.
@@ -745,7 +745,7 @@ class Model224(GenericInstrument):
                     * 000 - 999
 
         """
-        self.command("LOCK " + str(int(state)) + "," + str(code))
+        self.command(f"LOCK {str(int(state))},{str(code)}")
 
     def get_keypad_lock(self):
         """Returns the state of the keypad lock and the lock-out code.
@@ -791,7 +791,7 @@ class Model224(GenericInstrument):
                     * 0 = none, 1-20 = standard curves, 21-59 = user curves
 
         """
-        self.command("INCRV " + str(input_channel) + "," + str(curve_number))
+        self.command(f"INCRV {str(input_channel)},{str(curve_number)}")
         # Check that the user mapped an input to a curve (not just set the input to no curve)
         if curve_number != 0:
             # Query the curve mapped to input_channel, if the query returns zero,
@@ -812,7 +812,7 @@ class Model224(GenericInstrument):
                     * 0-59
 
         """
-        return int(self.query("INCRV? " + str(input_channel)))
+        return int(self.query(f"INCRV? {str(input_channel)}"))
 
     def set_website_login(self, username, password):
         """Sets the username and password to connect instrument to website.
@@ -870,10 +870,9 @@ class Model224(GenericInstrument):
                 visible = 0
             else:
                 visible = int(alarm_settings.visible)
-            self.command("ALARM {},{},{},{},{},{},{},{}".format(input_channel.upper(), int(alarm_enable),
-                                                                alarm_settings.high_value, alarm_settings.low_value,
-                                                                alarm_settings.deadband,
-                                                                int(alarm_settings.latch_enable), audible, visible))
+            self.command(f"ALARM {input_channel.upper()},{int(alarm_enable)},{alarm_settings.high_value}," +
+                        f"{alarm_settings.low_value},{alarm_settings.deadband},{int(alarm_settings.latch_enable)}," +
+                        f"{audible},{visible}")
         else:
             self.command("ALARM " + str(input_channel.upper()) + "," + str(int(alarm_enable)) + ",0,0,0,0,0,0")
 
@@ -941,12 +940,8 @@ class Model224(GenericInstrument):
                     * A Model224CurveHeader class object containing the desired curve information
 
         """
-        command_string = "CRVHDR {},{},{},{},{},{}".format(curve_number,
-                                                           curve_header.curve_name,
-                                                           curve_header.serial_number,
-                                                           curve_header.curve_data_format,
-                                                           curve_header.temperature_limit,
-                                                           curve_header.coefficient)
+        command_string = (f"CRVHDR {curve_number},{curve_header.curve_name},{curve_header.serial_number}," +
+                        f"{curve_header.curve_data_format},{curve_header.temperature_limit},{curve_header.coefficient}")
 
         self.command(command_string)
 
@@ -964,7 +959,7 @@ class Model224(GenericInstrument):
                     * A Model224CurveHeader class object containing the desired curve information
 
         """
-        response = self.query("CRVHDR? {}".format(curve))
+        response = self.query(f"CRVHDR? {curve}")
         curve_header = response.split(",")
         header = Model224CurveHeader(str(curve_header[0]),
                                      str(curve_header[1]),
@@ -991,7 +986,7 @@ class Model224(GenericInstrument):
                     * Specifies the corresponding temperature in Kelvin for this point to 6 digits
 
         """
-        self.command("CRVPT {},{},{},{}".format(curve, index, sensor_units, temperature))
+        self.command(f"CRVPT {curve},{index},{sensor_units},{temperature}")
 
     def get_curve_data_point(self, curve, index):
         """Returns a standard or user curve data point
@@ -1008,7 +1003,7 @@ class Model224(GenericInstrument):
                     * (sensor_units: float, temp_value: float))
 
         """
-        curve_point = self.query("CRVPT? {},{}".format(curve, index)).split(",")
+        curve_point = self.query(f"CRVPT? {curve},{index}").split(",")
         return float(curve_point[0]), float(curve_point[1])
 
     def delete_curve(self, curve):
@@ -1019,7 +1014,7 @@ class Model224(GenericInstrument):
                     * Specifies a user curve to delete
 
         """
-        self.command("CRVDEL {}".format(curve))
+        self.command(f"CRVDEL {curve}")
 
     def generate_and_apply_soft_cal_curve(self, source_curve, curve_number, serial_number, calibration_point_1,
                                           calibration_point_2=(0, 0), calibration_point_3=(0, 0)):
@@ -1051,10 +1046,11 @@ class Model224(GenericInstrument):
                     * Optional parameter
 
         """
-        self.command("SCAL {},{},{},{},{},{},{},{},{}".format(source_curve, curve_number, serial_number,
-                                                              calibration_point_1[0], calibration_point_1[1],
-                                                              calibration_point_2[0], calibration_point_2[1],
-                                                              calibration_point_3[0], calibration_point_3[1]))
+        command_string = (f"SCAL {source_curve},{curve_number},{serial_number}," +
+                            f"{calibration_point_1[0]},{calibration_point_1[1]}," +
+                            f"{calibration_point_2[0]},{calibration_point_2[1]}," +
+                            f"{calibration_point_3[0]},{calibration_point_3[1]}")
+        self.command(command_string)
 
     def get_curve(self, curve):
         """Returns a list of all the data points in a particular curve
@@ -1114,7 +1110,7 @@ class Model224(GenericInstrument):
                 (bool):
                     * True if relay is on, False if relay is off.
         """
-        return bool(int(self.query("RELAYST? " + str(relay_channel))))
+        return bool(int(self.query(f"RELAYST? {str(relay_channel)}")))
 
     def set_filter(self, input_channel, filter_enabled, number_of_points=8, filter_reset_threshold=10):
         """Enables or disables a filter for the readings of the specified input channel. Filter is a running
@@ -1169,7 +1165,7 @@ class Model224(GenericInstrument):
                     {filter_enabled: bool, number_of_points: int, filter_reset_threshold: int}
 
         """
-        filter_information = self.query("FILTER? " + str(input_channel))
+        filter_information = self.query(f"FILTER? {str(input_channel)}")
         separated_information = filter_information.split(",")
         return {'filter_enabled': bool(int(separated_information[0])),
                 'number_of_points': int(separated_information[1]),
@@ -1190,10 +1186,9 @@ class Model224(GenericInstrument):
                     Object of the Model224InputSensorSettings containing information for sensor setup.
 
         """
-        self.command("INTYPE {},{},{},{},{},{}".format(input_channel, settings.sensor_type,
-                                                       int(settings.autorange_enabled),
-                                                       settings.sensor_range, int(settings.compensation),
-                                                       settings.preferred_units))
+        command_string = (f"INTYPE {input_channel},{settings.sensor_type},{int(settings.autorange_enabled)}," +
+                        f"{settings.sensor_range},{int(settings.compensation)},{settings.preferred_units}")
+        self.command(command_string)
 
     def disable_input(self, input_channel):
         """Disables the selected input channel.
@@ -1208,7 +1203,7 @@ class Model224(GenericInstrument):
 
         """
         # Fill all parameters with 0 to disable
-        self.command("INTYPE " + str(input_channel) + ",0,0,0,0,0")
+        self.command(f"INTYPE {str(input_channel)},0,0,0,0,0")
 
     def get_input_configuration(self, input_channel):
         """Returns the configuration settings of the sensor at the specified input channel.
@@ -1227,7 +1222,7 @@ class Model224(GenericInstrument):
                     input_channel
 
         """
-        settings_string = self.query("INTYPE? " + str(input_channel))
+        settings_string = self.query(f"INTYPE? {str(input_channel)}")
         separated_settings = settings_string.split(",")
         # Convert sensor_range depending on sensor type
         sensor_type = int(separated_settings[0])
@@ -1256,7 +1251,7 @@ class Model224(GenericInstrument):
                     communications
 
         """
-        self.command("INTSEL {}".format(remote_interface))
+        self.command(f"INTSEL {remote_interface}")
 
     def get_remote_interface(self):
         """Returns the remote interface being used for communications.
@@ -1278,7 +1273,7 @@ class Model224(GenericInstrument):
                     Object of enum type Model224InterfaceMode representing the desired communication mode.
 
         """
-        self.command("MODE {}".format(interface_mode))
+        self.command(f"MODE {interface_mode}")
 
     def get_interface_mode(self):
         """Returns the mode of the remote interface.
@@ -1307,7 +1302,7 @@ class Model224(GenericInstrument):
                     * Defines which units to display reading in.
 
         """
-        self.command("DISPFLD {},{},{}".format(field, input_channel, display_units))
+        self.command(f"DISPFLD {field},{input_channel},{display_units}")
 
     def get_display_field_settings(self, field):
         """Returns the settings of a single display field in custom display mode.
@@ -1341,7 +1336,7 @@ class Model224(GenericInstrument):
                     * Only valid if mode is set to CUSTOM
 
         """
-        self.command("DISPLAY {},{}".format(display_mode, number_of_fields))
+        self.command(f"DISPLAY {display_mode},{number_of_fields}")
 
     def get_display_configuration(self):
         """Returns the mode of the display. If display mode is Custom, this method also returns the number of
@@ -1374,7 +1369,7 @@ class Model224(GenericInstrument):
                         * 1 or 2
 
         """
-        self.command("RELAY {},1,0,0".format(relay_number))
+        self.command(f"RELAY {relay_number},1,0,0")
 
     def turn_relay_off(self, relay_number):
         """Turns the specified relay off.
@@ -1386,7 +1381,7 @@ class Model224(GenericInstrument):
                         * 1 or 2
 
         """
-        self.command("RELAY {},0,0,0".format(relay_number))
+        self.command(f"RELAY {relay_number},0,0,0")
 
     def set_relay_alarms(self, relay_number, activating_input_channel, alarm_relay_trigger_type):
         """Sets a relay to turn on and off automatically based on the state of the alarm of the specified input channel.
@@ -1411,7 +1406,7 @@ class Model224(GenericInstrument):
                     * Only applies if ALARM mode is chosen.
 
         """
-        self.command("RELAY {},2,{},{}".format(relay_number, activating_input_channel, alarm_relay_trigger_type))
+        self.command(f"RELAY {relay_number},2,{activating_input_channel},{alarm_relay_trigger_type}")
 
     def get_relay_alarm_control_parameters(self, relay_number):
         """Returns the relay alarm configuration for either of the two configurable relays. Relay must be
@@ -1429,7 +1424,7 @@ class Model224(GenericInstrument):
 
         """
 
-        relay_config = self.query("RELAY? {}".format(relay_number)).split(",")
+        relay_config = self.query(f"RELAY? {relay_number}").split(",")
         activating_input_channel = relay_config[1]
         alarm_relay_trigger_type = Model224RelayControlAlarm(int(relay_config[2]))
         return {'activating_input_channel': activating_input_channel,

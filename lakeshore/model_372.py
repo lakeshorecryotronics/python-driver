@@ -628,7 +628,7 @@ class Model372(TemperatureController):
                     a specific heater in the bottom left of the display in custom mode.
 
         """
-        self.command("DISPLAY {},{},{}".format(mode, number_of_fields, displayed_info))
+        self.command(f"DISPLAY {mode},{number_of_fields},{displayed_info}")
 
     def get_display_mode(self):
         """Returns the current mode of the display.
@@ -672,7 +672,7 @@ class Model372(TemperatureController):
                     * Sensor reading in Ohms
 
         """
-        return float(self.query("RDGR? " + str(input_channel)))
+        return float(self.query(f"RDGR? {str(input_channel)}"))
 
     def get_quadrature_reading(self, input_channel):
         """Returns the imaginary part of the reading in Ohms. Only valid for measurement inputs.
@@ -686,7 +686,7 @@ class Model372(TemperatureController):
                 (float):
                     * The imaginary part of the sensor reading, in Ohms
         """
-        return float(self.query("QRDG? " + str(input_channel)))
+        return float(self.query(f"QRDG? {str(input_channel)}"))
 
     def get_all_input_readings(self, input_channel):
         """Returns the kelvin reading, resistance reading, and, if a measurement input, the quadrature reading.
@@ -732,7 +732,7 @@ class Model372(TemperatureController):
                         on the specified channel
 
         """
-        sensor_settings = self.query("INTYPE? " + str(input_channel))
+        sensor_settings = self.query(f"INTYPE? {str(input_channel)}")
         separated_settings = sensor_settings.split(",")
         # Determine which enum to use to interpret excitation value:
         if input_channel == "A":
@@ -774,10 +774,10 @@ class Model372(TemperatureController):
         else:
             resistance_range = format(settings.resistance_range)
         # Format command string
-        command_string = "INTYPE " + str(input_channel) + "," + str(format(settings.mode)) + "," + \
-                         str(format(settings.excitation_range)) + "," + str(format(settings.auto_range)) + "," + \
-                         str(resistance_range) + "," + str(int(settings.current_source_shunted)) + "," + \
-                         str(format(settings.units))
+        command_string = (f"INTYPE {str(input_channel)},{str(format(settings.mode))}," +
+                         f"{str(format(settings.excitation_range))},{str(format(settings.auto_range))}," +
+                         f"{str(resistance_range)},{str(int(settings.current_source_shunted))}," +
+                         f"{str(format(settings.units))}")
         self.command(command_string)
 
     def disable_input(self, input_channel):
@@ -790,7 +790,7 @@ class Model372(TemperatureController):
                     * "A" (control input)
 
         """
-        self.command("INSET " + str(input_channel) + ",0,0,0,0,0")
+        self.command(f"INSET {str(input_channel)},0,0,0,0,0")
 
     def get_input_channel_parameters(self, input_channel):
         """Returns the settings on the specified input channel
@@ -806,7 +806,7 @@ class Model372(TemperatureController):
                         * Contains variables representing the different channel settings parameters
 
         """
-        input_parameters = self.query("INSET? " + str(input_channel))
+        input_parameters = self.query(f"INSET? {str(input_channel)}")
         separated_parameters = input_parameters.split(",")
         temperature_coefficient = Model372CurveTemperatureCoefficient(int(separated_parameters[4]))
         input_channel_settings = Model372InputChannelSettings(bool(int(separated_parameters[0])),
@@ -833,9 +833,9 @@ class Model372(TemperatureController):
             temperature_coefficient = ""
         else:
             temperature_coefficient = format(settings.temperature_coefficient)
-        command_string = "INSET " + str(input_channel) + "," + str(int(settings.enable)) + "," + \
-                         str(settings.dwell_time) + "," + str(settings.pause_time) + "," + \
-                         str(settings.curve_number) + "," + str(temperature_coefficient)
+        command_string = (f"INSET {str(input_channel)},{str(int(settings.enable))}," +
+                         f"{str(settings.dwell_time)},{str(settings.pause_time)}," +
+                         f"{str(settings.curve_number)},{str(temperature_coefficient)}")
         self.command(command_string)
 
     def get_analog_heater_output(self, output_channel):
@@ -852,7 +852,7 @@ class Model372(TemperatureController):
                     * Output of the analog heater being queried
 
         """
-        return float(self.query("AOUT? " + str(output_channel)))
+        return float(self.query(f"AOUT? {str(output_channel)}"))
 
     def all_off(self):
         """Recreates the front panel safety feature of shutting off all heaters"""
@@ -886,7 +886,7 @@ class Model372(TemperatureController):
         else:
             range_value = int(heater_range)
 
-        self.command("RANGE " + str(output_channel) + "," + str(range_value))
+        self.command(f"RANGE {str(output_channel)},{str(range_value)}")
 
     def get_heater_output_range(self, output_channel):
         """Return's the range of the output on a given channel
@@ -904,7 +904,7 @@ class Model372(TemperatureController):
                         * If channel 0, an object of enum type Model372SampleHeaterOutputRange
 
         """
-        key = int(self.query("RANGE? " + str(output_channel)))
+        key = int(self.query(f"RANGE? {str(output_channel)}"))
         if output_channel == 0:
             output_range = Model372SampleHeaterOutputRange(key)
         else:
@@ -938,8 +938,7 @@ class Model372(TemperatureController):
 
         """
 
-        self.command("FILTER " + str(input_channel) + "," + str(int(state)) + "," + str(settle_time) + "," +
-                     str(window))
+        self.command(f"FILTER {str(input_channel)},{str(int(state))},{str(settle_time)},{str(window)}")
 
     def get_filter(self, input_channel):
         """Returns information about the filter set on the specified channel.
@@ -961,7 +960,7 @@ class Model372(TemperatureController):
                     * Specifies what percent of full scale reading limits the filtering function.
 
         """
-        output_string = self.query("FILTER? " + str(input_channel))
+        output_string = self.query(f"FILTER? {str(input_channel)}")
         separated_response = output_string.split(",")
         return {"state": bool(int(separated_response[0])),
                 "settle_time": int(separated_response[1]),
@@ -976,7 +975,7 @@ class Model372(TemperatureController):
                 * 1 - 30
 
         """
-        self.command("IEEE 0,0," + str(address))
+        self.command(f"IEEE 0,0,{str(address)}")
 
     def get_ieee_interface_parameter(self):
         """Returns the IEEE address of the instrument.
@@ -1002,7 +1001,7 @@ class Model372(TemperatureController):
                         * Most recent power calculation for the input being queried
 
         """
-        return float(self.query("RDGPWR? " + str(input_channel)))
+        return float(self.query(f"RDGPWR? {str(input_channel)}"))
 
     def get_heater_output_settings(self, output_channel):
         """Returns the mode and settings of the given output channel.
@@ -1020,7 +1019,7 @@ class Model372(TemperatureController):
                             current output settings of the queried heater.
 
         """
-        output_mode = self.query("OUTMODE? " + str(output_channel))
+        output_mode = self.query(f"OUTMODE? {str(output_channel)}")
         separated_response = output_mode.split(",")
         # Handle special case of control input not being an int
         if separated_response[1] == "A":
@@ -1061,13 +1060,13 @@ class Model372(TemperatureController):
         else:
             input_channel = settings.input_channel
 
-        command_string = "OUTMODE " + str(output_channel) + "," + \
-                         str(format(settings.output_mode)) + "," + \
-                         str(input_channel) + "," + \
-                         str(int(settings.powerup_enable)) + "," + \
-                         str(polarity) + "," + \
-                         str(int(settings.reading_filter)) + "," + \
-                         str(settings.delay)
+        command_string = (f"OUTMODE {str(output_channel)}," +
+                         f"{str(format(settings.output_mode))}," +
+                         f"{str(input_channel)}," +
+                         f"{str(int(settings.powerup_enable))}," +
+                         f"{str(polarity)}," +
+                         f"{str(int(settings.reading_filter))}," +
+                         f"{str(settings.delay)}")
 
         self.command(command_string)
 
@@ -1080,7 +1079,7 @@ class Model372(TemperatureController):
                     * False (for disable) or True (for enable)
 
         """
-        self.command("CMR " + str(int(state)))
+        self.command(f"CMR {str(int(state))}")
 
     def get_common_mode_reduction(self):
         """Returns whether or not CMR is set for measurement channels
@@ -1105,7 +1104,7 @@ class Model372(TemperatureController):
                         * False (disable) or True (enable)
 
         """
-        self.command("SCAN " + str(input_channel) + "," + str(int(status)))
+        self.command(f"SCAN {str(input_channel)},{str(int(status))}")
 
     def get_scanner_status(self):
         """Returns which channel the scanner is on and whether the auto scan feature is enabled
@@ -1131,7 +1130,7 @@ class Model372(TemperatureController):
                     * False (for disable) or True (for enable)
 
         """
-        self.command("BEEP " + str(int(status)))
+        self.command(f"BEEP {str(int(status))}")
 
     def get_alarm_beep_status(self):
         """Returns whether beep for alarms is enabled or disabled.
@@ -1157,7 +1156,7 @@ class Model372(TemperatureController):
         settings = self.get_heater_output_settings(2)
         settings.output_mode = Model372OutputMode.STILL
         self.configure_heater(2, settings)
-        self.command("STILL " + str(power))
+        self.command(f"STILL {str(power)}")
 
     def get_still_output(self):
         """Returns the percent of full power being outputted by still heater in still mode.
@@ -1186,7 +1185,7 @@ class Model372(TemperatureController):
         settings = self.get_heater_output_settings(1)
         settings.output_mode = Model372OutputMode.WARMUP
         self.configure_heater(1, settings)
-        self.command("WARMUP " + str(int(auto_control)) + "," + str(current))
+        self.command(f"WARMUP {str(int(auto_control))},{str(current)}")
 
     def get_warmup_output(self):
         """Returns the control setting and percent current outputted in the warmup heater in warmup mode.
@@ -1225,7 +1224,7 @@ class Model372(TemperatureController):
         settings.units = Model372InputSensorUnits.KELVIN
         self.configure_input(control_input, settings)
         # Set setpoint now that units are configured properly
-        self.command("SETP " + str(output_channel) + "," + str(setpoint))
+        self.command(f"SETP {str(output_channel)},{str(setpoint)}")
 
     def set_setpoint_ohms(self, output_channel, setpoint):
         """Sets the control setpoint in Ohms. Changes input parameters so preferred units are Ohms.
@@ -1249,7 +1248,7 @@ class Model372(TemperatureController):
         settings.units = Model372InputSensorUnits.OHMS
         self.configure_input(control_input, settings)
         # Set setpoint
-        self.command("SETP " + str(output_channel) + "," + str(setpoint))
+        self.command(f"SETP {str(output_channel)},{str(setpoint)}")
 
     def get_setpoint_kelvin(self, output_channel):
         """Returns the setpoint for the given output channel in kelvin. Changes the control input's preferred
@@ -1271,7 +1270,7 @@ class Model372(TemperatureController):
         settings = self.get_input_setup_parameters(control_input)
         settings.units = Model372InputSensorUnits.KELVIN
         self.configure_input(control_input, settings)
-        return float(self.query("SETP? " + str(output_channel)))
+        return float(self.query(f"SETP? {str(output_channel)}"))
 
     def get_setpoint_ohms(self, output_channel):
         """Returns the setpoint for the given output channel in kelvin. Changes the control input's preferred
@@ -1293,7 +1292,7 @@ class Model372(TemperatureController):
         settings = self.get_input_setup_parameters(control_input)
         settings.units = Model372InputSensorUnits.OHMS
         self.configure_input(control_input, settings)
-        return float(self.query("SETP? " + str(output_channel)))
+        return float(self.query(f"SETP? {str(output_channel)}"))
 
     def get_excitation_frequency(self, input_channel):
         """Returns the excitation frequency in Hz for either the measurement or control inputs.
@@ -1309,7 +1308,7 @@ class Model372(TemperatureController):
                     * The excitation frequency in Hz, returned as an object of Model372InputFrequency Enum type
 
         """
-        key = int(self.query("FREQ? " + str(input_channel)))
+        key = int(self.query(f"FREQ? {str(input_channel)}"))
         return Model372InputFrequency(key)
 
     def set_excitation_frequency(self, input_channel, frequency):
@@ -1325,7 +1324,7 @@ class Model372(TemperatureController):
                     * The excitation frequency in Hz (if float), represented as an object of type Model372InputFrequency
 
         """
-        self.command("FREQ {},{}".format(input_channel, frequency))
+        self.command(f"FREQ {input_channel},{frequency}")
 
     def set_digital_output(self, bit_weight):
         """Sets the status of the 5 digital output lines to high or low.
@@ -1336,7 +1335,7 @@ class Model372(TemperatureController):
 
         """
         bit_weight_integer = bit_weight.to_integer()
-        self.command("DOUT " + str(bit_weight_integer))
+        self.command(f"DOUT {str(bit_weight_integer)}")
 
     def get_digital_output(self):
         """Returns which digital output bits are set or reset by representing them in a binary
@@ -1358,7 +1357,7 @@ class Model372(TemperatureController):
                     * selects the interface based on the values as defined in the Model372Interface enum class
 
         """
-        self.command("INTSEL {}".format(interface))
+        self.command(f"INTSEL {interface}")
 
     def get_interface(self):
         """Returns the interface connected to the instrument.
@@ -1401,12 +1400,12 @@ class Model372(TemperatureController):
                 audible = int(alarm_settings.audible)
 
             # extra 0 added for unused data source parameter
-            self.command("ALARM {},{},0,{},{},{},{},{},{}".format(input_channel, int(alarm_enable),
-                                                                  alarm_settings.high_value, alarm_settings.low_value,
-                                                                  alarm_settings.deadband, int(alarm_settings.latch_enable),
-                                                                  visible, audible))
+            command_string = (f"ALARM {input_channel},{int(alarm_enable)},0,{alarm_settings.high_value}," +
+                                f"{alarm_settings.low_value},{alarm_settings.deadband}," +
+                                f"{int(alarm_settings.latch_enable)},{visible},{audible}")
+            self.command(command_string)
         else:
-            self.command("ALARM {},0,0,0,0,0,0,0".format(input_channel))
+            self.command(f"ALARM {input_channel},0,0,0,0,0,0,0")
 
     def get_alarm_parameters(self, input_channel):
         """Returns the parameters for the alarm set for the input at the specified channel.
@@ -1422,7 +1421,7 @@ class Model372(TemperatureController):
                     {alarm_enable: bool, alarm_settings: Model372AlarmParameters
 
         """
-        settings_string = self.query("ALARM? " + str(input_channel))
+        settings_string = self.query(f"ALARM? {str(input_channel)}")
         separated_settings = settings_string.split(",")
         alarm_settings = Model372AlarmParameters(int(separated_settings[2]),
                                                  int(separated_settings[3]), int(separated_settings[4]),
@@ -1443,7 +1442,7 @@ class Model372(TemperatureController):
                         * 1 or 2
 
         """
-        self.command("RELAY {},3,0,0".format(relay_number))
+        self.command(f"RELAY {relay_number},3,0,0")
 
     def set_relay_for_warmup_heater_control_zone(self, relay_number):
         """Configures a relay to follow the warm up heater output as part of a control zone. Settings can be
@@ -1456,7 +1455,7 @@ class Model372(TemperatureController):
                             * 1 or 2
 
             """
-        self.command("RELAY {},4,0,0".format(relay_number))
+        self.command(f"RELAY {relay_number},4,0,0")
 
     def get_ieee_interface_mode(self):
         """Returns the IEEE interface mode of the instrument.
@@ -1478,7 +1477,7 @@ class Model372(TemperatureController):
 
         """
         value = format(mode)
-        self.command("MODE " + str(value))
+        self.command(f"MODE {str(value)}")
 
     def set_monitor_output_source(self, source):
         """Sets the source of the monitor output. Also affects the reference output.
@@ -1489,7 +1488,7 @@ class Model372(TemperatureController):
 
         """
         value = format(source)
-        self.command("MONITOR " + str(value))
+        self.command(f"MONITOR {str(value)}")
 
     def get_monitor_output_source(self):
         """Returns the source for the monitor output.
@@ -1552,7 +1551,7 @@ class Model372(TemperatureController):
                     * Defines which units the output is displayed in (Current (A) or Power (W))
 
         """
-        command_string = "HTRSET 1,{},0,{},{}".format(resistance, max_current, units)
+        command_string = f"HTRSET 1,{resistance},0,{max_current},{units}"
         self.command(command_string)
 
     def setup_sample_heater(self, resistance, units):
@@ -1567,7 +1566,7 @@ class Model372(TemperatureController):
                     * Defines which units the output is displayed in (Current (A) or Power (W))
 
         """
-        command_string = "HTRSET 0,{},0,0,{}".format(resistance, units)
+        command_string = f"HTRSET 0,{resistance},0,0,{units}"
         self.command(command_string)
 
     def configure_analog_monitor_output_heater(self, source, high_value, low_value, settings=None):
@@ -1595,8 +1594,7 @@ class Model372(TemperatureController):
             input_channel = settings.input_channel.value
         else:
             input_channel = settings.input_channel
-        command_string = "ANALOG 2,{},1,{},{},{},{},0".format(settings.polarity, input_channel, source,
-                                                              high_value, low_value)
+        command_string = f"ANALOG 2,{settings.polarity},1,{input_channel},{source},{high_value},{low_value},0"
         self.command(command_string)
 
     def get_analog_monitor_output_settings(self):
@@ -1635,8 +1633,7 @@ class Model372(TemperatureController):
             input_channel = settings.input_channel.value
         else:
             input_channel = settings.input_channel
-        command_string = "ANALOG {},{},{},{},0,0,0,{}".format(output_channel, settings.output_mode, settings.polarity,
-                                                              input_channel, manual_value)
+        command_string = f"ANALOG {output_channel},{settings.output_mode},{settings.polarity},{input_channel},0,0,0,{manual_value}"
         self.command(command_string)
 
     def get_analog_manual_value(self, output_channel):
@@ -1653,7 +1650,7 @@ class Model372(TemperatureController):
                 (float):
                     The manual analog value for the heater.
         """
-        settings_string = self.query("ANALOG? " + str(output_channel))
+        settings_string = self.query(f"ANALOG? {str(output_channel)}")
         separated_settings = settings_string.split(",")
         return float(separated_settings[6])
 
@@ -1672,7 +1669,7 @@ class Model372(TemperatureController):
                         string literal passed into the method.
 
         """
-        self.command("WEBLOG \"" + username + "\",\"" + password + "\"")
+        self.command(f"WEBLOG \"{username}\",\"{password}\"")
 
     def get_website_login(self):
         """Returns the set username and password for web login for the instrument.
@@ -1714,7 +1711,7 @@ class Model372(TemperatureController):
                     * An object of the Model372ControlLoopZoneSettings class containing information of the
                         settings in the values of its variables.
         """
-        settings_string = self.query("ZONE? " + str(output_channel) + "," + str(zone))
+        settings_string = self.query(f"ZONE? {str(output_channel)},{str(zone)}")
         separated_settings = settings_string.split(",")
         # Use if statement to use correct dictionary to convert range to bool or float
         if output_channel == 0:
@@ -1752,10 +1749,10 @@ class Model372(TemperatureController):
             heater_range = format(settings.heater_range)
         else:
             heater_range = int(settings.heater_range)
-        command_string = "ZONE " + str(output_channel) + "," + str(zone) + "," + str(settings.upper_bound) + "," + \
-                         str(settings.p_value) + "," + str(settings.i_value) + "," + str(settings.d_value) + "," + \
-                         str(settings.manual_output) + "," + str(heater_range) + "," + str(settings.ramp_rate) + \
-                         "," + str(int(settings.relay_1)) + "," + str(int(settings.relay_2))
+        command_string = (f"ZONE {str(output_channel)},{str(zone)},{str(settings.upper_bound)}," +
+                         f"{str(settings.p_value)},{str(settings.i_value)},{str(settings.d_value)}," +
+                         f"{str(settings.manual_output)},{str(heater_range)},{str(settings.ramp_rate)}," +
+                         f"{str(int(settings.relay_1))},{str(int(settings.relay_2))}")
         self.command(command_string)
 
     def get_reading_status(self, input_channel):
@@ -1773,7 +1770,7 @@ class Model372(TemperatureController):
                         if the flag is raised or not.
 
         """
-        integer_representation = int(self.query("RDGST? " + str(input_channel)))
+        integer_representation = int(self.query(f"RDGST? {str(input_channel)}"))
         bit_states = Model372ReadingStatusRegister.from_integer(integer_representation)
         return bit_states
 

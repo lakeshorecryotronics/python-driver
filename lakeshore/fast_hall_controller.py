@@ -725,11 +725,11 @@ class FastHall(XIPInstrument):
             Args:
                 settings(ContactCheckOptimizedParameters):
         """
-        command_string = "CCHECK:START " + \
-                         str(settings.max_current) + "," + \
-                         str(settings.max_voltage) + "," + \
-                         str(settings.number_of_points) + "," + \
-                         str(settings.min_r_squared)
+        command_string = ("CCHECK:START " +
+                         f"{str(settings.max_current)}," +
+                         f"{str(settings.max_voltage)}," +
+                         f"{str(settings.number_of_points)}," +
+                         f"{str(settings.min_r_squared)}")
         self.command(command_string)
 
     def start_contact_check_vdp(self, settings):
@@ -738,16 +738,16 @@ class FastHall(XIPInstrument):
             Args:
                 settings(ContactCheckManualParameters):
                 """
-        command_string = "CCHECK:START:MANUAL " + \
-                         str(settings.excitation_type) + "," + \
-                         str(settings.excitation_start_value) + "," + \
-                         str(settings.excitation_end_value) + "," + \
-                         str(settings.excitation_range) + "," + \
-                         str(settings.measurement_range) + "," + \
-                         str(settings.compliance_limit) + "," + \
-                         str(settings.number_of_points) + "," + \
-                         str(settings.min_r_squared) + "," + \
-                         str(settings.blanking_time)
+        command_string = ("CCHECK:START:MANUAL " +
+                         f"{str(settings.excitation_type)}," +
+                         f"{str(settings.excitation_start_value)}," +
+                         f"{str(settings.excitation_end_value)}," +
+                         f"{str(settings.excitation_range)}," +
+                         f"{str(settings.measurement_range)}," +
+                         f"{str(settings.compliance_limit)}," +
+                         f"{str(settings.number_of_points)}," +
+                         f"{str(settings.min_r_squared)}," +
+                         f"{str(settings.blanking_time)}")
         self.command(command_string)
 
     def start_contact_check_hbar(self, settings):
@@ -756,16 +756,16 @@ class FastHall(XIPInstrument):
             Args:
                 settings(ContactCheckManualParameters):
                 """
-        command_string = "CCHECK:HBAR:START " + \
-                         str(settings.excitation_type) + "," + \
-                         str(settings.excitation_start_value) + "," + \
-                         str(settings.excitation_end_value) + "," + \
-                         str(settings.excitation_range) + "," + \
-                         str(settings.measurement_range) + "," + \
-                         str(settings.compliance_limit) + "," + \
-                         str(settings.number_of_points) + "," + \
-                         str(settings.min_r_squared) + "," + \
-                         str(settings.blanking_time)
+        command_string = ("CCHECK:HBAR:START " +
+                         f"{str(settings.excitation_type)}," +
+                         f"{str(settings.excitation_start_value)}," +
+                         f"{str(settings.excitation_end_value)}," +
+                         f"{str(settings.excitation_range)}," +
+                         f"{str(settings.measurement_range)}," +
+                         f"{str(settings.compliance_limit)}," +
+                         f"{str(settings.number_of_points)}," +
+                         f"{str(settings.min_r_squared)}," +
+                         f"{str(settings.blanking_time)}")
         self.command(command_string)
 
     def start_fasthall_vdp(self, settings):
@@ -774,20 +774,20 @@ class FastHall(XIPInstrument):
             Args:
                 settings (FastHallManualParameters):
             """
-        command_string = "FASTHALL:START " + \
-                         str(settings.excitation_type) + "," + \
-                         str(settings.excitation_value) + "," + \
-                         str(settings.excitation_range) + "," + \
-                         str(settings.excitation_measurement_range) + "," + \
-                         str(settings.measurement_range) + "," + \
-                         str(settings.compliance_limit) + "," + \
-                         str(settings.user_defined_field) + "," + \
-                         str(settings.max_samples) + "," + \
-                         str(settings.resistivity) + "," + \
-                         str(settings.blanking_time) + "," + \
-                         str(settings.averaging_samples) + "," + \
-                         str(settings.sample_thickness) + "," + \
-                         str(settings.min_hall_voltage_snr)
+        command_string = ("FASTHALL:START " +
+                         f"{str(settings.excitation_type)}," +
+                         f"{str(settings.excitation_value)}," +
+                         f"{str(settings.excitation_range)}," +
+                         f"{str(settings.excitation_measurement_range)}," +
+                         f"{str(settings.measurement_range)}," +
+                         f"{str(settings.compliance_limit)}," +
+                         f"{str(settings.user_defined_field)}," +
+                         f"{str(settings.max_samples)}," +
+                         f"{str(settings.resistivity)}," +
+                         f"{str(settings.blanking_time)}," +
+                         f"{str(settings.averaging_samples)}," +
+                         f"{str(settings.sample_thickness)}," +
+                         f"{str(settings.min_hall_voltage_snr)}")
         self.command(command_string)
 
     def start_fasthall_link_vdp(self, settings):
@@ -798,13 +798,13 @@ class FastHall(XIPInstrument):
             Args:
                 settings (FastHallLinkParameters)
         """
-        command_string = "FASTHALL:START:LINK " + \
-                         str(settings.user_defined_field) + "," + \
-                         str(settings.measurement_range) + "," + \
-                         str(settings.max_samples) + "," + \
-                         str(settings.min_hall_voltage_snr) + "," + \
-                         str(settings.averaging_samples) + "," + \
-                         str(settings.sample_thickness)
+        command_string = ("FASTHALL:START:LINK " +
+                         f"{str(settings.user_defined_field)}," +
+                         f"{str(settings.measurement_range)}," +
+                         f"{str(settings.max_samples)}," +
+                         f"{str(settings.min_hall_voltage_snr)}," +
+                         f"{str(settings.averaging_samples)}," +
+                         f"{str(settings.sample_thickness)}")
         self.command(command_string)
 
     def start_four_wire(self, settings):
@@ -814,21 +814,21 @@ class FastHall(XIPInstrument):
             Args:
                 settings(FourWireParameters)
         """
-        command_string = "FWIRE:START " + \
-                         str(settings.contact_point1) + "," + \
-                         str(settings.contact_point2) + "," + \
-                         str(settings.contact_point3) + "," + \
-                         str(settings.contact_point4) + "," + \
-                         str(settings.excitation_type) + "," + \
-                         str(settings.excitation_value) + "," + \
-                         str(settings.excitation_range) + "," + \
-                         str(settings.measurement_range) + "," + \
-                         str(settings.excitation_measurement_range) + "," + \
-                         str(settings.compliance_limit) + "," + \
-                         str(settings.blanking_time) + "," + \
-                         str(settings.max_samples) + "," + \
-                         str(settings.min_snr) + "," + \
-                         str(settings.excitation_reversal)
+        command_string = ("FWIRE:START " +
+                         f"{str(settings.contact_point1)}," +
+                         f"{str(settings.contact_point2)}," +
+                         f"{str(settings.contact_point3)}," +
+                         f"{str(settings.contact_point4)}," +
+                         f"{str(settings.excitation_type)}," +
+                         f"{str(settings.excitation_value)}," +
+                         f"{str(settings.excitation_range)}," +
+                         f"{str(settings.measurement_range)}," +
+                         f"{str(settings.excitation_measurement_range)}," +
+                         f"{str(settings.compliance_limit)}," +
+                         f"{str(settings.blanking_time)}," +
+                         f"{str(settings.max_samples)}," +
+                         f"{str(settings.min_snr)}," +
+                         f"{str(settings.excitation_reversal)}")
         self.command(command_string)
 
     def start_dc_hall_vdp(self, settings):
@@ -839,19 +839,19 @@ class FastHall(XIPInstrument):
                 settings(DCHallParameters)
 
         """
-        command_string = "HALL:DC:START " + \
-                         str(settings.excitation_type) + "," + \
-                         str(settings.excitation_value) + "," + \
-                         str(settings.excitation_range) + "," + \
-                         str(settings.excitation_measurement_range) + "," + \
-                         str(settings.measurement_range) + "," + \
-                         str(settings.compliance_limit) + "," + \
-                         str(settings.averaging_samples) + "," + \
-                         str(settings.user_defined_field) + "," + \
-                         str(settings.with_field_reversal) + "," + \
-                         str(settings.resistivity) + "," + \
-                         str(settings.blanking_time) + "," + \
-                         str(settings.sample_thickness)
+        command_string = ("HALL:DC:START " +
+                         f"{str(settings.excitation_type)}," +
+                         f"{str(settings.excitation_value)}," +
+                         f"{str(settings.excitation_range)}," +
+                         f"{str(settings.excitation_measurement_range)}," +
+                         f"{str(settings.measurement_range)}," +
+                         f"{str(settings.compliance_limit)}," +
+                         f"{str(settings.averaging_samples)}," +
+                         f"{str(settings.user_defined_field)}," +
+                         f"{str(settings.with_field_reversal)}," +
+                         f"{str(settings.resistivity)}," +
+                         f"{str(settings.blanking_time)}," +
+                         f"{str(settings.sample_thickness)}")
         self.command(command_string)
 
     def start_dc_hall_hbar(self, settings):
@@ -860,19 +860,19 @@ class FastHall(XIPInstrument):
             Args:
                 settings(DCHallParameters)
         """
-        command_string = "HALL:HBAR:DC:START " + \
-                         str(settings.excitation_type) + "," + \
-                         str(settings.excitation_value) + "," + \
-                         str(settings.excitation_range) + "," + \
-                         str(settings.excitation_measurement_range) + "," + \
-                         str(settings.measurement_range) + "," + \
-                         str(settings.compliance_limit) + "," + \
-                         str(settings.averaging_samples) + "," + \
-                         str(settings.user_defined_field) + "," + \
-                         str(settings.with_field_reversal) + "," + \
-                         str(settings.resistivity) + "," + \
-                         str(settings.blanking_time) + "," + \
-                         str(settings.sample_thickness)
+        command_string = ("HALL:HBAR:DC:START " +
+                         f"{str(settings.excitation_type)}," +
+                         f"{str(settings.excitation_value)}," +
+                         f"{str(settings.excitation_range)}," +
+                         f"{str(settings.excitation_measurement_range)}," +
+                         f"{str(settings.measurement_range)}," +
+                         f"{str(settings.compliance_limit)}," + \
+                         f"{str(settings.averaging_samples)}," +
+                         f"{str(settings.user_defined_field)}," +
+                         f"{str(settings.with_field_reversal)}," +
+                         f"{str(settings.resistivity)}," +
+                         f"{str(settings.blanking_time)}," +
+                         f"{str(settings.sample_thickness)}")
         self.command(command_string)
 
     def start_resistivity_vdp(self, settings):
@@ -881,17 +881,17 @@ class FastHall(XIPInstrument):
             Args:
                 settings(ResistivityManualParameters)
         """
-        command_string = "RESISTIVITY:START " + \
-                         str(settings.excitation_type) + "," + \
-                         str(settings.excitation_value) + "," + \
-                         str(settings.excitation_range) + "," + \
-                         str(settings.excitation_measurement_range) + "," + \
-                         str(settings.measurement_range) + "," + \
-                         str(settings.compliance_limit) + "," + \
-                         str(settings.max_samples) + "," + \
-                         str(settings.blanking_time) + "," + \
-                         str(settings.sample_thickness) + "," + \
-                         str(settings.min_snr)
+        command_string = ("RESISTIVITY:START " +
+                         f"{str(settings.excitation_type)}," +
+                         f"{str(settings.excitation_value)}," +
+                         f"{str(settings.excitation_range)}," +
+                         f"{str(settings.excitation_measurement_range)}," +
+                         f"{str(settings.measurement_range)}," +
+                         f"{str(settings.compliance_limit)}," +
+                         f"{str(settings.max_samples)}," +
+                         f"{str(settings.blanking_time)}," +
+                         f"{str(settings.sample_thickness)}," +
+                         f"{str(settings.min_snr)}")
         self.command(command_string)
 
     def start_resistivity_link_vdp(self, settings):
@@ -902,11 +902,11 @@ class FastHall(XIPInstrument):
             Args:
                 settings(ResistivityLinkParameters)
         """
-        command_string = "RESISTIVITY:START:LINK " + \
-                         str(settings.measurement_range) + "," + \
-                         str(settings.sample_thickness) + "," + \
-                         str(settings.min_snr) + "," + \
-                         str(settings.max_samples)
+        command_string = ("RESISTIVITY:START:LINK " +
+                         f"{str(settings.measurement_range)}," +
+                         f"{str(settings.sample_thickness)}," +
+                         f"{str(settings.min_snr)}," +
+                         f"{str(settings.max_samples)}")
         self.command(command_string)
 
     def start_resistivity_hbar(self, settings):
@@ -916,19 +916,19 @@ class FastHall(XIPInstrument):
                 settings(ResistivityManualParameters)
 
         """
-        command_string = "RESISTIVITY:HBAR:START " + \
-                         str(settings.excitation_type) + "," + \
-                         str(settings.excitation_value) + "," + \
-                         str(settings.excitation_range) + "," + \
-                         str(settings.excitation_measurement_range) + "," + \
-                         str(settings.measurement_range) + "," + \
-                         str(settings.compliance_limit) + "," + \
-                         str(settings.width) + "," + \
-                         str(settings.separation) + "," + \
-                         str(settings.max_samples) + "," + \
-                         str(settings.blanking_time) + "," + \
-                         str(settings.sample_thickness) + "," + \
-                         str(settings.min_snr)
+        command_string = ("RESISTIVITY:HBAR:START " +
+                         f"{str(settings.excitation_type)}," +
+                         f"{str(settings.excitation_value)}," +
+                         f"{str(settings.excitation_range)}," +
+                         f"{str(settings.excitation_measurement_range)}," +
+                         f"{str(settings.measurement_range)}," +
+                         f"{str(settings.compliance_limit)}," +
+                         f"{str(settings.width)}," +
+                         f"{str(settings.separation)}," +
+                         f"{str(settings.max_samples)}," +
+                         f"{str(settings.blanking_time)}," +
+                         f"{str(settings.sample_thickness)}," +
+                         f"{str(settings.min_snr)}")
         self.command(command_string)
 
     def get_contact_check_setup_results(self):

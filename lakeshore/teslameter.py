@@ -305,7 +305,7 @@ class Teslameter(XIPInstrument):
                 baseline_field (float):
                     A field units value that will act as the zero field for the relative measurement.
         """
-        self.command("SENS:RELATIVE:BASELINE " + str(baseline_field))
+        self.command(f"SENS:RELATIVE:BASELINE {str(baseline_field)}")
 
     def configure_field_measurement_setup(self, mode="DC", autorange=True, expected_field=None, averaging_samples=20):
         """Configures the field measurement settings.
@@ -328,11 +328,11 @@ class Teslameter(XIPInstrument):
                     The number of field samples to average. Each sample is 10 milliseconds of field information.
 
         """
-        self.command("SENS:MODE " + mode)
-        self.command("SENS:RANGE:AUTO " + str(int(autorange)))
+        self.command(f"SENS:MODE {mode}")
+        self.command(f"SENS:RANGE:AUTO {str(int(autorange))}")
         if expected_field is not None:
-            self.command("SENS:RANGE " + str(expected_field))
-        self.command("SENS:AVERAGE:COUNT " + str(averaging_samples))
+            self.command(f"SENS:RANGE {str(expected_field)}")
+        self.command(f"SENS:AVERAGE:COUNT {str(averaging_samples)}")
 
     def get_field_measurement_setup(self):
         """Returns the mode, autoranging state, range, and number of averaging samples as a dictionary."""
@@ -357,9 +357,9 @@ class Teslameter(XIPInstrument):
                     Sets the temperature provided by the user for MTEMP (manual temperature) source in Celsius.
 
         """
-        self.command("SENS:TCOM:TSOURCE " + temperature_source)
+        self.command(f"SENS:TCOM:TSOURCE {temperature_source}")
         if manual_temperature is not None:
-            self.command("SENS:TCOM:MTEM " + str(manual_temperature))
+            self.command(f"SENS:TCOM:MTEM {str(manual_temperature)}")
 
     def get_temperature_compensation_source(self):
         """Returns the source of temperature measurement for field compensation."""
@@ -379,7 +379,7 @@ class Teslameter(XIPInstrument):
                     * "GAUSS"
 
         """
-        self.command("UNIT:FIELD " + units)
+        self.command(f"UNIT:FIELD {units}")
 
     def get_field_units(self):
         """Returns the magnetic field units of the instrument."""
@@ -397,8 +397,8 @@ class Teslameter(XIPInstrument):
                     The maximum rate of change of the field control output voltage in volts per second.
 
         """
-        self.command("SOURCE:FIELD:VLIMIT " + str(voltage_limit))
-        self.command("SOURCE:FIELD:SLEW " + str(slew_rate_limit))
+        self.command(f"SOURCE:FIELD:VLIMIT {str(voltage_limit)}")
+        self.command(f"SOURCE:FIELD:SLEW {str(slew_rate_limit)}")
 
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_limits(self):
@@ -423,8 +423,8 @@ class Teslameter(XIPInstrument):
 
         """
 
-        self.command("SOURCE:FIELD:MODE " + mode)
-        self.command("SOURCE:FIELD:STATE " + str(int(output_enabled)))
+        self.command(f"SOURCE:FIELD:MODE {mode}")
+        self.command(f"SOURCE:FIELD:STATE {str(int(output_enabled))}")
 
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_output_mode(self):
@@ -454,11 +454,11 @@ class Teslameter(XIPInstrument):
 
         """
         if gain is not None:
-            self.command("SOURCE:FIELD:CLL:GAIN " + str(gain))
+            self.command(f"SOURCE:FIELD:CLL:GAIN {str(gain)}")
         if integral is not None:
-            self.command("SOURCE:FIELD:CLL:INTEGRAL " + str(integral))
+            self.command(f"SOURCE:FIELD:CLL:INTEGRAL {str(integral)}")
         if ramp_rate is not None:
-            self.command("SOURCE:FIELD:CLL:RAMP " + str(ramp_rate))
+            self.command(f"SOURCE:FIELD:CLL:RAMP {str(ramp_rate)}")
 
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_pid(self):
@@ -472,7 +472,7 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version("1.1.2018091003")
     def set_field_control_setpoint(self, setpoint):
         """Sets the field control setpoint value in field units."""
-        self.command("SOURCE:FIELD:CLL:SETPOINT " + str(setpoint))
+        self.command(f"SOURCE:FIELD:CLL:SETPOINT {str(setpoint)}")
 
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_setpoint(self):
@@ -482,7 +482,7 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version("1.1.2018091003")
     def set_field_control_open_loop_voltage(self, output_voltage):
         """Sets the field control open loop voltage."""
-        self.command("SOURCE:FIELD:OPL:VOLTAGE " + str(output_voltage))
+        self.command(f"SOURCE:FIELD:OPL:VOLTAGE {str(output_voltage)}")
 
     @requires_firmware_version("1.1.2018091003")
     def get_field_control_open_loop_voltage(self):
@@ -496,7 +496,7 @@ class Teslameter(XIPInstrument):
             "set_analog_output will be depreciated in a future version, use set_analog_output_signal instead",
             PendingDeprecationWarning
         )
-        self.command("SOURCE:AOUT " + analog_output_mode)
+        self.command(f"SOURCE:AOUT {analog_output_mode}")
 
     @requires_firmware_version("1.6.2019092002")
     def set_analog_output_signal(self, analog_output_mode):
@@ -515,7 +515,7 @@ class Teslameter(XIPInstrument):
                     * "MCOR" (Corrected magnitude field measurement)
 
         """
-        self.command("SOURCE:AOUT " + analog_output_mode)
+        self.command(f"SOURCE:AOUT {analog_output_mode}")
 
     @requires_firmware_version("1.6.2019092002")
     def configure_corrected_analog_output_scaling(self, scale_factor, baseline):
@@ -529,7 +529,7 @@ class Teslameter(XIPInstrument):
                     The field value at which the analog output voltage is zero.
 
         """
-        self.command("SOURCE:AOUT:SFACTOR " + str(scale_factor), "SOURCE:AOUT:BASELINE " + str(baseline))
+        self.command(f"SOURCE:AOUT:SFACTOR {str(scale_factor)}", f"SOURCE:AOUT:BASELINE {str(baseline)}")
 
     @requires_firmware_version("1.6.2019092002")
     def get_corrected_analog_output_scaling(self):
@@ -568,7 +568,7 @@ class Teslameter(XIPInstrument):
                     * "HPASS" (high pass filter)
                     * "BPASS" (band pass filter)
         """
-        self.command("SENSE:FILT:TYPE " + str(filter_type))
+        self.command(f"SENSE:FILT:TYPE {str(filter_type)}")
 
     @requires_firmware_version("1.6.2019092002")
     def get_frequency_filter_type(self):
@@ -587,7 +587,7 @@ class Teslameter(XIPInstrument):
             Args:
                 cutoff_frequency (float)
         """
-        self.command("SENSE:FILTER:LPASS:CUTOFF " + str(cutoff_frequency))
+        self.command(f"SENSE:FILTER:LPASS:CUTOFF {str(cutoff_frequency)}")
 
     @requires_firmware_version("1.6.2019092002")
     def get_high_pass_filter_cutoff(self):
@@ -601,7 +601,7 @@ class Teslameter(XIPInstrument):
             Args:
                 cutoff_frequency (float)
         """
-        self.command("SENSE:FILTER:HPASS:CUTOFF " + str(cutoff_frequency))
+        self.command(f"SENSE:FILTER:HPASS:CUTOFF {str(cutoff_frequency)}")
 
     @requires_firmware_version("1.6.2019092002")
     def get_band_pass_filter_center(self):
@@ -616,7 +616,7 @@ class Teslameter(XIPInstrument):
                 center_frequency (float):
                     The frequency at which the gain of the filter is 1
         """
-        self.command("SENSE:FILTER:BPASS:CENTER " + str(center_frequency))
+        self.command(f"SENSE:FILTER:BPASS:CENTER {str(center_frequency)}")
 
     @requires_firmware_version("1.6.2019092002")
     def enable_qualifier(self):
@@ -656,7 +656,7 @@ class Teslameter(XIPInstrument):
                 latching (bool):
                     Determines whether the qualifier latches
         """
-        self.command("SENSE:QUALIFIER:LATCH " + str(latching))
+        self.command(f"SENSE:QUALIFIER:LATCH {str(latching)}")
 
     @requires_firmware_version("1.6.2019092002")
     def reset_qualifier_latch(self):
@@ -697,9 +697,9 @@ class Teslameter(XIPInstrument):
                     The upper field value threshold used by the qualifier. Not used for OVER or UNDER
         """
         if upper_field is None:
-            self.command("SENSE:QUALIFIER:THRESHOLD " + mode + ',' + str(lower_field))
+            self.command(f"SENSE:QUALIFIER:THRESHOLD {mode},{str(lower_field)}")
         else:
-            self.command("SENSE:QUALIFIER:THRESHOLD " + mode + ',' + str(lower_field) + ',' + str(upper_field))
+            self.command(f"SENSE:QUALIFIER:THRESHOLD {mode},{str(lower_field)},{str(upper_field)}")
 
 
 # Create an aliases using the product names

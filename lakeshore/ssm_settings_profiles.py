@@ -16,7 +16,7 @@ class SettingsProfiles:
             description (str): Optional description of the profile.
         """
 
-        self.device.command('PROFile:CREAte "{}", "{}"'.format(name, description))
+        self.device.command(f'PROFile:CREAte "{name}", "{description}"')
 
     def get_list(self):
         """Returns a list of the saved profile names."""
@@ -34,7 +34,7 @@ class SettingsProfiles:
             name (str): Name of the profile to get the description for.
         """
 
-        return self.device.query('PROFile:DESCription? "{}"'.format(name)).strip('"')
+        return self.device.query(f'PROFile:DESCription? "{name}"').strip('"')
 
     def set_description(self, name, description):
         """Sets a profile's description. Any existing description will be overwritten.
@@ -44,7 +44,7 @@ class SettingsProfiles:
             description (str): The new description of the profile.
         """
 
-        self.device.command('PROFile:DESCription "{}","{}"'.format(name, description))
+        self.device.command(f'PROFile:DESCription "{name}","{description}"')
 
     def get_json(self, name):
         """Returns a JSON object of a given profile.
@@ -53,7 +53,7 @@ class SettingsProfiles:
             name (str): Name of the profile.
         """
 
-        response = self.device.query('PROFile:JSON? "{}"'.format(name))
+        response = self.device.query(f'PROFile:JSON? "{name}"')
         json_string = response.strip('"').replace('""', '"')
         return json.loads(json_string)
 
@@ -65,7 +65,7 @@ class SettingsProfiles:
             new_name (str): The new name of the profile.
         """
 
-        self.device.command('PROFile:REName "{}","{}"'.format(name, new_name))
+        self.device.command(f'PROFile:REName "{name}","{new_name}"')
 
     def update(self, name):
         """Update a profile with the present instrument configuration.
@@ -74,7 +74,7 @@ class SettingsProfiles:
             name (str): The name of the profile to update.
         """
 
-        self.device.command('PROFile:UPDate "{}"'.format(name))
+        self.device.command(f'PROFile:UPDate "{name}"')
 
     def get_valid_for_restore(self, name):
         """Returns if a profile is valid to restore.
@@ -83,7 +83,7 @@ class SettingsProfiles:
             name (str): The name of the profile to validate.
         """
 
-        response = self.device.query('PROFile:RESTore:VALid? "{}"'.format(name))
+        response = self.device.query(f'PROFile:RESTore:VALid? "{name}"')
         return bool(response)
 
     def restore(self, name):
@@ -93,7 +93,7 @@ class SettingsProfiles:
             name (str): The name of the profile to restore.
         """
 
-        self.device.command('PROFile:RESTore "{}"'.format(name))
+        self.device.command(f'PROFile:RESTore "{name}"')
 
     def delete(self, name):
         """Delete a profile
@@ -102,7 +102,7 @@ class SettingsProfiles:
             name (str): The name of the profile to delete.
         """
 
-        self.device.command('PROFile:DELete "{}"'.format(name))
+        self.device.command(f'PROFile:DELete "{name}"')
 
     def delete_all(self):
         """Delete all profiles."""
