@@ -716,7 +716,7 @@ class SourceModule(BaseModule):
 
     def set_voltage_output_limit_high(self, limit):
         """Configures the high voltage output limit.
-        The voltage output limits are a software defined limits preventing the user from entering an output which could
+        The voltage output limits are software defined limits preventing the user from entering an output which could
         potentially damage the module's load.
         When the shape is not DC, the limit is applied to the sum of the offset and amplitude.
         The high voltage output limit is bounded between -10 V and 10 V, and must be greater than the low voltage output limit.
@@ -734,8 +734,8 @@ class SourceModule(BaseModule):
 
     def set_voltage_output_limit_low(self, limit):
         """Configures the low voltage output limit.
-        The voltage output limits are a software defined limits preventing the user from entering an output which could
-         potentially damage the module's load.
+        The voltage output limits are software defined limits preventing the user from entering an output which could
+        potentially damage the module's load.
         When the shape is not DC, the limit is applied to the sum of the offset and amplitude.
         The low voltage output limit is bounded between -10 V and 10 V, and must be less than the high voltage output limit.
 
@@ -752,8 +752,8 @@ class SourceModule(BaseModule):
 
     def set_current_output_limit_high(self, limit):
         """Configures the high current output limit.
-        The current output limits are a software defined limits preventing the user from entering an output which could
-         potentially damage the module's load.
+        The current output limits are software defined limits preventing the user from entering an output which could
+        potentially damage the module's load.
         When the shape is not DC, the limit is applied to the sum of the offset and amplitude.
         The high current output limit is bounded between -10 V and 10 V, and must be greater than the low current output limit.
 
@@ -770,8 +770,8 @@ class SourceModule(BaseModule):
 
     def set_current_output_limit_low(self, limit):
         """Configures the low current output limit.
-        The current output limits are a software defined limits preventing the user from entering an output which could
-         potentially damage the module's load.
+        The current output limits are software defined limits preventing the user from entering an output which could
+        potentially damage the module's load.
         When the shape is not DC, the limit is applied to the sum of the offset and amplitude.
         The low current output limit is bounded between -10 V and 10 V, and must be less than the high current output limit.
 

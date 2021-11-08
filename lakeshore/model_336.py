@@ -742,7 +742,7 @@ class Model336(TemperatureController):
                     * See Model336ControlLoopZoneSettings class
 
         """
-        command_string = (f"ZONE {output},{zone},{control_loop_zone.upper_bound},{control_loop_zone.proportional}, " +
+        command_string = (f"ZONE {output},{zone},{control_loop_zone.upper_bound},{control_loop_zone.proportional}," +
                             f"{control_loop_zone.integral},{control_loop_zone.derivative}," +
                             f"{control_loop_zone.manual_out_value},{control_loop_zone.heater_range}," +
                             f"{control_loop_zone.channel},{control_loop_zone.rate}")
