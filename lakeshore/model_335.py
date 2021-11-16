@@ -374,7 +374,7 @@ class Model335(TemperatureController):
                     * Specifies output voltage is unipolar or bipolar
 
         """
-        self.command("ANALOG 2,{},{},{},{},{}".format(channel, units, high_value, low_value, polarity))
+        self.command(f"ANALOG 2,{channel},{units},{high_value},{low_value},{polarity}")
 
     def get_monitor_output_heater(self):
         """Used to obtain all monitor out parameters for output 2.
@@ -406,7 +406,7 @@ class Model335(TemperatureController):
                     * "A" or "B"
 
         """
-        return float(self.query("CRDG? {}".format(channel)))
+        return float(self.query(f"CRDG? {channel}"))
 
     def set_display_setup(self, mode):
         """Sets the display mode
@@ -417,7 +417,7 @@ class Model335(TemperatureController):
                     * See Model335DisplaySetup IntEnum class
 
         """
-        self.command("DISPLAY {}".format(mode))
+        self.command(f"DISPLAY {mode}")
 
     def get_display_setup(self):
         """Returns the display mode
@@ -445,7 +445,7 @@ class Model335(TemperatureController):
                     * See Model335HeaterOutType IntEnum class
 
         """
-        self.command("HTRSET 1,0,{},0,{},{}".format(heater_resistance, max_current, output_display_mode))
+        self.command(f"HTRSET 1,0,{heater_resistance},0,{max_current},{output_display_mode}")
 
     def set_heater_setup_two(self, output_type, heater_resistance, max_current, display_mode):
         """Method to configure the heater output 2.
@@ -467,7 +467,7 @@ class Model335(TemperatureController):
                     * See Model335HeaterOutType IntEnum class
 
         """
-        self.command("HTRSET 2,{},{},0,{},{}".format(output_type, heater_resistance, max_current, display_mode))
+        self.command(f"HTRSET 2,{output_type},{heater_resistance},0,{max_current},{display_mode}")
 
     def get_heater_setup(self, heater_output):
         """Returns the heater configuration status.
@@ -486,7 +486,7 @@ class Model335(TemperatureController):
                         * "output_display_mode": Model335HeaterOutputDisplay
 
         """
-        heater_setup = self.query("HTRSET? {}".format(heater_output)).split(",")
+        heater_setup = self.query(f"HTRSET? {heater_output}").split(",")
         if int(heater_setup[2]) == 0:
             max_current = float(heater_setup[3])
         else:
@@ -517,12 +517,9 @@ class Model335(TemperatureController):
         else:
             input_range = sensor_parameters.input_range
 
-        command_string = "INTYPE {},{},{},{},{},{}".format(channel,
-                                                           sensor_parameters.sensor_type,
-                                                           int(sensor_parameters.autorange_enable),
-                                                           input_range,
-                                                           int(sensor_parameters.compensation),
-                                                           sensor_parameters.units)
+        command_string = (f"INTYPE {channel},{sensor_parameters.sensor_type},{int(sensor_parameters.autorange_enable)}," +
+                            f"{input_range},{int(sensor_parameters.compensation)},{sensor_parameters.units}")
+
         self.command(command_string)
 
     def get_input_sensor(self, channel):
@@ -538,7 +535,7 @@ class Model335(TemperatureController):
                     * See Model335InputSensor IntEnum class
 
         """
-        sensor_configuration = self.query("INTYPE? {}".format(channel)).split(",")
+        sensor_configuration = self.query(f"INTYPE? {channel}").split(",")
         input_sensor_type = Model335InputSensorType(int(sensor_configuration[0]))
 
         sensor_range = None
@@ -587,7 +584,7 @@ class Model335(TemperatureController):
                     * or shuts off after power cycle (False)
 
         """
-        command_string = "OUTMODE {},{},{},{}".format(output, mode, channel, int(powerup_enable))
+        command_string = f"OUTMODE {output},{mode},{channel},{int(powerup_enable)}"
         self.command(command_string)
 
     def get_heater_output_mode(self, output):
@@ -605,7 +602,7 @@ class Model335(TemperatureController):
                         * "powerup_enable": bool
 
         """
-        outmode = self.query("OUTMODE? {}".format(output)).split(",")
+        outmode = self.query(f"OUTMODE? {output}").split(",")
 
         return {"mode": Model335HeaterOutputMode(int(outmode[0])),
                 "channel": Model335InputSensor(int(outmode[1])),
@@ -620,7 +617,7 @@ class Model335(TemperatureController):
                     * Specifies whether output voltage is UNIPOLAR or BIPOLAR
 
         """
-        self.command("POLARITY 2,{}".format(output_polarity))
+        self.command(f"POLARITY 2,{output_polarity}")
 
     def get_output_2_polarity(self):
         """Returns the polarity of output 2
@@ -647,7 +644,7 @@ class Model335(TemperatureController):
                         * Model335HeaterVoltageRange IntEnum member
 
         """
-        self.command("RANGE {},{}".format(output, heater_range))
+        self.command(f"RANGE {output},{heater_range}")
 
     def get_heater_range(self, output):
         """Returns the heater range for a particular output.
@@ -664,7 +661,7 @@ class Model335(TemperatureController):
                         * Model335HeaterVoltageRange IntEnum member
 
         """
-        heater_range = int(self.query("RANGE? {}".format(output)))
+        heater_range = int(self.query(f"RANGE? {output}"))
         if output == 2:
             # Check if output 2 is in voltage mode
             output_2_heater_setup = self.query("HTRSET? 2").split(",")
@@ -695,7 +692,7 @@ class Model335(TemperatureController):
                 (InputReadingStatus):
                     * Boolean representation of each bit of the input status flag register
         """
-        response = int(self.query("RDGST? {}".format(channel)))
+        response = int(self.query(f"RDGST? {channel}"))
         return Model335InputReadingStatus.from_integer(response)
 
     def set_warmup_supply(self, control, percentage):
@@ -717,7 +714,7 @@ class Model335(TemperatureController):
         if not output_2_voltage_enable:
             raise InstrumentException("Output 2 is not configured in voltage mode")
 
-        command_string = "WARMUP 2,{},{}".format(control, percentage)
+        command_string = f"WARMUP 2,{control},{percentage}"
         self.command(command_string)
 
     def get_warmup_supply(self):
@@ -750,11 +747,9 @@ class Model335(TemperatureController):
                     * See ControlLoopZone class
 
         """
-        command_string = "ZONE {},{},{},{},{},{},{},{},{},{}".format(
-            output, zone, control_loop_zone.upper_bound, control_loop_zone.proportional,
-            control_loop_zone.integral, control_loop_zone.derivative, control_loop_zone.manual_output_value,
-            control_loop_zone.heater_range, control_loop_zone.channel, control_loop_zone.ramp_rate)
-
+        command_string = (f"ZONE {output},{zone},{control_loop_zone.upper_bound},{control_loop_zone.proportional}," +
+                            f"{control_loop_zone.integral},{control_loop_zone.derivative},{control_loop_zone.manual_output_value}," +
+                            f"{control_loop_zone.heater_range},{control_loop_zone.channel},{control_loop_zone.ramp_rate}")
         self.command(command_string)
 
     def get_control_loop_zone_table(self, output, zone):
@@ -774,7 +769,7 @@ class Model335(TemperatureController):
                     * See Model335ControlLoopZone class
 
         """
-        zone_parameters = self.query("ZONE? {},{}".format(output, zone)).split(",")
+        zone_parameters = self.query(f"ZONE? {output},{zone}").split(",")
         control_loop_zone_parameters = Model335ControlLoopZoneSettings(float(zone_parameters[0]),
                                                                        float(zone_parameters[1]),
                                                                        float(zone_parameters[2]),

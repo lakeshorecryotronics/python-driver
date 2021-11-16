@@ -369,7 +369,7 @@ class Model336(TemperatureController):
                     * Member of the Model336Polarity IntEnum class
 
         """
-        command_string = "ANALOG {},{},{},{},{},{}".format(output, channel, units, high_value, low_value, polarity)
+        command_string = f"ANALOG {output},{channel},{units},{high_value},{low_value},{polarity}"
         self.command(command_string)
 
     def get_monitor_output_heater(self, output):
@@ -385,7 +385,7 @@ class Model336(TemperatureController):
                     * See set_monitor_output_heater arguments
 
         """
-        response = self.query("ANALOG? {}".format(output)).split(",")
+        response = self.query(f"ANALOG? {output}").split(",")
         return {"channel": Model336InputChannel(int(response[0])),
                 "units": Model336InputSensorUnits(int(response[1])),
                 "high_value": float(response[2]),
@@ -419,7 +419,7 @@ class Model336(TemperatureController):
             if not isinstance(num_fields, Model336DisplayFieldsSize):
                 raise InstrumentException("num_fields argument must be of type \"Model336DisplaySetupAllInputs\"")
 
-        command_string = "DISPLAY {},{},{}".format(mode, num_fields, displayed_output)
+        command_string = f"DISPLAY {mode},{num_fields},{displayed_output}"
         self.command(command_string)
 
     def get_display_setup(self):
@@ -466,7 +466,7 @@ class Model336(TemperatureController):
                     * Member of Model336HeaterOutputUnits IntEnum class
 
         """
-        self.command("HTRSET {},{},0,{},{}".format(output, heater_resistance, max_current, heater_output))
+        self.command(f"HTRSET {output},{heater_resistance},0,{max_current},{heater_output}")
 
     def get_heater_setup(self, heater_output):
         """Returns the heater configuration status.
@@ -485,7 +485,7 @@ class Model336(TemperatureController):
                         * output_display_mode
 
         """
-        heater_setup = self.query("HTRSET? {}".format(heater_output)).split(",")
+        heater_setup = self.query(f"HTRSET? {heater_output}").split(",")
         if int(heater_setup[1]) == 0:
             max_current = float(heater_setup[2])
         else:
@@ -517,12 +517,8 @@ class Model336(TemperatureController):
         else:
             input_range = sensor_parameters.input_range
 
-        command_string = "INTYPE {},{},{},{},{},{}".format(channel,
-                                                           sensor_parameters.sensor_type,
-                                                           int(sensor_parameters.autorange_enable),
-                                                           input_range,
-                                                           int(sensor_parameters.compensation),
-                                                           sensor_parameters.units)
+        command_string = (f"INTYPE {channel},{sensor_parameters.sensor_type},{int(sensor_parameters.autorange_enable)}," +
+                            f"{input_range},{int(sensor_parameters.compensation)},{sensor_parameters.units}")
         self.command(command_string)
 
     def get_input_sensor(self, channel):
@@ -538,7 +534,7 @@ class Model336(TemperatureController):
                     * See Model336InputSensorSettings class
 
         """
-        sensor_config = self.query("INTYPE? {}".format(channel)).split(",")
+        sensor_config = self.query(f"INTYPE? {channel}").split(",")
         sensor_type = Model336InputSensorType(int(sensor_config[0]))
         autorange_enable = bool(int(sensor_config[1]))
         if autorange_enable:
@@ -591,7 +587,7 @@ class Model336(TemperatureController):
                     * or shuts off after power cycle (False)
 
         """
-        command_string = "OUTMODE {},{},{},{}".format(output, mode, channel, int(powerup_enable))
+        command_string = f"OUTMODE {output},{mode},{channel},{int(powerup_enable)}"
         self.command(command_string)
 
     def get_heater_output_mode(self, output):
@@ -611,7 +607,7 @@ class Model336(TemperatureController):
                         * powerup_enable
 
         """
-        outmode = self.query("OUTMODE? {}".format(output)).split(",")
+        outmode = self.query(f"OUTMODE? {output}").split(",")
         return {"mode": Model336HeaterOutputMode(int(outmode[0])),
                 "channel": Model336InputChannel(int(outmode[1])),
                 "powerup_enable": bool(int(outmode[2]))}
@@ -634,7 +630,7 @@ class Model336(TemperatureController):
                         * Model336HeaterVoltageRange IntEnum class
 
         """
-        self.command("RANGE {},{}".format(output, heater_range))
+        self.command(f"RANGE {output},{heater_range}")
 
     def get_heater_range(self, output):
         """Returns the heater range for a particular output.
@@ -651,7 +647,7 @@ class Model336(TemperatureController):
                         * Member of Model336HeaterVoltageRange IntEnum class
 
         """
-        heater_range = int(self.query("RANGE? {}".format(output)))
+        heater_range = int(self.query(f"RANGE? {output}"))
 
         if output in (3, 4):
             heater_range = Model336HeaterVoltageRange(heater_range)
@@ -659,7 +655,6 @@ class Model336(TemperatureController):
             heater_range = Model336HeaterRange(heater_range)
 
         return heater_range
-
 
     def all_heaters_off(self):
         """Recreates the front panel safety feature of shutting off all heaters"""
@@ -679,7 +674,7 @@ class Model336(TemperatureController):
                     * Boolean representation of each bit in the input status flag register
 
         """
-        response = int(self.query("RDGST? {}".format(channel)))
+        response = int(self.query(f"RDGST? {channel}"))
         return Model336InputReadingStatus.from_integer(response)
 
     def get_all_sensor_reading(self):
@@ -711,7 +706,7 @@ class Model336(TemperatureController):
                         * A value of 50.5 translates to a 50.5 percent output voltage
 
         """
-        command_string = "WARMUP {},{},{}".format(output, control, percentage)
+        command_string = f"WARMUP {output},{control},{percentage}"
         self.command(command_string)
 
     def get_warmup_supply_parameter(self, output):
@@ -727,7 +722,7 @@ class Model336(TemperatureController):
                     * See set_warmup_supply_parameter method arguments
 
         """
-        warmup_supply = self.query("WARMUP? {}".format(output)).split(",")
+        warmup_supply = self.query(f"WARMUP? {output}").split(",")
         return {"control": Model336ControlTypes(int(warmup_supply[0])),
                 "percentage": float(warmup_supply[1])}
 
@@ -747,14 +742,10 @@ class Model336(TemperatureController):
                     * See Model336ControlLoopZoneSettings class
 
         """
-        command_string = "ZONE {},{},{},{},{},{},{},{},{},{}".format(output, zone, control_loop_zone.upper_bound,
-                                                                     control_loop_zone.proportional,
-                                                                     control_loop_zone.integral,
-                                                                     control_loop_zone.derivative,
-                                                                     control_loop_zone.manual_out_value,
-                                                                     control_loop_zone.heater_range,
-                                                                     control_loop_zone.channel,
-                                                                     control_loop_zone.rate)
+        command_string = (f"ZONE {output},{zone},{control_loop_zone.upper_bound},{control_loop_zone.proportional}," +
+                            f"{control_loop_zone.integral},{control_loop_zone.derivative}," +
+                            f"{control_loop_zone.manual_out_value},{control_loop_zone.heater_range}," +
+                            f"{control_loop_zone.channel},{control_loop_zone.rate}")
         self.command(command_string)
 
     def get_control_loop_zone_table(self, output, zone):
@@ -774,7 +765,7 @@ class Model336(TemperatureController):
                     * See Model336ControlLoopZoneSettings class
 
         """
-        zone_parameters = self.query("ZONE? {},{}".format(output, zone)).split(",")
+        zone_parameters = self.query(f"ZONE? {output},{zone}").split(",")
         return Model336ControlLoopZoneSettings(float(zone_parameters[0]),
                                                float(zone_parameters[1]),
                                                float(zone_parameters[2]),

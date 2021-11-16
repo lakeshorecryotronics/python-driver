@@ -359,7 +359,7 @@ class TemperatureController(GenericInstrument):
 
         """
         integer_representation = register_mask.to_integer()
-        self.command("*ESE " + str(integer_representation))
+        self.command(f"*ESE {str(integer_representation)}")
 
     def clear_interface_command(self):
         """Clears the bits in the Status Byte Register, Standard Event Status Register, and Operation Event Register,
@@ -382,7 +382,7 @@ class TemperatureController(GenericInstrument):
 
         """
         integer_representation = register_mask.to_integer()
-        self.command("*SRE " + str(integer_representation))
+        self.command(f"*SRE {str(integer_representation)}")
 
     def get_service_request(self):
         """Returns the status byte register bits and their values as a class instance"""
@@ -415,7 +415,7 @@ class TemperatureController(GenericInstrument):
                     * Selects the channel to retrieve measurement
 
         """
-        return float(self.query("KRDG? {}".format(input_channel)))
+        return float(self.query(f"KRDG? {input_channel}"))
 
     def get_sensor_reading(self, input_channel):
         """Returns the sensor reading in the sensor's units.
@@ -425,7 +425,7 @@ class TemperatureController(GenericInstrument):
                     * The raw sensor reading in the units of the connected sensor
 
         """
-        return float(self.query("SRDG? {}".format(input_channel)))
+        return float(self.query(f"SRDG? {input_channel}"))
 
     def set_sensor_name(self, input_channel, sensor_name):
         """Sets a given name to a sensor on the specified channel
@@ -438,7 +438,7 @@ class TemperatureController(GenericInstrument):
                     * Name user wants to give to the sensor on the specified channel
 
         """
-        self.command("INNAME {},\"{}\"".format(input_channel, sensor_name))
+        self.command(f"INNAME {input_channel},\"{sensor_name}\"")
 
     def get_sensor_name(self, input_channel):
         """Returns the name of the sensor on the specified channel
@@ -452,7 +452,7 @@ class TemperatureController(GenericInstrument):
                     * Name associated with the sensor
 
         """
-        return self.query("INNAME? {}".format(input_channel))
+        return self.query(f"INNAME? {input_channel}")
 
     def set_curve_header(self, curve_number, curve_header):
         """Configures the user curve header
@@ -465,12 +465,8 @@ class TemperatureController(GenericInstrument):
                     * Instrument's CurveHeader class object containing the desired curve information
 
         """
-        command_string = "CRVHDR {},\"{}\",\"{}\",{},{},{}".format(curve_number,
-                                                                   curve_header.curve_name,
-                                                                   curve_header.serial_number,
-                                                                   curve_header.curve_data_format,
-                                                                   curve_header.temperature_limit,
-                                                                   curve_header.coefficient)
+        command_string = (f"CRVHDR {curve_number},\"{curve_header.curve_name}\",\"{curve_header.serial_number}\"," +
+                        f"{curve_header.curve_data_format},{curve_header.temperature_limit},{curve_header.coefficient}")
         self.command(command_string)
 
     def get_curve_header(self, curve_number):
@@ -485,7 +481,7 @@ class TemperatureController(GenericInstrument):
                     * A CurveHeader class object containing the curve information
 
         """
-        response = self.query("CRVHDR? {}".format(curve_number))
+        response = self.query(f"CRVHDR? {curve_number}")
         curve_header = response.split(",")
         return CurveHeader(curve_header[0],
                            curve_header[1],
@@ -516,9 +512,9 @@ class TemperatureController(GenericInstrument):
 
         """
         if curvature:
-            command_string = "CRVPT {},{},{},{},{}".format(curve, index, sensor_units, temperature, curvature)
+            command_string = f"CRVPT {curve},{index},{sensor_units},{temperature},{curvature}"
         else:
-            command_string = "CRVPT {},{},{},{}".format(curve, index, sensor_units, temperature)
+            command_string = f"CRVPT {curve},{index},{sensor_units},{temperature}"
         self.command(command_string)
 
     def get_curve_data_point(self, curve, index):
@@ -536,7 +532,7 @@ class TemperatureController(GenericInstrument):
                     * (sensor_units: float, temp_value: float, curvature_value: float (optional))
 
         """
-        curve_point = self.query("CRVPT? {},{}".format(curve, index)).split(",")
+        curve_point = self.query(f"CRVPT? {curve},{index}").split(",")
         curve_point = [float(index) for index in curve_point]
         return tuple(curve_point)
 
@@ -592,7 +588,7 @@ class TemperatureController(GenericInstrument):
                     * Specifies a user curve to delete
 
         """
-        self.command("CRVDEL {}".format(curve))
+        self.command(f"CRVDEL {curve}")
 
     def set_alarm_parameters(self, input_channel, alarm_enable, alarm_settings=None):
         """Configures the alarm parameters for an input
@@ -609,17 +605,12 @@ class TemperatureController(GenericInstrument):
 
         """
         if alarm_enable:
-            command_string = "ALARM {},{},{},{},{},{},{},{}".format(input_channel,
-                                                                    int(alarm_enable),
-                                                                    alarm_settings.high_value,
-                                                                    alarm_settings.low_value,
-                                                                    alarm_settings.deadband,
-                                                                    int(alarm_settings.latch_enable),
-                                                                    int(alarm_settings.audible),
-                                                                    int(alarm_settings.visible))
+            command_string = (f"ALARM {input_channel},{int(alarm_enable)},{alarm_settings.high_value}," +
+                            f"{alarm_settings.low_value},{alarm_settings.deadband}," +
+                            f"{int(alarm_settings.latch_enable)},{int(alarm_settings.audible)},{int(alarm_settings.visible)}")
             self.command(command_string)
         else:
-            self.command("ALARM {},{},,,,,,".format(input_channel, int(alarm_enable)))
+            self.command(f"ALARM {input_channel},{int(alarm_enable)},,,,,,")
 
     def get_alarm_parameters(self, input_channel):
         """Returns the present state of all alarm parameters
@@ -633,7 +624,7 @@ class TemperatureController(GenericInstrument):
                     * See AlarmSettings class
 
         """
-        parameters = self.query("ALARM? {}".format(input_channel)).split(",")
+        parameters = self.query(f"ALARM? {input_channel}").split(",")
         return AlarmSettings(float(parameters[1]), float(parameters[2]),
                              float(parameters[3]), bool(int((parameters[4]))),
                              audible=bool(int(parameters[5])), visible=bool(int(parameters[6])),
@@ -655,7 +646,7 @@ class TemperatureController(GenericInstrument):
                             * True if low state is on, False if low state is off
 
         """
-        response = self.query("ALARMST? {}".format(channel))
+        response = self.query(f"ALARMST? {channel}")
         separated_response = response.split(",")
         return {"high_state_enabled": bool(int(separated_response[0])),
                 "low_state_enabled": bool(int(separated_response[1]))}
@@ -676,7 +667,7 @@ class TemperatureController(GenericInstrument):
                     * Analog voltage heater output percentage
 
         """
-        return float(self.query("AOUT? {}".format(output)))
+        return float(self.query(f"AOUT? {output}"))
 
     def _set_autotune(self, output, mode):
         """Initiates autotuning of the heater control loop.
@@ -690,7 +681,7 @@ class TemperatureController(GenericInstrument):
                     * Member of instrument's AutoTuneMode IntEnum class
 
         """
-        self.command("ATUNE {},{}".format(output, mode))
+        self.command(f"ATUNE {output},{mode}")
 
         # Ensure autotune starts without error
         self._autotune_error()
@@ -704,7 +695,7 @@ class TemperatureController(GenericInstrument):
                     * 1 - 32
 
         """
-        self.command("BRIGT {}".format(contrast_level))
+        self.command(f"BRIGT {contrast_level}")
 
     def _get_contrast_level(self):
         """Returns the contrast level of front display"""
@@ -719,7 +710,7 @@ class TemperatureController(GenericInstrument):
                     * A member of the instrument's BrightnessLevel IntEnum class
 
         """
-        self.command("BRIGT {}".format(brightness))
+        self.command(f"BRIGT {brightness}")
 
     def _get_brightness(self):
         """Method to query the front display brightness
@@ -739,7 +730,7 @@ class TemperatureController(GenericInstrument):
                     * "A" - "D" (in addition, "D1" - "D5" for 3062 option)
 
         """
-        return float(self.query("CRDG? {}".format(channel)))
+        return float(self.query(f"CRDG? {channel}"))
 
     def _set_diode_excitation_current(self, channel, excitation_current):
         """The 10 uA excitation current is the only calibrated excitation current, and is used in
@@ -755,7 +746,7 @@ class TemperatureController(GenericInstrument):
                     * A member of the instrument's DiodeCurrent IntEnum class
 
         """
-        self.command("DIOCUR {},{}".format(channel, excitation_current))
+        self.command(f"DIOCUR {channel},{excitation_current}")
 
     def _get_diode_excitation_current(self, channel):
         """Returns the diode excitation current setting as a string.
@@ -771,7 +762,7 @@ class TemperatureController(GenericInstrument):
                     * Diode excitation current
 
         """
-        response = int(self.query("DIOCUR? {}".format(channel)))
+        response = int(self.query(f"DIOCUR? {channel}"))
         return DiodeCurrent(response)
 
     def set_display_field_settings(self, field, input_channel, display_units):
@@ -790,7 +781,7 @@ class TemperatureController(GenericInstrument):
                     * A member of the instrument's DisplayUnits IntEnum class
 
         """
-        self.command("DISPFLD {},{},{}".format(field, input_channel, display_units))
+        self.command(f"DISPFLD {field},{input_channel},{display_units}")
 
     def get_display_field_settings(self, field):
         """Returns the settings of the specified display field when display is in Custom mode.
@@ -807,7 +798,7 @@ class TemperatureController(GenericInstrument):
                     * "display_units": IntEnum
 
         """
-        separated_settings = self.query("DISPFLD? {}".format(field)).split(",")
+        separated_settings = self.query(f"DISPFLD? {field}").split(",")
         return {'input_channel': self._input_channel_enum(int(separated_settings[0])),
                 'display_units': self._display_units_enum(int(separated_settings[1]))}
 
@@ -833,7 +824,7 @@ class TemperatureController(GenericInstrument):
                         * 1% - 10%
 
         """
-        self.command("FILTER {},{},{},{}".format(input_channel, int(filter_enable), data_points, reset_threshold))
+        self.command(f"FILTER {input_channel},{int(filter_enable)},{data_points},{reset_threshold}")
 
     def _get_filter(self, input_channel):
         """Returns the input_channel filter configuration
@@ -858,7 +849,7 @@ class TemperatureController(GenericInstrument):
                           resets.
 
         """
-        filter_settings = self.query("FILTER? {}".format(input_channel)).split(",")
+        filter_settings = self.query(f"FILTER? {input_channel}").split(",")
         return {"filter_enable": bool(int(filter_settings[0])),
                 "data_points": int(filter_settings[1]),
                 "reset_threshold": int(filter_settings[2])}
@@ -875,7 +866,7 @@ class TemperatureController(GenericInstrument):
                     * percent of full scale current/voltage/power
 
         """
-        return float(self.query("HTR? {}".format(output)))
+        return float(self.query(f"HTR? {output}"))
 
     def get_heater_status(self, output):
         """Returns the heater error code state, error is cleared upon querying the heater status
@@ -889,7 +880,7 @@ class TemperatureController(GenericInstrument):
                      * Object of instrument's HeaterError type
 
         """
-        status_code = int(self.query("HTRST? {}".format(output)))
+        status_code = int(self.query(f"HTRST? {output}"))
         return self._heater_error_enum(status_code)
 
     def set_ieee_488(self, address):
@@ -900,7 +891,7 @@ class TemperatureController(GenericInstrument):
                     * 1-30 (0 and 31 reserved)
 
         """
-        self.command("IEEE {}".format(address))
+        self.command(f"IEEE {address}")
 
     def get_ieee_488(self):
         """Returns the IEEE address set
@@ -923,7 +914,7 @@ class TemperatureController(GenericInstrument):
                     * 0 = none, 1-20 = standard curves, 21-59 = user curves
 
         """
-        self.command("INCRV {},{}".format(input_channel, curve_number))
+        self.command(f"INCRV {input_channel},{curve_number}")
         # Check that the user mapped an input to a curve (not just set the input to no curve)
         if curve_number != 0:
             # Query the curve mapped to input_channel, if the query returns zero,
@@ -943,7 +934,7 @@ class TemperatureController(GenericInstrument):
                     * 0-59
 
         """
-        return int(self.query("INCRV? {}".format(input_channel)))
+        return int(self.query(f"INCRV? {input_channel}"))
 
     def _set_interface(self, interface):
         """Selects the remote interface for the instrument
@@ -953,7 +944,7 @@ class TemperatureController(GenericInstrument):
                     * Member of instrument's Interface IntEnum class
 
         """
-        self.command("INTSEL {}".format(interface))
+        self.command(f"INTSEL {interface}")
 
     def _get_interface(self):
         """Returns the remote interface for the instrument
@@ -975,7 +966,7 @@ class TemperatureController(GenericInstrument):
                     * False if disabled, True enabled.
 
         """
-        self.command("LEDS {}".format(int(state)))
+        self.command(f"LEDS {int(state)}")
 
     def get_led_state(self):
         """Returns whether or not front panel LEDs are enabled.
@@ -1001,7 +992,7 @@ class TemperatureController(GenericInstrument):
                     * 000 - 999
 
         """
-        self.command("LOCK {},{}".format(int(state), code))
+        self.command(f"LOCK {int(state)},{code}")
 
     def get_keypad_lock(self):
         """Returns the state of the keypad lock and the lock-out code.
@@ -1032,7 +1023,7 @@ class TemperatureController(GenericInstrument):
                         * "maximum": float
 
         """
-        min_max_data = self.query("MDAT? {}".format(input_channel)).split(",")
+        min_max_data = self.query(f"MDAT? {input_channel}").split(",")
         return {"minimum": float(min_max_data[0]),
                 "maximum": float(min_max_data[1])}
 
@@ -1048,7 +1039,7 @@ class TemperatureController(GenericInstrument):
                     * A member of the instrument's InterfaceMode IntEnum class
 
         """
-        self.command("MODE {}".format(mode))
+        self.command(f"MODE {mode}")
 
     def get_remote_interface_mode(self):
         """Returns the state of the interface mode
@@ -1072,7 +1063,7 @@ class TemperatureController(GenericInstrument):
                     * Specifies value for manual output in percent
 
         """
-        self.command("MOUT {},{}".format(output, value))
+        self.command(f"MOUT {output},{value}")
 
     def get_manual_output(self, output):
         """Returns the manual output value in percent
@@ -1086,7 +1077,7 @@ class TemperatureController(GenericInstrument):
                     * Manual output percent
 
         """
-        return float(self.query("MOUT? {}".format(output)))
+        return float(self.query(f"MOUT? {output}"))
 
     def _set_network_settings(self, dhcp_enable, auto_ip_enable, ip_address, sub_mask, gateway, primary_dns,
                               secondary_dns, pref_host, pref_domain, description):
@@ -1124,16 +1115,9 @@ class TemperatureController(GenericInstrument):
                     * Instrument description (32 character maximum)
 
         """
-        command_string = "NET {},{},{},{},{},{},{},\"{}\",\"{}\",\"{}\"".format(int(dhcp_enable),
-                                                                                int(auto_ip_enable),
-                                                                                ip_address,
-                                                                                sub_mask,
-                                                                                gateway,
-                                                                                primary_dns,
-                                                                                secondary_dns,
-                                                                                pref_host,
-                                                                                pref_domain,
-                                                                                description)
+        command_string = (f"NET {int(dhcp_enable)},{int(auto_ip_enable)},{ip_address}," +
+                        f"{sub_mask},{gateway},{primary_dns},{secondary_dns},\"{pref_host}\"," +
+                        f"\"{pref_domain}\",\"{description}\"")
         self.command(command_string)
 
     def _get_network_settings(self):
@@ -1225,7 +1209,7 @@ class TemperatureController(GenericInstrument):
 
         """
         integer_representation = register_mask.to_integer()
-        self.command("OPSTE {}".format(integer_representation))
+        self.command(f"OPSTE {integer_representation}")
 
     def _get_operation_event(self):
         """Returns the names of the operation event register bits and their values."""
@@ -1255,7 +1239,7 @@ class TemperatureController(GenericInstrument):
                     * The ramp rate is configured in field units per second.
 
         """
-        self.command("PID {},{},{},{}".format(output, gain, integral, derivative))
+        self.command(f"PID {output},{gain},{integral},{derivative}")
 
     def get_heater_pid(self, output):
         """Returns the closed loop control parameters of the heater output
@@ -1277,7 +1261,7 @@ class TemperatureController(GenericInstrument):
                         * Derivative term in PID control
 
         """
-        pid_values = self.query("PID? {}".format(output))
+        pid_values = self.query(f"PID? {output}")
         pid_values = pid_values.split(",")
         return {"gain": float(pid_values[0]),
                 "integral": float(pid_values[1]),
@@ -1300,7 +1284,7 @@ class TemperatureController(GenericInstrument):
                     * A rate of 0 is interpreted as infinite, and will respond as if setpoint ramping were off
 
         """
-        self.command("RAMP {},{},{}".format(output, int(ramp_enable), rate_value))
+        self.command(f"RAMP {output},{int(ramp_enable)},{rate_value}")
 
     def get_setpoint_ramp_parameter(self, output):
         """Returns the control loop parameters of a particular output
@@ -1316,7 +1300,7 @@ class TemperatureController(GenericInstrument):
                     * "rate_value": float
 
         """
-        parameters = self.query("RAMP? {}".format(output)).split(",")
+        parameters = self.query(f"RAMP? {output}").split(",")
         return {"ramp_enable": bool(int(parameters[0])),
                 "rate_value": float(parameters[1])}
 
@@ -1333,7 +1317,7 @@ class TemperatureController(GenericInstrument):
                     * False = Not ramping, True = Ramping
 
         """
-        return bool(int(self.query("RAMPST? {}".format(output))))
+        return bool(int(self.query(f"RAMPST? {output}")))
 
     def turn_relay_on(self, relay_number):
         """Turns the specified relay on.
@@ -1345,7 +1329,7 @@ class TemperatureController(GenericInstrument):
                         * 1 or 2
 
         """
-        self.command("RELAY {},1,,".format(relay_number))
+        self.command(f"RELAY {relay_number},1,,")
 
     def turn_relay_off(self, relay_number):
         """Turns the specified relay off.
@@ -1357,7 +1341,7 @@ class TemperatureController(GenericInstrument):
                         * 1 or 2
 
         """
-        self.command("RELAY {},0,,".format(relay_number))
+        self.command(f"RELAY {relay_number},0,,")
 
     def set_relay_alarms(self, relay_number, activating_input_channel, alarm_relay_trigger_type):
         """Sets a relay to turn on and off automatically based on the state of the alarm of the specified input channel.
@@ -1375,7 +1359,7 @@ class TemperatureController(GenericInstrument):
                     * Specifies the type of alarm that triggers the relay
 
         """
-        self.command("RELAY {},2,{},{}".format(relay_number, activating_input_channel, alarm_relay_trigger_type))
+        self.command(f"RELAY {relay_number},2,{activating_input_channel},{alarm_relay_trigger_type}")
 
     def get_relay_alarm_control_parameters(self, relay_number):
         """Returns the relay alarm configuration for either of the two configurable relays. Relay must be
@@ -1394,7 +1378,7 @@ class TemperatureController(GenericInstrument):
                     * "alarm_relay_trigger_type": RelayControlAlarm
 
         """
-        relay_config = self.query("RELAY? {}".format(relay_number)).split(",")
+        relay_config = self.query(f"RELAY? {relay_number}").split(",")
         activating_input_channel = relay_config[1]
         alarm_relay_trigger_type = RelayControlAlarm(int(relay_config[2]))
         return {'activating_input_channel': activating_input_channel,
@@ -1415,7 +1399,7 @@ class TemperatureController(GenericInstrument):
                     * Represented as a member of the instrument's RelayControlMode IntEnum class
 
         """
-        relay_settings = self.query("RELAY? " + str(relay_number))
+        relay_settings = self.query(f"RELAY? {str(relay_number)}")
         split_relay_settings = relay_settings.split(",")
         return self._relay_control_mode_enum(int(split_relay_settings[0]))
 
@@ -1431,7 +1415,7 @@ class TemperatureController(GenericInstrument):
                     * True if relay is on, False if relay is off.
 
         """
-        return bool(int(self.query("RELAYST? {}".format(relay_channel))))
+        return bool(int(self.query(f"RELAYST? {relay_channel}")))
 
     def _set_soft_cal_curve_dt_470(self, curve_number, serial_number, calibration_point_1=(4.2, 1.62622),
                                    calibration_point_2=(77.35, 1.02032), calibration_point_3=(305, 0.50691)):
@@ -1461,15 +1445,9 @@ class TemperatureController(GenericInstrument):
                     * Optional parameter
 
         """
-        command_string = "SCAL {},{},{},{},{},{},{},{},{}".format(1,
-                                                                  curve_number,
-                                                                  serial_number,
-                                                                  calibration_point_1[0],
-                                                                  calibration_point_1[1],
-                                                                  calibration_point_2[0],
-                                                                  calibration_point_2[1],
-                                                                  calibration_point_3[0],
-                                                                  calibration_point_3[1])
+        command_string = (f"SCAL {1},{curve_number},{serial_number},{calibration_point_1[0]}," +
+                        f"{calibration_point_1[1]},{calibration_point_2[0]},{calibration_point_2[1]}," +
+                        f"{calibration_point_3[0]},{calibration_point_3[1]}")
         self.command(command_string)
 
     def _set_soft_cal_curve_pt_100(self, curve_number, serial_number, calibration_point_1=(77.35, 20.234),
@@ -1500,15 +1478,10 @@ class TemperatureController(GenericInstrument):
                     * Optional parameter
 
         """
-        command_string = "SCAL {},{},{},{},{},{},{},{},{}".format(6,
-                                                                  curve_number,
-                                                                  serial_number,
-                                                                  calibration_point_1[0],
-                                                                  calibration_point_1[1],
-                                                                  calibration_point_2[0],
-                                                                  calibration_point_2[1],
-                                                                  calibration_point_3[0],
-                                                                  calibration_point_3[1])
+        command_string = (f"SCAL {6},{curve_number},{serial_number}," +
+                        f"{calibration_point_1[0]},{calibration_point_1[1]}," +
+                        f"{calibration_point_2[0]},{calibration_point_2[1]}," +
+                        f"{calibration_point_3[0]},{calibration_point_3[1]}")
         self.command(command_string)
 
     def _set_soft_cal_curve_pt_1000(self, curve_number, serial_number, calibration_point_1=(77.35, 202.34),
@@ -1539,15 +1512,10 @@ class TemperatureController(GenericInstrument):
                     * Optional parameter
 
         """
-        command_string = "SCAL {},{},{},{},{},{},{},{},{}".format(7,
-                                                                  curve_number,
-                                                                  serial_number,
-                                                                  calibration_point_1[0],
-                                                                  calibration_point_1[1],
-                                                                  calibration_point_2[0],
-                                                                  calibration_point_2[1],
-                                                                  calibration_point_3[0],
-                                                                  calibration_point_3[1])
+        command_string = (f"SCAL {7},{curve_number},{serial_number}," +
+                        f"{calibration_point_1[0]},{calibration_point_1[1]}," +
+                        f"{calibration_point_2[0]},{calibration_point_2[1]}," +
+                        f"{calibration_point_3[0]},{calibration_point_3[1]}")
         self.command(command_string)
 
     def set_control_setpoint(self, output, value):
@@ -1563,7 +1531,7 @@ class TemperatureController(GenericInstrument):
                     The value for the setpoint (in the preferred units of the control loop sensor)
 
         """
-        self.command("SETP {},{}".format(output, value))
+        self.command(f"SETP {output},{value}")
 
     def get_control_setpoint(self, output):
         """Returns the value for a given control output
@@ -1577,7 +1545,7 @@ class TemperatureController(GenericInstrument):
                     * The value for the setpoint (in the preferred units of the control loop sensor)
 
         """
-        return float(self.query("SETP? {}".format(output)))
+        return float(self.query(f"SETP? {output}"))
 
     def _get_thermocouple_junction_temp(self):
         """This method returns the temperature of the ceramic thermocouple block
@@ -1602,7 +1570,7 @@ class TemperatureController(GenericInstrument):
                     * A limit of zero will turn the feature off
 
         """
-        self.command("TLIMIT {},{}".format(input_channel, limit))
+        self.command(f"TLIMIT {input_channel},{limit}")
 
     def get_temperature_limit(self, input_channel):
         """Returns the value of the temperature limit in kelvin
@@ -1612,7 +1580,7 @@ class TemperatureController(GenericInstrument):
                     * Specifies which input to query
 
         """
-        return float(self.query("TLIMIT? {}".format(input_channel)))
+        return float(self.query(f"TLIMIT? {input_channel}"))
 
     def _get_tuning_control_status(self):
         """If initial conditions are not met when starting the autotune procedure, causing the
@@ -1653,7 +1621,7 @@ class TemperatureController(GenericInstrument):
                     * 15 character string representing the website password
 
         """
-        self.command("WEBLOG \"{}\",\"{}\"".format(username, password))
+        self.command(f"WEBLOG \"{username}\",\"{password}\"")
 
     def _get_website_login(self):
         """Method to return the username and password for the web interface.

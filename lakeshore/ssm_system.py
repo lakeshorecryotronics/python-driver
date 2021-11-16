@@ -142,7 +142,7 @@ class SSMSystem(XIPInstrument):
             return self.source_modules[port_number - 1]
         except IndexError:
             raise IndexError(
-                'Invalid port number. Must be between 1 and {}'.format(self.get_num_source_channels())) from None
+                f'Invalid port number. Must be between 1 and {self.get_num_source_channels()}') from None
 
     def get_source_pod(self, port_number):
         """alias of get_source_module"""
@@ -160,7 +160,7 @@ class SSMSystem(XIPInstrument):
             return self.measure_modules[port_number - 1]
         except IndexError:
             raise IndexError(
-                'Invalid port number. Must be between 1 and {}'.format(self.get_num_measure_channels())) from None
+                f'Invalid port number. Must be between 1 and {self.get_num_measure_channels()}') from None
 
     def get_measure_pod(self, port_number):
         """alias of get_measure_module"""
@@ -185,9 +185,9 @@ class SSMSystem(XIPInstrument):
         num_matches = len([name for name in module_names if name == module_name])
 
         if num_matches < 1:
-            raise XIPInstrumentException('No module was found with the name {}.'.format(module_name))
+            raise XIPInstrumentException(f'No module was found with the name {module_name}.')
         if num_matches > 1:
-            raise XIPInstrumentException('Module name conflict: more than one module is named {}.'.format(module_name))
+            raise XIPInstrumentException(f'Module name conflict: more than one module is named {module_name}.')
 
         return set_of_modules[module_names.index(module_name)]
 
@@ -233,8 +233,8 @@ class SSMSystem(XIPInstrument):
                 Tuple of values corresponding to the given data sources
         """
 
-        elements = ','.join('{},{}'.format(mnemonic, index) for (mnemonic, index) in data_sources)
-        response_values_with_indices = enumerate(self.query('FETCh? {}'.format(elements)).split(','))
+        elements = ','.join(f'{mnemonic},{index}' for (mnemonic, index) in data_sources)
+        response_values_with_indices = enumerate(self.query(f'FETCh? {elements}').split(','))
 
         return tuple(
             (self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
@@ -256,13 +256,13 @@ class SSMSystem(XIPInstrument):
                 self.command('TRACe:RESEt')
                 self._configure_stream_elements(data_sources)
                 self.command('TRACe:FORMat:ENCOding B64')
-                self.command('TRACe:RATE {}'.format(rate))
+                self.command(f'TRACe:RATE {rate}')
 
                 bytes_per_row = int(self.query('TRACe:FORMat:ENCOding:B64:BCOunt?'))
                 binary_format = '<' + self.query('TRACe:FORMat:ENCOding:B64:BFORmat?').strip('\"')
 
                 if num_points is not None:
-                    self.command('TRACe:STARt {}'.format(num_points))
+                    self.command(f'TRACe:STARt {num_points}')
                 else:
                     self.command('TRACe:STARt')
 
@@ -320,8 +320,8 @@ class SSMSystem(XIPInstrument):
             file.write(','.join(str(x) for x in row) + '\n')
 
     def _configure_stream_elements(self, data_sources):
-        elements = ','.join('{},{}'.format(mnemonic, index) for (mnemonic, index) in data_sources)
-        self.command('TRACe:FORMat:ELEMents {}'.format(elements))
+        elements = ','.join(f'{mnemonic},{index}' for (mnemonic, index) in data_sources)
+        self.command(f'TRACe:FORMat:ELEMents {elements}')
 
     def get_ref_in_edge(self):
         """Returns the active edge of the reference input. 'RISing' or 'FALLing'."""
@@ -336,7 +336,7 @@ class SSMSystem(XIPInstrument):
                     The new active edge ('RISing', or 'FALLing')
         """
 
-        self.command('INPut:REFerence:EDGe {}'.format(edge))
+        self.command(f'INPut:REFerence:EDGe {edge}')
 
     def get_ref_out_source(self):
         """Returns the channel used for the reference output. 'S1', 'S2', or 'S3'."""
@@ -351,7 +351,7 @@ class SSMSystem(XIPInstrument):
                     The new reference out source ('S1', 'S2', or 'S3')
         """
 
-        self.command('OUTPut:REFerence:SOURce {}'.format(ref_out_source))
+        self.command(f'OUTPut:REFerence:SOURce {ref_out_source}')
 
     def get_ref_out_state(self):
         """Returns the enable state of reference out"""
@@ -366,7 +366,7 @@ class SSMSystem(XIPInstrument):
                     The new reference out state (True to enable reference out, False to disable reference out)
         """
 
-        self.command('OUTPut:REFerence:STATe {}'.format(str(int(ref_out_state))))
+        self.command(f'OUTPut:REFerence:STATe {str(int(ref_out_state))}')
 
     def enable_ref_out(self):
         """Sets the enable state of reference out to True"""
@@ -405,7 +405,7 @@ class SSMSystem(XIPInstrument):
                     The new monitor out source ('M1', 'M2', 'M3', or 'MANUAL')
         """
 
-        self.command('OUTPut:MONitor:MODe {}'.format(mon_out_source))
+        self.command(f'OUTPut:MONitor:MODe {mon_out_source}')
 
     def get_mon_out_state(self):
         """Returns the enable state of monitor out"""
@@ -420,7 +420,7 @@ class SSMSystem(XIPInstrument):
                     The new monitor out state (True to enable monitor out, False to disable monitor out)
         """
 
-        self.command('OUTPut:MONitor:STATe {}'.format(str(int(mon_out_state))))
+        self.command(f'OUTPut:MONitor:STATe {str(int(mon_out_state))}')
 
     def enable_mon_out(self):
         """Sets the enable state of monitor out to True"""
@@ -469,7 +469,7 @@ class SSMSystem(XIPInstrument):
                     The new monitor out manual level
         """
 
-        self.command('OUTPut:MONitor:MLEVel {}'.format(str(manual_level)))
+        self.command(f'OUTPut:MONitor:MLEVel {str(manual_level)}')
 
     def get_mon_out_manual_level(self):
         """Returns the manual level of monitor out"""

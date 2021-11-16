@@ -203,7 +203,7 @@ class XIPInstrument(GenericInstrument):
         """
 
         integer_representation = register_mask.to_integer()
-        self.command("*SRE " + str(integer_representation), check_errors=False)
+        self.command(f"*SRE {str(integer_representation)}", check_errors=False)
 
     def get_standard_events(self):
         """Returns the names of the standard event register bits and their values"""
@@ -232,7 +232,7 @@ class XIPInstrument(GenericInstrument):
         """
 
         integer_representation = register_mask.to_integer()
-        self.command("*ESE " + str(integer_representation), check_errors=False)
+        self.command(f"*ESE {str(integer_representation)}", check_errors=False)
 
     def get_present_operation_status(self):
         """Returns the names of the operation status register bits and their values"""
@@ -270,7 +270,7 @@ class XIPInstrument(GenericInstrument):
         """
 
         integer_representation = register_mask.to_integer()
-        self.command("STATus:OPERation:ENABle " + str(integer_representation), check_errors=False)
+        self.command(f"STATus:OPERation:ENABle {str(integer_representation)}", check_errors=False)
 
     def get_present_questionable_status(self):
         """Returns the names of the questionable status register bits and their values"""
@@ -308,7 +308,7 @@ class XIPInstrument(GenericInstrument):
         """
 
         integer_representation = self.questionable_register.to_integer(register_mask)
-        self.command("STATus:QUEStionable:ENABle " + str(integer_representation), check_errors=False)
+        self.command(f"STATus:QUEStionable:ENABle {str(integer_representation)}", check_errors=False)
 
     def reset_status_register_masks(self):
         """Resets status register masks to preset values"""
