@@ -1010,6 +1010,22 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.dut_module.set_input_configuration('GROUND')
         self.assertIn('SENSe1:CONFiguration GROUND', self.fake_connection.get_outgoing_message())
 
+    def test_get_bias_enabled(self):
+        self.fake_connection.setup_response('1;No error')
+        response = self.dut_module.get_bias_voltage_enabled()
+        self.assertEqual(response, True)
+        self.assertIn('SENSe1:BIAS:STATe?', self.fake_connection.get_outgoing_message())
+
+    def test_bias_enable(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.enable_bias_voltage()
+        self.assertIn('SENSe1:BIAS:STATe 1', self.fake_connection.get_outgoing_message())
+
+    def test_bias_disable(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.disable_bias_voltage()
+        self.assertIn('SENSe1:BIAS:STATe 0', self.fake_connection.get_outgoing_message())
+
     def test_get_bias_voltage(self):
         self.fake_connection.setup_response('2.54;No error')
         response = self.dut_module.get_bias_voltage()
