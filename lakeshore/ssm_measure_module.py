@@ -135,6 +135,21 @@ class MeasureModule(BaseModule):
 
         self.device.command(f'SENSe{self.module_number}:CONFiguration {input_configuration}')
 
+    def enable_bias_voltage(self):
+        """Enables the bias voltage applied to the amplifier"""
+
+        self.device.command(f'SENSe{self.module_number}:BIAS:STATe 1')
+
+    def disable_bias_voltage(self):
+        """Disables the bias voltage applied to the amplifier"""
+
+        self.device.command(f'SENSe{self.module_number}:BIAS:STATe 0')
+
+    def get_bias_voltage_enabled(self):
+        """Return whether the bias voltage is enabled"""
+
+        return bool(int(self.device.query(f'SENSe{self.module_number}:BIAS:STATe?')))
+
     def get_bias_voltage(self):
         """Return the bias voltage applied on the amplifier input in Volts"""
 
