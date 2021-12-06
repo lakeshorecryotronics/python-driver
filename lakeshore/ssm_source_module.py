@@ -768,6 +768,22 @@ class SourceModule(BaseModule):
         response = float(self.device.query(f'SOURce{self.module_number}:CURRent:LIMit:LOW?', cherk_errors=False))
         return response
 
+    def set_disable_on_compliance(self, value):
+        """Configures the module for disable on compliance.
+        When disable on compliance is turned on, the module will disable output when in compliance.
+        Otherwise, the module will continue to output, even when in compliance.
+
+            Args:
+                  value (bool):
+                    1 for the module to disable when in compliance; 0 for the module to remain enabled, even in compliance
+        """
+        self.device.command(f'SOURce{self.module_number}:DOCompliance {int(value)}', check_errors=False)
+
+    def get_disable_on_compliance(self):
+        """Returns the present state of disable on compliance."""
+        response = bool(self.device.query(f'SOURce{self.module_number}:DOCompliance?', check_errors=False))
+        return response
+
     def set_current_output_limit_low(self, limit):
         """Configures the low current output limit.
         The current output limits are software defined limits preventing the user from entering an output which could
