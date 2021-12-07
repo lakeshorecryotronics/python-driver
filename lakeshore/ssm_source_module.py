@@ -768,16 +768,16 @@ class SourceModule(BaseModule):
         response = float(self.device.query(f'SOURce{self.module_number}:CURRent:LIMit:LOW?', cherk_errors=False))
         return response
 
-    def set_disable_on_compliance(self, value):
+    def set_disable_on_compliance(self, disable_on_compliance):
         """Configures the module for disable on compliance.
         When disable on compliance is turned on, the module will disable output when in compliance.
         Otherwise, the module will continue to output, even when in compliance.
 
             Args:
-                  value (bool):
+                  disable_on_compliance (bool):
                     1 for the module to disable when in compliance; 0 for the module to remain enabled, even in compliance
         """
-        self.device.command(f'SOURce{self.module_number}:DOCompliance {int(value)}', check_errors=False)
+        self.device.command(f'SOURce{self.module_number}:DOCompliance {int(disable_on_compliance)}', check_errors=False)
 
     def get_disable_on_compliance(self):
         """Returns the present state of disable on compliance."""
