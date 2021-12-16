@@ -682,4 +682,9 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command(f'SENSe{self.module_number}:FRTHreshold {float(threshold)}')
-        
+
+    def reset_settings(self):
+        """Resets the settings for the specified module to their power on defaults.
+        """
+
+        self.device.command(f'SENSe{self.module_number}:PRESet')

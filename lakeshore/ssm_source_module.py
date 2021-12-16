@@ -796,3 +796,9 @@ class SourceModule(BaseModule):
                     The desired low current output limit.
         """
         self.device.command(f'SOURce{self.module_number}:CURRent:LIMit:LOW {str(limit)}', check_errors=False)
+
+    def reset_settings(self):
+        """Resets the settings for the specified module to their power on defaults.
+        """
+
+        self.device.command(f'SOURce{self.module_number}:PRESet')
