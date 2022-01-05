@@ -624,8 +624,8 @@ class MeasureModule(BaseModule):
         return status_register
 
     def set_operation_event_enable_mask(self, register_mask):
-        """Configures the values of the operaiton event enable register bits.
-        These values determine which operaiton bits propagate to the operaiton event register.
+        """Configures the values of the operation event enable register bits.
+        These values determine which operation bits propagate to the operation event register.
 
             Args:
                 register_mask ([Instrument]OperationRegister):
