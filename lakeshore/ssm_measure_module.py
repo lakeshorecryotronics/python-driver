@@ -688,3 +688,22 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command(f'SENSe{self.module_number}:PRESet')
+
+    def load(self):
+        """Loads the specified module. A connected module must be loaded before it can be used.
+        """
+
+        self.device.command(f'SENSe{self.module_number}:LOAD')
+
+    def unload(self):
+        """Unloads the specified module.
+        """
+
+        self.device.command(f'SENSe{self.module_number}:UNLoad')
+
+    def get_load_state(self):
+        """Returns the loaded state for the specified module.
+        """
+
+        response = bool(int(self.device.query(f'SENSe{self.module_number}:LOAD?')))
+        return response
