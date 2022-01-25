@@ -490,3 +490,18 @@ class SSMSystem(XIPInstrument):
         self.set_mon_out_manual_level(manual_level)
         self.set_mon_out_mode('MANUAL')
         self.set_mon_out_state(mon_out_state)
+
+    def get_line_frequency(self):
+        """Returns the line frequency in Hz"""
+
+        return float(self.query('SYSTem:LFRequency?'))
+
+    def get_detected_line_frequency(self):
+        """Returns the detected line frequency in Hz"""
+
+        return float(self.query('SYSTem:LFRequency:DETected?'))
+
+    def get_line_frequency_detection_error_status(self):
+        """Returns the line frequency detection error status. True if the frequency is out of bounds."""
+
+        return bool(int(self.query('SYSTem:LFRequency:ERRor?')))
