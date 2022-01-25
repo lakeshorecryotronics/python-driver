@@ -624,8 +624,8 @@ class MeasureModule(BaseModule):
         return status_register
 
     def set_operation_event_enable_mask(self, register_mask):
-        """Configures the values of the operaiton event enable register bits.
-        These values determine which operaiton bits propagate to the operaiton event register.
+        """Configures the values of the operation event enable register bits.
+        These values determine which operation bits propagate to the operation event register.
 
             Args:
                 register_mask ([Instrument]OperationRegister):
@@ -688,3 +688,22 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command(f'SENSe{self.module_number}:PRESet')
+
+    def load(self):
+        """Loads the specified module. A connected module must be loaded before it can be used.
+        """
+
+        self.device.command(f'SENSe{self.module_number}:LOAD')
+
+    def unload(self):
+        """Unloads the specified module.
+        """
+
+        self.device.command(f'SENSe{self.module_number}:UNLoad')
+
+    def get_load_state(self):
+        """Returns the loaded state for the specified module.
+        """
+
+        response = bool(int(self.device.query(f'SENSe{self.module_number}:LOAD?')))
+        return response
