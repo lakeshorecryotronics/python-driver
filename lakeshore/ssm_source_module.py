@@ -825,14 +825,14 @@ class SourceModule(BaseModule):
     def get_tracking_frequency_minimum(self):
         """Returns the minimum tracking frequency in Hz"""
 
-        return float(self.device.query('STATistic:MINimum:SOURce{}:TFRequency:?'.format(self.module_number)))
+        return float(self.device.query(f'STATistic:MINimum:SOURce{self.module_number}:TFRequency:?'))
 
     def get_tracking_frequency_maximum(self):
         """Returns the maximum tracking frequency in Hz"""
 
-        return float(self.device.query('STATistic:MAXimum:SOURce{}:TFRequency:?'.format(self.module_number)))
+        return float(self.device.query(f'STATistic:MAXimum:SOURce{self.module_number}:TFRequency:?'))
 
     def get_tracking_frequency_span(self):
         """Returns the span of the tracking frequency in Hz"""
 
-        return float(self.device.query('STATistic:SPAN:SOURce{}:TFRequency:?'.format(self.module_number)))
+        return float(self.device.query(f'STATistic:SPAN:SOURce{self.module_number}:TFRequency:?'))
