@@ -23,6 +23,7 @@ class SSMSystemMeasureModuleOperationRegister(RegisterBase):
         self.unlocked = unlocked
 
 
+# pylint: disable=R0904
 class MeasureModule(BaseModule):
     """Class for interaction with a specific measure channel of the M81 instrument"""
 
@@ -542,7 +543,7 @@ class MeasureModule(BaseModule):
     def get_rms_span(self):
         """Returns the span between the minimum RMS and maximum RMS indications in module units"""
 
-        return float(self.device.query('STATistic:SPAN:SENSe{}:RMS?'.format(self.module_number)))
+        return float(self.device.query(f'STATistic:SPAN:SENSe{self.module_number}:RMS?'))
 
     def get_peak_to_peak(self):
         """Returns the peak to peak measurement in module units"""
@@ -633,7 +634,7 @@ class MeasureModule(BaseModule):
         """Returns the minimum Y indication from the lock in"""
 
         return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:LIA:Y?'))
-    
+
     def get_lock_in_y_maximum(self):
         """Returns the maximum Y indication from the lock in"""
 
@@ -688,21 +689,6 @@ class MeasureModule(BaseModule):
         """Returns the present detected frequency from the Phase Locked Loop (PLL)"""
 
         return float(self.device.query(f'FETCh:SENSe{self.module_number}:LIA:FREQuency?'))
-
-    def get_lock_in_frequency_minimum(self):
-        """Returns the minimum detected frequency from the Phase Locked Loop (PLL)"""
-
-        return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:LIA:FREQuency?'))
-
-    def get_lock_in_frequency_maximum(self):
-        """Returns the maximum detected frequency from the Phase Locked Loop (PLL)"""
-
-        return float(self.device.query(f'STATistic:MAXimum:SENSe{self.module_number}:LIA:FREQuency?'))
-
-    def get_lock_in_frequency_span(self):
-        """Returns the span between the minimum detected frequency from the Phase Locked Loop (PLL) and maximum detected frequency from the Phase Locked Loop (PLL)"""
-
-        return float(self.device.query(f'STATistic:SPAN:SENSe{self.module_number}:LIA:FREQuency?'))
 
     def get_pll_lock_status(self):
         """Returns the present lock status of the PLL. True if locked, False if unlocked."""
