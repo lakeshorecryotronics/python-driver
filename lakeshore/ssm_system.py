@@ -3,6 +3,7 @@
 import struct
 from base64 import b64decode
 from threading import Lock
+from enum import Enum
 
 from lakeshore.xip_instrument import XIPInstrument, XIPInstrumentException, RegisterBase
 from lakeshore.ssm_measure_module import MeasureModule
@@ -86,6 +87,37 @@ class SSMSystemQuestionableRegister(RegisterBase):
         self.heartbeat = heartbeat
         self.calibration = calibration
         self.data_stream_overflow = data_stream_overflow
+
+
+class SSMSystemDataSourceMnemonic(str, Enum):
+    """Enumeration of M81 data source mnemonics"""
+    RELATIVE_TIME = 'RTIMe'
+    SOURCE_AMPLITUDE = 'SAMPlitude'
+    SOURCE_OFFSET = 'SOFFset'
+    SOURCE_FREQUENCY = 'SFRequency'
+    SOURCE_RANGE = 'SRANge'
+    SOURCE_VOLTAGE_LIMIT = 'SVLimit'
+    SOURCE_CURRENT_LIMIT = 'SILimit'
+    MEASURE_DC = 'MDC'
+    MEASURE_RMS = 'MRMs'
+    MEASURE_POSITIVE_PEAK = 'MPPeak'
+    MEASURE_NEGATIVE_PEAK = 'MNPeak'
+    MEASURE_PEAK_TO_PEAK = 'MPTPeak'
+    MEASURE_X = 'MX'
+    MEASURE_Y = 'MY'
+    MEASURE_R = 'MR'
+    MEASURE_THETA = 'MTHeta'
+    MEASURE_RANGE = 'MRANge'
+    MEASURE_OVERLOAD = 'MOVerload'
+    MEASURE_SETTLING = 'MSETtling'
+    MEASURE_UNLOCK = 'MUNLock'
+    MEASURE_REFERENCE_FREQUENCY = 'MRFRequency'
+    GENERAL_PURPOSE_INPUT_STATES = 'GPIStates'
+    GENERAL_PURPOSE_OUTPUT_STATES = 'GPOStates'
+
+    # Gets around having to use .value to access the string
+    def __str__(self) -> str:
+        return str.__str__(self)
 
 
 class SSMSystem(XIPInstrument):
@@ -227,7 +259,8 @@ class SSMSystem(XIPInstrument):
         """Gets a list of values corresponding to the input data sources.
 
             Args:
-                data_sources (str, int): Variable length list of pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
+                data_sources (SSMSystemDataSourceMnemonic or str, int):
+                    Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
 
             Returns:
                 Tuple of values corresponding to the given data sources
@@ -245,7 +278,9 @@ class SSMSystem(XIPInstrument):
             Args:
                 rate (int): Desired transfer rate in points/sec.
                 num_points (int): Number of points to return. None to stream indefinitely.
-                data_sources (str, int): Variable length list of pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
+
+                data_sources (SSMSystemDataSourceMnemonic or str, int):
+                    Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
 
             Yields:
                 A single row of stream data as a tuple
@@ -291,7 +326,9 @@ class SSMSystem(XIPInstrument):
             Args:
                 rate (int): Desired transfer rate in points/sec.
                 num_points (int): Number of points to return.
-                data_sources (str, int): Variable length list of pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
+
+                data_sources (SSMSystemDataSourceMnemonic or str, int):
+                    Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
 
             Returns:
                 All available stream data as a list of tuples
@@ -306,7 +343,7 @@ class SSMSystem(XIPInstrument):
                 rate (int): Desired transfer rate in points/sec.
                 file (IO): File to log to.
                 num_points (int): Number of points to log.
-                data_sources (str, int): Pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
+                data_sources (SSMSystemDataSourceMnemonic or str, int): Pairs of (DATA_SOURCE, CHANNEL_INDEX).
                 write_header (bool): If true, a header row is written with column names.
         """
         write_header = kwargs.pop('write_header', True)

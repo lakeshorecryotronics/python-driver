@@ -495,7 +495,7 @@ class MeasureModule(BaseModule):
         """Gets a list of values corresponding to the input data sources for this module.
 
             Args:
-                data_sources (str): Variable length list of DATASOURCE_MNEMONIC.
+                data_sources (SSMSystemDataSourceMnemonic or str): Variable length list of data sources.
 
             Returns:
                 Tuple of values corresponding to the given data sources for this module
