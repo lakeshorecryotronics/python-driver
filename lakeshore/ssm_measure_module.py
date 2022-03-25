@@ -798,12 +798,3 @@ class MeasureModule(BaseModule):
 
         response = bool(int(self.device.query(f'SENSe{self.module_number}:LOAD?')))
         return response
-
-    def get_multiple_min_max_values(self, *data_sources):
-        """Produces a synchronized minimum and maximum value for each specified data source.
-
-            Args:
-                data_sources (str, int): Pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
-        """
-        elements = ','.join(f'{mnemonic},{index}' for (mnemonic, index) in data_sources)
-        self.device.command(f'STATistic:MMAXimum:MULTiple? {elements}')
