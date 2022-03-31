@@ -17,6 +17,10 @@ List settings profiles and restore a profile
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/ssm_profiles_example.py
 
+Stream data
+~~~~~~~~~~~
+.. literalinclude:: examples/ssm_data_streaming_example.py
+
 SSMS instrument methods
 _______________________
 
@@ -76,3 +80,11 @@ methods of the M81.
 
 .. autoclass:: lakeshore.ssm_measure_module.SSMSystemMeasureModuleOperationRegister
     :members:
+
+Enumeration Objects
+____________________
+This section describes the Enum type objects that have been created for the M81 SSM.
+
+.. autoclass:: lakeshore.ssm_system.SSMSystemDataSourceMnemonic
+    :members:
+    :undoc-members:
