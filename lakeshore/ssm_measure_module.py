@@ -790,7 +790,7 @@ class MeasureModule(BaseModule):
     def get_resistance(self):
         """Returns the present resistance measurement in Ohms.  A valid source must be configured."""
 
-        return float(self.device.query(f'FETCh:SENSe{self.module_number}:RESistance?'))
+        return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance?'))
 
     def set_resistance_source(self, source):
         """Configures the resistance feature to use a specified source module to calculate resistance.
@@ -800,12 +800,12 @@ class MeasureModule(BaseModule):
                     The channel used for calculating resistance ('S1', 'S2', or 'S3').
         """
 
-        self.device.command(f'SENSe{self.module_number}:RESistance:SOURce {source}')
+        self.device.command(f'CALCulate:SENSe{self.module_number}:RESistance:SOURce {source}')
 
     def get_resistance_source(self):
         """Returns the present source module being used to calculate resistance."""
 
-        return self.device.query(f'SENSe{self.module_number}:RESistance:SOURce?')
+        return self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:SOURce?')
 
     def reset_settings(self):
         """Resets the settings for the specified module to their power on defaults.

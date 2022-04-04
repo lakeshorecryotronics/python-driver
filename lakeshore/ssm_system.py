@@ -112,7 +112,6 @@ class SSMSystemDataSourceMnemonic(str, Enum):
     MEASURE_SETTLING = 'MSETtling'
     MEASURE_UNLOCK = 'MUNLock'
     MEASURE_REFERENCE_FREQUENCY = 'MRFRequency'
-    MEASURE_RESISTANCE = 'MRESistance'
     GENERAL_PURPOSE_INPUT_STATES = 'GPIStates'
     GENERAL_PURPOSE_OUTPUT_STATES = 'GPOStates'
 
