@@ -272,6 +272,18 @@ class SSMSystem(XIPInstrument):
         return tuple(
             (self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
 
+    def get_multiple_min_max_values(self, *data_sources):
+        """Gets a synchronized minimum and maximum value for each specified data source.
+
+            Args:
+                data_sources (str, int): Pairs of (DATASOURCE_MNEMONIC, CHANNEL_INDEX).
+        """
+
+        elements = ','.join(f'{mnemonic},{index}' for (mnemonic, index) in data_sources)
+        response_values = self.query(f'STAT:MMAX? {elements}').split(',')
+
+        return [(float(response_values[i]), float(response_values[i + 1])) for i in range(0, len(response_values), 2)]
+
     def stream_data(self, rate, num_points, *data_sources):
         """Generator object to stream data from the instrument.
 

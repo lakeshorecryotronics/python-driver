@@ -23,6 +23,7 @@ class SSMSystemMeasureModuleOperationRegister(RegisterBase):
         self.unlocked = unlocked
 
 
+# pylint: disable=R0904
 class MeasureModule(BaseModule):
     """Class for interaction with a specific measure channel of the M81 instrument"""
 
@@ -509,45 +510,135 @@ class MeasureModule(BaseModule):
 
         return float(self.device.query(f'READ:SENSe{self.module_number}:DC?'))
 
+    def get_dc_minimum(self):
+        """Returns the minimum DC indication in module units"""
+
+        return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:DC?'))
+
+    def get_dc_maximum(self):
+        """Returns the maximum DC indication in module units"""
+
+        return float(self.device.query(f'STATistic:MAXimum:SENSe{self.module_number}:DC?'))
+
     def get_rms(self):
         """Returns the RMS measurement in module units"""
 
         return float(self.device.query(f'READ:SENSe{self.module_number}:RMS?'))
+
+    def get_rms_minimum(self):
+        """Returns the minimum RMS indication in module units"""
+
+        return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:RMS?'))
+
+    def get_rms_maximum(self):
+        """Returns the maximum RMS indication in module units"""
+
+        return float(self.device.query(f'STATistic:MAXimum:SENSe{self.module_number}:RMS?'))
 
     def get_peak_to_peak(self):
         """Returns the peak to peak measurement in module units"""
 
         return float(self.device.query(f'READ:SENSe{self.module_number}:PTPeak?'))
 
+    def get_peak_to_peak_minimum(self):
+        """Returns the minimum peak to peak indication in module units"""
+
+        return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:PTPeak?'))
+
+    def get_peak_to_peak_maximum(self):
+        """Returns the maximum peak to peak indication in module units"""
+
+        return float(self.device.query(f'STATistic:MAXimum:SENSe{self.module_number}:PTPeak?'))
+
     def get_positive_peak(self):
         """Returns the positive peak measurement in module units"""
 
         return float(self.device.query(f'READ:SENSe{self.module_number}:PPEak?'))
+
+    def get_positive_peak_minimum(self):
+        """Returns the minimum positive peak indication in module units"""
+
+        return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:PPEak?'))
+
+    def get_positive_peak_maximum(self):
+        """Returns the maximum positive peak indication in module units"""
+
+        return float(self.device.query(f'STATistic:MAXimum:SENSe{self.module_number}:PPEak?'))
 
     def get_negative_peak(self):
         """Returns the negative peak measurement in module units"""
 
         return float(self.device.query(f'READ:SENSe{self.module_number}:NPEak?'))
 
+    def get_negative_peak_minimum(self):
+        """Returns the minimum negative peak indication in module units"""
+
+        return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:NPEak?'))
+
+    def get_negative_peak_maximum(self):
+        """Returns the maximum negative peak indication in module units"""
+
+        return float(self.device.query(f'STATistic:MAXimum:SENSe{self.module_number}:NPEak?'))
+
     def get_lock_in_x(self):
         """Returns the present X measurement from the lock-in"""
 
         return float(self.device.query(f'FETCh:SENSe{self.module_number}:LIA:X?'))
+
+    def get_lock_in_x_minimum(self):
+        """Returns the minimum X indication from the lock in"""
+
+        return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:LIA:X?'))
+
+    def get_lock_in_x_maximum(self):
+        """Returns the maximum X indication from the lock in"""
+
+        return float(self.device.query(f'STATistic:MAXimum:SENSe{self.module_number}:LIA:X?'))
 
     def get_lock_in_y(self):
         """Returns the present Y measurement from the lock-in"""
 
         return float(self.device.query(f'FETCh:SENSe{self.module_number}:LIA:Y?'))
 
+    def get_lock_in_y_minimum(self):
+        """Returns the minimum Y indication from the lock in"""
+
+        return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:LIA:Y?'))
+
+    def get_lock_in_y_maximum(self):
+        """Returns the maximum Y indication from the lock in"""
+
+        return float(self.device.query(f'STATistic:MAXimum:SENSe{self.module_number}:LIA:Y?'))
+
     def get_lock_in_r(self):
         """Returns the present magnitude measurement from the lock-in"""
 
         return float(self.device.query(f'FETCh:SENSe{self.module_number}:LIA:R?'))
 
+    def get_lock_in_r_minimum(self):
+        """Returns the minimum magnitude indication from the lock in"""
+
+        return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:LIA:R?'))
+
+    def get_lock_in_r_maximum(self):
+        """Returns the maximum magnitude indication from the lock in"""
+
+        return float(self.device.query(f'STATistic:MAXimum:SENSe{self.module_number}:LIA:R?'))
+
     def get_lock_in_theta(self):
         """Returns the present angle measurement from the lock-in"""
 
         return float(self.device.query(f'FETCh:SENSe{self.module_number}:LIA:THETa?'))
+
+    def get_lock_in_theta_minimum(self):
+        """Returns the minimum angle indication from the lock in"""
+
+        return float(self.device.query(f'STATistic:MINimum:SENSe{self.module_number}:LIA:THETa?'))
+
+    def get_lock_in_theta_maximum(self):
+        """Returns the maximum angle indication from the lock in"""
+
+        return float(self.device.query(f'STATistic:MAXimum:SENSe{self.module_number}:LIA:THETa?'))
 
     def get_lock_in_frequency(self):
         """Returns the present detected frequency from the Phase Locked Loop (PLL)"""
