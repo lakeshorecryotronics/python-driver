@@ -792,21 +792,6 @@ class MeasureModule(BaseModule):
 
         return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance?'))
 
-    def get_resistance_state(self):
-        """Returns the present state for displaying the resistance on the front display."""
-
-        return bool(int(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:STATe?')))
-
-    def set_resistance_state(self, state):
-        """Sets the present state for displaying the resistance on the front display.
-
-            Args:
-                state (bool):
-                    The desired state for showing resistance, 1 for shown, 0 for hidden.
-        """
-
-        self.device.command(f'CALCulate:SENSe{self.module_number}:RESistance:STATe {int(state)}', check_errors=False)
-
     def set_resistance_source(self, source):
         """Configures the resistance feature to use a specified source module to calculate resistance.
 
