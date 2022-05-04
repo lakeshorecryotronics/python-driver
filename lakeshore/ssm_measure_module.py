@@ -732,7 +732,7 @@ class MeasureModule(BaseModule):
         return response
 
     def set_identify_state(self, state):
-        """Returns the identification state for the given pod.
+        """Sets the identification state for the given pod.
 
             Args:
                 state (bool):
@@ -773,6 +773,19 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command(f'SENSe{self.module_number}:FRTHreshold {float(threshold)}')
+
+    def get_digital_high_pass_filter_state(self):
+        """Returns the state of the digital high pass filter for lock-in mode."""
+        return bool(int(self.device.query(f'SENSe{self.module_number}:DIGital:FILTer:HPASs:STATe?')))
+
+    def set_digital_high_pass_filter_state(self, state):
+        """Sets the state of the digital high pass filter for lock-in mode.
+
+            Args:
+                state (bool):
+                    The desired state fot he digital lock-in high pass filter. 1 for enabled, 0 for disabled.
+        """
+        self.device.command(f'SENSe{self.module_number}:DIGital:FILTer:HPASs:STATE {int(state)}')
 
     def reset_settings(self):
         """Resets the settings for the specified module to their power on defaults.
