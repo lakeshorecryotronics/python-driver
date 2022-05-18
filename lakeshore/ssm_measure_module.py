@@ -22,7 +22,6 @@ class SSMSystemMeasureModuleOperationRegister(RegisterBase):
         self.settling = settling
         self.unlocked = unlocked
 
-
 # pylint: disable=R0904
 class MeasureModule(BaseModule):
     """Class for interaction with a specific measure channel of the M81 instrument"""
@@ -492,10 +491,10 @@ class MeasureModule(BaseModule):
         self.set_reference_harmonic(reference_harmonic)
         self.set_lock_in_fir_state(use_fir)
 
-    def relative_tare(self):
+    def zero_relative_baseline(self):
         """Sets the present measurement as the baseline value for calculating relative readings"""
 
-        self.device.command(f'SENSe{self.module_number}:RELative:TARE')
+        self.device.command(f'SENSe{self.module_number}:RELative:ZERO')
 
     def set_relative_baseline(self, baseline):
         """Sets the relative baseline"""
