@@ -22,7 +22,6 @@ class SSMSystemMeasureModuleOperationRegister(RegisterBase):
         self.settling = settling
         self.unlocked = unlocked
 
-
 # pylint: disable=R0904
 class MeasureModule(BaseModule):
     """Class for interaction with a specific measure channel of the M81 instrument"""
@@ -492,6 +491,21 @@ class MeasureModule(BaseModule):
         self.set_reference_harmonic(reference_harmonic)
         self.set_lock_in_fir_state(use_fir)
 
+    def zero_relative_baseline(self):
+        """Sets the present measurement as the baseline value for calculating relative readings"""
+
+        self.device.command(f'SENSe{self.module_number}:RELative:ZERO')
+
+    def set_relative_baseline(self, baseline):
+        """Sets the relative baseline"""
+
+        self.device.command(f'SENSe{self.module_number}:RELative:BASEline {str(baseline)}')
+
+    def get_relative_baseline(self):
+        """Returns the relative baseline"""
+
+        return float(self.device.query(f'SENSe{self.module_number}:RELative:BASEline?'))
+
     def get_multiple(self, *data_sources):
         """Gets a list of values corresponding to the input data sources for this module.
 
@@ -510,6 +524,11 @@ class MeasureModule(BaseModule):
 
         return float(self.device.query(f'READ:SENSe{self.module_number}:DC?'))
 
+    def get_dc_relative(self):
+        """Returns the relative DC measurement in module units"""
+
+        return float(self.device.query(f'READ:SENSe{self.module_number}:DC:RELative?'))
+
     def get_dc_minimum(self):
         """Returns the minimum DC indication in module units"""
 
@@ -524,6 +543,11 @@ class MeasureModule(BaseModule):
         """Returns the RMS measurement in module units"""
 
         return float(self.device.query(f'READ:SENSe{self.module_number}:RMS?'))
+
+    def get_rms_relative(self):
+        """Returns the relative RMS measurement in module units"""
+
+        return float(self.device.query(f'READ:SENSe{self.module_number}:RMS:RELative?'))
 
     def get_rms_minimum(self):
         """Returns the minimum RMS indication in module units"""
