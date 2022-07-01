@@ -532,17 +532,9 @@ class MeasureModule(BaseModule):
         return float(self.device.query(f'SENSe{self.module_number}:RELative:BASEline?'))
 
     def get_multiple(self, *data_sources):
-        """Gets a list of values corresponding to the input data sources for this module.
+        """This function is deprecated. Use fetch_multiple() instead."""
 
-            Args:
-                data_sources (SSMSystemDataSourceMnemonic or str): Variable length list of data sources.
-
-            Returns:
-                Tuple of values corresponding to the given data sources for this module
-        """
-
-        elements = [(data_source, self.module_number) for data_source in data_sources]
-        return self.device.get_multiple(*elements)
+        return self.fetch_multiple(*data_sources)
 
     def get_dc(self):
         """Returns the DC measurement in module units"""
@@ -880,3 +872,29 @@ class MeasureModule(BaseModule):
 
         response = bool(int(self.device.query(f'SENSe{self.module_number}:LOAD?')))
         return response
+
+    def fetch_multiple(self, *data_sources):
+        """Gets a list of values corresponding to the input data sources for this module by using "FETCh[:MULTiple]?".
+
+            Args:
+                data_sources (SSMSystemDataSourceMnemonic or str): Variable length list of data sources.
+
+            Returns:
+                Tuple of values corresponding to the given data sources for this module
+        """
+
+        elements = [(data_source, self.module_number) for data_source in data_sources]
+        return self.device.fetch_multiple(*elements)
+
+    def read_multiple(self, *data_sources):
+        """Gets a list of values corresponding to the input data sources for this module by using "READ[:MULTiple]?".
+
+            Args:
+                data_sources (SSMSystemReadDataSourceMnemonic or str): Variable length list of data sources.
+
+            Returns:
+                Tuple of values corresponding to the given data sources for this module
+        """
+
+        elements = [(data_source, self.module_number) for data_source in data_sources]
+        return self.device.read_multiple(*elements)

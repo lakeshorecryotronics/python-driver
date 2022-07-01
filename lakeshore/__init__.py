@@ -17,7 +17,8 @@ from .model_372 import *
 from .model_425 import Model425
 from .model_643 import Model643
 from .model_648 import Model648
-from .ssm_system import SSMSystem, SSMSystemQuestionableRegister, SSMSystemOperationRegister, SSMSystemDataSourceMnemonic
+from .ssm_system import SSMSystem, SSMSystemQuestionableRegister, SSMSystemOperationRegister, \
+    SSMSystemDataSourceMnemonic, SSMSystemReadDataSourceMnemonic
 from .ssm_base_module import SSMSystemModuleQuestionableRegister
 from .ssm_measure_module import SSMSystemMeasureModuleOperationRegister
 from .ssm_source_module import SSMSystemSourceModuleOperationRegister
