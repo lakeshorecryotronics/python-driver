@@ -874,7 +874,8 @@ class MeasureModule(BaseModule):
         return response
 
     def fetch_multiple(self, *data_sources):
-        """Gets a list of values corresponding to the input data sources for this module by using "FETCh[:MULTiple]?".
+        """Gets a list of the latest values corresponding to the input data sources for this module, and returns them
+        as soon as possible.
 
             Args:
                 data_sources (SSMSystemDataSourceMnemonic or str): Variable length list of data sources.
@@ -887,7 +888,8 @@ class MeasureModule(BaseModule):
         return self.device.fetch_multiple(*elements)
 
     def read_multiple(self, *data_sources):
-        """Gets a list of values corresponding to the input data sources for this module by using "READ[:MULTiple]?".
+        """Initiates measurement of new values corresponding to the input data sources for this module, and returns them
+        after the measurement is complete.
 
             Args:
                 data_sources (SSMSystemReadDataSourceMnemonic or str): Variable length list of data sources.

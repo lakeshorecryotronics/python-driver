@@ -558,7 +558,8 @@ class SSMSystem(XIPInstrument):
         return bool(int(self.query('SYSTem:LFRequency:ERRor?')))
 
     def fetch_multiple(self, *data_sources):
-        """Gets a list of values corresponding to the input data sources by using "FETCh[:MULTiple]?".
+        """Gets a list of the latest values corresponding to the input data sources, and returns them as soon as
+        possible.
 
             Args:
                 data_sources (SSMSystemDataSourceMnemonic or str, int):
@@ -575,7 +576,8 @@ class SSMSystem(XIPInstrument):
             (self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
 
     def read_multiple(self, *data_sources):
-        """Gets a list of values corresponding to the input data sources by using "READ[:MULTiple]?".
+        """Initiates measurement of new values corresponding to the input data sources, and returns them after the
+        measurement is complete.
 
             Args:
                 data_sources (SSMSystemReadDataSourceMnemonic or str, int):
