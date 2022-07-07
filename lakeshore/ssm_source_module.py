@@ -52,6 +52,16 @@ class SourceModule(BaseModule):
 
         self.device.command(f'SOURce{self.module_number}:NAME "{new_name}"')
 
+    def get_notes(self):
+        """Returns the user-settable notes of the module"""
+
+        return self.device.query(f'SOURce{self.module_number}:NOTes?').strip('\"')
+
+    def set_notes(self, new_note):
+        """Set the notes of the module"""
+
+        self.device.command(f'SOURce{self.module_number}:NOTes "{new_note}"')
+
     def get_model(self):
         """Returns the model of the module (i.e. BCS-10)"""
 
