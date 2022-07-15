@@ -418,7 +418,7 @@ class MeasureModule(BaseModule):
         self.set_lock_in_iir_state(False)
 
     def get_lock_in_fir_state(self):
-        """Returns the state of the lock-in PSD output IIR filter"""
+        """Returns the state of the lock-in PSD output FIR filter"""
 
         return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:FIR:STATe?')))
 
