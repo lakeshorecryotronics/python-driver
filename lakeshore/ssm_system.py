@@ -99,7 +99,7 @@ class SSMSystemDataSourceMnemonic(str, Enum):
     SOURCE_VOLTAGE_LIMIT = 'SVLimit'
     SOURCE_CURRENT_LIMIT = 'SILimit'
     MEASURE_DC = 'MDC'
-    MEASURE_RMS = 'MRMs'
+    MEASURE_RMS = 'MRMS'
     MEASURE_POSITIVE_PEAK = 'MPPeak'
     MEASURE_NEGATIVE_PEAK = 'MNPeak'
     MEASURE_PEAK_TO_PEAK = 'MPTPeak'
