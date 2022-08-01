@@ -430,7 +430,7 @@ class MeasureModule(BaseModule):
                     The desired number of FIR cycles, between 1 and 100
         """
 
-        self.device.commands(f'SENSe{self.module_number}:LIA:FIR:CYCLes {str(int(cycles))}')
+        self.device.command(f'SENSe{self.module_number}:LIA:FIR:CYCLes {str(int(cycles))}')
 
     def setup_dc_measurement(self, nplc=1):
         """Setup the module for DC measurement
