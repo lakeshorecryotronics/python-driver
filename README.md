@@ -6,6 +6,10 @@
 
 The [Lake Shore](https://www.lakeshore.com) python driver allows users to quickly and easily communicate with Lake Shore instruments. It automatically establishes a connection and provides a variety of functions specific to the product that configure settings and acquire measurements. 
 
+## Documentation
+[Click here to read the documentation and some example scripts](https://lake-shore-python-driver.readthedocs.io/en/latest/)
+
+
 ## Supported Products
 Advanced support
 * [F41 and F71 Teslameters](https://www.lakeshore.com/products/Gaussmeters/F71-F41-teslameters/Pages/Overview.aspx)
@@ -37,9 +41,6 @@ The following code will connect to a 155 Precision Source over USB and print wha
 
     my_instrument = PrecisionSource()
     print(my_instrument.query('*IDN?'))
-
-## Documentation
-[Click here to read the documentation and some example scripts](https://lake-shore-python-driver.readthedocs.io/en/latest/)
 
 ## Contribute
 We want your feedback!
