@@ -392,6 +392,31 @@ class MeasureModule(BaseModule):
 
         self.device.command(f'SENSe{self.module_number}:LIA:ROLLoff {rolloff}')
 
+    def get_lock_in_iir_state(self):
+        """Returns the state of the lock-in PSD output IIR filter"""
+
+        return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:IIR:STATe?')))
+
+    def set_lock_in_iir_state(self, state):
+        """Sets the state of the lock-in PSD output IIR filter
+
+            Args:
+                state (bool):
+                    The new state of the PSD output IIR filter
+        """
+
+        self.device.command(f'SENSe{self.module_number}:LIA:IIR:STATe {str(int(state))}')
+
+    def enable_lock_in_iir(self):
+        """Sets the state of the lock-in PSD output IIR filter to True."""
+
+        self.set_lock_in_iir_state(True)
+
+    def disable_lock_in_iir(self):
+        """Sets the state of the lock-in PSD output IIR filter to False."""
+
+        self.set_lock_in_iir_state(False)
+
     def get_lock_in_fir_state(self):
         """Returns the state of the lock-in PSD output FIR filter"""
 
