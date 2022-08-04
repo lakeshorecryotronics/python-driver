@@ -24,7 +24,13 @@ class SourceModule(BaseModule):
     """Class for interaction with a specific source channel of the M81 instrument"""
 
     def get_multiple(self, *data_sources):
-        r"""Gets a list of values corresponding to the input data sources for this module.
+        r"""This function is deprecated. Use fetch_multiple() instead."""
+
+        return self.fetch_multiple(*data_sources)
+
+    def fetch_multiple(self, *data_sources):
+        r"""Gets a list of the latest values corresponding to the input data sources for this module, and returns them
+        as soon as possible.
 
             Args:
                 data_sources (SSMSystemDataSourceMnemonic or str): Variable length list of data sources.
@@ -34,7 +40,7 @@ class SourceModule(BaseModule):
         """
 
         elements = [(data_source, self.module_number) for data_source in data_sources]
-        return self.device.get_multiple(*elements)
+        return self.device.fetch_multiple(*elements)
 
     def get_name(self):
         """Returns the user-settable name of the module"""

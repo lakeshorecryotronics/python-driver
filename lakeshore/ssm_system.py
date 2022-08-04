@@ -120,6 +120,20 @@ class SSMSystemDataSourceMnemonic(str, Enum):
         return str.__str__(self)
 
 
+class SSMSystemReadDataSourceMnemonic(str, Enum):
+    """Enumeration of M81 read data source mnemonics"""
+    MEASURE_DC = 'MDC'
+    MEASURE_RMS = 'MRMs'
+    MEASURE_POSITIVE_PEAK = 'MPPeak'
+    MEASURE_NEGATIVE_PEAK = 'MNPeak'
+    MEASURE_PEAK_TO_PEAK = 'MPTPeak'
+    MEASURE_RANGE = 'MRANge'
+
+    # Gets around having to use .value to access the string
+    def __str__(self) -> str:
+        return str.__str__(self)
+
+
 class SSMSystem(XIPInstrument):
     """Class for interaction with the M81 instrument"""
 
@@ -256,21 +270,9 @@ class SSMSystem(XIPInstrument):
         data_source_lookup[short_form.upper()] = channel_index
 
     def get_multiple(self, *data_sources):
-        """Gets a list of values corresponding to the input data sources.
+        """This function is deprecated. Use fetch_multiple() instead."""
 
-            Args:
-                data_sources (SSMSystemDataSourceMnemonic or str, int):
-                    Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
-
-            Returns:
-                Tuple of values corresponding to the given data sources
-        """
-
-        elements = ','.join(f'{mnemonic},{index}' for (mnemonic, index) in data_sources)
-        response_values_with_indices = enumerate(self.query(f'FETCh? {elements}').split(','))
-
-        return tuple(
-            (self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
+        return self.fetch_multiple(*data_sources)
 
     def get_multiple_min_max_values(self, *data_sources):
         """Gets a synchronized minimum and maximum value for each specified data source.
@@ -554,3 +556,39 @@ class SSMSystem(XIPInstrument):
         """Returns the line frequency detection error status. True if the frequency is out of bounds."""
 
         return bool(int(self.query('SYSTem:LFRequency:ERRor?')))
+
+    def fetch_multiple(self, *data_sources):
+        """Gets a list of the latest values corresponding to the input data sources, and returns them as soon as
+        possible.
+
+            Args:
+                data_sources (SSMSystemDataSourceMnemonic or str, int):
+                    Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
+
+            Returns:
+                Tuple of values corresponding to the given data sources
+        """
+
+        elements = ','.join(f'{mnemonic},{index}' for (mnemonic, index) in data_sources)
+        response_values_with_indices = enumerate(self.query(f'FETCh? {elements}').split(','))
+
+        return tuple(
+            (self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
+
+    def read_multiple(self, *data_sources):
+        """Initiates measurement of new values corresponding to the input data sources, and returns them after the
+        measurement is complete.
+
+            Args:
+                data_sources (SSMSystemReadDataSourceMnemonic or str, int):
+                    Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
+
+            Returns:
+                Tuple of values corresponding to the given data sources
+        """
+
+        elements = ','.join(f'{mnemonic},{index}' for (mnemonic, index) in data_sources)
+        response_values_with_indices = enumerate(self.query(f'READ? {elements}').split(','))
+
+        return tuple(
+            (self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)

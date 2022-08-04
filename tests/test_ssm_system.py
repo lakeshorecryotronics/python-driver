@@ -61,11 +61,17 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
         with self.assertRaisesRegex(IndexError, 'Invalid port number. Must be between 1 and 3'):
             self.dut.get_measure_module(5)
 
-    def test_get_multiple(self):
+    def test_fetch_multiple(self):
         self.fake_connection.setup_response('5.63,4.31,1.33;No error')
-        response = self.dut.get_multiple(("MX", 1), ("MY", 2), ("MR", 3))
+        response = self.dut.fetch_multiple(("MX", 1), ("MY", 2), ("MR", 3))
         self.assertEqual(response, (5.63, 4.31, 1.33))
         self.assertIn('FETCh? MX,1,MY,2,MR,3', self.fake_connection.get_outgoing_message())
+
+    def test_read_multiple(self):
+        self.fake_connection.setup_response('5.63,4.31,1.33;No error')
+        response = self.dut.read_multiple(("MDC", 1), ("MRMS", 2), ("MPTPeak", 3))
+        self.assertEqual(response, (5.63, 4.31, 1.33))
+        self.assertIn('READ? MDC,1,MRMS,2,MPTPeak,3', self.fake_connection.get_outgoing_message())
 
     def test_stream_data(self):
         """Test stream data"""
@@ -363,9 +369,9 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
 
 
 class TestSourceModule(TestWithFakeSSMSSourceModule):
-    def test_get_multiple(self):
+    def test_fetch_multiple(self):
         self.fake_connection.setup_response('3.45,2.89,0.73;No error')
-        response = self.dut_module.get_multiple('SRANge', 'MDC', 'MY')
+        response = self.dut_module.fetch_multiple('SRANge', 'MDC', 'MY')
         self.assertEqual(response, (3.45, 2.89, 0.73))
         self.assertIn('FETCh? SRANge,1,MDC,1,MY,1', self.fake_connection.get_outgoing_message())
 
@@ -1275,11 +1281,17 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.assertIn('SENSe1:LIA:DHARmonic 2', self.fake_connection.get_outgoing_message())
         self.assertIn('SENSe1:LIA:FIR:STATe 1', self.fake_connection.get_outgoing_message())
 
-    def test_get_multiple(self):
+    def test_fetch_multiple(self):
         self.fake_connection.setup_response('2.21,5.91,2.13;No error')
-        response = self.dut_module.get_multiple('SRANge', 'MDC', 'MY')
+        response = self.dut_module.fetch_multiple('SRANge', 'MDC', 'MY')
         self.assertEqual(response, (2.21, 5.91, 2.13))
         self.assertIn('FETCh? SRANge,1,MDC,1,MY,1', self.fake_connection.get_outgoing_message())
+
+    def test_read_multiple(self):
+        self.fake_connection.setup_response('2.21,5.91,2.13;No error')
+        response = self.dut_module.read_multiple('MRANge', 'MDC', 'MPPeak')
+        self.assertEqual(response, (2.21, 5.91, 2.13))
+        self.assertIn('READ? MRANge,1,MDC,1,MPPeak,1', self.fake_connection.get_outgoing_message())
 
     def test_get_dc(self):
         self.fake_connection.setup_response('2.5;No error')
