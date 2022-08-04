@@ -2,11 +2,23 @@
 
 import json
 
+
 class SettingsProfiles:
     """Class for interaction with settings profiles"""
 
     def __init__(self, device):
         self.device = device
+
+    def get_summary(self, name):
+        """Returns a list containing a profile's description and module models.
+
+        Args:
+            name (str): Name of the profile to query.
+        """
+
+        response = self.device.query(f'PROFile:SUMMary? "{name}"')
+
+        return [element.replace('"', '').strip() for element in response.split(',')]
 
     def create(self, name, description=''):
         """Create a new profile using the present instrument configuration.
