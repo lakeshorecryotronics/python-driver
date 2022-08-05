@@ -497,6 +497,11 @@ class SSMSystem(XIPInstrument):
         self.set_mon_out_mode(mon_out_source)
         self.set_mon_out_state(mon_out_state)
 
+    def get_mon_out_scale(self):
+        """Returns the monitor out scaling factor of the configured module."""
+
+        return float(self.query('OUTPut:MONitor:SCALe?'))
+
     def get_head_self_cal_status(self):
         """Returns the status of the last head self calibration"""
 
