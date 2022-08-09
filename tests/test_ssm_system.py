@@ -381,10 +381,21 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.assertEqual(response, 'module_1_name')
         self.assertIn('SOURce1:NAME?', self.fake_connection.get_outgoing_message())
 
+    def test_get_notes(self):
+        self.fake_connection.setup_response('"module_1_notes";No error')
+        response = self.dut_module.get_notes()
+        self.assertEqual(response, 'module_1_notes')
+        self.assertIn('SOURce1:NOTes?', self.fake_connection.get_outgoing_message())
+
     def test_set_name(self):
         self.fake_connection.setup_response('No error')
         self.dut_module.set_name('New_Module_Name')
         self.assertIn('SOURce1:NAME "New_Module_Name"', self.fake_connection.get_outgoing_message())
+
+    def test_set_notes(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.set_notes('New_Module_Notes')
+        self.assertIn('SOURce1:NOTes "New_Module_Notes"', self.fake_connection.get_outgoing_message())
 
     def test_get_model(self):
         self.fake_connection.setup_response('BCS-10;No error')
