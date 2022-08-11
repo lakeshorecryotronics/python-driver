@@ -332,6 +332,12 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
         self.assertIn('OUTPut:MONitor:MODe M1', self.fake_connection.get_outgoing_message())
         self.assertIn('OUTPut:MONitor:STATe 0', self.fake_connection.get_outgoing_message())
 
+    def test_get_mon_out_scale(self):
+        self.fake_connection.setup_response('2.5;No error')
+        response = self.dut.get_mon_out_scale()
+        self.assertEqual(response, 2.5)
+        self.assertIn('OUTPut:MONitor:SCALe?', self.fake_connection.get_outgoing_message())
+
     def test_get_head_self_cal_status(self):
         self.fake_connection.setup_response('No error')
         self.dut.get_head_self_cal_status()
