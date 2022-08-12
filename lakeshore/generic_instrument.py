@@ -252,7 +252,7 @@ class GenericInstrument:
         """Query over the serial USB connection"""
 
         self._usb_command(query)
-        response = self.device_serial.readline().decode('ascii')
+        response = self.device_serial.read_until(b'\r\n').decode('ascii')
 
         # If nothing is returned, raise a timeout error.
         if not response:
