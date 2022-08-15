@@ -953,14 +953,14 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.dut_module.set_identify_state(True)
         self.assertIn('SOURce1:IDENtify 1', self.fake_connection.get_outgoing_message())
 
-    def test_get_self_calibration_datetime(self):
+    def test_get_self_cal_datetime(self):
         self.fake_connection.setup_response('1985,10,26,1,20,0;No error')
-        response = self.dut_module.get_self_calibration_datetime()
+        response = self.dut_module.get_self_cal_datetime()
         self.assertEqual(response, datetime(1985,10,26,1,20,0))
 
     def test_get_self_cal_temperature(self):
         self.fake_connection.setup_response('232.778;No error')
-        response = self.dut_module.get_self_calibration_temperature()
+        response = self.dut_module.get_self_cal_temperature()
         self.assertEqual(response, 232.778)
 
 
@@ -1504,12 +1504,12 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
 
     def test_get_self_cal_datetime(self):
         self.fake_connection.setup_response('1985,10,26,1,20,0;No error')
-        response = self.dut_module.get_self_calibration_datetime()
+        response = self.dut_module.get_self_cal_datetime()
         self.assertEqual(response, datetime(1985,10,26,1,20,0))
 
     def test_get_self_cal_temperature(self):
         self.fake_connection.setup_response('232.778;No error')
-        response = self.dut_module.get_self_calibration_temperature()
+        response = self.dut_module.get_self_cal_temperature()
         self.assertEqual(response, 232.778)
 
 

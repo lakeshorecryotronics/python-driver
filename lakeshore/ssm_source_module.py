@@ -839,14 +839,14 @@ class SourceModule(BaseModule):
         response = bool(int(self.device.query(f'SOURce{self.module_number}:LOAD?')))
         return response
 
-    def get_self_calibration_datetime(self):
+    def get_self_cal_datetime(self):
         """Returns the self calibration date and time for the specified module.
         """
 
         response = self.device.query(f'SOURce{self.module_number}:SCALibration:DATE?').split(',')
         return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]), int(response[4]), int(response[5]))
 
-    def get_self_calibration_temperature(self):
+    def get_self_cal_temperature(self):
         """Returns the self calibration temperature for the specified module.
         """
 
