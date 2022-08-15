@@ -20,7 +20,7 @@ class SSMSystemSourceModuleOperationRegister(RegisterBase):
         self.v_limit = v_limit
         self.i_limit = i_limit
 
-
+# pylint: disable=R0904
 class SourceModule(BaseModule):
     """Class for interaction with a specific source channel of the M81 instrument"""
 
