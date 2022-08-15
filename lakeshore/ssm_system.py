@@ -513,6 +513,11 @@ class SSMSystem(XIPInstrument):
         response = self.query('CALibration:SCALibration:DATE?').split(',')
         return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]), int(response[4]), int(response[5]))
 
+    def get_head_self_cal_temperature(self):
+        """Returns the temperature of the last head self calibration"""
+
+        return float(self.query('CALibration:SCALibration:TEMPerature?'))
+
     def run_head_self_calibration(self):
         """"Runs a self calibration for the head"""
 
