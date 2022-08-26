@@ -1,5 +1,6 @@
 """Implements functionality unique to the Lake Shore M81."""
 
+from datetime import datetime
 import struct
 from base64 import b64decode
 from threading import Lock
@@ -502,10 +503,32 @@ class SSMSystem(XIPInstrument):
 
         return float(self.query('OUTPut:MONitor:SCALe?'))
 
+    def get_head_cal_datetime(self):
+        """Returns the date and time of the head calibration"""
+
+        response = self.query('CALibration:DATE?').split(',')
+        return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]), int(response[4]), int(response[5]))
+
+    def get_head_cal_temperature(self):
+        """Returns the temperature of the head calibration"""
+
+        return float(self.query('CALibration:TEMPerature?'))
+
     def get_head_self_cal_status(self):
         """Returns the status of the last head self calibration"""
 
         return self.query('CALibration:SCALibration:STATus?')
+
+    def get_head_self_cal_datetime(self):
+        """Returns the datetime of the last head self calibration"""
+
+        response = self.query('CALibration:SCALibration:DATE?').split(',')
+        return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]), int(response[4]), int(response[5]))
+
+    def get_head_self_cal_temperature(self):
+        """Returns the temperature of the last head self calibration"""
+
+        return float(self.query('CALibration:SCALibration:TEMPerature?'))
 
     def run_head_self_calibration(self):
         """"Runs a self calibration for the head"""

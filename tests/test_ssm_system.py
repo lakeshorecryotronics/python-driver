@@ -1,3 +1,4 @@
+from datetime import datetime
 from tests.utils import TestWithFakeSSMS, TestWithFakeSSMSSourceModule, TestWithFakeSSMSMeasureModule
 from lakeshore import ssm_system, ssm_measure_module, ssm_source_module, ssm_base_module
 from base64 import b64encode
@@ -372,6 +373,26 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
         self.assertIn('OUTPut:MONitor:MLEVel 37.84', self.fake_connection.get_outgoing_message())
         self.assertIn('OUTPut:MONitor:MODe MANUAL', self.fake_connection.get_outgoing_message())
         self.assertIn('OUTPut:MONitor:STATe 0', self.fake_connection.get_outgoing_message())
+
+    def test_get_head_self_cal_datetime(self):
+        self.fake_connection.setup_response('1985,10,26,1,20,0;No error')
+        response = self.dut.get_head_self_cal_datetime()
+        self.assertEqual(response, datetime(1985,10,26,1,20,0))
+
+    def test_get_head_self_cal_temperature(self):
+        self.fake_connection.setup_response('232.778;No error')
+        response = self.dut.get_head_self_cal_temperature()
+        self.assertEqual(response, 232.778)
+
+    def test_get_head_cal_datetime(self):
+        self.fake_connection.setup_response('1985,10,26,1,20,0;No error')
+        response = self.dut.get_head_cal_datetime()
+        self.assertEqual(response, datetime(1985,10,26,1,20,0))
+
+    def test_get_head_cal_temperature(self):
+        self.fake_connection.setup_response('232.778;No error')
+        response = self.dut.get_head_cal_temperature()
+        self.assertEqual(response, 232.778)
 
 
 class TestSourceModule(TestWithFakeSSMSSourceModule):
@@ -932,6 +953,16 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.dut_module.set_identify_state(True)
         self.assertIn('SOURce1:IDENtify 1', self.fake_connection.get_outgoing_message())
 
+    def test_get_self_cal_datetime(self):
+        self.fake_connection.setup_response('1985,10,26,1,20,0;No error')
+        response = self.dut_module.get_self_cal_datetime()
+        self.assertEqual(response, datetime(1985,10,26,1,20,0))
+
+    def test_get_self_cal_temperature(self):
+        self.fake_connection.setup_response('232.778;No error')
+        response = self.dut_module.get_self_cal_temperature()
+        self.assertEqual(response, 232.778)
+
 
 class TestMeasureModule(TestWithFakeSSMSMeasureModule):
     def test_get_name(self):
@@ -1470,6 +1501,16 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.fake_connection.setup_response('No error')
         self.dut_module.set_frequency_range_threshold(0.9)
         self.assertIn('SENSe1:FRTHreshold 0.9', self.fake_connection.get_outgoing_message())
+
+    def test_get_self_cal_datetime(self):
+        self.fake_connection.setup_response('1985,10,26,1,20,0;No error')
+        response = self.dut_module.get_self_cal_datetime()
+        self.assertEqual(response, datetime(1985,10,26,1,20,0))
+
+    def test_get_self_cal_temperature(self):
+        self.fake_connection.setup_response('232.778;No error')
+        response = self.dut_module.get_self_cal_temperature()
+        self.assertEqual(response, 232.778)
 
 
 class TestSettingsProfiles(TestWithFakeSSMS):

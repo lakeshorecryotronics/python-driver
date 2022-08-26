@@ -1,5 +1,6 @@
 """Implements functionality unique to the M81 Source Modules."""
 
+from datetime import datetime
 from lakeshore.xip_instrument import RegisterBase
 from lakeshore.ssm_base_module import SSMSystemModuleQuestionableRegister, BaseModule
 
@@ -19,7 +20,7 @@ class SSMSystemSourceModuleOperationRegister(RegisterBase):
         self.v_limit = v_limit
         self.i_limit = i_limit
 
-
+# pylint: disable=R0904
 class SourceModule(BaseModule):
     """Class for interaction with a specific source channel of the M81 instrument"""
 
@@ -836,4 +837,18 @@ class SourceModule(BaseModule):
         """
 
         response = bool(int(self.device.query(f'SOURce{self.module_number}:LOAD?')))
+        return response
+
+    def get_self_cal_datetime(self):
+        """Returns the self calibration date and time for the specified module.
+        """
+
+        response = self.device.query(f'SOURce{self.module_number}:SCALibration:DATE?').split(',')
+        return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]), int(response[4]), int(response[5]))
+
+    def get_self_cal_temperature(self):
+        """Returns the self calibration temperature for the specified module.
+        """
+
+        response = float(self.device.query(f'SOURce{self.module_number}:SCALibration:TEMP?'))
         return response
