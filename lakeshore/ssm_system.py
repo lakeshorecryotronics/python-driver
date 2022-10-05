@@ -172,6 +172,10 @@ class SSMSystem(XIPInstrument):
 
         self.stream_lock = Lock()
 
+    def load_modules(self):
+        """Loads all unloaded modules. Connected modules must be loaded before they can be used"""
+        self.command('SYSTem:LOAD')
+
     def get_num_measure_channels(self):
         """Returns the number of measure channels supported by the instrument"""
 

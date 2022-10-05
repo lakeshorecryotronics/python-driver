@@ -820,12 +820,6 @@ class SourceModule(BaseModule):
 
         self.device.command(f'SOURce{self.module_number}:PRESet')
 
-    def load(self):
-        """Loads the specified module. A connected module must be loaded before it can be used.
-        """
-
-        self.device.command(f'SOURce{self.module_number}:LOAD')
-
     def unload(self):
         """Unloads the specified module.
         """
