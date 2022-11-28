@@ -104,6 +104,12 @@ class GenericInstrument:
         if self.device_tcp is not None:
             self.device_tcp.close()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.__del__()
+
     def command(self, command_string):
         """Send a command to the instrument
 
