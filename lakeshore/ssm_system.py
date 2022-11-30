@@ -266,6 +266,7 @@ class SSMSystem(XIPInstrument):
         'MRFRequency': float,
         'GPIStates': int,
         'GPOStates': int,
+        'SRSettling': lambda s: bool(int(s)),
     }
 
     data_source_lookup = {}
