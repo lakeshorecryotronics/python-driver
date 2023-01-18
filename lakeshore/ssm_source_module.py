@@ -864,13 +864,13 @@ class SourceModule(BaseModule):
 
             Args:
                 dwell (float):
-                    The desired dwell time per step in s. Must be a multiple of 200 ns (0.0002).
+                    The desired dwell time per step in seconds. Must be a multiple of 200 microseconds (0.0002).
         """
 
         self.device.command(f'SOURce{self.module_number}:CURRent:DWELl {dwell}')
 
     def get_source_sweep_current_dwell(self):
-        """Returns the current dwell time of the source sweep for the specified module in s.
+        """Returns the current dwell time of the source sweep for the specified module in seconds.
         """
 
         response = float(self.device.query(f'SOURce{self.module_number}:CURRent:DWELl?'))
@@ -946,17 +946,20 @@ class SourceModule(BaseModule):
 
     def set_source_sweep_current_time(self, time):
         """Configures the current overall runtime of the source sweep for the specified module.
-        Must be at least 200 ns (0.0002) per step.
+        Must be at least 200 microseconds (0.0002) per step.
 
             Args:
                 time (float):
-                    The desired runtime, in s.
+                    The desired runtime, in seconds. Must be a multiple of 200 microseconds.
+
+            Raises:
+                XIPInstrumentException: Step size must be a multiple of 200 microseconds.
         """
 
         self.device.command(f'SOURce{self.module_number}:CURRent:TIME {time}')
 
     def get_source_sweep_current_time(self):
-        """Returns the current overall runtime of the source sweep for the specified module in s.
+        """Returns the current overall runtime of the source sweep for the specified module in seconds.
         """
 
         response = float(self.device.query(f'SOURce{self.module_number}:CURRent:TIME?'))
@@ -967,13 +970,13 @@ class SourceModule(BaseModule):
 
             Args:
                 dwell (float):
-                    The desired dwell time per step in s. Must be a multiple of 200 ns (0.0002).
+                    The desired dwell time per step in seconds. Must be a multiple of 200 microseconds (0.0002).
         """
 
         self.device.command(f'SOURce{self.module_number}:VOLTage:DWELl {dwell}')
 
     def get_source_sweep_voltage_dwell(self):
-        """Returns the voltage dwell time of the source sweep for the specified module in s.
+        """Returns the voltage dwell time of the source sweep for the specified module in seconds.
         """
 
         response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:DWELl?'))
@@ -1007,7 +1010,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:VOLTage:STARt {start}')
 
     def get_source_sweep_voltage_start(self):
-        """Returns the voltage starting value of the source sweep for the specififed module in A.
+        """Returns the voltage starting value of the source sweep for the specified module in A.
         """
 
         response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:STARt?'))
@@ -1024,7 +1027,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:VOLTage:STOP {stop}')
 
     def get_source_sweep_voltage_stop(self):
-        """Returns the voltage stopping value of the source sweep for the specififed module in A.
+        """Returns the voltage stopping value of the source sweep for the specified module in A.
         """
 
         response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:STOP?'))
@@ -1041,7 +1044,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:VOLTage:STEP {step}')
 
     def get_source_sweep_voltage_step(self):
-        """Returns the voltage step size of the source sweep for the specififed module in A.
+        """Returns the voltage step size of the source sweep for the specified module in A.
         """
 
         response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:STEP?'))
@@ -1049,17 +1052,20 @@ class SourceModule(BaseModule):
 
     def set_source_sweep_voltage_time(self, time):
         """Configures the voltage overall runtime of the source sweep for the specified module.
-        Must be at least 200 ns (0.0002) per step.
+        Must be at least 200 microseconds (0.0002) per step.
 
             Args:
                 time (float):
-                    The desired runtime, in s.
+                    The desired runtime, in seconds. Must be a multiple of 200 microseconds.
+
+            Raises:
+                XIPInstrumentException: Step size must be a multiple of 200 microseconds.
         """
 
         self.device.command(f'SOURce{self.module_number}:VOLTage:TIME {time}')
 
     def get_source_sweep_voltage_time(self):
-        """Returns the voltage overall runtime of the source sweep for the specified module in s.
+        """Returns the voltage overall runtime of the source sweep for the specified module in seconds.
         """
 
         response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:TIME?'))
@@ -1093,7 +1099,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {str(spacing)}')
 
     def get_source_sweep_spacing(self):
-        """Returns the specing of the source sweep for the specified module.
+        """Returns the spacing of the source sweep for the specified module.
         """
 
         response = self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?')
