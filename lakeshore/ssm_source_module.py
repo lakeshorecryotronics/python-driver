@@ -197,7 +197,7 @@ class SourceModule(BaseModule):
             Args:
                 source (str):
                     The channel used for synchronization ('S1', 'S2', 'S3', or 'RIN').
-                    This channel will follow the frequency set for the specifed channel.
+                    This channel will follow the frequency set for the specified channel.
 
                 phase_shift (float):
                     The phase shift applied between the synchronization source and this channel in degrees.
@@ -933,12 +933,15 @@ class SourceModule(BaseModule):
             Args:
                 step (float):
                     The desired step size, in A.
+
+            Raises:
+                XIPInstrumentException: Step size cannot be set when spacing is logarithmic.
         """
 
         self.device.command(f'SOURce{self.module_number}:CURRent:STEP {step}')
 
     def get_source_sweep_current_step(self):
-        """Returns the current step size of the source sweep for the specififed module in A.
+        """Returns the current step size of the source sweep for the specified module in A.
         """
 
         response = float(self.device.query(f'SOURce{self.module_number}:CURRent:STEP?'))
@@ -950,7 +953,11 @@ class SourceModule(BaseModule):
 
             Args:
                 time (float):
+<<<<<<< HEAD
                     The desired runtime, in seconds. Must be a multiple of 200 microseconds.
+=======
+                    The desired runtime, in s. Must be a multiple of 200 microseconds.
+>>>>>>> 2149f6a (Add Raises documentation)
 
             Raises:
                 XIPInstrumentException: Step size must be a multiple of 200 microseconds.
@@ -1039,6 +1046,9 @@ class SourceModule(BaseModule):
             Args:
                 step (float):
                     The desired step size, in A.
+
+            Raises:
+                XIPInstrumentException: Step size cannot be set when spacing is logarithmic.
         """
 
         self.device.command(f'SOURce{self.module_number}:VOLTage:STEP {step}')
@@ -1056,7 +1066,11 @@ class SourceModule(BaseModule):
 
             Args:
                 time (float):
+<<<<<<< HEAD
                     The desired runtime, in seconds. Must be a multiple of 200 microseconds.
+=======
+                    The desired runtime, in s. Must be a multiple of 200 microseconds.
+>>>>>>> 2149f6a (Add Raises documentation)
 
             Raises:
                 XIPInstrumentException: Step size must be a multiple of 200 microseconds.
