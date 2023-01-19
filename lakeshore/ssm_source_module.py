@@ -99,7 +99,7 @@ class SourceModule(BaseModule):
         return bool(int(self.device.query(f'SOURce{self.module_number}:STATe?')))
 
     def set_enable_state(self, state):
-        """Set the enable state of the module
+        """Sets the enable state of the module
 
             Args:
                 state (bool):
@@ -870,8 +870,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:CURRent:DWELl {dwell}')
 
     def get_source_sweep_current_dwell(self):
-        """Returns the current dwell time of the source sweep for the specified module in seconds.
-        """
+        """Returns the current dwell time of the source sweep for the specified module in seconds."""
 
         response = float(self.device.query(f'SOURce{self.module_number}:CURRent:DWELl?'))
         return response
@@ -887,8 +886,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:CURRent:MODE {str(mode)}')
 
     def get_source_sweep_current_mode(self):
-        """Returns the current mode of the source sweep for the specified module.
-        """
+        """Returns the current mode of the source sweep for the specified module."""
 
         response = self.device.query(f'SOURce{self.module_number}:CURRent:MODE?')
         return response
@@ -898,14 +896,13 @@ class SourceModule(BaseModule):
 
             Args:
                 start (float):
-                    The desired starting value, in A.
+                    The desired starting value, in Amps.
         """
 
         self.device.command(f'SOURce{self.module_number}:CURRent:STARt {start}')
 
     def get_source_sweep_current_start(self):
-        """Returns the current starting value of the source sweep for the specififed module in A.
-        """
+        """Returns the current starting value of the source sweep for the specified module in Amps."""
 
         response = float(self.device.query(f'SOURce{self.module_number}:CURRent:STARt?'))
         return response
@@ -915,14 +912,13 @@ class SourceModule(BaseModule):
 
             Args:
                 stop (float):
-                    The desired stopping value, in A.
+                    The desired stopping value, in Amps.
         """
 
         self.device.command(f'SOURce{self.module_number}:CURRent:STOP {stop}')
 
     def get_source_sweep_current_stop(self):
-        """Returns the current stopping value of the source sweep for the specififed module in A.
-        """
+        """Returns the current stopping value of the source sweep for the specified module in Amps."""
 
         response = float(self.device.query(f'SOURce{self.module_number}:CURRent:STOP?'))
         return response
@@ -932,7 +928,7 @@ class SourceModule(BaseModule):
 
             Args:
                 step (float):
-                    The desired step size, in A.
+                    The desired step size, in Amps.
 
             Raises:
                 XIPInstrumentException: Step size cannot be set when spacing is logarithmic.
@@ -941,8 +937,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:CURRent:STEP {step}')
 
     def get_source_sweep_current_step(self):
-        """Returns the current step size of the source sweep for the specified module in A.
-        """
+        """Returns the current step size of the source sweep for the specified module in Amps."""
 
         response = float(self.device.query(f'SOURce{self.module_number}:CURRent:STEP?'))
         return response
@@ -953,11 +948,7 @@ class SourceModule(BaseModule):
 
             Args:
                 time (float):
-<<<<<<< HEAD
                     The desired runtime, in seconds. Must be a multiple of 200 microseconds.
-=======
-                    The desired runtime, in s. Must be a multiple of 200 microseconds.
->>>>>>> 2149f6a (Add Raises documentation)
 
             Raises:
                 XIPInstrumentException: Step size must be a multiple of 200 microseconds.
@@ -966,8 +957,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:CURRent:TIME {time}')
 
     def get_source_sweep_current_time(self):
-        """Returns the current overall runtime of the source sweep for the specified module in seconds.
-        """
+        """Returns the current overall runtime of the source sweep for the specified module in seconds."""
 
         response = float(self.device.query(f'SOURce{self.module_number}:CURRent:TIME?'))
         return response
@@ -983,8 +973,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:VOLTage:DWELl {dwell}')
 
     def get_source_sweep_voltage_dwell(self):
-        """Returns the voltage dwell time of the source sweep for the specified module in seconds.
-        """
+        """Returns the voltage dwell time of the source sweep for the specified module in seconds."""
 
         response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:DWELl?'))
         return response
@@ -1000,8 +989,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:VOLTage:MODE {str(mode)}')
 
     def get_source_sweep_voltage_mode(self):
-        """Returns the voltage mode of the source sweep for the specified module.
-        """
+        """Returns the voltage mode of the source sweep for the specified module."""
 
         response = self.device.query(f'SOURce{self.module_number}:VOLTage:MODE?')
         return response
@@ -1011,14 +999,13 @@ class SourceModule(BaseModule):
 
             Args:
                 start (float):
-                    The desired starting value, in A.
+                    The desired starting value, in Volts.
         """
 
         self.device.command(f'SOURce{self.module_number}:VOLTage:STARt {start}')
 
     def get_source_sweep_voltage_start(self):
-        """Returns the voltage starting value of the source sweep for the specified module in A.
-        """
+        """Returns the voltage starting value of the source sweep for the specified module in Volts."""
 
         response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:STARt?'))
         return response
@@ -1028,14 +1015,13 @@ class SourceModule(BaseModule):
 
             Args:
                 stop (float):
-                    The desired stopping value, in A.
+                    The desired stopping value, in Volts.
         """
 
         self.device.command(f'SOURce{self.module_number}:VOLTage:STOP {stop}')
 
     def get_source_sweep_voltage_stop(self):
-        """Returns the voltage stopping value of the source sweep for the specified module in A.
-        """
+        """Returns the voltage stopping value of the source sweep for the specified module in Volts."""
 
         response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:STOP?'))
         return response
@@ -1045,7 +1031,7 @@ class SourceModule(BaseModule):
 
             Args:
                 step (float):
-                    The desired step size, in A.
+                    The desired step size, in Volts.
 
             Raises:
                 XIPInstrumentException: Step size cannot be set when spacing is logarithmic.
@@ -1054,8 +1040,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:VOLTage:STEP {step}')
 
     def get_source_sweep_voltage_step(self):
-        """Returns the voltage step size of the source sweep for the specified module in A.
-        """
+        """Returns the voltage step size of the source sweep for the specified module in Volts."""
 
         response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:STEP?'))
         return response
@@ -1066,11 +1051,8 @@ class SourceModule(BaseModule):
 
             Args:
                 time (float):
-<<<<<<< HEAD
                     The desired runtime, in seconds. Must be a multiple of 200 microseconds.
-=======
-                    The desired runtime, in s. Must be a multiple of 200 microseconds.
->>>>>>> 2149f6a (Add Raises documentation)
+
 
             Raises:
                 XIPInstrumentException: Step size must be a multiple of 200 microseconds.
@@ -1096,8 +1078,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:SWEep:POINt {points}')
 
     def get_source_sweep_points(self):
-        """Returns the number of points in the source sweep for the specified module.
-        """
+        """Returns the number of points in the source sweep for the specified module."""
 
         response = int(f'SOURce{self.module_number}:SWEep:POINt?')
         return response
@@ -1113,8 +1094,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {str(spacing)}')
 
     def get_source_sweep_spacing(self):
-        """Returns the spacing of the source sweep for the specified module.
-        """
+        """Returns the spacing of the source sweep for the specified module."""
 
         response = self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?')
         return response
