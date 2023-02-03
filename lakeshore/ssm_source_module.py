@@ -422,6 +422,9 @@ class SourceModule(BaseModule):
                     Set the enable state of the module to True
         """
 
+        if not enable_output:
+            self.disable()
+
         self.set_excitation_mode('CURRent')
         self.set_shape('DC')
         self.set_i_amplitude(level)
@@ -445,6 +448,9 @@ class SourceModule(BaseModule):
                 enable_output (bool):
                     Set the enable state of the module to True
         """
+
+        if not enable_output:
+            self.disable()
 
         self.set_excitation_mode('CURRent')
         self.set_frequency(frequency)
@@ -569,9 +575,12 @@ class SourceModule(BaseModule):
                     Set the enable state of the module to True
         """
 
+        if not enable_output:
+            self.disable()
+
         self.set_excitation_mode('VOLTage')
         self.set_shape('DC')
-        self.set_i_amplitude(level)
+        self.set_voltage_amplitude(level)
 
         if enable_output:
             self.enable()
@@ -593,11 +602,14 @@ class SourceModule(BaseModule):
                     Set the enable state of the module to True
         """
 
+        if not enable_output:
+            self.disable()
+
         self.set_excitation_mode('VOLTage')
         self.set_frequency(frequency)
         self.set_shape('SINusoid')
-        self.set_i_amplitude(amplitude)
-        self.set_i_offset(offset)
+        self.set_voltage_amplitude(amplitude)
+        self.set_voltage_offset(offset)
 
         if enable_output:
             self.enable()
