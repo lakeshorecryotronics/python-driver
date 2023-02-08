@@ -836,7 +836,7 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.dut_module.apply_dc_voltage(5.2)
         self.assertIn('SOURce1:FUNCtion:MODE VOLTage', self.fake_connection.get_outgoing_message())
         self.assertIn('SOURce1:FUNCtion:SHAPe DC', self.fake_connection.get_outgoing_message())
-        self.assertIn('SOURce1:CURRent:LEVel:AMPLitude 5.2', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURce1:VOLTage:LEVel:AMPLitude 5.2', self.fake_connection.get_outgoing_message())
         self.assertIn('SOURce1:STATe 1', self.fake_connection.get_outgoing_message())
 
     def test_apply_ac_voltage(self):
@@ -851,8 +851,8 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.assertIn('SOURce1:FREQuency 5000', self.fake_connection.get_outgoing_message())
         self.assertIn('SOURce1:FUNCtion:SHAPe SINusoid', self.fake_connection.get_outgoing_message())
         # Why is current amplitude being set for apply ac voltage method?
-        self.assertIn('SOURce1:CURRent:LEVel:AMPLitude 1.63', self.fake_connection.get_outgoing_message())
-        self.assertIn('SOURce1:CURRent:LEVel:OFFSet 0.5', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURce1:VOLTage:LEVel:AMPLitude 1.63', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURce1:VOLTage:LEVel:OFFSet 0.5', self.fake_connection.get_outgoing_message())
         self.assertIn('SOURce1:STATe 1', self.fake_connection.get_outgoing_message())
 
     def test_get_voltage_limit(self):

@@ -126,7 +126,7 @@ class GenericInstrument:
             elif self.device_tcp is not None:
                 self._tcp_command(command_string)
             else:
-                raise Exception("No connections configured")
+                raise InstrumentException("No connections configured")
 
             self.logger.info('Sent command to %s: %s', self.serial_number, command_string)
 

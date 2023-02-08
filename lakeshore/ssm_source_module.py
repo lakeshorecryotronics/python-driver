@@ -411,25 +411,28 @@ class SourceModule(BaseModule):
 
         self.device.command(f'SOURce{self.module_number}:CURRent:LEVel:OFFSet {str(offset)}')
 
-    def apply_dc_current(self, level, enable_output=True):
+    def apply_dc_current(self, level, output_enable=True):
         """Apply DC current
 
             Args:
                 level (float):
                     DC current level in Amps
 
-                enable_output (bool):
-                    Set the enable state of the module to True
+                output_enable (bool):
+                    Turns the module output on if true; off if false
         """
+
+        if not output_enable:
+            self.disable()
 
         self.set_excitation_mode('CURRent')
         self.set_shape('DC')
         self.set_i_amplitude(level)
 
-        if enable_output:
+        if output_enable:
             self.enable()
 
-    def apply_ac_current(self, frequency, amplitude, offset=0.0, enable_output=True):
+    def apply_ac_current(self, frequency, amplitude, offset=0.0, output_enable=True):
         """Apply AC current
 
             Args:
@@ -442,9 +445,12 @@ class SourceModule(BaseModule):
                 offset (float):
                     Current offset in Amps
 
-                enable_output (bool):
-                    Set the enable state of the module to True
+                output_enable (bool):
+                    Turns the module output on if true; off if false
         """
+
+        if not output_enable:
+            self.disable()
 
         self.set_excitation_mode('CURRent')
         self.set_frequency(frequency)
@@ -452,7 +458,7 @@ class SourceModule(BaseModule):
         self.set_i_amplitude(amplitude)
         self.set_i_offset(offset)
 
-        if enable_output:
+        if output_enable:
             self.enable()
 
     def get_i_limit(self):
@@ -558,25 +564,28 @@ class SourceModule(BaseModule):
 
         self.device.command(f'SOURce{self.module_number}:VOLTage:LEVel:OFFSet {str(offset)}')
 
-    def apply_dc_voltage(self, level, enable_output=True):
+    def apply_dc_voltage(self, level, output_enable=True):
         """Apply DC voltage
 
             Args:
                 level (float):
                     DC voltage level in Volts
 
-                enable_output (bool):
-                    Set the enable state of the module to True
+                output_enable (bool):
+                    Turns the module output on if true; off if false
         """
+
+        if not output_enable:
+            self.disable()
 
         self.set_excitation_mode('VOLTage')
         self.set_shape('DC')
-        self.set_i_amplitude(level)
+        self.set_voltage_amplitude(level)
 
-        if enable_output:
+        if output_enable:
             self.enable()
 
-    def apply_ac_voltage(self, frequency, amplitude, offset=0.0, enable_output=True):
+    def apply_ac_voltage(self, frequency, amplitude, offset=0.0, output_enable=True):
         """Apply AC voltage
 
             Args:
@@ -589,17 +598,20 @@ class SourceModule(BaseModule):
                 offset (float):
                     Voltage offset in Volts
 
-                enable_output (bool):
-                    Set the enable state of the module to True
+                output_enable (bool):
+                    Turns the module output on if true; off if false
         """
+
+        if not output_enable:
+            self.disable()
 
         self.set_excitation_mode('VOLTage')
         self.set_frequency(frequency)
         self.set_shape('SINusoid')
-        self.set_i_amplitude(amplitude)
-        self.set_i_offset(offset)
+        self.set_voltage_amplitude(amplitude)
+        self.set_voltage_offset(offset)
 
-        if enable_output:
+        if output_enable:
             self.enable()
 
     def get_voltage_limit(self):
