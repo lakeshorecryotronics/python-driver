@@ -1062,3 +1062,8 @@ class SourceModule(BaseModule):
 
         response = self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?')
         return response
+
+    def abort_source_sweep(self):
+        """Aborts the in progress source sweep for the specified module."""
+
+        self.device.command(f'SOURce{self.module_number}:SWEep:ABORt')
