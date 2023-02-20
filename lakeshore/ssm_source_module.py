@@ -10,15 +10,19 @@ class SSMSystemSourceModuleOperationRegister(RegisterBase):
 
     bit_names = [
         "v_limit",
-        "i_limit"
+        "i_limit",
+        "sweeping"
     ]
 
     def __init__(
             self,
             v_limit,
-            i_limit):
+            i_limit,
+            sweeping):
         self.v_limit = v_limit
         self.i_limit = i_limit
+        self.sweeping = sweeping
+
 
 # pylint: disable=R0904
 class SourceModule(BaseModule):
@@ -1067,3 +1071,9 @@ class SourceModule(BaseModule):
         """Aborts the in progress source sweep for the specified module."""
 
         self.device.command(f'SOURce{self.module_number}:SWEep:ABORt')
+
+    def get_source_sweep_state(self):
+        """Returns the state of the source sweep."""
+
+        response = bool(int(self.device.query(f'SOURce{self.module_number}:SWEep:STATus?')))
+        return response

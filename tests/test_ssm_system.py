@@ -920,13 +920,15 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         response = self.dut_module.get_present_operation_status()
         self.assertEqual(response.v_limit, False)
         self.assertEqual(response.i_limit, True)
+        self.assertEqual(response.sweeping, False)
         self.assertIn('STATus:OPERation:SOURce1:CONDition?', self.fake_connection.get_outgoing_message())
 
     def test_get_operation_events(self):
-        self.fake_connection.setup_response('3')
+        self.fake_connection.setup_response('7')
         response = self.dut_module.get_operation_events()
         self.assertEqual(response.v_limit, True)
         self.assertEqual(response.i_limit, True)
+        self.assertEqual(response.sweeping, True)
         self.assertIn('STATus:OPERation:SOURce1:EVENt?', self.fake_connection.get_outgoing_message())
 
     def test_get_operation_event_enable_mask(self):
@@ -934,11 +936,12 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         response = self.dut_module.get_operation_event_enable_mask()
         self.assertEqual(response.v_limit, True)
         self.assertEqual(response.i_limit, False)
+        self.assertEqual(response.sweeping, False)
         self.assertIn('STATus:OPERation:SOURce1:ENABle?', self.fake_connection.get_outgoing_message())
 
     def test_set_operation_event_enable_mask(self):
         self.fake_connection.setup_response('No error')
-        register = ssm_source_module.SSMSystemSourceModuleOperationRegister(False, False)
+        register = ssm_source_module.SSMSystemSourceModuleOperationRegister(False, False, False)
         self.dut_module.set_operation_event_enable_mask(register)
         self.assertIn('STATus:OPERation:SOURce1:ENABle 0', self.fake_connection.get_outgoing_message())
 
