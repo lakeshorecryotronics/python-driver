@@ -99,6 +99,7 @@ class SSMSystemDataSourceMnemonic(str, Enum):
     SOURCE_RANGE = 'SRANge'
     SOURCE_VOLTAGE_LIMIT = 'SVLimit'
     SOURCE_CURRENT_LIMIT = 'SILimit'
+    SOURCE_IS_SWEEPING = 'SSWeeping'
     MEASURE_DC = 'MDC'
     MEASURE_RMS = 'MRMS'
     MEASURE_POSITIVE_PEAK = 'MPPeak'
@@ -625,3 +626,9 @@ class SSMSystem(XIPInstrument):
 
         return tuple(
             (self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
+
+    def abort_all_source_sweeps(self):
+        """Aborts in progress source sweeps across all channels."""
+
+        for module_number in range(0, 2):
+            self.command(f'SOURce{module_number}:SWEep:ABORt')
