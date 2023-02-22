@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from lakeshore.ssm_system import SSMSystemEnums
 from tests.utils import TestWithFakeSSMS, TestWithFakeSSMSSourceModule, TestWithFakeSSMSMeasureModule
 from lakeshore import ssm_system, ssm_measure_module, ssm_source_module, ssm_base_module
 from base64 import b64encode
@@ -483,7 +485,7 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
     def test_get_excitation_mode(self):
         self.fake_connection.setup_response('VOLTAGE;No error')
         response = self.dut_module.get_excitation_mode()
-        self.assertEqual(response, 'VOLTAGE')
+        self.assertEqual(response, SSMSystemEnums.ExcitationType.VOLTAGE)
         self.assertIn('SOURce1:FUNCtion:MODE?', self.fake_connection.get_outgoing_message())
 
     def test_set_excitation_mode(self):
@@ -494,12 +496,12 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
     def test_go_to_current_mode(self):
         self.fake_connection.setup_response('No error')
         self.dut_module.go_to_current_mode()
-        self.assertIn('SOURce1:FUNCtion:MODE CURRent', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURce1:FUNCtion:MODE CURRENT', self.fake_connection.get_outgoing_message())
 
     def test_go_to_voltage_mode(self):
         self.fake_connection.setup_response('No error')
         self.dut_module.go_to_voltage_mode()
-        self.assertIn('SOURce1:FUNCtion:MODE VOLTage', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURce1:FUNCtion:MODE VOLTAGE', self.fake_connection.get_outgoing_message())
 
     def test_get_shape(self):
         self.fake_connection.setup_response('SINUSOID; No error')
@@ -847,7 +849,7 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.fake_connection.setup_response('No error')
         self.fake_connection.setup_response('No error')
         self.dut_module.apply_ac_voltage(5000, 1.63, 0.5)
-        self.assertIn('SOURce1:FUNCtion:MODE VOLTage', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURce1:FUNCtion:MODE VOLTAGE', self.fake_connection.get_outgoing_message())
         self.assertIn('SOURce1:FREQuency 5000', self.fake_connection.get_outgoing_message())
         self.assertIn('SOURce1:FUNCtion:SHAPe SINusoid', self.fake_connection.get_outgoing_message())
         # Why is current amplitude being set for apply ac voltage method?

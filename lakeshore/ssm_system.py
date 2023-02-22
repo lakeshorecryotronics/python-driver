@@ -136,7 +136,56 @@ class SSMSystemReadDataSourceMnemonic(str, Enum):
         return str.__str__(self)
 
 
-class SSMSystem(XIPInstrument):
+class SSMSystemEnums:
+    """Class for collecting the enumerations specified to the SSMSystem without bulking up that class size"""
+
+    class ExcitationType(Enum):
+        """Class object representing the possible excitation types of a source module."""
+        CURRENT = 'CURRENT'
+        VOLTAGE = 'VOLTAGE'
+
+    class SourceSweepType(Enum):
+        """Class representing the available sweep types for a source module."""
+        CURRENT_AMPLITUDE = 'CURRent'
+        VOLTAGE_AMPLITUDE = 'VOLTage'
+
+    class SourceSweepSettings:
+        """Class to configure a parameter sweep on a source module."""
+
+        class SweepSpacing(Enum):
+            """Class object representing the possible types of sweep spacing."""
+            LINEAR = 'LINEAR'
+            LOGARITHMIC = 'LOGARITHMIC'
+
+        def __init__(self, sweep_type, start, stop, points, dwell, spacing=SweepSpacing.LINEAR):
+            """
+            Constructor for SourceModuleSweepSettings class
+
+            Args:
+                sweep_type (SweepType):
+                    The type of sweep to perform.
+                start (float):
+                    Sets the start value of the source sweep.
+                stop (float):
+                    Sets the stop value of the source sweep.
+                points (int):
+                    Sets the number of steps in the source sweep.
+                dwell (float):
+                    Sets the time spent at each step in the source sweep in seconds.
+                    Must be a multiple of 200 microseconds (0.0002).
+                spacing (SweepSpacing):
+                    The spacing of the sweep.
+            """
+
+            self.sweep_type = sweep_type
+            self.spacing = spacing
+            self.start = start
+            self.stop = stop
+            self.points = points
+            self.dwell = dwell
+
+
+class SSMSystem(XIPInstrument, SSMSystemEnums):
     """Class for interaction with the M81 instrument"""
 
     vid_pid = [(0x1FB9, 0x0704), (0x10C4, 0xEA60)]
