@@ -1,6 +1,7 @@
 """Implements functionality unique to the M81 Measure Modules."""
 
 from datetime import datetime
+from warnings import warn
 from lakeshore.xip_instrument import RegisterBase
 from lakeshore.ssm_base_module import SSMSystemModuleQuestionableRegister, BaseModule
 
@@ -251,17 +252,39 @@ class MeasureModule(BaseModule):
 
         self.device.command(f'SENSe{self.module_number}:FILTer:STATe 0')
 
-    def get_i_range(self):
+    def get_current_range(self):
         """Returns the current range in Amps"""
 
         return float(self.device.query(f'SENSe{self.module_number}:CURRent:RANGe?'))
 
-    def get_i_autorange_status(self):
+    def get_i_range(self):
+        """
+        Returns the current range in Amps
+
+        .. deprecated:: 1.5.4
+           Use get_current_range instead
+        """
+
+        warn('The get_i_range method is deprecated. Use get_current_range instead.', DeprecationWarning)
+        return self.get_current_range()
+
+    def get_current_autorange_status(self):
         """Returns whether autoranging is enabled for the module"""
 
         return bool(int(self.device.query(f'SENSe{self.module_number}:CURRent:RANGe:AUTO?')))
 
-    def configure_i_range(self, autorange, max_level=None):
+    def get_i_autorange_status(self):
+        """
+        Returns whether autoranging is enabled for the module
+
+        .. deprecated:: 1.5.4
+           Use get_current_autorange_status instead
+        """
+
+        warn('The get_i_autorange_status method is deprecated. Use get_current_autorange_status instead.', DeprecationWarning)
+        return self.get_current_autorange_status()
+
+    def configure_current_range(self, autorange, max_level=None):
         """Configure current ranging for the module
 
             Args:
@@ -280,6 +303,24 @@ class MeasureModule(BaseModule):
         else:
             if max_level is not None:
                 self.device.command(f'SENSe{self.module_number}:CURRent:RANGe {str(max_level)}')
+
+    def configure_i_range(self, autorange, max_level=None):
+        """
+        Configure current ranging for the module
+
+        .. deprecated:: 1.5.4
+           Use configure_current_range instead
+
+            Args:
+                autorange (bool):
+                    True to enable real time range decisions by the module. False for manual ranging.
+
+                max_level (float):
+                    The largest current that needs to be measured by the module in Amps.
+        """
+
+        warn('The configure_i_range method is deprecated. Use configure_current_range instead.', DeprecationWarning)
+        self.configure_current_range(autorange, max_level)
 
     def get_voltage_range(self):
         """Returns the voltage range in Volts"""

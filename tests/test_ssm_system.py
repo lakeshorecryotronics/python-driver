@@ -640,79 +640,79 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.assertIn('SOURce1:CMR:SOURce EXTernal', self.fake_connection.get_outgoing_message())
         self.assertIn('SOURce1:CMR:STATe 0', self.fake_connection.get_outgoing_message())
 
-    def test_get_i_range(self):
+    def test_get_current_range(self):
         self.fake_connection.setup_response('2;No error')
-        response = self.dut_module.get_i_range()
+        response = self.dut_module.get_current_range()
         self.assertEqual(response, 2)
         self.assertIn('SOURce1:CURRent:RANGe?', self.fake_connection.get_outgoing_message())
 
-    def test_get_i_ac_range(self):
+    def test_get_current_ac_range(self):
         self.fake_connection.setup_response('0.5;No error')
-        response = self.dut_module.get_i_ac_range()
+        response = self.dut_module.get_current_ac_range()
         self.assertEqual(response, 0.5)
         self.assertIn('SOURce1:CURRent:RANGe:AC?', self.fake_connection.get_outgoing_message())
 
-    def test_get_i_dc_range(self):
+    def test_get_current_dc_range(self):
         self.fake_connection.setup_response('1.52;No error')
-        response = self.dut_module.get_i_dc_range()
+        response = self.dut_module.get_current_dc_range()
         self.assertEqual(response, 1.52)
         self.assertIn('SOURce1:CURRent:RANGe:DC?', self.fake_connection.get_outgoing_message())
 
-    def test_get_i_autorange_status(self):
+    def test_get_current_autorange_status(self):
         self.fake_connection.setup_response('1;No error')
-        response = self.dut_module.get_i_autorange_status()
+        response = self.dut_module.get_current_autorange_status()
         self.assertEqual(response, True)
         self.assertIn('SOURce1:CURRent:RANGe:AUTO?', self.fake_connection.get_outgoing_message())
 
-    def test_configure_i_range_autorange(self):
+    def test_configure_current_range_autorange(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.configure_i_range(True)
+        self.dut_module.configure_current_range(True)
         self.assertIn('SOURce1:CURRent:RANGe:AUTO 1', self.fake_connection.get_outgoing_message())
 
-    def test_configure_i_range_autorange_exception(self):
+    def test_configure_current_range_autorange_exception(self):
         self.fake_connection.setup_response('No error')
         with self.assertRaisesRegex(ValueError, 'If autorange is selected, a manual range cannot be specified.'):
-            self.dut_module.configure_i_range(True, 5.0, 2.5, 3.2)
+            self.dut_module.configure_current_range(True, 5.0, 2.5, 3.2)
 
-    def test_configure_i_range_manual_max(self):
+    def test_configure_current_range_manual_max(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.configure_i_range(False, 4.6)
+        self.dut_module.configure_current_range(False, 4.6)
         self.assertIn('SOURce1:CURRent:RANGe 4.6', self.fake_connection.get_outgoing_message())
 
-    def test_configure_i_range_manual_max_ac(self):
+    def test_configure_current_range_manual_max_ac(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.configure_i_range(False, max_ac_level=3.2)
+        self.dut_module.configure_current_range(False, max_ac_level=3.2)
         self.assertIn('SOURce1:CURRent:RANGe:AC 3.2', self.fake_connection.get_outgoing_message())
 
-    def test_configure_i_range_manual_max_dc(self):
+    def test_configure_current_range_manual_max_dc(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.configure_i_range(False, max_dc_level=5.5)
+        self.dut_module.configure_current_range(False, max_dc_level=5.5)
         self.assertIn('SOURce1:CURRent:RANGe:DC 5.5', self.fake_connection.get_outgoing_message())
 
-    def test_configure_i_range_manual_exception(self):
+    def test_configure_current_range_manual_exception(self):
         with self.assertRaisesRegex(ValueError, 'Either a single range, or separate AC and DC ranges can be supplied, not both.'):
-            self.dut_module.configure_i_range(False, 5.0, 2.5)
+            self.dut_module.configure_current_range(False, 5.0, 2.5)
 
-    def test_get_i_amplitude(self):
+    def test_get_current_amplitude(self):
         self.fake_connection.setup_response('0.25;No error')
-        response = self.dut_module.get_i_amplitude()
+        response = self.dut_module.get_current_amplitude()
         self.assertEqual(response, 0.25)
         self.assertIn('SOURce1:CURRent:LEVel:AMPLitude?', self.fake_connection.get_outgoing_message())
 
-    def test_set_i_amplitude(self):
+    def test_set_current_amplitude(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.set_i_amplitude(0.25)
+        self.dut_module.set_current_amplitude(0.25)
         self.assertIn('SOURce1:CURRent:LEVel:AMPLitude 0.25', self.fake_connection.get_outgoing_message())
 
-    def test_get_i_offset(self):
+    def test_get_current_offset(self):
         self.fake_connection.setup_response('0.5;No error')
-        response = self.dut_module.get_i_offset()
+        response = self.dut_module.get_current_offset()
         self.assertEqual(response, 0.5)
         self.assertIn('SOURce1:CURRent:LEVel:OFFSet?', self.fake_connection.get_outgoing_message())
 
-    def test_set_i_offset(self):
+    def test_set_current_offset(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.set_i_offset(0.65)
+        self.dut_module.set_current_offset(0.65)
         self.assertIn('SOURce1:CURRent:LEVel:OFFSet 0.65', self.fake_connection.get_outgoing_message())
 
     def test_apply_dc_current(self):
@@ -741,20 +741,20 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.assertIn('SOURce1:CURRent:LEVel:OFFSet 0.5', self.fake_connection.get_outgoing_message())
         self.assertIn('SOURce1:STATe 1', self.fake_connection.get_outgoing_message())
 
-    def test_get_i_limit(self):
+    def test_get_current_limit(self):
         self.fake_connection.setup_response('5;No error')
-        response = self.dut_module.get_i_limit()
+        response = self.dut_module.get_current_limit()
         self.assertEqual(response, 5)
         self.assertIn('SOURce1:CURRent:PROTection?', self.fake_connection.get_outgoing_message())
 
-    def test_set_i_limit(self):
+    def test_set_current_limit(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.set_i_limit(3.65)
+        self.dut_module.set_current_limit(3.65)
         self.assertIn('SOURce1:CURRent:PROTection 3.65', self.fake_connection.get_outgoing_message())
 
-    def test_get_i_limit_status(self):
+    def test_get_current_limit_status(self):
         self.fake_connection.setup_response('0;No error')
-        response = self.dut_module.get_i_limit_status()
+        response = self.dut_module.get_current_limit_status()
         self.assertEqual(response, False)
         self.assertIn('SOURce1:CURRent:PROTection:TRIPped?', self.fake_connection.get_outgoing_message())
 
@@ -1158,32 +1158,32 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.dut_module.disable_input_filters()
         self.assertIn('SENSe1:FILTer:STATe 0', self.fake_connection.get_outgoing_message())
 
-    def test_get_i_range(self):
+    def test_get_current_range(self):
         self.fake_connection.setup_response('1.25;No error')
-        response = self.dut_module.get_i_range()
+        response = self.dut_module.get_current_range()
         self.assertEqual(response, 1.25)
         self.assertIn('SENSe1:CURRent:RANGe?', self.fake_connection.get_outgoing_message())
 
-    def test_get_i_autorange_status(self):
+    def test_get_current_autorange_status(self):
         self.fake_connection.setup_response('1;No error')
-        response = self.dut_module.get_i_autorange_status()
+        response = self.dut_module.get_current_autorange_status()
         self.assertEqual(response, True)
         self.assertIn('SENSe1:CURRent:RANGe:AUTO?', self.fake_connection.get_outgoing_message())
 
-    def test_configure_i_range_manual(self):
+    def test_configure_current_range_manual(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.configure_i_range(False, 2.5)
+        self.dut_module.configure_current_range(False, 2.5)
         self.assertIn('SENSe1:CURRent:RANGe 2.5', self.fake_connection.get_outgoing_message())
 
-    def test_configure_i_range_auto(self):
+    def test_configure_current_range_auto(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.configure_i_range(True, max_level=None)
+        self.dut_module.configure_current_range(True, max_level=None)
         self.assertIn('SENSe1:CURRent:RANGe:AUTO 1', self.fake_connection.get_outgoing_message())
 
-    def test_configure_i_range_exception(self):
+    def test_configure_current_range_exception(self):
         self.fake_connection.setup_response('No error')
         with self.assertRaisesRegex(ValueError,'If autorange is selected, a manual range cannot be specified.'):
-            self.dut_module.configure_i_range(True, 1.5)
+            self.dut_module.configure_current_range(True, 1.5)
 
     def test_get_voltage_range(self):
         self.fake_connection.setup_response('6.54;No error')

@@ -1,6 +1,7 @@
 """Implements functionality unique to the M81 Source Modules."""
 
 from datetime import datetime
+from warnings import warn
 from lakeshore.xip_instrument import RegisterBase
 from lakeshore.ssm_base_module import SSMSystemModuleQuestionableRegister, BaseModule
 
@@ -332,27 +333,71 @@ class SourceModule(BaseModule):
         self.set_cmr_source(cmr_source)
         self.set_cmr_state(cmr_state)
 
-    def get_i_range(self):
+    def get_current_range(self):
         """Returns the present current range of the module in Amps"""
 
         return float(self.device.query(f'SOURce{self.module_number}:CURRent:RANGe?'))
 
-    def get_i_ac_range(self):
+    def get_i_range(self):
+        """
+        Returns the present current range of the module in Amps
+        
+        .. deprecated:: 1.5.4
+           Use get_current_range instead.
+        """
+
+        warn("The get_i_range method is deprecated, use get_current_range instead", DeprecationWarning)
+        return self.get_current_range()
+
+    def get_current_ac_range(self):
         """Returns the present AC current range of the module in Amps"""
 
         return float(self.device.query(f'SOURce{self.module_number}:CURRent:RANGe:AC?'))
 
-    def get_i_dc_range(self):
+    def get_i_ac_range(self):
+        """
+        Returns the present AC current range of the module in Amps
+        
+        .. deprecated:: 1.5.4
+           Use get_current_ac_range instead.
+        """
+
+        warn("The get_i_ac_range method is deprecated, use get_current_ac_range instead", DeprecationWarning)
+        return self.get_current_ac_range()
+
+    def get_current_dc_range(self):
         """Returns the present DC current range of the module in Amps"""
 
         return float(self.device.query(f'SOURce{self.module_number}:CURRent:RANGe:DC?'))
 
-    def get_i_autorange_status(self):
+    def get_i_dc_range(self):
+        """
+        Returns the present DC current range of the module in Amps
+        
+        .. deprecated:: 1.5.4
+           Use get_current_dc_range instead.
+        """
+
+        warn("The get_i_dc_range method is deprecated, use get_current_dc_range instead", DeprecationWarning)
+        return self.get_current_dc_range()
+
+    def get_current_autorange_status(self):
         """Returns whether automatic selection of the current range is enabled for this module"""
 
         return bool(int(self.device.query(f'SOURce{self.module_number}:CURRent:RANGe:AUTO?')))
 
-    def configure_i_range(self, autorange, max_level=None, max_ac_level=None, max_dc_level=None):
+    def get_i_autorange_status(self):
+        """
+        Returns whether automatic selection of the current range is enabled for this module
+        
+        .. deprecated:: 1.5.4
+           Use get_current_autorange_status instead.
+        """
+
+        warn("The get_i_autorange_status method is deprecated, use get_current_autorange_status instead", DeprecationWarning)
+        return self.get_current_autorange_status()
+
+    def configure_current_range(self, autorange, max_level=None, max_ac_level=None, max_dc_level=None):
         """Sets up current ranging for this module
 
             Args:
@@ -386,12 +431,51 @@ class SourceModule(BaseModule):
                 if max_dc_level is not None:
                     self.device.command(f'SOURce{self.module_number}:CURRent:RANGe:DC {str(max_dc_level)}')
 
-    def get_i_amplitude(self):
+    def configure_i_range(self, autorange, max_level=None, max_ac_level=None, max_dc_level=None):
+        """
+        Sets up current ranging for this module
+
+            Args:
+                autorange (bool):
+                    True to enable automatic range selection. False for manual ranging.
+
+                max_level (float):
+                    The largest current that needs to be sourced.
+
+                max_ac_level (float):
+                    The largest AC current that needs to be sourced. Separate AC and DC ranges are only available on some modules.
+
+                max_dc_level (float):
+                    The largest DC current that needs to be sourced. Separate AC and DC ranges are only available on some modules.
+        
+        .. deprecated:: 1.5.4
+           Use configure_current_range instead.
+        """
+
+        warn("The configure_i_range method is deprecated, use configure_current_range instead", DeprecationWarning)
+        self.configure_current_range(autorange, max_level, max_ac_level, max_dc_level)
+
+    def get_current_amplitude(self):
         """Returns the current amplitude for the module in Amps"""
 
         return float(self.device.query(f'SOURce{self.module_number}:CURRent:LEVel:AMPLitude?'))
 
-    def set_i_amplitude(self, amplitude):
+    def get_i_amplitude(self):
+        """
+        Returns the current amplitude for the module in Amps
+
+            Args:
+                amplitude (float):
+                    The new current amplitude in Amps
+        
+        .. deprecated:: 1.5.4
+           Use get_current_amplitude instead.
+        """
+
+        warn("The get_i_amplitude method is deprecated, use get_current_amplitude instead", DeprecationWarning)
+        return self.get_current_amplitude()
+
+    def set_current_amplitude(self, amplitude):
         """Sets the current amplitude for the module
 
             Args:
@@ -400,12 +484,38 @@ class SourceModule(BaseModule):
         """
         self.device.command(f'SOURce{self.module_number}:CURRent:LEVel:AMPLitude {str(amplitude)}')
 
-    def get_i_offset(self):
+    def set_i_amplitude(self, amplitude):
+        """
+        Sets the current amplitude for the module
+
+            Args:
+                amplitude (float):
+                    The new current amplitude in Amps
+        
+        .. deprecated:: 1.5.4
+           Use set_current_amplitude instead.
+        """
+
+        warn("The set_i_amplitude method is deprecated, use set_current_amplitude instead", DeprecationWarning)
+        self.set_current_amplitude(amplitude)
+
+    def get_current_offset(self):
         """Returns the current offset for the module in Amps"""
 
         return float(self.device.query(f'SOURce{self.module_number}:CURRent:LEVel:OFFSet?'))
 
-    def set_i_offset(self, offset):
+    def get_i_offset(self):
+        """
+        Returns the current offset for the module in Amps
+        
+        .. deprecated:: 1.5.4
+           Use get_current_offset instead.
+        """
+
+        warn("The get_i_offset method is deprecated, use get_current_offset instead", DeprecationWarning)
+        return self.get_current_offset()
+
+    def set_current_offset(self, offset):
         """Sets the current offset for the module
 
             Args:
@@ -414,6 +524,21 @@ class SourceModule(BaseModule):
         """
 
         self.device.command(f'SOURce{self.module_number}:CURRent:LEVel:OFFSet {str(offset)}')
+
+    def set_i_offset(self, offset):
+        """
+        Sets the current offset for the module
+
+            Args:
+                offset (float):
+                    The new current offset in Amps
+        
+        .. deprecated:: 1.5.4
+           Use set_current_offset instead.
+        """
+
+        warn("The set_i_offset method is deprecated, use set_current_offset instead", DeprecationWarning)
+        self.set_current_offset(offset)
 
     def apply_dc_current(self, level, output_enable=True):
         """Apply DC current
@@ -431,7 +556,7 @@ class SourceModule(BaseModule):
 
         self.set_excitation_mode('CURRent')
         self.set_shape('DC')
-        self.set_i_amplitude(level)
+        self.set_current_amplitude(level)
 
         if output_enable:
             self.enable()
@@ -459,30 +584,67 @@ class SourceModule(BaseModule):
         self.set_excitation_mode('CURRent')
         self.set_frequency(frequency)
         self.set_shape('SINusoid')
-        self.set_i_amplitude(amplitude)
-        self.set_i_offset(offset)
+        self.set_current_amplitude(amplitude)
+        self.set_current_offset(offset)
 
         if output_enable:
             self.enable()
 
-    def get_i_limit(self):
+    def get_current_limit(self):
         """Returns the current limit enforced by the module in Amps"""
 
         return float(self.device.query(f'SOURce{self.module_number}:CURRent:PROTection?'))
 
-    def set_i_limit(self, i_limit):
+    def get_i_limit(self):
+        """
+        Returns the current limit enforced by the module in Amps
+        
+        .. deprecated:: 1.5.4
+           Use get_current_limit instead.
+        """
+
+        warn("The get_i_limit method is deprecated, use get_current_limit instead", DeprecationWarning)
+        return self.get_current_limit()
+
+    def set_current_limit(self, current_limit):
         """Sets the current limit enforced by the module
+
+            Args:
+                current_limit (float):
+                    The new limit to apply in Amps
+        """
+        self.device.command(f'SOURce{self.module_number}:CURRent:PROTection {str(current_limit)}')
+
+    def set_i_limit(self, i_limit):
+        """
+        Sets the current limit enforced by the module
 
             Args:
                 i_limit (float):
                     The new limit to apply in Amps
+        
+        .. deprecated:: 1.5.4
+           Use set_current_limit instead.
         """
-        self.device.command(f'SOURce{self.module_number}:CURRent:PROTection {str(i_limit)}')
 
-    def get_i_limit_status(self):
+        warn("The set_i_limit method is deprecated, use set_current_limit instead", DeprecationWarning)
+        self.set_current_limit(i_limit)
+
+    def get_current_limit_status(self):
         """Returns whether the current limit circuitry is presently engaged and limiting the current sourced by the module"""
 
         return bool(int(self.device.query(f'SOURce{self.module_number}:CURRent:PROTection:TRIPped?')))
+
+    def get_i_limit_status(self):
+        """
+        Returns whether the current limit circuitry is presently engaged and limiting the current sourced by the module
+        
+        .. deprecated:: 1.5.4
+           Use get_current_limit_status instead.
+        """
+
+        warn("The get_i_limit_status method is deprecated, use get_current_limit_status instead", DeprecationWarning)
+        return self.get_current_limit_status()
 
     def get_voltage_range(self):
         """Returns the present voltage range of the module in Volts"""
@@ -623,15 +785,15 @@ class SourceModule(BaseModule):
 
         return float(self.device.query(f'SOURce{self.module_number}:VOLTage:PROTection?'))
 
-    def set_voltage_limit(self, v_limit):
+    def set_voltage_limit(self, voltage_limit):
         """Sets the voltage limit enforced by the module
 
             Args:
-                v_limit (float):
+                voltage_limit (float):
                     The new limit to apply in Volts
         """
 
-        self.device.command(f'SOURce{self.module_number}:VOLTage:PROTection {str(v_limit)}')
+        self.device.command(f'SOURce{self.module_number}:VOLTage:PROTection {str(voltage_limit)}')
 
     def get_voltage_limit_status(self):
         """Returns whether the voltage limit circuitry is presently engaged and limiting the voltage at the output of the module"""
