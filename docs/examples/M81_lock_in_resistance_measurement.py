@@ -13,7 +13,7 @@ voltage_measure = my_M81.get_measure_module(1)
 balanced_current_source.set_frequency(13.7)
 
 # Set the source current peak amplitude to 1 mA
-balanced_current_source.set_i_amplitude(0.001)
+balanced_current_source.set_current_amplitude(0.001)
 
 # Set the voltage measure module to reference the source 1 module with a 100 ms time constant
 voltage_measure.setup_lock_in_measurement('S1', 0.1)
@@ -26,7 +26,7 @@ sleep(1.5)
 lock_in_magnitude = voltage_measure.get_lock_in_r()
 
 # Get the amplitude of the current source
-peak_current = balanced_current_source.get_i_amplitude()
+peak_current = balanced_current_source.get_current_amplitude()
 
 # Calculate the resistance
 resistance = lock_in_magnitude * sqrt(2) / peak_current
