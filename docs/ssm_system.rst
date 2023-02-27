@@ -21,6 +21,10 @@ Stream data
 ~~~~~~~~~~~
 .. literalinclude:: examples/ssm_data_streaming_example.py
 
+Sweep a BCS-10 from 0 mA to 100 mA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: examples/ssm_sweep_and_stream_example.py
+
 SSMS instrument methods
 _______________________
 
@@ -85,6 +89,6 @@ Enumeration Objects
 ____________________
 This section describes the Enum type objects that have been created for the M81 SSM.
 
-.. autoclass:: lakeshore.ssm_system.SSMSystemEnums.DataSourceMnemonic
+.. autoclass:: lakeshore.ssm_system_enums.SSMSystemEnums.DataSourceMnemonic
     :members:
     :undoc-members:

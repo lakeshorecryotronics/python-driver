@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from lakeshore.ssm_system import SSMSystemEnums
+from lakeshore.ssm_system_enums import SSMSystemEnums
 from tests.utils import TestWithFakeSSMS, TestWithFakeSSMSSourceModule, TestWithFakeSSMSMeasureModule
 from lakeshore import ssm_system, ssm_measure_module, ssm_source_module, ssm_base_module
 from base64 import b64encode
