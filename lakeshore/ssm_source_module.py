@@ -1041,7 +1041,7 @@ class SourceModule(BaseModule):
                 The type of sweep for which to return the step size.
         """
 
-        response = float(self.device.query(f'SOURce{self.module_number}:{sweep_type.value}:STEP?'))
+        response = float(self.device.query(f'SOURce{self.module_number}:{sweep_type}:STEP?'))
         return response
 
     def get_source_sweep_time(self):
@@ -1075,10 +1075,10 @@ class SourceModule(BaseModule):
 
         self.device.command(f'SOURce{self.module_number}:SWEep:DWELl {sweep_settings.dwell}')
         self.device.command(f'SOURce{self.module_number}:SWEep:POINts {sweep_settings.points}')
-        self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {sweep_settings.spacing.value}')
-        self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type.value}:MODE SWEep')
-        self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type.value}:STARt {sweep_settings.start}')
-        self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type.value}:STOP {sweep_settings.stop}')
+        self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {sweep_settings.spacing}')
+        self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:MODE SWEep')
+        self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STARt {sweep_settings.start}')
+        self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STOP {sweep_settings.stop}')
 
     def get_sweep_configuration(self, sweep_type):
         """
@@ -1091,8 +1091,8 @@ class SourceModule(BaseModule):
 
         return self.device.SourceSweepSettings(
             sweep_type,
-            self.device.query(f'SOURce{self.module_number}:{sweep_type.value}:STARt?'),
-            self.device.query(f'SOURce{self.module_number}:{sweep_type.value}:STOP?'),
+            self.device.query(f'SOURce{self.module_number}:{sweep_type}:STARt?'),
+            self.device.query(f'SOURce{self.module_number}:{sweep_type}:STOP?'),
             self.device.query(f'SOURce{self.module_number}:SWEep:POINts?'),
             self.device.query(f'SOURce{self.module_number}:SWEep:DWELl?'),
             self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?'))
@@ -1101,7 +1101,7 @@ class SourceModule(BaseModule):
         """Disables all source signals that support sweeping on the specified module."""
 
         for sweep_type in self.device.SourceSweepType:
-            self.device.command(f'SOURce{self.module_number}:{sweep_type.value}:MODE FIXED')
+            self.device.command(f'SOURce{self.module_number}:{sweep_type}:MODE FIXED')
 
     def disable_sweeping(self, sweep_type):
         """
@@ -1112,4 +1112,4 @@ class SourceModule(BaseModule):
                 The type of sweep to disable.
         """
 
-        self.device.command(f'SOURce{self.module_number}:{sweep_type.value}:MODE FIXED')
+        self.device.command(f'SOURce{self.module_number}:{sweep_type}:MODE FIXED')

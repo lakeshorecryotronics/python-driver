@@ -85,6 +85,6 @@ Enumeration Objects
 ____________________
 This section describes the Enum type objects that have been created for the M81 SSM.
 
-.. autoclass:: lakeshore.ssm_system.SSMSystemDataSourceMnemonic
+.. autoclass:: lakeshore.ssm_system.SSMSystemEnums.DataSourceMnemonic
     :members:
     :undoc-members:
