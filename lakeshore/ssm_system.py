@@ -1,11 +1,11 @@
 """Implements functionality unique to the Lake Shore M81."""
-
 from datetime import datetime
 import struct
 from base64 import b64decode
 from threading import Lock
-from enum import Enum
+from warnings import warn
 
+from lakeshore.ssm_system_enums import SSMSystemEnums
 from lakeshore.xip_instrument import XIPInstrument, XIPInstrumentException, RegisterBase
 from lakeshore.ssm_measure_module import MeasureModule
 from lakeshore.ssm_source_module import SourceModule
@@ -90,53 +90,7 @@ class SSMSystemQuestionableRegister(RegisterBase):
         self.data_stream_overflow = data_stream_overflow
 
 
-class SSMSystemDataSourceMnemonic(str, Enum):
-    """Enumeration of M81 data source mnemonics"""
-    RELATIVE_TIME = 'RTIMe'
-    SOURCE_AMPLITUDE = 'SAMPlitude'
-    SOURCE_OFFSET = 'SOFFset'
-    SOURCE_FREQUENCY = 'SFRequency'
-    SOURCE_RANGE = 'SRANge'
-    SOURCE_VOLTAGE_LIMIT = 'SVLimit'
-    SOURCE_CURRENT_LIMIT = 'SILimit'
-    SOURCE_IS_SWEEPING = 'SSWeeping'
-    MEASURE_DC = 'MDC'
-    MEASURE_RMS = 'MRMS'
-    MEASURE_POSITIVE_PEAK = 'MPPeak'
-    MEASURE_NEGATIVE_PEAK = 'MNPeak'
-    MEASURE_PEAK_TO_PEAK = 'MPTPeak'
-    MEASURE_X = 'MX'
-    MEASURE_Y = 'MY'
-    MEASURE_R = 'MR'
-    MEASURE_THETA = 'MTHeta'
-    MEASURE_RANGE = 'MRANge'
-    MEASURE_OVERLOAD = 'MOVerload'
-    MEASURE_SETTLING = 'MSETtling'
-    MEASURE_UNLOCK = 'MUNLock'
-    MEASURE_REFERENCE_FREQUENCY = 'MRFRequency'
-    GENERAL_PURPOSE_INPUT_STATES = 'GPIStates'
-    GENERAL_PURPOSE_OUTPUT_STATES = 'GPOStates'
-
-    # Gets around having to use .value to access the string
-    def __str__(self) -> str:
-        return str.__str__(self)
-
-
-class SSMSystemReadDataSourceMnemonic(str, Enum):
-    """Enumeration of M81 read data source mnemonics"""
-    MEASURE_DC = 'MDC'
-    MEASURE_RMS = 'MRMs'
-    MEASURE_POSITIVE_PEAK = 'MPPeak'
-    MEASURE_NEGATIVE_PEAK = 'MNPeak'
-    MEASURE_PEAK_TO_PEAK = 'MPTPeak'
-    MEASURE_RANGE = 'MRANge'
-
-    # Gets around having to use .value to access the string
-    def __str__(self) -> str:
-        return str.__str__(self)
-
-
-class SSMSystem(XIPInstrument):
+class SSMSystem(XIPInstrument, SSMSystemEnums):
     """Class for interaction with the M81 instrument"""
 
     vid_pid = [(0x1FB9, 0x0704), (0x10C4, 0xEA60)]
@@ -277,8 +231,14 @@ class SSMSystem(XIPInstrument):
         data_source_lookup[short_form.upper()] = channel_index
 
     def get_multiple(self, *data_sources):
-        """This function is deprecated. Use fetch_multiple() instead."""
+        """
+        This function is deprecated. Use fetch_multiple() instead.
 
+        .. deprecated:: 1.5.4
+            Use fetch_multiple instead.
+        """
+
+        warn("The get_multiple method is deprecated, use fetch_multiple instead", DeprecationWarning)
         return self.fetch_multiple(*data_sources)
 
     def get_multiple_min_max_values(self, *data_sources):

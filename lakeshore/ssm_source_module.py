@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from warnings import warn
+
 from lakeshore.xip_instrument import RegisterBase
 from lakeshore.ssm_base_module import SSMSystemModuleQuestionableRegister, BaseModule
 
@@ -38,11 +39,11 @@ class SourceModule(BaseModule):
         r"""Gets a list of the latest values corresponding to the input data sources for this module, and returns them
         as soon as possible.
 
-            Args:
-                data_sources (SSMSystemDataSourceMnemonic or str): Variable length list of data sources.
+        Args:
+            data_sources (SSMSystemDataSourceMnemonic or str): Variable length list of data sources.
 
-            Returns:
-                Tuple of values corresponding to the given data sources for this module
+        Returns:
+            Tuple of values corresponding to the given data sources for this module
         """
 
         elements = [(data_source, self.module_number) for data_source in data_sources]
@@ -126,27 +127,32 @@ class SourceModule(BaseModule):
     def get_excitation_mode(self):
         """Returns the excitation mode of the module. 'CURRENT' or 'VOLTAGE'."""
 
-        return self.device.query(f'SOURce{self.module_number}:FUNCtion:MODE?')
+        return self.device.ExcitationType(self.device.query(f'SOURce{self.module_number}:FUNCtion:MODE?'))
 
     def set_excitation_mode(self, excitation_mode):
         """Sets the excitation mode of the module
 
             Args:
-                excitation_mode (str):
+                excitation_mode (SSMSystem.ExcitationType):
                     The new excitation mode ('CURRENT' or 'VOLTAGE')
         """
 
-        self.device.command(f'SOURce{self.module_number}:FUNCtion:MODE {excitation_mode}')
+        if isinstance(excitation_mode, self.device.ExcitationType):
+            mode = excitation_mode.name
+        else:
+            mode = excitation_mode
+
+        self.device.command(f'SOURce{self.module_number}:FUNCtion:MODE {mode}')
 
     def go_to_current_mode(self):
         """Sets the excitation mode of the module to 'CURRENT'"""
 
-        self.set_excitation_mode('CURRent')
+        self.set_excitation_mode(self.device.ExcitationType.CURRENT)
 
     def go_to_voltage_mode(self):
         """Sets the excitation mode of the module to 'VOLTAGE'"""
 
-        self.set_excitation_mode('VOLTage')
+        self.set_excitation_mode(self.device.ExcitationType.VOLTAGE)
 
     def get_shape(self):
         """Returns the signal shape of the module. 'DC' or 'SINUSOID'."""
@@ -771,7 +777,7 @@ class SourceModule(BaseModule):
         if not output_enable:
             self.disable()
 
-        self.set_excitation_mode('VOLTage')
+        self.set_excitation_mode(self.device.ExcitationType.VOLTAGE)
         self.set_frequency(frequency)
         self.set_shape('SINusoid')
         self.set_voltage_amplitude(amplitude)
@@ -1025,217 +1031,85 @@ class SourceModule(BaseModule):
         response = float(self.device.query(f'SOURce{self.module_number}:SCALibration:TEMP?'))
         return response
 
-    def set_source_sweep_current_mode(self, mode):
-        """Configures the current mode of the source sweep for the specified module.
+    def get_source_sweep_step_size(self, sweep_type):
+        """
+        Returns the step size of the source sweep for the specified module.
+        Step size is a calculated parameter derived from the relevant sweep type's span and points.
 
-            Args:
-                mode (str):
-                    The desired current mode ('FIXed', or 'SWEep')
+        Args:
+            sweep_type (SweepType):
+                The type of sweep for which to return the step size.
         """
 
-        self.device.command(f'SOURce{self.module_number}:CURRent:MODE {str(mode)}')
-
-    def get_source_sweep_current_mode(self):
-        """Returns the current mode of the source sweep for the specified module."""
-
-        response = self.device.query(f'SOURce{self.module_number}:CURRent:MODE?')
+        response = float(self.device.query(f'SOURce{self.module_number}:{sweep_type}:STEP?'))
         return response
-
-    def set_source_sweep_current_start(self, start):
-        """Configures the current starting value of the source sweep for the specified module.
-
-            Args:
-                start (float):
-                    The desired starting value, in Amps.
-        """
-
-        self.device.command(f'SOURce{self.module_number}:CURRent:STARt {start}')
-
-    def get_source_sweep_current_start(self):
-        """Returns the current starting value of the source sweep for the specified module in Amps."""
-
-        response = float(self.device.query(f'SOURce{self.module_number}:CURRent:STARt?'))
-        return response
-
-    def set_source_sweep_current_stop(self, stop):
-        """Configures the current stopping value of the source sweep for the specified module.
-
-            Args:
-                stop (float):
-                    The desired stopping value, in Amps.
-        """
-
-        self.device.command(f'SOURce{self.module_number}:CURRent:STOP {stop}')
-
-    def get_source_sweep_current_stop(self):
-        """Returns the current stopping value of the source sweep for the specified module in Amps."""
-
-        response = float(self.device.query(f'SOURce{self.module_number}:CURRent:STOP?'))
-        return response
-
-    def set_source_sweep_current_step(self, step):
-        """Configures the current step size of the source sweep for the specified module.
-
-            Args:
-                step (float):
-                    The desired step size, in Amps.
-
-            Raises:
-                XIPInstrumentException: Step size cannot be set when spacing is logarithmic.
-        """
-
-        self.device.command(f'SOURce{self.module_number}:CURRent:STEP {step}')
-
-    def get_source_sweep_current_step(self):
-        """Returns the current step size of the source sweep for the specified module in Amps."""
-
-        response = float(self.device.query(f'SOURce{self.module_number}:CURRent:STEP?'))
-        return response
-
-    def set_source_sweep_voltage_mode(self, mode):
-        """Configures the voltage mode of the source sweep for the specified module.
-
-            Args:
-                mode (str):
-                    The desired voltage mode ('FIXed', or 'SWEep')
-        """
-
-        self.device.command(f'SOURce{self.module_number}:VOLTage:MODE {str(mode)}')
-
-    def get_source_sweep_voltage_mode(self):
-        """Returns the voltage mode of the source sweep for the specified module."""
-
-        response = self.device.query(f'SOURce{self.module_number}:VOLTage:MODE?')
-        return response
-
-    def set_source_sweep_voltage_start(self, start):
-        """Configures the voltage starting value of the source sweep for the specified module.
-
-            Args:
-                start (float):
-                    The desired starting value, in Volts.
-        """
-
-        self.device.command(f'SOURce{self.module_number}:VOLTage:STARt {start}')
-
-    def get_source_sweep_voltage_start(self):
-        """Returns the voltage starting value of the source sweep for the specified module in Volts."""
-
-        response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:STARt?'))
-        return response
-
-    def set_source_sweep_voltage_stop(self, stop):
-        """Configures the voltage stopping value of the source sweep for the specified module.
-
-            Args:
-                stop (float):
-                    The desired stopping value, in Volts.
-        """
-
-        self.device.command(f'SOURce{self.module_number}:VOLTage:STOP {stop}')
-
-    def get_source_sweep_voltage_stop(self):
-        """Returns the voltage stopping value of the source sweep for the specified module in Volts."""
-
-        response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:STOP?'))
-        return response
-
-    def set_source_sweep_voltage_step(self, step):
-        """Configures the voltage step size of the source sweep for the specified module.
-
-            Args:
-                step (float):
-                    The desired step size, in Volts.
-
-            Raises:
-                XIPInstrumentException: Step size cannot be set when spacing is logarithmic.
-        """
-
-        self.device.command(f'SOURce{self.module_number}:VOLTage:STEP {step}')
-
-    def get_source_sweep_voltage_step(self):
-        """Returns the voltage step size of the source sweep for the specified module in Volts."""
-
-        response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:STEP?'))
-        return response
-
-    def set_source_sweep_dwell(self, dwell):
-        """Configures the dwell time of the source sweep for the specified module.
-
-            Args:
-                dwell (float):
-                    The desired dwell time per step in seconds. Must be a multiple of 200 microseconds (0.0002).
-        """
-
-        self.device.command(f'SOURce{self.module_number}:SWEep:DWELl {dwell}')
-
-    def get_source_sweep_dwell(self):
-        """Returns the dwell time of the source sweep for the specified module in seconds."""
-
-        response = float(self.device.query(f'SOURce{self.module_number}:SWEep:DWELl?'))
-        return response
-
-    def set_source_sweep_time(self, time):
-        """Configures the overall runtime of the source sweep for the specified module.
-        Must be at least 200 microseconds (0.0002) per step.
-
-            Args:
-                time (float):
-                    The desired runtime, in seconds. Must be a multiple of 200 microseconds.
-
-
-            Raises:
-                XIPInstrumentException: Step size must be a multiple of 200 microseconds.
-        """
-
-        self.device.command(f'SOURce{self.module_number}:SWEep:TIME {time}')
 
     def get_source_sweep_time(self):
-        """Returns the overall runtime of the source sweep for the specified module in seconds.
+        """
+        Returns the overall runtime of the source sweep for the specified module in seconds.
+        Sweep time is a calculated parameter derived from the dwell time and number of points.
         """
 
         response = float(self.device.query(f'SOURce{self.module_number}:SWEep:TIME?'))
         return response
 
-    def set_source_sweep_points(self, points):
-        """Configures the number of points in the source sweep for the specified module.
-
-            Args:
-                points (int):
-                    The number of points to sweep.
-        """
-
-        self.device.command(f'SOURce{self.module_number}:SWEep:POINts {points}')
-
-    def get_source_sweep_points(self):
-        """Returns the number of points in the source sweep for the specified module."""
-
-        response = int(f'SOURce{self.module_number}:SWEep:POINts?')
-        return response
-
-    def set_source_sweep_spacing(self, spacing):
-        """Configures the spacing of the source sweep for the specified module.
-
-            Args:
-                spacing (string):
-                    The spacing of the sweep ('LINear', or 'LOGarithmic').
-        """
-
-        self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {str(spacing)}')
-
-    def get_source_sweep_spacing(self):
-        """Returns the spacing of the source sweep for the specified module."""
-
-        response = self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?')
-        return response
-
     def abort_source_sweep(self):
-        """Aborts the in progress source sweep for the specified module."""
+        """Aborts all in progress source sweep for the specified module."""
 
         self.device.command(f'SOURce{self.module_number}:SWEep:ABORt')
 
     def get_source_sweep_state(self):
-        """Returns the state of the source sweep."""
+        """Returns the state of the source sweep on the specified module."""
 
         response = bool(int(self.device.query(f'SOURce{self.module_number}:SWEep:STATus?')))
         return response
+
+    def set_sweep_configuration(self, sweep_settings):
+        """
+        Configures a source sweep for the specified module.
+
+        Args:
+            sweep_settings (SourceSweepSettings):
+                The configuration for a specific sweep on the specified module.
+        """
+
+        self.device.command(f'SOURce{self.module_number}:SWEep:DWELl {sweep_settings.dwell}')
+        self.device.command(f'SOURce{self.module_number}:SWEep:POINts {sweep_settings.points}')
+        self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {sweep_settings.spacing}')
+        self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:MODE SWEep')
+        self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STARt {sweep_settings.start}')
+        self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STOP {sweep_settings.stop}')
+
+    def get_sweep_configuration(self, sweep_type):
+        """
+        Returns a SourceSweepSettings of the present sweep configuration for the specified module.
+
+        Args:
+            sweep_type (SourceSweepType):
+                The sweep type for which to return the sweep settings.
+        """
+
+        return self.device.SourceSweepSettings(
+            sweep_type,
+            self.device.query(f'SOURce{self.module_number}:{sweep_type}:STARt?'),
+            self.device.query(f'SOURce{self.module_number}:{sweep_type}:STOP?'),
+            self.device.query(f'SOURce{self.module_number}:SWEep:POINts?'),
+            self.device.query(f'SOURce{self.module_number}:SWEep:DWELl?'),
+            self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?'))
+
+    def disable_all_sweeping(self):
+        """Disables all source signals that support sweeping on the specified module."""
+
+        for sweep_type in self.device.SourceSweepType:
+            self.device.command(f'SOURce{self.module_number}:{sweep_type}:MODE FIXED')
+
+    def disable_sweeping(self, sweep_type):
+        """
+        Disables the sweeping of the specified sweep type on the specified module.
+
+        Args:
+            sweep_type (SourceSweepType):
+                The type of sweep to disable.
+        """
+
+        self.device.command(f'SOURce{self.module_number}:{sweep_type}:MODE FIXED')
