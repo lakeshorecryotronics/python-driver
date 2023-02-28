@@ -1,16 +1,15 @@
 from lakeshore import SSMSystem
-from lakeshore import SSMSystemEnums
 
 # Connect to instrument via USB
 my_M81 = SSMSystem()
 
 # stream 5,000 samples of synchronized data at 1,000 samples per second
 streamed_data = my_M81.get_data(1000, 5000,
-                                (SSMSystemEnums.DataSourceMnemonic.RELATIVE_TIME, 1),
-                                (SSMSystemEnums.DataSourceMnemonic.SOURCE_OFFSET, 1),
-                                (SSMSystemEnums.DataSourceMnemonic.MEASURE_X, 1),
-                                (SSMSystemEnums.DataSourceMnemonic.MEASURE_Y, 1),
-                                (SSMSystemEnums.DataSourceMnemonic.MEASURE_DC, 2))
+                                (my_M81.DataSourceMnemonic.RELATIVE_TIME, 1),
+                                (my_M81.DataSourceMnemonic.SOURCE_OFFSET, 1),
+                                (my_M81.DataSourceMnemonic.MEASURE_X, 1),
+                                (my_M81.DataSourceMnemonic.MEASURE_Y, 1),
+                                (my_M81.DataSourceMnemonic.MEASURE_DC, 2))
 
 # format the data and print to the console
 for point in streamed_data:

@@ -1,3 +1,5 @@
+"""Contains enumerations specific to the M81 """
+
 from enum import Enum
 
 
