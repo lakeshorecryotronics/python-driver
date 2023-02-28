@@ -10,6 +10,7 @@ from lakeshore.xip_instrument import XIPInstrument, XIPInstrumentException, Regi
 from lakeshore.ssm_measure_module import MeasureModule
 from lakeshore.ssm_source_module import SourceModule
 from lakeshore.ssm_settings_profiles import SettingsProfiles
+from lakeshore.requires_firmware_version import requires_firmware_version
 
 try:
     from wakepy import keepawake
@@ -587,11 +588,13 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         return tuple(
             (self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
 
+    @requires_firmware_version('1.7.0')
     def initiate_sweeps(self):
         """Initiates sweeps across all channels."""
 
         self.command('SWEep:INITiate')
 
+    @requires_firmware_version('1.7.0')
     def abort_sweeps(self):
         """Aborts in progress sweeps across all channels."""
 

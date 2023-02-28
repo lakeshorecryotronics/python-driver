@@ -5,6 +5,7 @@ from warnings import warn
 
 from lakeshore.xip_instrument import RegisterBase
 from lakeshore.ssm_base_module import SSMSystemModuleQuestionableRegister, BaseModule
+from lakeshore.requires_firmware_version import requires_firmware_version
 
 
 class SSMSystemSourceModuleOperationRegister(RegisterBase):
@@ -1031,6 +1032,7 @@ class SourceModule(BaseModule):
         response = float(self.device.query(f'SOURce{self.module_number}:SCALibration:TEMP?'))
         return response
 
+    @requires_firmware_version('1.7.0')
     def get_source_sweep_step_size(self, sweep_type):
         """
         Returns the step size of the source sweep for the specified module.
@@ -1044,6 +1046,7 @@ class SourceModule(BaseModule):
         response = float(self.device.query(f'SOURce{self.module_number}:{sweep_type}:STEP?'))
         return response
 
+    @requires_firmware_version('1.7.0')
     def get_source_sweep_time(self):
         """
         Returns the overall runtime of the source sweep for the specified module in seconds.
@@ -1053,17 +1056,20 @@ class SourceModule(BaseModule):
         response = float(self.device.query(f'SOURce{self.module_number}:SWEep:TIME?'))
         return response
 
+    @requires_firmware_version('1.7.0')
     def abort_source_sweep(self):
         """Aborts all in progress source sweep for the specified module."""
 
         self.device.command(f'SOURce{self.module_number}:SWEep:ABORt')
 
+    @requires_firmware_version('1.7.0')
     def get_source_sweep_state(self):
         """Returns the state of the source sweep on the specified module."""
 
         response = bool(int(self.device.query(f'SOURce{self.module_number}:SWEep:STATus?')))
         return response
 
+    @requires_firmware_version('1.7.0')
     def set_sweep_configuration(self, sweep_settings):
         """
         Configures a source sweep for the specified module.
@@ -1082,6 +1088,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STARt {sweep_settings.start}')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STOP {sweep_settings.stop}')
 
+    @requires_firmware_version('1.7.0')
     def get_sweep_configuration(self, sweep_type):
         """
         Returns a SourceSweepSettings of the present sweep configuration for the specified module.
@@ -1101,12 +1108,14 @@ class SourceModule(BaseModule):
             self.device.query(f'SOURce{self.module_number}:SWEep:DIRection:RTRip?'),
             self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?'))
 
+    @requires_firmware_version('1.7.0')
     def disable_all_sweeping(self):
         """Disables all source signals that support sweeping on the specified module."""
 
         for sweep_type in self.device.SourceSweepType:
             self.device.command(f'SOURce{self.module_number}:{sweep_type}:MODE FIXED')
 
+    @requires_firmware_version('1.7.0')
     def disable_sweeping(self, sweep_type):
         """
         Disables the sweeping of the specified sweep type on the specified module.
