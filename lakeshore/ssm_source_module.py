@@ -1076,6 +1076,8 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:SWEep:DWELl {sweep_settings.dwell}')
         self.device.command(f'SOURce{self.module_number}:SWEep:POINts {sweep_settings.points}')
         self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {sweep_settings.spacing}')
+        self.device.command(f'SOURce{self.module_number}:SWEep:DIRection {sweep_settings.direction}')
+        self.device.command(f'SOURce{self.module_number}:SWEep:DIRection:RTRip {int(sweep_settings.round_trip)}')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:MODE SWEep')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STARt {sweep_settings.start}')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STOP {sweep_settings.stop}')
@@ -1095,6 +1097,8 @@ class SourceModule(BaseModule):
             self.device.query(f'SOURce{self.module_number}:{sweep_type}:STOP?'),
             self.device.query(f'SOURce{self.module_number}:SWEep:POINts?'),
             self.device.query(f'SOURce{self.module_number}:SWEep:DWELl?'),
+            self.device.query(f'SOURce{self.module_number}:SWEep:DIRection?'),
+            self.device.query(f'SOURce{self.module_number}:SWEep:DIRection:RTRip?'),
             self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?'))
 
     def disable_all_sweeping(self):
