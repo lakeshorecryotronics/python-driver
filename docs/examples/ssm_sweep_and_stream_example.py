@@ -7,7 +7,7 @@ my_ssm = SSMSystem()
 s1_bcs = my_ssm.get_source_module(1)
 
 s1_bcs.set_shape('DC')
-s1_bcs.configure_i_range(False, max_level=.1)
+s1_bcs.configure_current_range(False, max_level=.1)
 
 # Configure the sweep settings to sweep 0 mA to 100 mA with a dwell time of 1 ms
 sweep_configuration = SSMSystem.SourceSweepSettings(sweep_type=my_ssm.SourceSweepType.CURRENT_AMPLITUDE,
