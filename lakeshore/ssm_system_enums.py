@@ -85,7 +85,7 @@ class SSMSystemEnums:
             Constructor for SourceModuleSweepSettings class
 
             Args:
-                sweep_type (SweepType):
+                sweep_type (SourceSweepType):
                     The type of sweep to perform.
                 start (float):
                     Sets the start value of the source sweep.
