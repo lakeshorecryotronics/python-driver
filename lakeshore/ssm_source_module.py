@@ -1037,7 +1037,7 @@ class SourceModule(BaseModule):
         Step size is a calculated parameter derived from the relevant sweep type's span and points.
 
         Args:
-            sweep_type (SweepType):
+            sweep_type (SourceSweepType):
                 The type of sweep for which to return the step size.
         """
 
