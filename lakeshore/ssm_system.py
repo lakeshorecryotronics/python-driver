@@ -587,8 +587,12 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         return tuple(
             (self.data_source_lookup[data_sources[i][0].upper()])(value) for (i, value) in response_values_with_indices)
 
-    def abort_all_source_sweeps(self):
-        """Aborts in progress source sweeps across all channels."""
+    def initiate_sweeps(self):
+        """Initiates sweeps across all channels."""
 
-        for module_number in range(0, 2):
-            self.command(f'SOURce{module_number}:SWEep:ABORt')
+        self.command('SWEep:INITiate')
+
+    def abort_sweeps(self):
+        """Aborts in progress sweeps across all channels."""
+
+        self.command('SWEep:ABORt')
