@@ -80,7 +80,17 @@ class SSMSystemEnums:
             def __str__(self) -> str:
                 return str.__str__(self)
 
-        def __init__(self, sweep_type, start, stop, points, dwell, spacing=SweepSpacing.LINEAR):
+        class Direction(str, Enum):
+            """Class object representing the possible directions for sweeping"""
+            DOWN = 'DOWN'
+            UP = 'UP'
+
+            # Gets around having to use .value to access the string
+            def __str__(self) -> str:
+                return str.__str__(self)
+
+        def __init__(self, sweep_type, start, stop, points, dwell,
+                     direction=Direction.UP, round_trip=False, spacing=SweepSpacing.LINEAR):
             """
             Constructor for SourceModuleSweepSettings class
 
@@ -96,6 +106,13 @@ class SSMSystemEnums:
                 dwell (float):
                     Sets the time spent at each step in the source sweep in seconds.
                     Must be a multiple of 200 microseconds (0.0002).
+                direction (Direction):
+                    The direction of the sweep.
+                    UP begins the sweep at the start and ends at the stop value.
+                    DOWN begins the sweep at the stop value and ends at the start value.
+                round_trip (bool):
+                    The round trip state of the sweep.
+                    When True, the sweep will begin and end at the same value.
                 spacing (SweepSpacing):
                     The spacing of the sweep.
             """
@@ -106,3 +123,5 @@ class SSMSystemEnums:
             self.stop = stop
             self.points = points
             self.dwell = dwell
+            self.direction = direction
+            self.round_trip = round_trip

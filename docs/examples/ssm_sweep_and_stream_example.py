@@ -14,7 +14,9 @@ sweep_configuration = SSMSystem.SourceSweepSettings(sweep_type=my_ssm.SourceSwee
                                                     start=0.0,
                                                     stop=0.1,
                                                     points=1000,
-                                                    dwell=.001)
+                                                    dwell=.001,
+                                                    direction=my_ssm.SourceSweepSettings.Direction.UP,
+                                                    round_trip=False)
 s1_bcs.set_sweep_configuration(sweep_configuration)
 
 # stream 1,000 samples of synchronized data at 1,000 samples per second and simultaneously start the sweep
