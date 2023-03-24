@@ -1,5 +1,6 @@
 """Implements functionality unique to the M81 Source Modules."""
 
+import math
 from datetime import datetime
 from warnings import warn
 
@@ -470,10 +471,6 @@ class SourceModule(BaseModule):
     def get_i_amplitude(self):
         """
         Returns the current amplitude for the module in Amps
-
-            Args:
-                amplitude (float):
-                    The new current amplitude in Amps
         
         .. deprecated:: 1.5.4
            Use get_current_amplitude instead.
@@ -1126,3 +1123,77 @@ class SourceModule(BaseModule):
         """
 
         self.device.command(f'SOURce{self.module_number}:{sweep_type}:MODE FIXED')
+
+    def set_voltage_ramp_configuration(self, stop_amplitude, start_amplitude=None, slew_rate=1.0):
+        """
+        Sets up a parameter sweep that ramps the voltage output to the desired amplitude using the smallest
+        possible step size.
+
+        Args:
+            stop_amplitude (float):
+                The voltage amplitude of the output when the ramp completes.
+
+            start_amplitude (float):
+                The voltage amplitude of the output when the ramp starts. Default is the present amplitude setting.
+
+            slew_rate (float):
+                The rate in volts per second to ramp the output. Default is 1 volt per second.
+        """
+        min_dwell = 0.0002
+        max_points = 100001
+
+        # Use the present voltage amplitude as the starting point if no start is specified
+        if start_amplitude is None:
+            start_amplitude = self.get_voltage_amplitude()
+
+        ramp_total_time = abs(stop_amplitude - start_amplitude) / abs(slew_rate)
+
+        # Determine if the shortest dwell time that can be used without exceeding the maximum number of points
+        dwell_time = math.ceil(ramp_total_time / (min_dwell * max_points)) * min_dwell
+        num_points = round(ramp_total_time / dwell_time)
+
+        sweep_config = self.device.SourceSweepSettings(sweep_type=self.device.SourceSweepType.VOLTAGE_AMPLITUDE,
+                                                       start=start_amplitude,
+                                                       stop=stop_amplitude,
+                                                       points=num_points,
+                                                       dwell=dwell_time,
+                                                       direction=self.device.SourceSweepSettings.Direction.UP,
+                                                       round_trip=False)
+        self.set_sweep_configuration(sweep_config)
+
+    def set_current_ramp_configuration(self, stop_amplitude, start_amplitude=None, slew_rate=0.001):
+        """
+        Sets up a parameter sweep that ramps the current output to the desired amplitude using the smallest
+        possible step size.
+
+        Args:
+            stop_amplitude (float):
+                The current amplitude of the output when the ramp completes.
+
+            start_amplitude (float):
+                The current amplitude of the output when the ramp starts. Default is the present amplitude setting.
+
+            slew_rate (float):
+                The rate in amps per second to ramp the output. Default is 1 mA per second.
+        """
+        min_dwell = 0.0002
+        max_points = 100001
+
+        # Use the present voltage amplitude as the starting point if no start is specified
+        if start_amplitude is None:
+            start_amplitude = self.get_current_amplitude()
+
+        ramp_total_time = abs(stop_amplitude - start_amplitude) / abs(slew_rate)
+
+        # Determine if the shortest dwell time that can be used without exceeding the maximum number of points
+        dwell_time = math.ceil(ramp_total_time / (min_dwell * max_points)) * min_dwell
+        num_points = round(ramp_total_time / dwell_time)
+
+        sweep_config = self.device.SourceSweepSettings(sweep_type=self.device.SourceSweepType.CURRENT_AMPLITUDE,
+                                                       start=start_amplitude,
+                                                       stop=stop_amplitude,
+                                                       points=num_points,
+                                                       dwell=dwell_time,
+                                                       direction=self.device.SourceSweepSettings.Direction.UP,
+                                                       round_trip=False)
+        self.set_sweep_configuration(sweep_config)
