@@ -5,7 +5,7 @@ Release 1.6.0
 -------------
 Added:
 - M81 data sources enumeration and example
-- Support for lock-in IIR filter on M81
+- Enable and disable for lock-in IIR filter on M81
 - Read subsystem support for M81
 - Settings profiles for M81 include summary and notes queries
 - Support for M81 monitor out scale query
