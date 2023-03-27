@@ -1,5 +1,41 @@
 Change Log
 ==========
+
+Release 1.6.0
+-------------
+Added:
+- M81 data sources enumeration and example
+- Enable and disable for lock-in IIR filter on M81
+- Read subsystem support for M81
+- Settings profiles for M81 include summary and notes queries
+- Support for M81 monitor out scale query
+- M81 calibration information queries
+- M81 load all modules and unload module methods
+- All instruments support enter and exit methods for context management
+- Data streaming on M81 supports source readback settling
+- Parameter sweeping on M81
+- Frequency range threshold support for M81 measure module
+- Configurable FIR cycles in M81 measure modules
+- Output limits for M81 source modules
+- Bias voltage controls for M81 measure modules
+- Disable on compliance for M81 source modules
+- M81 module reset commands
+- Line frequency detection queries for M81
+- Minimum and maximum values support for M81 measure modules
+- Digital high pass filter for M81 measure modules
+- Resistance measurement methods for M81
+- Relative measurement methods for M81 measure modules
+
+Changed:
+- Clarified confusing M81 documentation
+- Model 335 gets now return list literals where appropriate
+
+Fixed:
+- M81 FIR cycles now set as expected
+- M81 data source mnemonics corrected
+- Correctly handles multi-line responses from MeasureReady instruments
+- Replaced methods that referred to current and voltage by i and v with the full word
+
 Release 1.5.3
 -------------
 Added:

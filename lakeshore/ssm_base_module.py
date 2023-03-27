@@ -35,3 +35,4 @@ class BaseModule:
         self.module_number = module_number
         self.device = device
         self.questionable_register = SSMSystemModuleQuestionableRegister
+        self.firmware_version = self.device.firmware_version
