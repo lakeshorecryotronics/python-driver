@@ -1097,12 +1097,12 @@ class SourceModule(BaseModule):
 
         return self.device.SourceSweepSettings(
             sweep_type,
-            self.device.query(f'SOURce{self.module_number}:{sweep_type}:STARt?'),
-            self.device.query(f'SOURce{self.module_number}:{sweep_type}:STOP?'),
-            self.device.query(f'SOURce{self.module_number}:SWEep:POINts?'),
-            self.device.query(f'SOURce{self.module_number}:SWEep:DWELl?'),
+            float(self.device.query(f'SOURce{self.module_number}:{sweep_type}:STARt?')),
+            float(self.device.query(f'SOURce{self.module_number}:{sweep_type}:STOP?')),
+            int(self.device.query(f'SOURce{self.module_number}:SWEep:POINts?')),
+            float(self.device.query(f'SOURce{self.module_number}:SWEep:DWELl?')),
             self.device.query(f'SOURce{self.module_number}:SWEep:DIRection?'),
-            self.device.query(f'SOURce{self.module_number}:SWEep:DIRection:RTRip?'),
+            bool(int(self.device.query(f'SOURce{self.module_number}:SWEep:DIRection:RTRip?'))),
             self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?'))
 
     @requires_firmware_version('1.7.0')
