@@ -128,6 +128,10 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
 
         self.stream_lock = Lock()
 
+        # Sweeping limits
+        self.min_sweep_dwell = 0.0002
+        self.max_sweep_points = 100001
+
     def load_modules(self):
         """Loads all unloaded modules. Connected modules must be loaded before they can be used"""
         self.command('SYSTem:LOAD')

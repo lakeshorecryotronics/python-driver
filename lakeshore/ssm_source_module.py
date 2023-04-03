@@ -1139,9 +1139,6 @@ class SourceModule(BaseModule):
             slew_rate (float):
                 The rate in volts per second to ramp the output. Default is 1 volt per second.
         """
-        min_dwell = 0.0002
-        max_points = 100001
-
         # Use the present voltage amplitude as the starting point if no start is specified
         if start_amplitude is None:
             start_amplitude = self.get_voltage_amplitude()
@@ -1149,7 +1146,7 @@ class SourceModule(BaseModule):
         ramp_total_time = abs(stop_amplitude - start_amplitude) / abs(slew_rate)
 
         # Determine if the shortest dwell time that can be used without exceeding the maximum number of points
-        dwell_time = math.ceil(ramp_total_time / (min_dwell * max_points)) * min_dwell
+        dwell_time = math.ceil(ramp_total_time / (self.device.min_sweep_dwell * self.device.max_sweep_points)) * self.device.min_sweep_dwell
         num_points = round(ramp_total_time / dwell_time)
 
         sweep_config = self.device.SourceSweepSettings(sweep_type=self.device.SourceSweepType.VOLTAGE_AMPLITUDE,
@@ -1176,9 +1173,6 @@ class SourceModule(BaseModule):
             slew_rate (float):
                 The rate in amps per second to ramp the output. Default is 1 mA per second.
         """
-        min_dwell = 0.0002
-        max_points = 100001
-
         # Use the present voltage amplitude as the starting point if no start is specified
         if start_amplitude is None:
             start_amplitude = self.get_current_amplitude()
@@ -1186,7 +1180,7 @@ class SourceModule(BaseModule):
         ramp_total_time = abs(stop_amplitude - start_amplitude) / abs(slew_rate)
 
         # Determine if the shortest dwell time that can be used without exceeding the maximum number of points
-        dwell_time = math.ceil(ramp_total_time / (min_dwell * max_points)) * min_dwell
+        dwell_time = math.ceil(ramp_total_time / (self.device.min_sweep_dwell * self.device.max_sweep_points)) * self.device.min_sweep_dwell
         num_points = round(ramp_total_time / dwell_time)
 
         sweep_config = self.device.SourceSweepSettings(sweep_type=self.device.SourceSweepType.CURRENT_AMPLITUDE,
