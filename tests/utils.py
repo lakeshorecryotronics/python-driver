@@ -109,6 +109,11 @@ class TestWithFakeSSMSSourceModule(unittest.TestCase):
         self.dut_module = self.dut_system.get_source_module(1)
         self.fake_connection.reset()  # Clear startup activity
 
+    def queue_up_many_no_error_responses(self, num_responses):
+        """Convenience function for when many commands are sent that require no error responses."""
+        for _ in range(num_responses):
+            self.fake_connection.setup_response('No error')
+
 
 class TestWithFakeSSMSMeasureModule(unittest.TestCase):
     def setUp(self):

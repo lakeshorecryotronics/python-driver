@@ -982,14 +982,7 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
             spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LOGARITHMIC,
             round_trip=False)
         # Queue up an error queue response for every command that will be sent
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
+        self.queue_up_many_no_error_responses(8)
         # Call the method
         self.dut_module.set_sweep_configuration(sweep_configuration)
         # Do an assert for every command
@@ -1063,15 +1056,9 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
             spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
             round_trip=False)
         # Queue up a response for every command that will be sent
+        # No start value is passed, so we query the present amplitude from the instrument
         self.fake_connection.setup_response('1.0;No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
+        self.queue_up_many_no_error_responses(8)
         # Call the function
         self.dut_module.set_voltage_ramp_configuration(2.0)
         # Assert every command sent matches expectations
@@ -1109,15 +1096,7 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
             spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
             round_trip=False)
         # Queue up a response for every command that will be sent
-        self.fake_connection.setup_response('1.0;No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
-        self.fake_connection.setup_response('No error')
+        self.queue_up_many_no_error_responses(8)
         # Call the function
         self.dut_module.set_current_ramp_configuration(-0.456, start_amplitude=0.123, slew_rate=100E-6)
         # Assert every command sent matches expectations

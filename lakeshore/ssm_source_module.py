@@ -1145,7 +1145,7 @@ class SourceModule(BaseModule):
 
         ramp_total_time = abs(stop_amplitude - start_amplitude) / abs(slew_rate)
 
-        # Determine if the shortest dwell time that can be used without exceeding the maximum number of points
+        # Determine the shortest dwell time that can be used without exceeding the maximum number of points
         dwell_time = math.ceil(ramp_total_time / (self.device.min_sweep_dwell * self.device.max_sweep_points)) * self.device.min_sweep_dwell
         num_points = round(ramp_total_time / dwell_time)
 
@@ -1179,7 +1179,7 @@ class SourceModule(BaseModule):
 
         ramp_total_time = abs(stop_amplitude - start_amplitude) / abs(slew_rate)
 
-        # Determine if the shortest dwell time that can be used without exceeding the maximum number of points
+        # Determine the shortest dwell time that can be used without exceeding the maximum number of points
         dwell_time = math.ceil(ramp_total_time / (self.device.min_sweep_dwell * self.device.max_sweep_points)) * self.device.min_sweep_dwell
         num_points = round(ramp_total_time / dwell_time)
 
