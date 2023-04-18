@@ -969,6 +969,158 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.assertEqual(response, 232.778)
 
 
+class TestSweepMethods(TestWithFakeSSMSSourceModule):
+    def test_set_sweep_configuration(self):
+        # Create a sweep config object using the sweep settings class
+        sweep_configuration = self.dut_system.SourceSweepSettings(
+            sweep_type=self.dut_system.SourceSweepType.CURRENT_AMPLITUDE,
+            start=-0.123,
+            stop=0.456,
+            points=789,
+            dwell=0.123,
+            direction=self.dut_system.SourceSweepSettings.Direction.UP,
+            spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LOGARITHMIC,
+            round_trip=False)
+        # Queue up an error queue response for every command that will be sent
+        self.queue_up_many_no_error_responses(8)
+        # Call the method
+        self.dut_module.set_sweep_configuration(sweep_configuration)
+        # Do an assert for every command
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DWELl {sweep_configuration.dwell}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:POINts {sweep_configuration.points}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:SPACing {sweep_configuration.spacing}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DIRection {sweep_configuration.direction}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DIRection:RTRip {int(sweep_configuration.round_trip)}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:MODE SWEep',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STARt {sweep_configuration.start}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STOP {sweep_configuration.stop}',
+                      self.fake_connection.get_outgoing_message())
+
+    def test_get_sweep_configuration(self):
+        sweep_configuration = self.dut_system.SourceSweepSettings(
+            sweep_type=self.dut_system.SourceSweepType.VOLTAGE_AMPLITUDE,
+            start=-0.123,
+            stop=0.456,
+            points=789,
+            dwell=0.001,
+            direction=self.dut_system.SourceSweepSettings.Direction.DOWN,
+            spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
+            round_trip=False)
+        # Set up responses to every query we expect to happen
+        self.fake_connection.setup_response(f'{sweep_configuration.start};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.stop};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.points};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.dwell};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.direction};No error')
+        # Booleans are returned as 0 and 1 so cast it as such
+        self.fake_connection.setup_response(f'{int(bool(sweep_configuration.round_trip))};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.spacing};No error')
+        # Call the function
+        response = self.dut_module.get_sweep_configuration(self.dut_system.SourceSweepType.VOLTAGE_AMPLITUDE)
+        # Assert that all aspects of the sweep configuration object match what was in the responses
+        self.assertEqual(response.start, sweep_configuration.start)
+        self.assertEqual(response.stop, sweep_configuration.stop)
+        self.assertEqual(response.points, sweep_configuration.points)
+        self.assertEqual(response.dwell, sweep_configuration.dwell)
+        self.assertEqual(response.direction, sweep_configuration.direction)
+        self.assertEqual(response.round_trip, sweep_configuration.round_trip)
+        self.assertEqual(response.spacing, sweep_configuration.spacing)
+
+    def test_disable_all_sweeping(self):
+        for sweep_type in self.dut_system.SourceSweepType:
+            self.fake_connection.setup_response(f'SOURce{self.dut_module.module_number}:{sweep_type}:MODE FIXED;No error')
+
+        self.dut_module.disable_all_sweeping()
+
+    def test_disable_sweeping(self):
+        for sweep_type in self.dut_system.SourceSweepType:
+            self.fake_connection.setup_response(f'SOURce{self.dut_module.module_number}:{sweep_type}:MODE FIXED;No error')
+            self.dut_module.disable_sweeping(sweep_type)
+
+    def test_set_voltage_ramp_configuration(self):
+        # Create a sweep config object using the sweep settings class that matches the expected settings for the ramp
+        sweep_configuration = self.dut_system.SourceSweepSettings(
+            sweep_type=self.dut_system.SourceSweepType.VOLTAGE_AMPLITUDE,
+            start=1.0,
+            stop=2.0,
+            points=5000,
+            dwell=0.0002,
+            direction=self.dut_system.SourceSweepSettings.Direction.UP,
+            spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
+            round_trip=False)
+        # Queue up a response for every command that will be sent
+        # No start value is passed, so we query the present amplitude from the instrument
+        self.fake_connection.setup_response('1.0;No error')
+        self.queue_up_many_no_error_responses(8)
+        # Call the function
+        self.dut_module.set_voltage_ramp_configuration(2.0)
+        # Assert every command sent matches expectations
+        self.assertIn(f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:LEVel:AMPLitude?',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DWELl {sweep_configuration.dwell}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:POINts {sweep_configuration.points}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:SPACing {sweep_configuration.spacing}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DIRection {sweep_configuration.direction}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(
+            f'SOURce{self.dut_module.module_number}:SWEep:DIRection:RTRip {int(sweep_configuration.round_trip)}',
+            self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:MODE SWEep',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(
+            f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STARt {sweep_configuration.start}',
+            self.fake_connection.get_outgoing_message())
+        self.assertIn(
+            f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STOP {sweep_configuration.stop}',
+            self.fake_connection.get_outgoing_message())
+
+    def test_set_current_ramp_configuration(self):
+        # Create a sweep config object using the sweep settings class that matches the expected settings for the ramp
+        sweep_configuration = self.dut_system.SourceSweepSettings(
+            sweep_type=self.dut_system.SourceSweepType.CURRENT_AMPLITUDE,
+            start=0.123,
+            stop=-0.456,
+            points=99828,
+            dwell=0.058,
+            direction=self.dut_system.SourceSweepSettings.Direction.UP,
+            spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
+            round_trip=False)
+        # Queue up a response for every command that will be sent
+        self.queue_up_many_no_error_responses(8)
+        # Call the function
+        self.dut_module.set_current_ramp_configuration(-0.456, start_amplitude=0.123, slew_rate=100E-6)
+        # Assert every command sent matches expectations
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DWELl {sweep_configuration.dwell}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:POINts {sweep_configuration.points}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:SPACing {sweep_configuration.spacing}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DIRection {sweep_configuration.direction}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(
+            f'SOURce{self.dut_module.module_number}:SWEep:DIRection:RTRip {int(sweep_configuration.round_trip)}',
+            self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:MODE SWEep',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(
+            f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STARt {sweep_configuration.start}',
+            self.fake_connection.get_outgoing_message())
+        self.assertIn(
+            f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STOP {sweep_configuration.stop}',
+            self.fake_connection.get_outgoing_message())
+
+
 class TestMeasureModule(TestWithFakeSSMSMeasureModule):
     def test_get_name(self):
         self.fake_connection.setup_response('Module_name;No error')
