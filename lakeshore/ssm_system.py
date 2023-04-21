@@ -16,6 +16,8 @@ try:
     from wakepy import keepawake
 except NotImplementedError:
     pass  # Proceed without wakepy on linux without systemd
+except KeyError:
+    pass  # Proceed without wakepy on linux without dbus
 
 
 class SSMSystemOperationRegister(RegisterBase):
