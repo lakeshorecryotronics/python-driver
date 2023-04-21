@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Release 1.6.1
+-------------
+Added:
+- Added explicit requirement for packaging package
+
+Fixed:
+- Catch error on wakepy import that breaks in some scenarios
+
 Release 1.6.0
 -------------
 Added:
