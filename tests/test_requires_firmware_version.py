@@ -49,3 +49,33 @@ class TestRequiresFirmwareVersion(unittest.TestCase):
             dut.fake_method()
         except XIPInstrumentException:
             self.fail('Exception raised unexpectedly.')
+
+    def test_version_equal_pre_release(self):
+        class FakeInstrument:
+            def __init__(self):
+                self.firmware_version = '1.3.0-pre'
+
+            @requires_firmware_version('1.3.0')
+            def fake_method(self):
+                pass
+
+        dut = FakeInstrument()
+
+        try:
+            dut.fake_method()
+        except XIPInstrumentException:
+            self.fail('Exception raised unexpectedly.')
+
+    def test_version_lesser_pre_release(self):
+        class FakeInstrument:
+            def __init__(self):
+                self.firmware_version = '1.2.1-pre'
+
+            @requires_firmware_version('1.2.3')
+            def fake_method(self):
+                pass
+
+        dut = FakeInstrument()
+
+        with self.assertRaises(XIPInstrumentException):
+            dut.fake_method()
