@@ -14,7 +14,7 @@ def requires_firmware_version(required_version):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
             # Raise an error if the instrument version is earlier than the required version.
-            if Version(required_version) > Version(self.firmware_version):
+            if Version(required_version) > Version(self.firmware_version.split('-')[0]):
                 raise XIPInstrumentException(func.__name__ + ' requires instrument firmware version ' +
                                              str(required_version) +
                                              ' or later. Please update your instrument.')
