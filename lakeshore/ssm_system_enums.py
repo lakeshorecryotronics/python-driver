@@ -63,6 +63,7 @@ class SSMSystemEnums:
         """Class representing the available sweep types for a source module."""
         CURRENT_AMPLITUDE = 'CURRent'
         VOLTAGE_AMPLITUDE = 'VOLTage'
+        FREQUENCY = 'FREQuency'
 
         # Gets around having to use .value to access the string
         def __str__(self) -> str:
