@@ -1054,12 +1054,6 @@ class SourceModule(BaseModule):
         return response
 
     @requires_firmware_version('1.7.0')
-    def abort_source_sweep(self):
-        """Aborts all in progress source sweep for the specified module."""
-
-        self.device.command(f'SOURce{self.module_number}:SWEep:ABORt')
-
-    @requires_firmware_version('1.7.0')
     def get_source_sweep_state(self):
         """Returns the state of the source sweep on the specified module."""
 
