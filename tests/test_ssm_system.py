@@ -1003,7 +1003,7 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
         self.assertIn(f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STOP {sweep_configuration.stop}',
                       self.fake_connection.get_outgoing_message())
 
-    def test_get_sweep_configuration(self):
+    def test_get_sweep_configuration_voltage(self):
         sweep_configuration = self.dut_system.SourceSweepSettings(
             sweep_type=self.dut_system.SourceSweepType.VOLTAGE_AMPLITUDE,
             start=-0.123,
@@ -1024,6 +1024,66 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
         self.fake_connection.setup_response(f'{sweep_configuration.spacing};No error')
         # Call the function
         response = self.dut_module.get_sweep_configuration(self.dut_system.SourceSweepType.VOLTAGE_AMPLITUDE)
+        # Assert that all aspects of the sweep configuration object match what was in the responses
+        self.assertEqual(response.start, sweep_configuration.start)
+        self.assertEqual(response.stop, sweep_configuration.stop)
+        self.assertEqual(response.points, sweep_configuration.points)
+        self.assertEqual(response.dwell, sweep_configuration.dwell)
+        self.assertEqual(response.direction, sweep_configuration.direction)
+        self.assertEqual(response.round_trip, sweep_configuration.round_trip)
+        self.assertEqual(response.spacing, sweep_configuration.spacing)
+
+    def test_get_sweep_configuration_current(self):
+        sweep_configuration = self.dut_system.SourceSweepSettings(
+            sweep_type=self.dut_system.SourceSweepType.CURRENT_AMPLITUDE,
+            start=-0.123,
+            stop=0.456,
+            points=789,
+            dwell=0.001,
+            direction=self.dut_system.SourceSweepSettings.Direction.DOWN,
+            spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
+            round_trip=False)
+        # Set up responses to every query we expect to happen
+        self.fake_connection.setup_response(f'{sweep_configuration.start};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.stop};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.points};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.dwell};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.direction};No error')
+        # Booleans are returned as 0 and 1 so cast it as such
+        self.fake_connection.setup_response(f'{int(bool(sweep_configuration.round_trip))};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.spacing};No error')
+        # Call the function
+        response = self.dut_module.get_sweep_configuration(self.dut_system.SourceSweepType.CURRENT_AMPLITUDE)
+        # Assert that all aspects of the sweep configuration object match what was in the responses
+        self.assertEqual(response.start, sweep_configuration.start)
+        self.assertEqual(response.stop, sweep_configuration.stop)
+        self.assertEqual(response.points, sweep_configuration.points)
+        self.assertEqual(response.dwell, sweep_configuration.dwell)
+        self.assertEqual(response.direction, sweep_configuration.direction)
+        self.assertEqual(response.round_trip, sweep_configuration.round_trip)
+        self.assertEqual(response.spacing, sweep_configuration.spacing)
+
+    def test_get_sweep_configuration_frequency(self):
+        sweep_configuration = self.dut_system.SourceSweepSettings(
+            sweep_type=self.dut_system.SourceSweepType.FREQUENCY,
+            start=-0.123,
+            stop=0.456,
+            points=789,
+            dwell=0.001,
+            direction=self.dut_system.SourceSweepSettings.Direction.DOWN,
+            spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
+            round_trip=False)
+        # Set up responses to every query we expect to happen
+        self.fake_connection.setup_response(f'{sweep_configuration.start};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.stop};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.points};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.dwell};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.direction};No error')
+        # Booleans are returned as 0 and 1 so cast it as such
+        self.fake_connection.setup_response(f'{int(bool(sweep_configuration.round_trip))};No error')
+        self.fake_connection.setup_response(f'{sweep_configuration.spacing};No error')
+        # Call the function
+        response = self.dut_module.get_sweep_configuration(self.dut_system.SourceSweepType.FREQUENCY)
         # Assert that all aspects of the sweep configuration object match what was in the responses
         self.assertEqual(response.start, sweep_configuration.start)
         self.assertEqual(response.stop, sweep_configuration.stop)
@@ -1119,7 +1179,9 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
         self.assertIn(
             f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STOP {sweep_configuration.stop}',
             self.fake_connection.get_outgoing_message())
-
+    # def test_frequency_sweeping(self):
+    #     # Create a sweep config object using the sweep settings class that matches the expected settings for the ramp
+    #
 
 class TestMeasureModule(TestWithFakeSSMSMeasureModule):
     def test_get_name(self):
