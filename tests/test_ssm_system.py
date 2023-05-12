@@ -1179,9 +1179,7 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
         self.assertIn(
             f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STOP {sweep_configuration.stop}',
             self.fake_connection.get_outgoing_message())
-    # def test_frequency_sweeping(self):
-    #     # Create a sweep config object using the sweep settings class that matches the expected settings for the ramp
-    #
+
 
 class TestMeasureModule(TestWithFakeSSMSMeasureModule):
     def test_get_name(self):
