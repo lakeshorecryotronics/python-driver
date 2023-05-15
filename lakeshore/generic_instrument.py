@@ -53,7 +53,10 @@ class RegisterBase:
 
 def _is_valid_user_connection(connection):
     """Verifies connection can be used and has write and query methods"""
-    return callable(connection.write) and callable(connection.query)
+    try:
+        return callable(connection.write) and callable(connection.query)
+    except AttributeError:
+        return 0
 
 
 class GenericInstrument:

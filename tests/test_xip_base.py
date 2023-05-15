@@ -1,8 +1,29 @@
 import unittest
-
+from collections import deque
 # Teslameter is used for these general tests on the HIL rig at this time
 from lakeshore import Teslameter, XIPInstrumentException, InstrumentException
-from tests.utils import TestWithFakeTeslameter
+from tests.utils import TestWithFakeTeslameter, FakeDutConnection
+
+
+class ValidFakeUserConnection:
+    def __init__(self):
+        self.responses = deque()
+        self.responses.append('No error')
+        self.responses.append('LSCI,F71,FakeSerial,999.999.999')
+    def write(self, command):
+        return
+
+    def query(self, query):
+        return self.responses.pop()
+
+
+class InvalidFakeUserConnection:
+
+    def send(self, command):
+        return
+
+    def query(self, query):
+        return "response"
 
 
 class TestDiscovery(unittest.TestCase):
@@ -18,6 +39,28 @@ class TestDiscovery(unittest.TestCase):
                                     r'and/or matching serial number'):
             Teslameter(com_port='COM99')
 
+
+class TestMultipleConnections(unittest.TestCase):
+    def test_two_connections(self):
+        with self.assertRaisesRegex(ValueError, "Multiple different connection methods provided."):
+            Teslameter(ip_address="192.0.2.0", com_port='COM4')
+
+    def test_three_connections(self):
+        self.fake_connection = FakeDutConnection()
+        with self.assertRaisesRegex(ValueError, "Multiple different connection methods provided."):
+            Teslameter(ip_address="192.0.2.0", com_port='COM4', connection=self.fake_connection)
+
+
+class TestUserConnections(unittest.TestCase):
+    def test_valid_connection(self):
+        provided_connection = ValidFakeUserConnection()
+        Teslameter(connection=provided_connection)
+
+    def test_invalid_connection(self):
+        provided_connection = InvalidFakeUserConnection()
+        with self.assertRaisesRegex(ValueError,
+                                    "Invalid connection. Connection must have callable write and query methods."):
+            Teslameter(connection=provided_connection)
 
 class TestCommands(TestWithFakeTeslameter):
     def test_basic_command(self):
