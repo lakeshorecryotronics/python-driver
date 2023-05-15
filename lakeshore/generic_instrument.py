@@ -70,19 +70,29 @@ class GenericInstrument:
         self.dut_lock = Lock()
         self.serial_number = None
         self.option_card_serial = None
+        self.user_connection = None
 
-        # Raise an error if serial and TCP parameters are passed. Otherwise connect to the instrument using one of them.
-        if ip_address is not None:
-            if com_port is not None:
-                raise ValueError("Two different connection methods provided.")
+        # Raise an error if multiple connection methods are passed. Otherwise, connect to instrument.
+        if (ip_address and com_port) or (ip_address and connection) or (com_port and connection):
+            raise ValueError("Multiple different connection methods provided.")
 
+        # TCP via IP
+        if ip_address:
             self.connect_tcp(ip_address, tcp_port, timeout)
-        else:
-            if connection is None:
-                self.connect_usb(serial_number, com_port, baud_rate, data_bits, stop_bits, parity,
-                                 timeout, handshaking, flow_control)
-            else:
+        # User provided connection
+        elif connection:
+            # Test connection
+            if hasattr(connection, "FAKE_CONNECTION"):
                 self.device_serial = connection
+            # Check validity of provided connection with duck-typing
+            elif _is_valid_user_connection(connection):
+                self.user_connection = connection
+            else:
+                raise ValueError("Invalid connection. Connection must have callable write and query methods.")
+        # USB connection (default)
+        else:
+            self.connect_usb(serial_number, com_port, baud_rate, data_bits, stop_bits, parity,
+                             timeout, handshaking, flow_control)
 
         # Query the instrument identification information and store it in variables
         try:
@@ -130,6 +140,8 @@ class GenericInstrument:
                 self._usb_command(command_string)
             elif self.device_tcp is not None:
                 self._tcp_command(command_string)
+            elif self.user_connection is not None:
+                self._user_connection_command(command_string)
             else:
                 raise InstrumentException("No connections configured")
 
@@ -153,6 +165,8 @@ class GenericInstrument:
                 response = self._usb_query(query_string)
             elif self.device_tcp is not None:
                 response = self._tcp_query(query_string)
+            elif self.user_connection is not None:
+                response = self._user_connection_query(query_string)
             else:
                 raise InstrumentException("No connections configured")
 
@@ -270,6 +284,21 @@ class GenericInstrument:
             raise InstrumentException("Communication timed out")
 
         return response.rstrip()
+
+    def _user_connection_command(self, command):
+        """Send a command over the user provided connection"""
+
+        self.user_connection.write(command)
+
+    def _user_connection_query(self, query):
+        """Query over the user provided connection"""
+
+        response = self.user_connection.query(query)
+
+        if not response:
+            raise InstrumentException("Communication timed out")
+
+        return response
 
     def _get_identity(self):
         return self.query('*IDN?').split(',')
