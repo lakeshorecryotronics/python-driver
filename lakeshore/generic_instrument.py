@@ -125,6 +125,14 @@ class GenericInstrument:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.__del__()
 
+    def write(self, command_string):
+        """Alias of command. Send a command to the instrument
+
+            Args:
+                command_string (str):
+                    A serial command
+        """
+        self.command(command_string)
     def command(self, command_string):
         """Send a command to the instrument
 
