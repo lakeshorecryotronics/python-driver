@@ -72,6 +72,26 @@ By default the error flags or queue will be reset upon connecting to an instrume
 
         my_instrument = Teslameter(clear_errors_on_init=False)
 
+Alternative instrument connections
+----------------------------------
+Alternative connections to the instrument can be used by the driver. Create your connection and pass it into the constructor for your instrument. The connection must have both write and query methods for this to work.
+
+GPIB connection with PyVISA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+    import pyvisa
+    from lakeshore import SSMSystem
+
+    # Set up GPIB connection to instrument
+    rm = pyvisa.ResourceManager()
+    M81_connection = rm.open_resource('GPIB0::12::INSTR')
+
+    # Pass connection to instrument constructor
+    my_M81 = SSMSystem(connection=M81_connection)
+    print(my_M81.query('*IDN?'))
+
+
 Python 2 compatibility
 ----------------------
 Python 2 is no longer supported by the python software foundation. The most recent version of this driver that is fully compatible with python 2 is version 1.4.
