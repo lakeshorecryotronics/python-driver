@@ -51,6 +51,11 @@ class RegisterBase:
         return cls(**bit_states)
 
 
+def _is_valid_user_connection(connection):
+    """Verifies connection can be used and has write and query methods"""
+    return callable(connection.write) and callable(connection.query)
+
+
 class GenericInstrument:
     """Parent class that implements functionality to connect to generic instruments"""
 
