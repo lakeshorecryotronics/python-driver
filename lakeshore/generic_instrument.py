@@ -76,8 +76,12 @@ class GenericInstrument:
         self.user_connection = None
 
         # Raise an error if multiple connection methods are passed. Otherwise, connect to instrument.
-        if (ip_address and com_port) or (ip_address and connection) or (com_port and connection):
-            raise ValueError("Multiple different connection methods provided.")
+        if ip_address and com_port:
+            raise ValueError("Too many connections. Cannot have IP and serial connection at the same time.")
+        if ip_address and connection:
+            raise ValueError("Too many connections. Cannot have IP and user connection at the same time.")
+        if com_port and connection:
+            raise ValueError("Too many connections. Cannot have serial and user connection at the same time.")
 
         # TCP via IP
         if ip_address:
