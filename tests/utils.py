@@ -11,6 +11,7 @@ class FakeDutConnection:
     def __init__(self):
         self.incoming = deque()
         self.outgoing = deque()
+        self.FAKE_CONNECTION = True
 
     def setup_response(self, message):
         self.incoming.append(message)

@@ -118,6 +118,8 @@ class XIPInstrument(GenericInstrument):
                     self._usb_command(command_string)
                 elif self.device_tcp is not None:
                     self._tcp_command(command_string)
+                elif self.user_connection is not None:
+                    self._user_connection_command(command_string)
                 else:
                     raise InstrumentException("No connections configured")
 
@@ -152,6 +154,8 @@ class XIPInstrument(GenericInstrument):
                 response = self._usb_query(query_string)
             elif self.device_tcp is not None:
                 response = self._tcp_query(query_string)
+            elif self.user_connection is not None:
+                response = self._user_connection_query(query_string)
             else:
                 raise InstrumentException("No connections configured")
 
