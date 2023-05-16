@@ -42,12 +42,12 @@ class TestDiscovery(unittest.TestCase):
 
 class TestMultipleConnections(unittest.TestCase):
     def test_two_connections(self):
-        with self.assertRaisesRegex(ValueError, "Multiple different connection methods provided."):
+        with self.assertRaisesRegex(ValueError, "Too many connections. Cannot have IP and serial connection at the same time."):
             Teslameter(ip_address="192.0.2.0", com_port='COM4')
 
     def test_three_connections(self):
         self.fake_connection = FakeDutConnection()
-        with self.assertRaisesRegex(ValueError, "Multiple different connection methods provided."):
+        with self.assertRaisesRegex(ValueError, "Too many connections. Cannot have IP and serial connection at the same time."):
             Teslameter(ip_address="192.0.2.0", com_port='COM4', connection=self.fake_connection)
 
 
