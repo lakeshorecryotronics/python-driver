@@ -49,7 +49,7 @@ Connecting to an instrument over TCP requires knowledge of its IP address. The I
 
 Commands and queries
 --------------------
-All Lake Shore instruments supported by the Python driver have :func:`~lakeshore.xip_instrument.command` and :func:`~lakeshore.xip_instrument.query` methods.
+All Lake Shore instruments supported by the Python driver have ``command()`` and ``query()`` methods.
 
 The Python driver makes it simple to send the instrument a command or query::
 
