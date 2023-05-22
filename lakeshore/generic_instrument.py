@@ -1,4 +1,6 @@
-"""This module implements a parent class that contains basic functionality for communicating with Lake Shore instruments."""
+"""This module implements a parent class that contains basic functionality for communicating with
+Lake Shore instruments.
+"""
 import logging
 import select
 import socket
@@ -14,7 +16,7 @@ class InstrumentException(Exception):
 
 
 class RegisterBase:
-    """Base class of the status register classes"""
+    """Base class of the status register classes."""
 
     bit_names = []
 
@@ -22,7 +24,7 @@ class RegisterBase:
         return str(vars(self))
 
     def to_integer(self):
-        """Translates the register object to an integer representation value"""
+        """Translates the register object to an integer representation value."""
 
         integer_representation = 0
 
@@ -37,7 +39,7 @@ class RegisterBase:
 
     @classmethod
     def from_integer(cls, integer_representation):
-        """Creates the register object from an integer representation value"""
+        """Creates the register object from an integer representation value."""
 
         # Create a dictionary to temporarily store the bit states
         bit_states = {}
@@ -52,7 +54,7 @@ class RegisterBase:
 
 
 def _is_valid_user_connection(connection):
-    """Verifies connection can be used and has write and query methods"""
+    """Verifies connection can be used and has write and query methods."""
     try:
         return callable(connection.write) and callable(connection.query)
     except AttributeError:
@@ -60,7 +62,7 @@ def _is_valid_user_connection(connection):
 
 
 class GenericInstrument:
-    """Parent class that implements functionality to connect to generic instruments"""
+    """Parent class that implements functionality to connect to generic instruments."""
 
     vid_pid = []
     logger = logging.getLogger(__name__)
@@ -133,19 +135,19 @@ class GenericInstrument:
         self.__del__()
 
     def write(self, command_string):
-        """Alias of command. Send a command to the instrument
+        """Alias of command. Send a command to the instrument.
 
             Args:
                 command_string (str):
-                    A serial command
+                    A serial command.
         """
         self.command(command_string)
     def command(self, command_string):
-        """Send a command to the instrument
+        """Send a command to the instrument.
 
             Args:
                 command_string (str):
-                    A serial command
+                    A serial command.
         """
 
         # Query the instrument over serial. If serial is not configured, use TCP.
@@ -163,11 +165,11 @@ class GenericInstrument:
             self.logger.info('Sent command to %s: %s', self.serial_number, command_string)
 
     def query(self, query_string):
-        """Send a query to the instrument and return the response
+        """Send a query to the instrument and return the response.
 
             Args:
                 query_string (str):
-                    A serial query ending in a question mark
+                    A serial query ending in a question mark.
 
             Returns:
                The instrument query response as a string.
@@ -191,7 +193,7 @@ class GenericInstrument:
         return response
 
     def connect_tcp(self, ip_address, tcp_port, timeout):
-        """Establishes a TCP connection with the instrument on the specified IP address"""
+        """Establishes a TCP connection with the instrument on the specified IP address."""
 
         self.device_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.device_tcp.settimeout(timeout)
@@ -209,14 +211,14 @@ class GenericInstrument:
                 read_object.recv(1)
 
     def disconnect_tcp(self):
-        """Disconnect the TCP connection"""
+        """Disconnect the TCP connection."""
 
         self.device_tcp.close()
         self.device_tcp = None
 
     def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, data_bits=None,
                     stop_bits=None, parity=None, timeout=None, handshaking=None, flow_control=None):
-        """Establish a serial USB connection"""
+        """Establish a serial USB connection."""
 
         # Scan the ports for devices matching the VID and PID combos of the instrument
         for port in comports():
@@ -250,18 +252,18 @@ class GenericInstrument:
                 "No serial connections found with a matching COM port and/or matching serial number")
 
     def disconnect_usb(self):
-        """Disconnect the USB connection"""
+        """Disconnect the USB connection."""
 
         self.device_serial.close()
         self.device_serial = None
 
     def _tcp_command(self, command):
-        """Send a command over the TCP connection"""
+        """Send a command over the TCP connection."""
 
         self.device_tcp.send(command.encode('utf-8') + b'\n')
 
     def _tcp_query(self, query):
-        """Query over the TCP connection"""
+        """Query over the TCP connection."""
 
         self._tcp_command(query)
 
@@ -284,12 +286,12 @@ class GenericInstrument:
                 return total_response.rstrip()
 
     def _usb_command(self, command):
-        """Send a command over the serial USB connection"""
+        """Send a command over the serial USB connection."""
 
         self.device_serial.write(command.encode('ascii') + b'\n')
 
     def _usb_query(self, query):
-        """Query over the serial USB connection"""
+        """Query over the serial USB connection."""
 
         self._usb_command(query)
         response = self.device_serial.read_until(b'\r\n').decode('ascii')
@@ -301,12 +303,12 @@ class GenericInstrument:
         return response.rstrip()
 
     def _user_connection_command(self, command):
-        """Send a command over the user provided connection"""
+        """Send a command over the user provided connection."""
 
         self.user_connection.write(command)
 
     def _user_connection_query(self, query):
-        """Query over the user provided connection"""
+        """Query over the user provided connection."""
 
         response = self.user_connection.query(query)
 
