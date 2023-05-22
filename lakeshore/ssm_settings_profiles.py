@@ -1,10 +1,10 @@
-"""Implements functionality unique to settings profiles"""
+"""Implements functionality unique to settings profiles."""
 
 import json
 
 
 class SettingsProfiles:
-    """Class for interaction with settings profiles"""
+    """Class for interaction with settings profiles."""
 
     def __init__(self, device):
         self.device = device
@@ -13,7 +13,8 @@ class SettingsProfiles:
         """Returns a list containing a profile's description and module models.
 
         Args:
-            name (str): Name of the profile to query.
+            name (str):
+                Name of the profile to query.
         """
 
         response = self.device.query(f'PROFile:SUMMary? "{name}"')
@@ -24,8 +25,10 @@ class SettingsProfiles:
         """Create a new profile using the present instrument configuration.
 
         Args:
-            name (str): Unique name to give the profile.
-            description (str): Optional description of the profile.
+            name (str):
+                Unique name to give the profile.
+            description (str):
+                Optional description of the profile.
         """
 
         self.device.command(f'PROFile:CREAte "{name}", "{description}"')
@@ -43,7 +46,8 @@ class SettingsProfiles:
         """Returns a profile's description.
 
         Args:
-            name (str): Name of the profile to get the description for.
+            name (str):
+                Name of the profile to get the description for.
         """
 
         return self.device.query(f'PROFile:DESCription? "{name}"').strip('"')
@@ -52,8 +56,10 @@ class SettingsProfiles:
         """Sets a profile's description. Any existing description will be overwritten.
 
         Args:
-            name (str): Name of the profile to get the description for.
-            description (str): The new description of the profile.
+            name (str):
+                Name of the profile to get the description for.
+            description (str):
+                The new description of the profile.
         """
 
         self.device.command(f'PROFile:DESCription "{name}","{description}"')
@@ -62,7 +68,8 @@ class SettingsProfiles:
         """Returns a JSON object of a given profile.
 
         Args:
-            name (str): Name of the profile.
+            name (str):
+                Name of the profile.
         """
 
         response = self.device.query(f'PROFile:JSON? "{name}"')
@@ -73,8 +80,10 @@ class SettingsProfiles:
         """Rename a profile. New name must be unique.
 
         Args:
-            name (str): The name of the profile to rename.
-            new_name (str): The new name of the profile.
+            name (str):
+                The name of the profile to rename.
+            new_name (str):
+                The new name of the profile.
         """
 
         self.device.command(f'PROFile:REName "{name}","{new_name}"')
@@ -83,7 +92,8 @@ class SettingsProfiles:
         """Update a profile with the present instrument configuration.
 
         Args:
-            name (str): The name of the profile to update.
+            name (str):
+                The name of the profile to update.
         """
 
         self.device.command(f'PROFile:UPDate "{name}"')
@@ -92,7 +102,8 @@ class SettingsProfiles:
         """Returns if a profile is valid to restore.
 
         Args:
-            name (str): The name of the profile to validate.
+            name (str):
+                The name of the profile to validate.
         """
 
         response = self.device.query(f'PROFile:RESTore:VALid? "{name}"')
@@ -102,16 +113,18 @@ class SettingsProfiles:
         """Restore a profile.
 
         Args:
-            name (str): The name of the profile to restore.
+            name (str):
+                The name of the profile to restore.
         """
 
         self.device.command(f'PROFile:RESTore "{name}"')
 
     def delete(self, name):
-        """Delete a profile
+        """Delete a profile.
 
         Args:
-            name (str): The name of the profile to delete.
+            name (str):
+                The name of the profile to delete.
         """
 
         self.device.command(f'PROFile:DELete "{name}"')

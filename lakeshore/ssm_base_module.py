@@ -4,7 +4,7 @@ from lakeshore.xip_instrument import RegisterBase
 
 
 class SSMSystemModuleQuestionableRegister(RegisterBase):
-    """Class object representing the questionable status register of a module"""
+    """Class object representing the questionable status register of a module."""
 
     bit_names = [
         "read_error",
@@ -29,7 +29,7 @@ class SSMSystemModuleQuestionableRegister(RegisterBase):
 
 
 class BaseModule:
-    """Class for interaction with a specific channel, not specific to source or measure"""
+    """Class for interaction with a specific channel, not specific to source or measure."""
 
     def __init__(self, module_number, device):
         self.module_number = module_number
