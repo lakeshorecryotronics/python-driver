@@ -1,4 +1,4 @@
-"""Implements functionality unique to the Lake Shore 155 Precision Source"""
+"""Implements functionality unique to the Lake Shore 155 Precision Source."""
 
 from time import sleep
 import itertools
@@ -7,7 +7,7 @@ from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, Sta
 
 
 class PrecisionSourceOperationRegister(RegisterBase):
-    """Class object representing the operation status register"""
+    """Class object representing the operation status register."""
 
     bit_names = [
         "",
@@ -37,7 +37,7 @@ class PrecisionSourceOperationRegister(RegisterBase):
 
 
 class PrecisionSourceQuestionableRegister(RegisterBase):
-    """Class object representing the questionable status register"""
+    """Class object representing the questionable status register."""
 
     bit_names = [
         "voltage_source_in_current_limit",
@@ -64,7 +64,7 @@ class PrecisionSourceQuestionableRegister(RegisterBase):
 
 
 class PrecisionSource(XIPInstrument):
-    """A class object representing a Lake Shore 155 precision I/V source"""
+    """A class object representing a Lake Shore 155 precision I/V source."""
 
     vid_pid = [(0x1FB9, 0x0103)]
 
@@ -92,20 +92,17 @@ class PrecisionSource(XIPInstrument):
                       frequency_values=None):
         """Sweep source output voltage parameters based on list arguments.
 
-        Args:
-            dwell_time (float):
-                The length of time in seconds to wait at each parameter combination.
-                Note that the update rate will be limited by the SCPI communication response time.
-                The response time is usually on the order of 10-30 milliseconds.
-
-            offset_values (list):
-                DC offset values in volts to sweep over
-
-            amplitude_values (list):
-                Peak to peak values in volts to sweep over
-
-            frequency_values (list):
-                Frequency values in Hertz to sweep over
+            Args:
+                dwell_time (float):
+                    The length of time in seconds to wait at each parameter combination.
+                    Note that the update rate will be limited by the SCPI communication response time.
+                    The response time is usually on the order of 10-30 milliseconds.
+                offset_values (list):
+                    DC offset values in volts to sweep over.
+                amplitude_values (list):
+                    Peak to peak values in volts to sweep over.
+                frequency_values (list):
+                    Frequency values in Hertz to sweep over.
 
         """
 
@@ -157,15 +154,12 @@ class PrecisionSource(XIPInstrument):
                     The length of time in seconds to wait at each parameter combination.
                     Note that the update rate will be limited by the SCPI communication response time.
                     The response time is usually on the order of 10-30 milliseconds.
-
                 offset_values (list):
-                    DC offset values in volts to sweep over
-
+                    DC offset values in volts to sweep over.
                 amplitude_values (list):
-                    Peak to peak values in volts to sweep over
-
+                    Peak to peak values in volts to sweep over.
                 frequency_values (list):
-                    Frequency values in Hertz to sweep over
+                    Frequency values in Hertz to sweep over.
 
         """
 
@@ -231,9 +225,8 @@ class PrecisionSource(XIPInstrument):
 
             Args:
                 output_connections_location (str):
-                    * Valid options are:
-                    * "REAR" (Output is routed out the rear connections)
-                    * "FRONT" (Output is routed out the front connections)
+                    Valid options are: "REAR" (Output is routed out the rear connections), and
+                    "FRONT" (Output is routed out the front connections).
 
         """
         self.command("ROUTE:TERMINALS " + output_connections_location)
@@ -244,13 +237,10 @@ class PrecisionSource(XIPInstrument):
             Args:
                 amplitude (float):
                     The peak current amplitude value in amps.
-
                 frequency (float):
                     The source frequency value in hertz.
-
                 offset (float):
                     The DC offset current in amps.
-
                 phase (float):
                     Shifts the phase of the output relative to the reference out. Must be between -180 and 180 degrees.
 
@@ -283,13 +273,10 @@ class PrecisionSource(XIPInstrument):
             Args:
                 amplitude (float):
                     The peak voltage amplitude value in volts.
-
                 frequency (float):
                     The source frequency value in hertz.
-
                 offset (float):
                     The DC offset voltage in volts.
-
                 phase (float):
                     Shifts the phase of the output relative to the reference out. Must be between -180 and 180 degrees.
 
@@ -391,13 +378,7 @@ class PrecisionSource(XIPInstrument):
 
             Args:
                 current_range (str):
-                    * The range in amps. Valid ranges are:
-                    * "100E-3"
-                    * "10E-3"
-                    * "1E-3"
-                    * "100E-6"
-                    * "10E-6"
-                    * "1E-6"
+                    The range in amps. Valid ranges are: "100E-3", "10E-3", "1E-3", "100E-6", "10E-6", and "1E-6".
 
         """
         self.command("SOURCE:CURRENT:RANGE " + current_range)
@@ -407,12 +388,7 @@ class PrecisionSource(XIPInstrument):
 
             Args:
                 voltage_range (str):
-                    * The range in volts. Valid ranges are:
-                    * "100"
-                    * "10"
-                    * "1"
-                    * "0.1"
-                    * "0.01"
+                    The range in volts. Valid ranges are: "100", "10", "1", "0.1", and "0.01".
 
         """
         self.command("SOURCE:VOLTAGE:RANGE " + voltage_range)
@@ -422,7 +398,7 @@ class PrecisionSource(XIPInstrument):
 
             Args:
                 current_limit (float):
-                    The maximum settable current in amps. Must be between 0 and 100 milliamps.
+                    The maximum settable current in amps. Must be between 0 and 100 milli-amps.
 
         """
         self.command("SOURCE:CURRENT:LIMIT " + str(current_limit))
