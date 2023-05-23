@@ -101,16 +101,16 @@ class ContactCheckManualParameters:
                     The ending excitation value For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_range (float or str):
                     Excitation range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    a floating point number of either volts in the range of 0 to 10.0V: voltage excitation, or
-                    amps in the range of -100e-3 to 100e-3 A: current excitation.
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 measurement_range (float or str):
                     Measurement range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    a floating point number of amps in the range of 0 to 100e-3A: voltage excitation, or
-                    volts in the range of 0 to 10.0V: current excitation.
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 compliance_limit (float):
-                    For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
+                    For voltage excitation, specify the current limit 100e-9 to 100e-3 A. For current excitation,
                     specify the voltage compliance 1.00 to 10.0 V.
                 number_of_points (int):
                     The number of points to measure between the excitation start and end. 0 - 100.
@@ -197,21 +197,21 @@ class FastHallManualParameters:
                     For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_range (float or str):
                     Excitation range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
                     a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
                     amps in the range of -100e-3 to 100e-3 A for current excitation.
                 excitation_measurement_range (float or str):
                     Excitation measurement range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    a floating point number of either volts in the range of 0 to 10.0V: voltage excitation, or
-                    amps in the range of -100e-3 to 100e-3 A: current excitation.
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 measurement_range (float or str):
                     Measurement range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    a floating point number of either amps in the range of 0 to 100e-3A: voltage excitation, or
-                    volts in the range of 0 to 10.0V: current excitation.
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 compliance_limit (float):
-                    For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
+                    For voltage excitation, specify the current limit 100e-9 to 100e-3. A For current excitation,
                     specify the voltage compliance 1.00 to 10.0 V.
                 user_defined_field (float):
                     The field, in units of Tesla, the sample is being subjected to. Used for calculations.
@@ -330,19 +330,19 @@ class FourWireParameters:
                     For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_range (float or str):
                     Excitation range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
                     a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
                     amps in the range of -100e-3 to 100e-3 A for current excitation.
                 measurement_range (float or str):
                     Measurement range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    a floating point number of either amps in the range of 0 to 100e-3A: voltage excitation, or
-                    volts in the range of 0 to 10.0V: current excitation.
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 excitation_measurement_range (float or str):
                     Excitation measurement range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    a floating point number of either volts in the range of 0 to 10.0V: voltage excitation, or
-                    amps in the range of -100e-3 to 100e-3 A: current excitation.
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 compliance_limit (float):
                     For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
                     specify the voltage compliance 1.00 to 10.0 V.
@@ -405,21 +405,19 @@ class DCHallParameters:
                     For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_range (float or str):
                     Excitation range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
+                    "AUTO" for sets the range to the best fit range for a given excitation value, or
                     a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
                     amps in the range of -100e-3 to 100e-3 A for current excitation.
                 excitation_measurement_range (float or str):
                     Excitation measurement range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    a floating point number of either
-                    volts in the range of 0 to 10.0V: voltage excitation, or
-                    amps in the range of -100e-3 to 100e-3 A: current excitation.
+                    "AUTO" for sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 measurement_range (float or str):
                     Measurement range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    a floating point number of either
-                    amps in the range of 0 to 100e-3A: voltage excitation, or
-                    volts in the range of 0 to 10.0V: current excitation.
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 compliance_limit (float):
                     For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
                     specify the voltage compliance 1.00 to 10.0 V.
@@ -481,21 +479,19 @@ class ResistivityManualParameters:
                     For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_range (float or str):
                     Excitation range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
                     a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
                     amps in the range of -100e-3 to 100e-3 A for current excitation.
-
                 excitation_measurement_range (float or str):
                     Excitation measurement range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    floating point number of either volts in the range of 0 to 10.0V: voltage excitation, or
-                    amps in the range of -100e-3 to 100e-3 A: current excitation.
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 measurement_range (float or str):
                     Measurement range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    a floating point number of either
-                    amps in the range of 0 to 100e-3A: voltage excitation, or
-                    volts in the range of 0 to 10.0V: current excitation.
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 compliance_limit (float):
                     For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
                     specify the voltage compliance 1.00 to 10.0 V.
@@ -553,10 +549,9 @@ class ResistivityLinkParameters:
             Args:
                 measurement_range (float or str):
                     Measurement range based on the excitation type. Options are:
-                    "AUTO": sets the range to the best fit range for a given excitation value, or
-                    a floating point number of either
-                    amps in the range of 0 to 100e-3A: voltage excitation, or
-                    volts in the range of 0 to 10.0V: current excitation.
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3 A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 sample_thickness (float):
                     Thickness of the sample in meters. 0 to 10E-3 m. Default is 0 m.
                 min_snr (float or str):
