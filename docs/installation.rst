@@ -32,6 +32,14 @@ Back in the Spyder console, type::
 
 The driver is now installed! Now take a look through :ref:`getting_started` to begin communicating with your instrument(s).
 
+Updating the driver
+^^^^^^^^^^^^^^^^^^^
+
+If you have an old version of the Lake Shore Python driver and want to upgrade to the newest version, open
+a terminal (command prompt) window and type::
+
+    pip install --upgrade lakeshore
+
 
 
 .. _install pip: https://www.w3schools.com/python/python_pip.asp
