@@ -22,12 +22,12 @@ class Model224AlarmParameters:
                     condition to deactivate an unlatched alarm.
                 latch_enable (bool):
                     Specifies a latched alarm (False = off, True = on).
-                audible (bool, optional):
+                audible (bool):
                     Specifies if the internal speaker will beep when an alarm condition
-                    occurs (False = off, True = on).
-                visible (bool, optional):
+                    occurs (False = off, True = on). Optional parameter.
+                visible (bool):
                     Specifies if the Alarm LED on the instrument front panel will blink
-                    when an alarm condition occurs (False = off, True = on)
+                    when an alarm condition occurs (False = off, True = on). Optional parameter.
 
         """
         self.high_value = high_value
@@ -99,17 +99,17 @@ class Model224InputSensorSettings:
                     Specifies what type of sensor is being used at the input.
                 preferred_units (Model224InputSensorUnits or int):
                     Specifies the preferred units used for sensor readings and alarm set-points when displayed.
-                sensor_range (IntEnum, optional):
+                sensor_range (IntEnum):
                     Specifies the range of the sensor.
                     Optional if auto range is enabled.
-                autorange_enabled (bool, optional):
+                autorange_enabled (bool):
                     Defines if autorange is enabled.
                     Not applicable for diode sensors.
-                    Defaults to false.
-                compensation (bool, optional):
+                    Defaults to false. Optional parameter.
+                compensation (bool):
                     Defines if thermal input compensation is on or off.
                     Not applicable for diode sensors.
-                    Defaults to false.
+                    Defaults to false. Optional parameter.
 
         """
         self.sensor_type = sensor_type
@@ -374,8 +374,9 @@ class Model224(GenericInstrument):
             Args:
                 commands (str):
                     A serial command.
-                check_errors (bool, optional):
+                check_errors (bool):
                     Chooses whether to check for and raise errors after sending a command. True by default. kwarg.
+                    Optional Parameter
 
         """
 
@@ -1000,10 +1001,10 @@ class Model224(GenericInstrument):
                     Maximum of 10 characters.
                 calibration_point_1 (tuple):
                     Tuple of two floats in the form (temperature_value, sensor_value).
-                calibration_point_2 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
-                calibration_point_3 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
+                calibration_point_2 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
+                calibration_point_3 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional parameter.
 
         """
         command_string = (f"SCAL {source_curve},{curve_number},{serial_number}," +
@@ -1082,13 +1083,13 @@ class Model224(GenericInstrument):
                 filter_enabled (bool):
                     Enables or disables a filter for the input channel.
                     True for enabled, False for disabled.
-                number_of_points (int, optional):
+                number_of_points (int):
                     Specifies the number of points used for the filter.
                     Inputting a larger number of points will slow down the instrument's response to changes in
                     temperature.
                     Options are: 2 - 64
                     Optional if disabling the filter function.
-                filter_reset_threshold (int, optional):
+                filter_reset_threshold (int):
                     Specifies the limit for restarting the filter, represented by a percent of the full scale reading.
                     If raw reading differs from filtered value by more than this threshold, filter averaging resets.
                     Options are: 1% - 10%.

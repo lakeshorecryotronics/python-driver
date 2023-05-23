@@ -497,9 +497,9 @@ class TemperatureController(GenericInstrument):
                     Specifies sensor units for this point to 6 digits.
                 temperature (float):
                     Specifies the corresponding temperature in Kelvin for this point to 6 digits.
-                curvature (float, optional):
+                curvature (float):
                     Specify only if the point is part of a cubic spindle curve.
-                    The curvature value scale used to calculate spindle coefficients to 6 digits.
+                    The curvature value scale used to calculate spindle coefficients to 6 digits. Optional parameter.
 
         """
         if curvature:
@@ -1359,12 +1359,12 @@ class TemperatureController(GenericInstrument):
                 serial_number (str):
                     Specifies the curve serial number.
                     Limited to 10 characters.
-                calibration_point_1 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
-                calibration_point_2 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
-                calibration_point_3 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
+                calibration_point_1 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional parameter.
+                calibration_point_2 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
+                calibration_point_3 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
 
         """
         command_string = (f"SCAL {1},{curve_number},{serial_number},{calibration_point_1[0]}," +
@@ -1387,12 +1387,12 @@ class TemperatureController(GenericInstrument):
                 serial_number (str):
                     Specifies the curve serial number.
                     Limited to 10 characters.
-                calibration_point_1 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
-                calibration_point_2 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
-                calibration_point_3 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
+                calibration_point_1 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
+                calibration_point_2 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
+                calibration_point_3 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
 
         """
         command_string = (f"SCAL {6},{curve_number},{serial_number}," +
@@ -1416,12 +1416,12 @@ class TemperatureController(GenericInstrument):
                 serial_number (str):
                     Specifies the curve serial number.
                     Limited to 10 characters.
-                calibration_point_1 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
-                calibration_point_2 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
-                calibration_point_3 (tuple, optional):
-                    Tuple of two floats in the form (temperature_value, sensor_value).
+                calibration_point_1 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
+                calibration_point_2 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
+                calibration_point_3 (tuple):
+                    Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
 
         """
         command_string = (f"SCAL {7},{curve_number},{serial_number}," +

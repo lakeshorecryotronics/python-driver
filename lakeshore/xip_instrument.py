@@ -97,8 +97,9 @@ class XIPInstrument(GenericInstrument):
             Args:
                 commands (str):
                     Any number of SCPI commands.
-                check_errors (bool, optional):
+                check_errors (bool):
                     Chooses whether to query the SCPI error queue and raise errors as exceptions. True by default.
+                    Optional Parameter.
 
         """
 
@@ -129,8 +130,9 @@ class XIPInstrument(GenericInstrument):
             Args:
                 queries (str):
                     Any number of SCPI queries or commands.
-                check_errors (bool, optional):
+                check_errors (bool):
                     Chooses whether to query the SCPI error queue and raise errors as exceptions. True by default.
+                    Optional Parameter.
 
             Returns:
                The instrument query response as a string.

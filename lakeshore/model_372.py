@@ -1365,7 +1365,7 @@ class Model372(TemperatureController):
                     "A" for control input.
                 alarm_enable (bool)
                     Defines whether to turn alarm on or off.
-                alarm_settings (Model372AlarmParameters, optional)
+                alarm_settings (Model372AlarmParameters)
                     Model372AlarmParameters object containing desired alarm settings.
                     Optional if alarm is disabled.
 
@@ -1559,7 +1559,7 @@ class Model372(TemperatureController):
                 low_value (float):
                     The data at which the outputs reach 0% output for unipolar output, or -100% for bipolar.
                     output.
-                settings (Model372HeaterOutputSettings, optional):
+                settings (Model372HeaterOutputSettings):
                     Optional if heater is already configured using configure_heater. Gives non-analog configurations
                     for heater.
 
@@ -1601,7 +1601,7 @@ class Model372(TemperatureController):
                     The output to configure.
                 manual_value (float):
                     The value of the analog output as it applies to the set analog mode.
-                settings (Model372HeaterOutputSettings, optional):
+                settings (Model372HeaterOutputSettings):
                     Optional if heater is already configured using configure_heater. Gives non-analog configurations
                     for heater.
 
