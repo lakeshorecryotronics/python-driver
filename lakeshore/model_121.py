@@ -90,3 +90,28 @@ class Model121(GenericInstrument):
     def set_factory_defaults(self) -> None:
         """Sets all configuration values to factory defaults and resets the instrument."""
         self.command("DFLT 99")
+
+    def lock_front_panel(self) -> None:
+        """Locks the front panel keypad."""
+        self.command("LOCK 1")
+
+    def unlock_front_panel(self) -> None:
+        """Unlocks the front panel keypad."""
+        self.command("LOCK 0")
+
+    def get_front_panel_lock_status(self) -> bool:
+        """Returns if the front panel keypad  is locked or not.
+
+        Returns:
+            bool: True = Locked, False = Unlocked.
+        """
+        return bool(int(self.query("LOCK?")))
+
+    def set_power_up_enable(self, state: bool) -> None:
+        """Specifies whether the output remains on or shuts off after power cycle.
+
+        Args:
+            state (bool): True = Enabled, False = Disabled.
+
+        """
+        self.command(f"PWUPENBL {int(state)}")
