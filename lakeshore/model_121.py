@@ -40,3 +40,16 @@ class Model121(GenericInstrument):
         # will block.
 
         GenericInstrument.query(self, command_string + '; COMP?')
+
+    def get_identity(self) -> list[str]:
+        """Returns the Manufacturer ID, model number, serial number, and firmware version of instrument.
+
+        Returns:
+            list[str]: [manufacturer_id, model_number, serial_number, firmware_version]
+
+        """
+        return self.query('*IDN?').split(',')
+
+    def reset_instrument(self) -> None:
+        """Sets instrument parameters to power-up settings."""
+        self.command("*RST")
