@@ -53,3 +53,40 @@ class Model121(GenericInstrument):
     def reset_instrument(self) -> None:
         """Sets instrument parameters to power-up settings."""
         self.command("*RST")
+
+    def set_display_brightness(self, brightness_level: int) -> None:
+        """Sets the display contrast for the front panel seven-segment display.
+
+            A higher number makes the display brighter. The default setting is 8. The display can be turned off by
+            setting the brightness to 0.
+
+        Args:
+            brightness_level (int): The display brightness (0-15).
+
+        """
+        self.command(f"BRIGT {brightness_level}")
+
+    def get_display_brightness(self) -> int:
+        """Gets the display contrast for the front panel seven-segment display.
+
+            A higher number makes the display brighter. The default setting is 8. Brightness level 0 means the display
+            is turned off.
+
+        Returns:
+            int: The display brightness (0-15).
+
+        """
+        return int(self.query("BRIGT?"))
+
+    def get_compliance_limit_status(self) -> bool:
+        """Returns the voltage compliance status of the current source output.
+
+        Returns:
+            bool: False = normal operation. True = in compliance limit.
+
+        """
+        return bool(int(self.query("COMP?")))
+
+    def set_factory_defaults(self) -> None:
+        """Sets all configuration values to factory defaults and resets the instrument."""
+        self.command("DFLT 99")
