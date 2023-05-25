@@ -26,3 +26,17 @@ class Model121(GenericInstrument):
         # Call the parent init, then fill in values specific to the 121
         GenericInstrument.__init__(self, serial_number, com_port, baud_rate, data_bits, stop_bits, parity, flow_control,
                                    handshaking, timeout, ip_address, tcp_port, **kwargs)
+
+    def command(self, command_string: str) -> None:
+        """Sends a command to the instrument.
+
+        Args:
+            command_string (str): A serial command.
+
+        """
+        # Overload of parent command.
+        # In order to avoid overlapping commands, a short query is appended to block the instruction.
+        # The type of query that is used here is not important. It only matters that some query is sent which
+        # will block.
+
+        GenericInstrument.query(self, command_string + '; COMP?')
