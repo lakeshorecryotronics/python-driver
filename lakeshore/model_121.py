@@ -115,3 +115,11 @@ class Model121(GenericInstrument):
 
         """
         self.command(f"PWUPENBL {int(state)}")
+
+    def save_current_state(self) -> None:
+        """Saves the present range, polarity, and user current value.
+
+            This saved state will be loaded on future power ups.
+
+        """
+        self.command("SETSAVE")
