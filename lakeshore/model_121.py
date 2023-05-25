@@ -50,6 +50,38 @@ class Model121(GenericInstrument):
         """
         return self.query('*IDN?').split(',')
 
+    def set_current(self, current: float) -> None:
+        """Set and start outputting a specific current from the instrument.
+
+            Switches to the user current range and applies the specified current. Current can be set between 100nA and
+            100mA. The sign of the current determines the polarity of the output (+-nnne-nn).
+
+        Args:
+            current (float): New current value as a floating point number. (+-100e-9A - +-100e-3A). Up to three
+            significant digits.
+
+        """
+        self.command("RANGE 13")
+        self.command(f"SETI {current}")
+        self.command("IENBL 1")
+
+    def get_current(self) -> float:
+        """Returns the present user current setting in Amps.
+
+        Returns:
+            float: User current value in Amps.
+
+        """
+        return float(self.query("SETI?"))
+
+    def enable_current(self) -> None:
+        """Enables current source output."""
+        self.command("IENBL 1")
+
+    def disable_current(self) -> None:
+        """Disables current source output."""
+        self.command("IENBL 0")
+
     def reset_instrument(self) -> None:
         """Sets instrument parameters to power-up settings."""
         self.command("*RST")
