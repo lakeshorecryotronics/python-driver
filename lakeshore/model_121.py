@@ -37,7 +37,7 @@ class Model121(GenericInstrument):
         # Overload of parent command.
         # In order to avoid overlapping commands, a short query is appended to block the instruction.
         # The type of query that is used here is not important. It only matters that some query is sent which
-        # will block.
+        # will block. Because the "*OPC?" query is not implemented for this device, this is the next best fix.
 
         GenericInstrument.query(self, command_string + '; COMP?')
 
