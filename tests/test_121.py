@@ -42,12 +42,6 @@ class TestCurrentCommands(TestWithFakeModel121):
 
 
 class TestGeneralCommands(TestWithFakeModel121):
-    def test_get_identity(self):
-        self.fake_connection.setup_response('LSCI,MODEL121,FakeSerial,999.999.999')
-        response = self.dut.get_identity()
-        self.assertEqual(response, ['LSCI', 'MODEL121', 'FakeSerial', '999.999.999'])
-        self.assertNotEqual(response, 'LSCI,MODEL121,FakeSerial,999.999.999')
-        self.assertIn('*IDN?', self.fake_connection.get_outgoing_message())
 
     def test_reset_instrument(self):
         self.fake_connection.setup_response('')

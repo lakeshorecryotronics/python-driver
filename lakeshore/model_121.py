@@ -41,15 +41,6 @@ class Model121(GenericInstrument):
 
         GenericInstrument.query(self, command_string + '; COMP?')
 
-    def get_identity(self) -> list[str]:
-        """Returns the Manufacturer ID, model number, serial number, and firmware version of instrument.
-
-        Returns:
-            list[str]: [manufacturer_id, model_number, serial_number, firmware_version]
-
-        """
-        return self.query('*IDN?').split(',')
-
     def set_current(self, current: float) -> None:
         """Set and start outputting a specific current from the instrument.
 
