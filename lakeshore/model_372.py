@@ -1264,8 +1264,8 @@ class Model372(TemperatureController):
 
             Args:
                 output_channel (int):
-                    Specifies which heater to set a set-point. Options are: 0:
-                    sample heater, or
+                    Specifies which heater to set a set-point. Options are:
+                    0: sample heater, or
                     1: output 1 (warm up heater).
 
             Returns:
@@ -1302,7 +1302,8 @@ class Model372(TemperatureController):
 
             Args:
                 input_channel (int or str):
-                    Specifies which input to get frequency from. Options are: 0 : measurement inputs, or
+                    Specifies which input to get frequency from. Options are:
+                    0 : measurement inputs, or
                     "A" : control input.
 
                 frequency (Enum):
