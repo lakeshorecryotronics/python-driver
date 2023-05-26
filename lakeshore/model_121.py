@@ -35,8 +35,8 @@ class Model121(GenericInstrument):
 
         """
         # Overload of parent command.
-        # Typically, In order to make sure that a command does not execute before the previous is finished, the *OPC?
-        # query is called which will block until the previous command finishes.. On this device, the *OPC? query is not
+        # Typically, in order to make sure that a command does not execute before the previous is finished, the *OPC?
+        # query is called which will block until the previous command finishes. On this device, the *OPC? query is not
         # implemented and the next best alternative is the COMP? query. This is what is implemented. Another alternative
         # is to sleep 50 ms after each command is sent.
         GenericInstrument.query(self, command_string + '; COMP?')
