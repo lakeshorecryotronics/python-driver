@@ -35,10 +35,10 @@ class Model121(GenericInstrument):
 
         """
         # Overload of parent command.
-        # In order to avoid overlapping commands, a short query is appended to block the instruction.
-        # The type of query that is used here is not important. It only matters that some query is sent which
-        # will block. Because the "*OPC?" query is not implemented for this device, this is the next best fix.
-
+        # Typically, In order to make sure that a command does not execute before the previous is finished, the *OPC?
+        # query is called which will block until the previous command finishes.. On this device, the *OPC? query is not
+        # implemented and the next best alternative is the COMP? query. This is what is implemented. Another alternative
+        # is to sleep 50 ms after each command is sent.
         GenericInstrument.query(self, command_string + '; COMP?')
 
     def set_current(self, current: float) -> None:
