@@ -1,13 +1,13 @@
-"""Contains enumerations specific to the M81 """
+"""Contains enumerations specific to the M81."""
 
 from enum import Enum
 
 
 class SSMSystemEnums:
-    """Class for collecting the enumerations specific to the SSMSystem without bulking up that class size"""
+    """Class for collecting the enumerations specific to the SSMSystem without bulking up that class size."""
 
     class DataSourceMnemonic(str, Enum):
-        """Enumeration of M81 data source mnemonics"""
+        """Enumeration of M81 data source mnemonics."""
         RELATIVE_TIME = 'RTIMe'
         SOURCE_AMPLITUDE = 'SAMPlitude'
         SOURCE_OFFSET = 'SOFFset'
@@ -38,7 +38,7 @@ class SSMSystemEnums:
             return str.__str__(self)
 
     class ReadDataSourceMnemonic(str, Enum):
-        """Enumeration of M81 read data source mnemonics"""
+        """Enumeration of M81 read data source mnemonics."""
         MEASURE_DC = 'MDC'
         MEASURE_RMS = 'MRMs'
         MEASURE_POSITIVE_PEAK = 'MPPeak'
@@ -82,7 +82,7 @@ class SSMSystemEnums:
                 return str.__str__(self)
 
         class Direction(str, Enum):
-            """Class object representing the possible directions for sweeping"""
+            """Class object representing the possible directions for sweeping."""
             DOWN = 'DOWN'
             UP = 'UP'
 
@@ -92,8 +92,7 @@ class SSMSystemEnums:
 
         def __init__(self, sweep_type, start, stop, points, dwell,
                      direction=Direction.UP, round_trip=False, spacing=SweepSpacing.LINEAR):
-            """
-            Constructor for SourceModuleSweepSettings class
+            """Constructor for SourceModuleSweepSettings class.
 
             Args:
                 sweep_type (SourceSweepType):

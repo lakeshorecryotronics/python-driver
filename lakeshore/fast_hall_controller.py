@@ -1,11 +1,11 @@
-"""Implements functionality unique to the Lake Shore M91 Fast Hall"""
+"""Implements functionality unique to the Lake Shore M91 Fast Hall."""
 
 import json
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
 
 class FastHallOperationRegister(RegisterBase):
-    """Class object representing the operation status register"""
+    """Class object representing the operation status register."""
 
     bit_names = [
         "",
@@ -33,7 +33,7 @@ class FastHallOperationRegister(RegisterBase):
 
 
 class FastHallQuestionableRegister(RegisterBase):
-    """Class object representing the questionable status register"""
+    """Class object representing the questionable status register."""
 
     bit_names = [
         "source_in_compliance_or_at_current_limit",
@@ -94,47 +94,35 @@ class ContactCheckManualParameters:
 
             Args:
                 excitation_type (str):
-                    * The excitation type used for the measurement. Options are:
-                    * "CURRENT"
-                    * "VOLTAGE"
-
+                    The excitation type used for the measurement. Options are: "CURRENT" and "VOLTAGE".
                 excitation_start_value (float):
-                    The starting excitation value For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A
-
+                    The starting excitation value For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_end_value (float):
-                    The ending excitation value For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A
-
+                    The ending excitation value For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_range (float or str):
-                    * Excitation range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - volts in the range of 0 to 10.0V: voltage excitation
-                        - amps in the range of -100e-3 to 100e-3 A: current excitation
-
+                    Excitation range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 measurement_range (float or str):
-                    * Measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - amps in the range of 0 to 100e-3A: voltage excitation
-                        - volts in the range of 0 to 10.0V: current excitation
-
+                    Measurement range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 compliance_limit (float):
-                    For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
-                    specify the voltage compliance 1.00 to 10.0 V
-
+                    For voltage excitation, specify the current limit 100e-9 to 100e-3 A. For current excitation,
+                    specify the voltage compliance 1.00 to 10.0 V.
                 number_of_points (int):
-                    The number of points to measure between the excitation start and end. 0 - 100
-
+                    The number of points to measure between the excitation start and end. 0 - 100.
                 min_r_squared (float):
                     The minimum R^2 desired. Default is 0.9999.
-
                 blanking_time (float or str):
-                    * The time in seconds to wait for hardware to settle before gathering readings. Range of time is
-                      0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
-                    * "DEF" (Default) = 2 ms
-                    * "MIN" = 0.5 ms
-                    * "MAX" = 300 s
-                    * floating point number of seconds
+                    The time in seconds to wait for hardware to settle before gathering readings. Range of time is
+                    0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
+                    "DEF" (Default) = 2 ms,
+                    "MIN" = 0.5 ms,
+                    "MAX" = 300 s, or a
+                    floating point number of seconds.
         """
         self.excitation_type = excitation_type
         self.excitation_start_value = excitation_start_value
@@ -148,7 +136,7 @@ class ContactCheckManualParameters:
 
 
 class ContactCheckOptimizedParameters:
-    """Class object representing parameters used for optimized Contact Check run methods"""
+    """Class object representing parameters used for optimized Contact Check run methods."""
     def __init__(self,
                  max_current=100e-3,
                  max_voltage=10,
@@ -158,26 +146,23 @@ class ContactCheckOptimizedParameters:
 
             Args:
                 max_current(float or str):
-                    * A 'not to exceed' output current value for the auto algorithm to use. Options are:
-                    * "MIN" = 1 uA
-                    * "MAX" = 100 mA
-                    * "DEF" (Default) = 100 mA
-                    * floating point number of amps
-
+                    A 'not to exceed' output current value for the auto algorithm to use. Options are:
+                    "MIN" = 1 uA,
+                    "MAX" = 100 mA,
+                    "DEF" (Default) = 100 mA, or
+                    floating point number of amps.
                 max_voltage(float or str):
-                    * A 'not to exceed' output voltage value for the auto algorithm to use. Options are:
-                    * "MIN" = 1 V
-                    * "MAX" = 10 V
-                    * "DEF" (Default) = 10 V
-                    * floating point number of volts
-
+                    A 'not to exceed' output voltage value for the auto algorithm to use. Options are:
+                    "MIN" = 1 V,
+                    "MAX" = 10 V,
+                    "DEF" (Default) = 10 V, or
+                    floating point number of volts.
                 number_of_points(int or str):
-                    * The number of points to measure between the excitation start and end. Options are:
-                    * "MIN" = 2
-                    * "MAX" = 100
-                    * "DEF" (Default) = 11
-                    * integer number of points
-
+                    The number of points to measure between the excitation start and end. Options are:
+                    "MIN" = 2,
+                    "MAX" = 100,
+                    "DEF" (Default) = 11, or
+                    an integer number of points.
                 min_r_squared(float):
                     The minimum R^2 desired. Default is 0.9999.
         """
@@ -188,7 +173,7 @@ class ContactCheckOptimizedParameters:
 
 
 class FastHallManualParameters:
-    """Class object representing parameters used for running manual FastHall measurements"""
+    """Class object representing parameters used for running manual FastHall measurements."""
     def __init__(self,
                  excitation_type,
                  excitation_value,
@@ -203,76 +188,57 @@ class FastHallManualParameters:
                  averaging_samples=60,
                  sample_thickness=0,
                  min_hall_voltage_snr=30):
-        """The constructor for FastHallManualParameters class
+        """The constructor for FastHallManualParameters class.
 
             Args:
                 excitation_type (str):
-                    * The excitation type used for the measurement. Options are:
-                    * "CURRENT"
-                    * "VOLTAGE"
-
+                    The excitation type used for the measurement. Options are: "CURRENT" or "VOLTAGE".
                 excitation_value(float):
-                    For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A
-
+                    For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_range (float or str):
-                    * Excitation range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - volts in the range of 0 to 10.0V for voltage excitation,
-                        - amps in the range of -100e-3 to 100e-3 A for current excitation
-
+                    Excitation range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 excitation_measurement_range (float or str):
-                    * Excitation measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - volts in the range of 0 to 10.0V: voltage excitation
-                        - amps in the range of -100e-3 to 100e-3 A: current excitation
-
+                    Excitation measurement range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 measurement_range (float or str):
-                    * Measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - amps in the range of 0 to 100e-3A: voltage excitation
-                        - volts in the range of 0 to 10.0V: current excitation
-
+                    Measurement range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 compliance_limit (float):
-                    For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
-                    specify the voltage compliance 1.00 to 10.0 V
-
+                    For voltage excitation, specify the current limit 100e-9 to 100e-3. A For current excitation,
+                    specify the voltage compliance 1.00 to 10.0 V.
                 user_defined_field (float):
                     The field, in units of Tesla, the sample is being subjected to. Used for calculations.
-
                 max_samples(int):
                     When minimumSnr is omitted or Infinity ('INF'), the total number of samples to average 1 - 1000 When
-                    minimumSnr is specified, the maximum number of samples to average 10 - 1000. Default is 100
-
+                    minimumSnr is specified, the maximum number of samples to average 10 - 1000. Default is 100.
                 resistivity (float):
                     The resistivity of the sample in units of Ohm*Meters (bulk) of Ohms Per Square (sheet). Used for
                     calculations. Measure this value using the RESistivity SCPI subsystem. Defaults to 'Nan' (not a
-                    number) which will propagate through calculated values
-
-
+                    number) which will propagate through calculated values.
                 blanking_time (float or str):
-                    * The time in seconds to wait for hardware to settle before gathering readings. Range of time is
-                      0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
-                    * "DEF" (Default) = 2 ms
-                    * "MIN" = 0.5 ms
-                    * "MAX" = 300 s
-                    * floating point number in seconds
-
+                    The time in seconds to wait for hardware to settle before gathering readings. Range of time is
+                    0.5 ms - 300 s with a resolution of 0.1 ms. Options are: "DEF" (Default) = 2 ms,
+                    "MIN" = 0.5 ms,
+                    "MAX" = 300 s, or
+                    a floating point number in seconds.
                 averaging_samples (int):
                     The number of voltage compensation samples to average. Only applied for excitation type voltage.
                     1 - 120. Default is 60.
-
                 sample_thickness (float):
-                    Thickness of the sample in meters. 0 to 10E-3 m Default is 0 m
-
+                    Thickness of the sample in meters. 0 to 10E-3 m Default is 0 m.
                 min_hall_voltage_snr (float or str):
-                    * The desired signal to noise ratio of the measurement calculated using average hall voltage / error
-                      of mean 1 - 1000. Options are:
-                    * "INF" (Infinity)
-                    * "DEF" (Default) = 30
-                    * floating point number to represent the ratio
+                    The desired signal-to-noise ratio of the measurement calculated using average hall voltage / error
+                    of mean 1 - 1000. Options are:
+                    "INF" (Infinity),
+                    "DEF" (Default) = 30, or
+                    a floating point number to represent the ratio.
         """
         self.excitation_type = excitation_type
         self.excitation_value = excitation_value
@@ -290,7 +256,7 @@ class FastHallManualParameters:
 
 
 class FastHallLinkParameters:
-    """Class object representing parameters used for running FastHall Link measurements"""
+    """Class object representing parameters used for running FastHall Link measurements."""
     def __init__(self,
                  user_defined_field,
                  measurement_range='AUTO',
@@ -298,31 +264,24 @@ class FastHallLinkParameters:
                  min_hall_voltage_snr=30,
                  averaging_samples=60,
                  sample_thickness='DEF'):
-        """The constructor for FastHallLinkParameters class
+        """The constructor for FastHallLinkParameters class.
 
             Args:
                 user_defined_field (float):
                     The field, in units of Tesla, the sample is being subjected to. Used for calculations.
-
                 measurement_range (float or str):
                     For voltage excitation, specify the current measurement range 0 to 100e-3 A For current
-                    excitation, specify the voltage measurement range 0 to 10.0 V. Defaults to 'AUTO'
-
+                    excitation, specify the voltage measurement range 0 to 10.0 V. Defaults to 'AUTO'.
                 max_samples(int):
-                    When minimumSnr is omitted or Infinity ('INF'), the total number of samples to average 1 - 1000
-                    When minimumSnr is specified, the maximum number of samples to average 10 - 1000 Defaults to 100
-
+                    When minimumSnr is omitted or Infinity ('INF'), the total number of samples to average 1 - 1000.
+                    When minimumSnr is specified, the maximum number of samples to average 10 - 1000 Defaults to 100.
                 min_hall_voltage_snr (float or str):
-                    * The desired signal to noise ratio of the measurement calculated using average hall voltage / error
-                      of mean 1 - 1000. Options are:
-                    * "INF" (Infinity)
-                    * "DEF" (Default) = 30
-                    * floating point number to represent the ratio
-
+                    The desired signal-to-noise ratio of the measurement calculated using average hall voltage / error
+                    of mean 1 - 1000. Options are: "INF" (Infinity), "DEF" (Default) = 30, or a floating point number
+                    to represent the ratio.
                 averaging_samples (int):
                     The number of voltage compensation samples to average. Only applied for excitation type voltage.
-                    1 - 120. Defaults to 60
-
+                    1 - 120. Defaults to 60.
                 sample_thickness (float):
                     Thickness of the sample in meters. 0 to 10E-3 m Default is the last run resistivity measurement's
                     sample thickness.
@@ -336,7 +295,7 @@ class FastHallLinkParameters:
 
 
 class FourWireParameters:
-    """Class object representing parameters used for running Four Wire measurements"""
+    """Class object representing parameters used for running Four Wire measurements."""
     def __init__(self,
                  contact_point1,
                  contact_point2,
@@ -357,72 +316,54 @@ class FourWireParameters:
             Args:
                 contact_point1 (int):
                     Excitation +. Valid contact points are: 1, 2, 3, 4, 5, or 6. Cannot be the same as Contact Point 2.
-
                 contact_point2 (int):
                     Excitation - Valid contact points are: 1, 2, 3, 4, 5, or 6. Cannot be the same as Contact Point 1.
-
                 contact_point3 (int):
                     Voltage Measure/Sense +. Valid contact points are: 1, 2, 3, 4, 5, or 6. Cannot be the same as
                     Contact Point 4.
-
                 contact_point4 (int):
                     Voltage Measure/Sense -. Valid contact points are: 1, 2, 3, 4, 5, or 6. Cannot be the same as
                     Contact Point 3.
-
                 excitation_type (str):
-                    * The excitation type used for the measurement. Options are:
-                    * "CURRENT"
-                    * "VOLTAGE"
-
+                    The excitation type used for the measurement. Options: "CURRENT" or "VOLTAGE".
                 excitation_value(float):
-                    For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A
-
+                    For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_range (float or str):
-                    * Excitation range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - volts in the range of 0 to 10.0V for voltage excitation,
-                        - amps in the range of -100e-3 to 100e-3 A for current excitation
-
+                    Excitation range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 measurement_range (float or str):
-                    * Measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - amps in the range of 0 to 100e-3A: voltage excitation
-                        - volts in the range of 0 to 10.0V: current excitation
-
+                    Measurement range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 excitation_measurement_range (float or str):
-                    * Excitation measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - volts in the range of 0 to 10.0V: voltage excitation
-                        - amps in the range of -100e-3 to 100e-3 A: current excitation
-
+                    Excitation measurement range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 compliance_limit (float):
                     For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
-                    specify the voltage compliance 1.00 to 10.0 V
-
+                    specify the voltage compliance 1.00 to 10.0 V.
                 blanking_time (float or str):
-                    * The time in seconds to wait for hardware to settle before gathering readings. Range of time is
-                      0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
-                    * "DEF" (Default)= 2 ms
-                    * "MIN" = 0.5 ms
-                    * "MAX" = 300 s
-                    * floating point number in seconds
-
+                    The time in seconds to wait for hardware to settle before gathering readings. Range of time is
+                    0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
+                    "DEF" (Default)= 2 ms,
+                    "MIN" = 0.5 ms.
+                    "MAX" = 300 s, or
+                    a floating point number in seconds.
                 max_samples(int):
                     When minimumSnr is omitted or Infinity, the total number of samples to average 1 - 1000 When
-                    minimumSnr is specified, the maximum number of samples to average 10 - 1000. Default is 100
-
+                    minimumSnr is specified, the maximum number of samples to average 10 - 1000. Default is 100.
                 min_snr (float or str):
-                    * The desired signal to noise ratio of the measurement resistance, calculated using measurement
-                      average / error of mean 1 - 1000. Options are:
-                    * "INF" (Infinity)
-                    * "DEF" (Default)= 30
-                    * floating point number to represent the ratio
-
+                    The desired signal-to-noise ratio of the measurement resistance, calculated using measurement
+                    average / error of mean 1 - 1000. Options are:
+                    "INF" (Infinity),
+                    "DEF" (Default)= 30, or
+                    a floating point number to represent the ratio.
                 excitation_reversal (bool):
-                    True = Reverse the excitation to generate the resistance. False = no excitation reversal
+                    True = Reverse the excitation to generate the resistance. False = no excitation reversal.
         """
         self.contact_point1 = contact_point1
         self.contact_point2 = contact_point2
@@ -441,7 +382,7 @@ class FourWireParameters:
 
 
 class DCHallParameters:
-    """Class object representing parameters used for running DC Hall measurements"""
+    """Class object representing parameters used for running DC Hall measurements."""
     def __init__(self,
                  excitation_type,
                  excitation_value,
@@ -459,62 +400,46 @@ class DCHallParameters:
 
             Args:
                 excitation_type (str):
-                    * The excitation type used for the measurement. Options are:
-                    * "CURRENT"
-                    * "VOLTAGE"
-
+                    The excitation type used for the measurement. Options: "CURRENT", or "VOLTAGE".
                 excitation_value(float):
-                    For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A
-
+                    For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_range (float or str):
-                    * Excitation range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - volts in the range of 0 to 10.0V for voltage excitation,
-                        - amps in the range of -100e-3 to 100e-3 A for current excitation
-
+                    Excitation range based on the excitation type. Options are:
+                    "AUTO" for sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 excitation_measurement_range (float or str):
-                    * Excitation measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - volts in the range of 0 to 10.0V: voltage excitation
-                        - amps in the range of -100e-3 to 100e-3 A: current excitation
-
+                    Excitation measurement range based on the excitation type. Options are:
+                    "AUTO" for sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 measurement_range (float or str):
-                    * Measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - amps in the range of 0 to 100e-3A: voltage excitation
-                        - volts in the range of 0 to 10.0V: current excitation
-
+                    Measurement range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 compliance_limit (float):
                     For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
-                    specify the voltage compliance 1.00 to 10.0 V
-
+                    specify the voltage compliance 1.00 to 10.0 V.
                 averaging_samples(int):
-                    The number of samples to average 1-1000
-
+                    The number of samples to average 1-1000.
                 user_defined_field(float):
                     The field, in units of Tesla, the sample is being subjected to. Used for calculations.
-
                 with_field_reversal (bool):
-                    Specifies whether or not to apply reversal field. Default is true
-
+                    Specifies whether to apply reversal field. Default is true
                 resistivity(float):
                     The resistivity of the sample in units of Ohm*Meters (bulk) of Ohms Per Square (sheet). Used for
                     calculations. Measure this value using the RESistivity SCPI subsystem. Defaults to 'NaN' (not a
                     number) which will propagate through calculated values.
-
                 blanking_time (float or str):
-                    * The time in seconds to wait for hardware to settle before gathering readings. Range of time is
-                      0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
-                    * "DEF" (Default) = 2 ms
-                    * "MIN" = 0.5 ms
-                    * "MAX" = 300 s
-                    * floating point number in seconds
-
+                    The time in seconds to wait for hardware to settle before gathering readings. Range of time is
+                    0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
+                    "DEF" (Default) = 2 ms,
+                    "MIN" = 0.5 ms,
+                    "MAX" = 300 s, or
+                    floating point number in seconds.
                 sample_thickness (float):
-                    Thickness of the sample in meters. 0 to 10e-3 m. Default is 0m
+                    Thickness of the sample in meters. 0 to 10e-3 m. Default is 0m.
             """
 
         self.excitation_type = excitation_type
@@ -532,7 +457,7 @@ class DCHallParameters:
 
 
 class ResistivityManualParameters:
-    """Class object representing parameters used for running manual Resistivity measurements"""
+    """Class object representing parameters used for running manual Resistivity measurements."""
     def __init__(self,
                  excitation_type,
                  excitation_value,
@@ -549,70 +474,53 @@ class ResistivityManualParameters:
 
             Args:
                 excitation_type (str):
-                    * The excitation type used for the measurement. Options are:
-                    * "CURRENT"
-                    * "VOLTAGE"
-
+                    The excitation type used for the measurement. Options are: "CURRENT" or "VOLTAGE".
                 excitation_value(float):
-                    For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A
-
+                    For voltage -10.0 to 10.0 V For current -100e-3 to 100e-3 A.
                 excitation_range (float or str):
-                    * Excitation range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - volts in the range of 0 to 10.0V for voltage excitation,
-                        - amps in the range of -100e-3 to 100e-3 A for current excitation
-
+                    Excitation range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 excitation_measurement_range (float or str):
-                    * Excitation measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - volts in the range of 0 to 10.0V: voltage excitation
-                        - amps in the range of -100e-3 to 100e-3 A: current excitation
-
+                    Excitation measurement range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    floating point number of either volts in the range of 0 to 10.0V for voltage excitation, or
+                    amps in the range of -100e-3 to 100e-3 A for current excitation.
                 measurement_range (float or str):
-                    * Measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - amps in the range of 0 to 100e-3A: voltage excitation
-                        - volts in the range of 0 to 10.0V: current excitation
-
+                    Measurement range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 compliance_limit (float):
                     For voltage excitation, specify the current limit 100e-9 to 100e-3 A For current excitation,
-                    specify the voltage compliance 1.00 to 10.0 V
-
+                    specify the voltage compliance 1.00 to 10.0 V.
                 max_samples(int):
                     When minimumSnr is omitted or Infinity ('INF'), the total number of samples to average 1 - 1000 When
-                    minimumSnr is specified, the maximum number of samples to average 10 - 1000. Default is 100
-
+                    minimumSnr is specified, the maximum number of samples to average 10 - 1000. Default is 100.
                 blanking_time (float or str):
-                    * The time in seconds to wait for hardware to settle before gathering readings. Range of time is
-                      0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
-                    * "DEF" (Default) = 2 ms
-                    * "MIN" = 0.5 ms
-                    * "MAX" = 300 s
-                    * floating point number in seconds
-
+                    The time in seconds to wait for hardware to settle before gathering readings. Range of time is
+                    0.5 ms - 300 s with a resolution of 0.1 ms. Options are:
+                    "DEF" (Default) = 2 ms,
+                    "MIN" = 0.5 ms,
+                    "MAX" = 300 s, or
+                    a floating point number in seconds.
                 averaging_samples (int):
                     The number of voltage compensation samples to average. Only applied for excitation type voltage.
-                    1 - 120. Default is 60
-
+                    1 - 120. Default is 60.
                 sample_thickness (float):
-                    Thickness of the sample in meters. 0 to 10E-3 m. Default is 0 m
-
+                    Thickness of the sample in meters. 0 to 10E-3 m. Default is 0 m.
                 min_snr (float or str):
-                    * The desired signal to noise ratio of the measurement calculated using average resistivity / error
-                      of mean 1 - 1000. Options are:
-                    * "INF" (Infinity)
-                    * "DEF" (Default) = 30
-                    * floating point number to represent the ratio
-
+                    The desired signal-to-noise ratio of the measurement calculated using average resistivity / error
+                    of mean 1 - 1000. Options are:
+                    "INF" (Infinity),
+                    "DEF" (Default) = 30, or
+                    a floating point number to represent the ratio.
             Kwargs:
                 width(float):
-                    The width of the sample in meters. Greater than 0
-
+                    The width of the sample in meters. Greater than 0.
                 separation(float):
-                    The distance between the sample's arms in meters. Greater than 0
+                    The distance between the sample's arms in meters. Greater than 0.
             """
 
         self.excitation_type = excitation_type
@@ -630,7 +538,7 @@ class ResistivityManualParameters:
 
 
 class ResistivityLinkParameters:
-    """Class object representing parameters used for running manual Resistivity measurements"""
+    """Class object representing parameters used for running manual Resistivity measurements."""
     def __init__(self,
                  measurement_range='AUTO',
                  sample_thickness=0,
@@ -640,25 +548,21 @@ class ResistivityLinkParameters:
 
             Args:
                 measurement_range (float or str):
-                    * Measurement range based on the excitation type. Options are:
-                    * "AUTO": sets the range to the best fit range for a given excitation value
-                    * floating point number of
-                        - amps in the range of 0 to 100e-3A: voltage excitation
-                        - volts in the range of 0 to 10.0V: current excitation
-
+                    Measurement range based on the excitation type. Options are:
+                    "AUTO" which sets the range to the best fit range for a given excitation value, or
+                    a floating point number of either amps in the range of 0 to 100e-3 A for voltage excitation, or
+                    volts in the range of 0 to 10.0V for current excitation.
                 sample_thickness (float):
-                    Thickness of the sample in meters. 0 to 10E-3 m. Default is 0 m
-
+                    Thickness of the sample in meters. 0 to 10E-3 m. Default is 0 m.
                 min_snr (float or str):
-                    * The desired signal to noise ratio of the measurement calculated using average resistivity / error
-                      of mean 1 - 1000. Options are:
-                    * "INF" (Infinity)
-                    * "DEF" (Default)= 30
-                    * floating point number to represent the ratio
-
+                    The desired signal-to-noise ratio of the measurement calculated using average resistivity / error
+                    of mean 1 - 1000. Options are:
+                    "INF" (Infinity),
+                    "DEF" (Default)= 30, or
+                    a floating point number to represent the ratio.
                 max_samples(int):
                     When minimumSnr is omitted or Infinity ('INF'), the total number of samples to average 1 - 1000 When
-                    minimumSnr is specified, the maximum number of samples to average 10 - 1000 Default is 100
+                    minimumSnr is specified, the maximum number of samples to average 10 - 1000 Default is 100.
         """
 
         self.measurement_range = measurement_range
@@ -668,7 +572,7 @@ class ResistivityLinkParameters:
 
 
 class FastHall(XIPInstrument):
-    """A class object representing a Lake Shore M91 Fast Hall controller"""
+    """A class object representing a Lake Shore M91 Fast Hall controller."""
 
     vid_pid = [(0x1FB9, 0x0705)]
 
@@ -696,19 +600,19 @@ class FastHall(XIPInstrument):
         return bool(int(self.query("CCHECK:RUNNING?")))
 
     def get_fasthall_running_status(self):
-        """Indicates if the FastHall measurement is running"""
+        """Indicates if the FastHall measurement is running."""
         return bool(int(self.query("FASTHALL:RUNNING?")))
 
     def get_four_wire_running_status(self):
-        """Indicates if the four wire measurement is running"""
+        """Indicates if the four wire measurement is running."""
         return bool(int(self.query("FWIRE:RUNNING?")))
 
     def get_resistivity_running_status(self):
-        """Indicates if the resistivity measurement is running"""
+        """Indicates if the resistivity measurement is running."""
         return bool(int(self.query("RESISTIVITY:RUNNING?")))
 
     def get_dc_hall_running_status(self):
-        """Indicates if the DC Hall measurement is running"""
+        """Indicates if the DC Hall measurement is running."""
         return bool(int(self.query("HALL:DC:RUNNING?")))
 
     def get_dc_hall_waiting_status(self):
@@ -716,7 +620,7 @@ class FastHall(XIPInstrument):
         return bool(int(self.query("HALL:DC:WAITING?")))
 
     def continue_dc_hall(self):
-        """Continues the DC hall measurement if it's in a waiting state """
+        """Continues the DC hall measurement if it's in a waiting state."""
         self.command("HALL:DC:CONTINUE")
 
     def start_contact_check_vdp_optimized(self, settings):
@@ -791,12 +695,15 @@ class FastHall(XIPInstrument):
         self.command(command_string)
 
     def start_fasthall_link_vdp(self, settings):
-        """Performs a FastHall (measurement that uses the last run contact check measurement's excitation type,
-        compliance limit, blanking time, excitation range, and the largest absolute value of the start and end
-        excitation values along with the last run resistivity measurement's resistivity average and sample thickness.
+        """Starts a FastHall measurement with provided link parameters.
+
+            Performs a FastHall measurement that uses the last run contact check measurement's excitation type,
+            compliance limit, blanking time, excitation range, and the largest absolute value of the start and end
+            excitation values along with the last run resistivity measurement's resistivity average and sample
+            thickness.
 
             Args:
-                settings (FastHallLinkParameters)
+                settings (FastHallLinkParameters):
         """
         command_string = ("FASTHALL:START:LINK " +
                          f"{str(settings.user_defined_field)}," +
@@ -808,11 +715,13 @@ class FastHall(XIPInstrument):
         self.command(command_string)
 
     def start_four_wire(self, settings):
-        """Performs a Four wire measurement. Excitation is sourced from Contact Point 1 to Contact Point 2. Voltage is
-        measured/sensed between contact point 3 and contact point 4.
+        """Performs a Four wire measurement.
+
+            Excitation is sourced from Contact Point 1 to Contact Point 2. Voltage is measured/sensed between contact
+            point 3 and contact point 4.
 
             Args:
-                settings(FourWireParameters)
+                settings(FourWireParameters):
         """
         command_string = ("FWIRE:START " +
                          f"{str(settings.contact_point1)}," +
@@ -836,7 +745,7 @@ class FastHall(XIPInstrument):
         """Performs a DC hall measurement for a Hall Bar sample.
 
             Args:
-                settings(DCHallParameters)
+                settings(DCHallParameters):
 
         """
         command_string = ("HALL:DC:START " +
@@ -858,7 +767,7 @@ class FastHall(XIPInstrument):
         """Performs a DC hall measurement for a Hall Bar sample.
 
             Args:
-                settings(DCHallParameters)
+                settings(DCHallParameters):
         """
         command_string = ("HALL:HBAR:DC:START " +
                          f"{str(settings.excitation_type)}," +
@@ -879,7 +788,7 @@ class FastHall(XIPInstrument):
         """Performs a resistivity measurement on a Van der Pauw sample.
 
             Args:
-                settings(ResistivityManualParameters)
+                settings(ResistivityManualParameters):
         """
         command_string = ("RESISTIVITY:START " +
                          f"{str(settings.excitation_type)}," +
@@ -895,12 +804,14 @@ class FastHall(XIPInstrument):
         self.command(command_string)
 
     def start_resistivity_link_vdp(self, settings):
-        """Performs a resistivity measurement that uses the last run contact check measurement's excitation type,
-        compliance limit, blanking time, excitation range, and the largest absolute value of the start and end
-        excitation values.
+        """Performs a resistivity measurement with provided link settings.
+
+            Performs a resistivity measurement that uses the last run contact check measurement's excitation type,
+            compliance limit, blanking time, excitation range, and the largest absolute value of the start and end
+            excitation values.
 
             Args:
-                settings(ResistivityLinkParameters)
+                settings(ResistivityLinkParameters):
         """
         command_string = ("RESISTIVITY:START:LINK " +
                          f"{str(settings.measurement_range)}," +
@@ -913,7 +824,7 @@ class FastHall(XIPInstrument):
         """Performs a resistivity measurement on a hall bar sample.
 
             Args:
-                settings(ResistivityManualParameters)
+                settings(ResistivityManualParameters):
 
         """
         command_string = ("RESISTIVITY:HBAR:START " +
@@ -932,7 +843,7 @@ class FastHall(XIPInstrument):
         self.command(command_string)
 
     def get_contact_check_setup_results(self):
-        """Returns an object representing the setup results of the last run Contact Check measurement"""
+        """Returns an object representing the setup results of the last run Contact Check measurement."""
 
         # Parse the JSON query string into a dictionary with only the setup results
         json_results = self.query('CCHECK:RESULT:JSON? 0')
@@ -951,7 +862,7 @@ class FastHall(XIPInstrument):
         return settings
 
     def get_contact_check_measurement_results(self):
-        """Returns a dictionary representing the results of the last run Contact Check measurement"""
+        """Returns a dictionary representing the results of the last run Contact Check measurement."""
 
         # Parse the JSON query string into a dictionary
         json_results = self.query('CCHECK:RESULT:JSON? 0')
@@ -965,7 +876,7 @@ class FastHall(XIPInstrument):
         return measurement_results
 
     def get_fasthall_setup_results(self):
-        """Returns an object representing the setup results of the last run FastHall measurement"""
+        """Returns an object representing the setup results of the last run FastHall measurement."""
 
         # Parse the JSON query string into a dictionary with only the setup results
         json_results = self.query('FASTHALL:RESULT:JSON? 0')
@@ -990,7 +901,7 @@ class FastHall(XIPInstrument):
         return settings
 
     def get_fasthall_measurement_results(self):
-        """Returns a dictionary representing the results of the last run FastHall measurement"""
+        """Returns a dictionary representing the results of the last run FastHall measurement."""
 
         # Parse the JSON query string into a dictionary
         json_results = self.query('FASTHALL:RESULT:JSON? 0')
@@ -1002,7 +913,7 @@ class FastHall(XIPInstrument):
         return measurement_results
 
     def get_four_wire_setup_results(self):
-        """Returns an object representing the setup results of the last run Four Wire measurement"""
+        """Returns an object representing the setup results of the last run Four Wire measurement."""
 
         # Parse the JSON query string into a dictionary with only the setup results
         json_results = self.query('FWIRE:RESULT:JSON? 0')
@@ -1026,7 +937,7 @@ class FastHall(XIPInstrument):
         return settings
 
     def get_four_wire_measurement_results(self):
-        """Returns a dictionary representing the results of the last run Four Wire measurement"""
+        """Returns a dictionary representing the results of the last run Four Wire measurement."""
 
         # Parse the JSON query string into a dictionary
         json_results = self.query('FWIRE:RESULT:JSON? 0')
@@ -1038,7 +949,7 @@ class FastHall(XIPInstrument):
         return measurement_results
 
     def get_dc_hall_setup_results(self):
-        """Returns a dictionary representing the setup results of the last run Hall measurement"""
+        """Returns a dictionary representing the setup results of the last run Hall measurement."""
 
         # Parse the JSON query string into a dictionary with only the setup results
         json_results = self.query('HALL:DC:RESULT:JSON? 0')
@@ -1060,7 +971,7 @@ class FastHall(XIPInstrument):
         return settings
 
     def get_dc_hall_measurement_results(self):
-        """Returns a dictionary representing the results of the last run Hall measurement"""
+        """Returns a dictionary representing the results of the last run Hall measurement."""
 
         # Parse the JSON query string into a dictionary
         json_results = self.query('HALL:DC:RESULT:JSON? 0')
@@ -1072,7 +983,7 @@ class FastHall(XIPInstrument):
         return measurement_results
 
     def get_resistivity_setup_results(self):
-        """Returns an object representing the setup results of the last run Resistivity measurement"""
+        """Returns an object representing the setup results of the last run Resistivity measurement."""
 
         # Parse the JSON query string into a dictionary with only the setup results
         json_results = self.query('RESISTIVITY:RESULT:JSON? 0')
@@ -1095,7 +1006,7 @@ class FastHall(XIPInstrument):
         return settings
 
     def get_resistivity_measurement_results(self):
-        """Returns a dictionary representing the results of the last run Resistivity measurement"""
+        """Returns a dictionary representing the results of the last run Resistivity measurement."""
 
         # Parse the JSON query string into a dictionary
         json_results = self.query('RESISTIVITY:RESULT:JSON? 0')
@@ -1110,7 +1021,7 @@ class FastHall(XIPInstrument):
         """Performs a contact check measurement and then returns the corresponding measurement results.
 
             Args:
-                settings(ContactCheckOptimizedParameters)
+                settings(ContactCheckOptimizedParameters):
 
             Returns:
                 The measurement results as a dictionary.
@@ -1131,15 +1042,14 @@ class FastHall(XIPInstrument):
         """Performs a manual contact check measurement and then returns the corresponding measurement results.
 
             Args:
-                settings(ContactCheckManualParameters)
-
-                sample_type(str):
-                    * Indicates sample type. Options are:
-                    * "VDP" (Van der Pauw sample)
-                    * "HBAR" (Hall Bar sample)
+                settings (ContactCheckManualParameters):
+                    Object with settings for FastHall link setup.
+                sample_type (str):
+                    Indicates sample type. Options: "VDP" (Van der Pauw sample), or "HBAR" (Hall Bar sample).
 
             Returns:
                 The measurement results as a dictionary.
+
         """
 
         # Run specific measurement based on sample type
@@ -1160,7 +1070,8 @@ class FastHall(XIPInstrument):
         """Performs a FastHall Link measurement and then returns the corresponding measurement results.
 
             Args:
-                settings(FastHallLinkParameters)
+                settings(FastHallLinkParameters):
+                    Object with settings for FastHall link setup.
 
             Returns:
                 The measurement results as a dictionary.
@@ -1181,8 +1092,8 @@ class FastHall(XIPInstrument):
         """Performs a manual FastHall measurement and then returns the corresponding measurement results.
 
             Args:
-                settings(FastHallManualParameters)
-
+                settings(FastHallManualParameters):
+                    Object with settings for FastHall link setup.
             Returns:
                 The measurement results as a dictionary.
         """
@@ -1202,7 +1113,7 @@ class FastHall(XIPInstrument):
         """Performs a Four Wire measurement and then returns the corresponding measurement results.
 
             Args:
-                settings(FourWireParameters)
+                settings(FourWireParameters):
 
             Returns:
                 The measurement results as a dictionary.
@@ -1223,12 +1134,10 @@ class FastHall(XIPInstrument):
         """Performs a DC Hall measurement and then returns the corresponding measurement results.
 
             Args:
-                settings(DCHallParameters)
-
+                settings(DCHallParameters):
+                    Object with settings for FastHall link setup.
                 sample_type(str):
-                    * Indicates sample type. Options are:
-                    * "VDP" (Van der Pauw sample)
-                    * "HBAR" (Hall Bar sample)
+                    Indicates sample type. Options: "VDP" (Van der Pauw sample), or"HBAR" (Hall Bar sample).
 
             Returns:
                 The measurement results as a dictionary.
@@ -1253,7 +1162,7 @@ class FastHall(XIPInstrument):
         """Performs a resistivity link measurement and then returns the corresponding measurement results.
 
             Args:
-                settings(ResistivityLinkParameters)
+                settings(ResistivityLinkParameters):
 
             Returns:
                 The measurement results as a dictionary.
@@ -1274,12 +1183,10 @@ class FastHall(XIPInstrument):
         """Performs a manual resistivity measurement and then returns the corresponding measurement results.
 
             Args:
-                settings(ResistivityManualParameters)
-
+                settings(ResistivityManualParameters):
+                    Object with settings for manual resistivity setup.
                 sample_type(str):
-                    * Indicates sample type. Options are:
-                    * "VDP" (Van der Pauw sample)
-                    * "HBAR" (Hall Bar sample)
+                    Indicates sample type. Options are: "VDP" (Van der Pauw sample), or "HBAR" (Hall Bar sample).
 
             Returns:
                 The measurement results as a dictionary.
@@ -1300,24 +1207,24 @@ class FastHall(XIPInstrument):
         return results
 
     def reset_contact_check_measurement(self):
-        """Resets the measurement to a not run state, canceling any running measurement"""
+        """Resets the measurement to a not run state, canceling any running measurement."""
         self.command("CCHECK:RESET")
 
     def reset_fasthall_measurement(self):
-        """Resets the measurement to a not run state, canceling any running measurement"""
+        """Resets the measurement to a not run state, canceling any running measurement."""
         self.command("FASTHALL:RESET")
 
     def reset_four_wire_measurement(self):
 
-        """Resets the measurement to a not run state, canceling any running measurement"""
+        """Resets the measurement to a not run state, canceling any running measurement."""
         self.command("FWIRE:RESET")
 
     def reset_dc_hall_measurement(self):
-        """Resets the measurement to a not run state, canceling any running measurement"""
+        """Resets the measurement to a not run state, canceling any running measurement."""
         self.command("HALL:DC:RESET")
 
     def reset_resistivity_measurement(self):
-        """Resets the measurement to a not run state, canceling any running measurement"""
+        """Resets the measurement to a not run state, canceling any running measurement."""
         self.command("RESISTIVITY:RESET")
 
 

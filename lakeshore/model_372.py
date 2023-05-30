@@ -1,4 +1,4 @@
-"""Implements functionality unique to the Lake Shore Model 372 AC bridge and temperature controller"""
+"""Implements functionality unique to the Lake Shore Model 372 AC bridge and temperature controller."""
 from enum import Enum, IntEnum
 
 from .temperature_controllers import TemperatureController, CurveTemperatureCoefficient, InterfaceMode, \
@@ -22,6 +22,7 @@ Model372StandardEventRegister = StandardEventRegister
 
 class Model372OutputMode(IntEnum):
     """Enumeration of the different modes for heater output setup."""
+
     OFF = 0
     MONITOR_OUT = 1
     OPEN_LOOP = 2
@@ -32,7 +33,8 @@ class Model372OutputMode(IntEnum):
 
 
 class Model372InputChannel(Enum):
-    """Enumeration of the input channels of the Model 372"""
+    """Enumeration of the input channels of the Model 372."""
+
     NONE = 0
     ONE = 1
     TWO = 2
@@ -55,13 +57,17 @@ class Model372InputChannel(Enum):
 
 class Model372SensorExcitationMode(IntEnum):
     """Enumeration of the possible excitation modes for an input sensor."""
+
     VOLTAGE = 0
     CURRENT = 1
 
 
 class Model372AutoRangeMode(IntEnum):
-    """Enumeration for the possible modes of the auto ranging feature. ROX102B mode is a special autoranging mode
-    that applies only to Lake Shore ROX-102B sensor."""
+    """Enumeration for the possible modes of the auto ranging feature.
+
+        ROX102B mode is a special auto-ranging mode that applies only to Lake Shore ROX-102B sensor.
+    """
+
     OFF = 0
     CURRENT = 1
     ROX102B = 2
@@ -69,12 +75,14 @@ class Model372AutoRangeMode(IntEnum):
 
 class Model372InputSensorUnits(IntEnum):
     """Enumeration of the units to handle input readings and display in."""
+
     KELVIN = 1
     OHMS = 2
 
 
 class Model372MonitorOutputSource(IntEnum):
     """Enumeration of the source for an output to monitor."""
+
     OFF = 0
     CS_NEG = 1
     CS_POS = 2
@@ -86,7 +94,8 @@ class Model372MonitorOutputSource(IntEnum):
 
 
 class Model372RelayControlMode(IntEnum):
-    """Enumeration of the control modes of the configurable relays of the 372"""
+    """Enumeration of the control modes of the configurable relays of the 372."""
+
     RELAY_OFF = 0
     RELAY_ON = 1
     ALARMS = 2
@@ -95,14 +104,16 @@ class Model372RelayControlMode(IntEnum):
 
 
 class Model372DisplayMode(IntEnum):
-    """Enumeration of the possible information to display"""
+    """Enumeration of the possible information to display."""
+
     MEASUREMENT_INPUT = 0
     CONTROL_INPUT = 1
     CUSTOM = 2
 
 
 class Model372DisplayInfo(IntEnum):
-    """Enumeration of the information to a display in the bottom left of the custom display mode"""
+    """Enumeration of the information to a display in the bottom left of the custom display mode."""
+
     NONE = 0
     SAMPLE_HEATER = 1
     WARMUP_HEATER = 2
@@ -110,7 +121,8 @@ class Model372DisplayInfo(IntEnum):
 
 
 class Model372CurveFormat(IntEnum):
-    """Enumeration of the units to use in a calibration curve"""
+    """Enumeration of the units to use in a calibration curve."""
+
     OHM_PER_KELVIN = 3
     LOGOHM_PER_KELVIN = 4
     OHM_PER_KELVIN_CUBIC_SPLINE = 7
@@ -118,6 +130,7 @@ class Model372CurveFormat(IntEnum):
 
 class Model372DisplayFieldUnits(IntEnum):
     """Enumeration for the possible units to display in a single display field."""
+
     KELVIN = 1
     OHMS = 2
     QUADRATURE = 3
@@ -141,6 +154,7 @@ class Model372SampleHeaterOutputRange(IntEnum):
 
 class Model372InputFrequency(IntEnum):
     """Defines the enumeration of the excitation frequency of an input."""
+
     FREQUENCY_9_POINT_8_HZ = 1
     FREQUENCY_13_POINT_7_HZ = 2
     FREQUENCY_16_POINT_2_HZ = 3
@@ -150,6 +164,7 @@ class Model372InputFrequency(IntEnum):
 
 class Model372MeasurementInputVoltageRange(IntEnum):
     """Enumerates the possible voltage ranges for a measurement input."""
+
     RANGE_2_MICRO_VOLTS = 1
     RANGE_6_POINT_32_MICRO_VOLTS = 2
     RANGE_20_MICRO_VOLTS = 3
@@ -166,6 +181,7 @@ class Model372MeasurementInputVoltageRange(IntEnum):
 
 class Model372MeasurementInputCurrentRange(IntEnum):
     """Enumeration of the current range of a measurement input."""
+
     RANGE_1_PICO_AMP = 1
     RANGE_3_POINT_16_PICO_AMPS = 2
     RANGE_10_PICO_AMPS = 3
@@ -192,6 +208,7 @@ class Model372MeasurementInputCurrentRange(IntEnum):
 
 class Model372ControlInputCurrentRange(IntEnum):
     """Enumeration of the current range of the control input. """
+
     RANGE_316_PICO_AMPS = 1
     RANGE_1_NANO_AMP = 2
     RANGE_3_POINT_16_NANO_AMPS = 3
@@ -202,6 +219,7 @@ class Model372ControlInputCurrentRange(IntEnum):
 
 class Model372MeasurementInputResistance(IntEnum):
     """Enumeration of the resistance range of a measurement input."""
+
     RANGE_2_MILLI_OHMS = 1
     RANGE_6_POINT_32_MILLI_OHMS = 2
     RANGE_20_MILLI_OHMS = 3
@@ -227,13 +245,14 @@ class Model372MeasurementInputResistance(IntEnum):
 
 
 class Model372HeaterOutput(IntEnum):
-    """Enumeration of model372 heater output"""
+    """Enumeration of model372 heater output."""
+
     WARM_UP_HEATER = 1
     STILL_HEATER = 2
 
 
 class Model372InputChannelSettings:
-    """Class object representing parameters for the channel settings of an Model372InputChannel"""
+    """Class object representing parameters for the channel settings of an Model372InputChannel."""
 
     def __init__(self,
                  enable,
@@ -245,22 +264,18 @@ class Model372InputChannelSettings:
 
             Args:
                 enable (bool):
-                    * Whether to enable or disable input
-
-                dwell_time (int)
-                    * Specifies a value for the autoscanning dwell time in seconds. Not applicable to control input.
-                    * Options are: 1 to 200 s
-
-                pause_time (int)
-                    * Specifies a value for the change pause time in seconds.
-                    * Options are: 3 to 200 s
-
+                    Whether to enable or disable input.
+                dwell_time (int):
+                    Specifies a value for the auto-scanning dwell time in seconds. Not applicable to control input.
+                    Options are: 1 to 200 s.
+                pause_time (int):
+                    Specifies a value for the change pause time in seconds. Options are:
+                    3 to 200 s.
                 curve_number (int):
-                    * Specifies which calibration curve to use on input sensor.
-                    * Options are: 0 (none), 1 - 59
-
-                temperature_coefficient (Model372CurveTemperatureCoefficient)
-                    * Sets coefficient for temperature control if no curve is selected.
+                    Specifies which calibration curve to use on input sensor. Options are:
+                    0 (none), or 1 - 59.
+                temperature_coefficient (Model372CurveTemperatureCoefficient):
+                    Sets coefficient for temperature control if no curve is selected.
 
         """
         self.enable = enable
@@ -271,7 +286,7 @@ class Model372InputChannelSettings:
 
 
 class Model372InputSetupSettings:
-    """Class object representing parameters for the sensor and measurement settings of an Model372InputChannel"""
+    """Class object representing parameters for the sensor and measurement settings of an Model372InputChannel."""
 
     def __init__(self,
                  mode,
@@ -284,23 +299,18 @@ class Model372InputSetupSettings:
 
             Args:
                 mode (Model372SensorExcitationMode):
-                    * Determines whether to use current or voltage for sensor excitation.
-
-                excitation_range (IntEnum)
-                    * the voltage or current (depending on mode) excitation range.
-
-                auto_range (Model372AutoRangeMode)
-                    * Specifies whether auto range is Off, Autoranging Current, or in ROX 102B mode.
-
+                    Determines whether to use current or voltage for sensor excitation.
+                excitation_range (IntEnum):
+                    The voltage or current (depending on mode) excitation range.
+                auto_range (Model372AutoRangeMode):
+                    Specifies whether auto range is Off, Auto-ranging Current, or in ROX 102B mode.
                 current_source_shunted (bool):
-                    * Specifies whether or not the current source is shunted. If current source is shunted,
-                        excitation is off. If current source is not shunted, excitation is on.
-
-                units (Model372InputSensorUnits)
-                    * Specifies the preferred units, Kelvin or Ohms, for the sensor.
-
+                    Specifies whether the current source is shunted. If current source is shunted,
+                    excitation is off. If current source is not shunted, excitation is on.
+                units (Model372InputSensorUnits):
+                    Specifies the preferred units, Kelvin or Ohms, for the sensor.
                 resistance_range (Model372MeasurementInputResistance):
-                    * For measurement inputs only, specifies the measurement input resistance range.
+                    For measurement inputs only, specifies the measurement input resistance range.
 
         """
         self.mode = mode
@@ -325,25 +335,20 @@ class Model372HeaterOutputSettings:
 
             Args:
                 output_mode (Model372OutputMode):
-                    * The control or output mode to configure the heater for. Defines how the output is controlled.
-
+                    The control or output mode to configure the heater for. Defines how the output is controlled.
                 input_channel (Model372InputChannel):
-                    * Which input to control output from in a control loop.
-
+                    Which input to control output from in a control loop.
                 powerup_enable (bool):
-                    * Specifies whether output stays on after powerup cycle.
-                    * True if enabled, False if disabled.
-
+                    Specifies whether output stays on after powerup cycle.
+                    True if enabled, False if disabled.
                 reading_filter (bool):
-                    * Specifies whether readings are filtered on unfiltered.
-                    * True if filtered, False if unfiltered
-
+                    Specifies whether readings are filtered on unfiltered.
+                    True if filtered, False if unfiltered.
                 delay (int):
-                    * Specifies delay in seconds for setpoint during AutoScanning. Options are:
-                    * 1 - 255
-
+                    Specifies delay in seconds for set-point during AutoScanning. Options are:
+                    1 - 255.
                 polarity (Model372Polarity):
-                    * Specifies output polarity. Not applicable to warmup heater.
+                    Specifies output polarity. Not applicable to warmup heater.
 
         """
         self.output_mode = output_mode
@@ -355,7 +360,7 @@ class Model372HeaterOutputSettings:
 
 
 class Model372AlarmParameters:
-    """Sets up an alarm for an input channel"""
+    """Sets up an alarm for an input channel."""
 
     def __init__(self,
                  high_value,
@@ -368,23 +373,18 @@ class Model372AlarmParameters:
 
             Args:
                 high_value (int):
-                    * Sets value for source to be checked against to set high alarm
-
+                    Sets value for source to be checked against to set high alarm.
                 low_value (int):
-                    * Sets value for source to be checked against to set low alarm
-
+                    Sets value for source to be checked against to set low alarm.
                 deadband (int):
-                    * Sets value that source must change outside of an alarm condition
-                      to deactivate an unlatched alarm.
-
-                latch_enable (bool)
-                    * Specifies if alarm is latched or not
-
-                audible (bool)
-                    * Specifies if an alarm is audible or not
-
-                visible (bool)
-                    * Specifies if an alarm is visible via LED on front panel or not
+                    Sets value that source must change outside an alarm condition
+                    to deactivate an unlatched alarm.
+                latch_enable (bool):
+                    Specifies if alarm is latched or not.
+                audible (bool):
+                    Specifies if an alarm is audible or not.
+                visible (bool):
+                    Specifies if an alarm is visible via LED on front panel or not.
 
         """
         self.high_value = high_value
@@ -412,40 +412,32 @@ class Model372ControlLoopZoneSettings:
 
             Args:
                 upper_bound (float):
-                    * upper bound setpoint in Kelvin
-
-                p_value (float)
-                    * The gain for a PID system. Options are:
-                    * 0.0 - 1000
-
-                i_value (float)
-                    * The integral value for a PID system. Options are:
-                    * 0 - 10000
-
-                d_value (float)
-                    * The rate for a PID system. Options are:
-                    * 0 - 2500
-
-                manual_output (float)
-                    * Percentage full scale manual output
-
-                heater_range (float or bool)
-                    * Heater range for the control zone.
-                    * Entered as a float for the sample heater
-                    * Entered as a bool for the warm-up heater
-
-                ramp_rate (float)
-                    * Specifies ramp rate for this zone
-
-                relay_1 (bool)
-                    * Specifies if relay 1 is on or off
-                    * Only applicable if relay is configured in zone mode and relay's control
-                        output matches configured output.
-
-                relay_2 (bool)
-                    * Specifies if relay 2 is on or off
-                    * Only applicable if relay is configured in zone mode and relay's control
-                        output matches configured output.
+                    Upper bound setpoint in Kelvin.
+                p_value (float):
+                    The gain for a PID system. Options are:
+                    0.0 - 1000.
+                i_value (float):
+                    The integral value for a PID system. Options are:
+                    0 - 10000.
+                d_value (float):
+                    The rate for a PID system. Options are:
+                    0 - 2500.
+                manual_output (float):
+                    Percentage full scale manual output.
+                heater_range (float or bool):
+                    Heater range for the control zone.
+                    Entered as a float for the sample heater.
+                    Entered as a bool for the warm-up heater.
+                ramp_rate (float):
+                    Specifies ramp rate for this zone.
+                relay_1 (bool):
+                    Specifies if relay 1 is on or off.
+                    Only applicable if relay is configured in zone mode and relay's control
+                    output matches configured output.
+                relay_2 (bool):
+                    Specifies if relay 2 is on or off.
+                    Only applicable if relay is configured in zone mode and relay's control
+                    output matches configured output.
 
         """
         self.upper_bound = upper_bound
@@ -460,8 +452,11 @@ class Model372ControlLoopZoneSettings:
 
 
 class Model372ReadingStatusRegister(RegisterBase):
-    """Class object representing the reading status of an input. While not a literal register, the return of an int
-    representation of multiple booleans makes it convenient to represent this functionality as a register."""
+    """Class object representing the reading status of an input.
+
+        While not a literal register, the return of an int representation of multiple booleans makes it convenient to
+        represent this functionality as a register.
+    """
     bit_names = [
         "current_source_overload",
         "voltage_common_mode_stage_overload",
@@ -573,7 +568,7 @@ class Model372DigitalOutputRegister(RegisterBase):
 
 
 class Model372(TemperatureController):
-    """A class object representing the Lake Shore Model 372 AC bridge and temperature controller"""
+    """A class object representing the Lake Shore Model 372 AC bridge and temperature controller."""
 
     vid_pid = [(0x1FB9, 0x0305)]
 
@@ -603,8 +598,11 @@ class Model372(TemperatureController):
         self._disable_emulation_mode()
 
     def clear_interface(self):
-        """Clears the interace, such as all bits in the status byte register and the standard event
-        status register. Does not clear the instrument."""
+        """Clears the interface.
+
+            Clears all bits in the status byte register and the standard event status register. Does not clear the
+            instrument.
+        """
         self.command("*CLS")
 
     def reset_instrument(self):
@@ -635,7 +633,7 @@ class Model372(TemperatureController):
 
             Returns:
                 (Model372DisplayMode):
-                    Enumerated object representing the current mode of the display
+                    Enumerated object representing the current mode of the display.
 
         """
         settings_string = self.query("DISPLAY?")
@@ -662,14 +660,13 @@ class Model372(TemperatureController):
         """Returns the input reading in Ohms.
 
             Args:
-                input_channel (str or int)
-                    * Specifies which input channel to read from. Options are:
-                        * 1-16
-                        * "A" (for control input)
+                input_channel (str or int):
+                    Specifies which input channel to read from. Options are:
+                    1-16, or "A" (for control input).
 
             Returns:
                 (float):
-                    * Sensor reading in Ohms
+                    Sensor reading in Ohms.
 
         """
         return float(self.query(f"RDGR? {str(input_channel)}"))
@@ -678,13 +675,13 @@ class Model372(TemperatureController):
         """Returns the imaginary part of the reading in Ohms. Only valid for measurement inputs.
 
             Args:
-                input_channel (int)
-                    * Specifies which input channel to read from. Options are:
-                        * 1-16
+                input_channel (int):
+                    Specifies which input channel to read from. Options are:
+                    1-16.
 
             Returns:
                 (float):
-                    * The imaginary part of the sensor reading, in Ohms
+                    The imaginary part of the sensor reading, in Ohms.
         """
         return float(self.query(f"QRDG? {str(input_channel)}"))
 
@@ -692,10 +689,9 @@ class Model372(TemperatureController):
         """Returns the kelvin reading, resistance reading, and, if a measurement input, the quadrature reading.
 
             Args:
-                input_channel (str or int)
-                    * Specifies which input channel to read from. Options are:
-                        * 1-16
-                        * "A" (for control input)
+                input_channel (str or int):
+                    Specifies which input channel to read from. Options are:
+                    1-16, or "A" (for control input).
 
             Returns:
                 (dict):
@@ -721,15 +717,14 @@ class Model372(TemperatureController):
         """Returns the settings on the specified input.
 
             Args:
-                input_channel (str or int)
-                    * Specifies which input channel to read from. Options are:
-                        * 1-16
-                        * "A" (control input)
+                input_channel (str or int):
+                    Specifies which input channel to read from. Options are:
+                    1-16, or "A" (control input).
 
             Returns:
-                input_sensor_settings (Model372InputSetupSettings)
-                    * object of Model372InputSetupSettings representing the parameters of the excitation of the sensor
-                        on the specified channel
+                input_sensor_settings (Model372InputSetupSettings):
+                    object of Model372InputSetupSettings representing the parameters of the excitation of the sensor
+                    on the specified channel
 
         """
         sensor_settings = self.query(f"INTYPE? {str(input_channel)}")
@@ -758,14 +753,12 @@ class Model372(TemperatureController):
         """Sets the desired setup settings on the specified input.
 
             Args:
-                input_channel (str or int)
-                    * Specifies which input channel to read from. Options are:
-                        * 1-16
-                        * "A" (control input)
-
-                settings (Model372InputSetupSettings)
-                    * object of Model372InputSetupSettings representing the parameters of the excitation of the sensor
-                        on the specified channel
+                input_channel (str or int):
+                    Specifies which input channel to read from. Options are:
+                    1-16, or "A" (control input).
+                settings (Model372InputSetupSettings):
+                    Object of Model372InputSetupSettings representing the parameters of the excitation of the sensor
+                    on the specified channel.
 
         """
         # Handle control input not setting resistance range
@@ -784,26 +777,24 @@ class Model372(TemperatureController):
         """Disables the desired input channel.
 
             Args:
-                input_channel (str or int)
-                    * Specifies which input channel to disable. Options are:
-                    * 1-16
-                    * "A" (control input)
+                input_channel (str or int):
+                    Specifies which input channel to disable. Options are:
+                    1-16, or "A" (control input).
 
         """
         self.command(f"INSET {str(input_channel)},0,0,0,0,0")
 
     def get_input_channel_parameters(self, input_channel):
-        """Returns the settings on the specified input channel
+        """Returns the settings on the specified input channel.
 
                 Args:
-                    input_channel (str or int)
-                        * Specifies which input channel to read from. Options are:
-                            * 1-16
-                            * "A" (control input)
+                    input_channel (str or int):
+                        Specifies which input channel to read from. Options are:
+                        1-16, or "A" (control input).
 
                 Returns:
-                    input_channel_settings (Model372InputChannelSettings)
-                        * Contains variables representing the different channel settings parameters
+                    input_channel_settings (Model372InputChannelSettings):
+                        Contains variables representing the different channel settings parameters.
 
         """
         input_parameters = self.query(f"INSET? {str(input_channel)}")
@@ -817,16 +808,15 @@ class Model372(TemperatureController):
         return input_channel_settings
 
     def set_input_channel_parameters(self, input_channel, settings):
-        """Sets the desired channel settings on the specified input channel
+        """Sets the desired channel settings on the specified input channel.
 
             Args:
-                input_channel (str or int)
-                    * Specifies which input channel to read from. Options are:
-                        * 1-16
-                        * "A" (control input)
-
-                settings (Model372InputChannelSettings)
-                    * Defines how to set the various parameters
+                input_channel (str or int):
+                    Specifies which input channel to read from. Options are:
+                    1-16, or
+                    "A" (control input).
+                settings (Model372InputChannelSettings):
+                    Defines how to set the various parameters.
 
         """
         if settings.temperature_coefficient is None:
@@ -839,46 +829,40 @@ class Model372(TemperatureController):
         self.command(command_string)
 
     def get_analog_heater_output(self, output_channel):
-        """Returns the output of the warm-up or analog/still heater
+        """Returns the output of the warm-up or analog/still heater.
 
-           Args:
-                output_channel (int)
-                    * Specifies which heater to read from. Options:
-                        * 1 output 1 (warm up heater)
-                        * 2 output 2 (analog heater)
+            Args:
+                output_channel (int):
+                    Specifies which heater to read from. Options:
+                        1 output 1 (warm up heater), or
+                        2 output 2 (analog heater).
 
             Returns:
-                reading (float)
-                    * Output of the analog heater being queried
+                reading (float):
+                    Output of the analog heater being queried.
 
         """
         return float(self.query(f"AOUT? {str(output_channel)}"))
 
     def all_off(self):
-        """Recreates the front panel safety feature of shutting off all heaters"""
+        """Recreates the front panel safety feature of shutting off all heaters."""
         self.command("RANGE 0,0")
         self.command("RANGE 1,0")
         self.command("RANGE 2,0")
 
     def set_heater_output_range(self, output_channel, heater_range):
-        """Sets the output range
+        """Sets the output range.
 
-              Args:
-                    output_channel (int)
-                        * Specifies which heater to set. Options:
-                            * 0: sample heater
-                            * 1: output 1 (warm up heater)
-                            * 2: output 2 (analog heater)
-
-                    heater_range (Enum or bool)
-                        * Specifies the range of the output. Options:
-
-                            Sample Heater (Enum):
-                                * Object of type Model372SampleHeaterOutputRange
-
-                            Warmup Heater/Still Heater (bool):
-                                * False: output off
-                                * True: output on
+            Args:
+                output_channel (int):
+                    Specifies which heater to set. Options:
+                    0: sample heater,
+                    1: output 1 (warm up heater), or
+                    2: output 2 (analog heater).
+                heater_range (Enum or bool):
+                    Specifies the range of the output. Options:
+                    Sample Heater (Enum) - Object of type Model372SampleHeaterOutputRange.
+                    Warmup Heater/Still Heater (bool) - False: output off, True: output on.
 
         """
         if output_channel == 0:
@@ -889,19 +873,19 @@ class Model372(TemperatureController):
         self.command(f"RANGE {str(output_channel)},{str(range_value)}")
 
     def get_heater_output_range(self, output_channel):
-        """Return's the range of the output on a given channel
+        """Return's the range of the output on a given channel.
 
-              Args:
-                    output_channel (int)
-                        * Specifies which heater to read from. Options:
-                            * 0: sample heater
-                            * 1: output 1 (warm up heater)
-                            * 2: output 2 (analog heater)
+            Args:
+                output_channel (int):
+                    Specifies which heater to read from. Options:
+                    0: sample heater,
+                    1: output 1 (warm up heater), or
+                    2: output 2 (analog heater).
 
-                Returns:
-                    heater_range (bool or Enum)
-                        * If channel 1 or 2, returns bool for if output is on or off.
-                        * If channel 0, an object of enum type Model372SampleHeaterOutputRange
+            Returns:
+                heater_range (bool or Enum):
+                    If channel 1 or 2, returns bool for if output is on or off.
+                    If channel 0, an object of enum type Model372SampleHeaterOutputRange.
 
         """
         key = int(self.query(f"RANGE? {str(output_channel)}"))
@@ -912,29 +896,26 @@ class Model372(TemperatureController):
 
         return output_range
 
-    # Filter methods different than in temperature_instrument
+    # Filter methods different from in temperature_instrument
     def set_filter(self, input_channel, state, settle_time, window):
         """Sets a filter for the specified input channel.
 
             Args:
-                input_channel (str or int)
-                    * Specifies which input channel to read from. Options are:
-                        * 0 (all channels/measurement inputs)
-                        * 1-16
-                        * "A" (control input)
-
-                state (bool)
-                    * Specifies whether to turn filter on or off. Options are:
-                        * False for off, True for on
-
-                settle_time (float)
-                    * Specifies filter settle time. Options are:
-                        * 1 - 200 s
-
-                window (float)
-                    * Specifies what percent of full scale reading limits the filtering function.
-                    * Options are:
-                        * 1 - 80
+                input_channel (str or int):
+                    Specifies which input channel to read from. Options are:
+                    0 (all channels/measurement inputs),
+                    1-16, or
+                    "A" (control input).
+                state (bool):
+                    Specifies whether to turn filter on or off. Options are:
+                    False for off, or
+                    True for on.
+                settle_time (float):
+                    Specifies filter settle time. Options are:
+                    1 - 200 s.
+                window (float):
+                    Specifies what percent of full scale reading limits the filtering function. Options are:
+                    1 - 80.
 
         """
 
@@ -944,20 +925,17 @@ class Model372(TemperatureController):
         """Returns information about the filter set on the specified channel.
 
             Args:
-                input_channel (str or int)
-                    * Specifies which input channel to read from. Options are:
-                    * 1-16
-                    * "A" (control input)
+                input_channel (str or int):
+                    Specifies which input channel to read from. Options are:
+                    1-16, or "A" (control input).
 
             Returns:
-                state (bool)
-                    * Specifies whether to turn filter on or off.
-
-                settle_time (int)
-                    * Specifies filter settle time.
-
-                window (int)
-                    * Specifies what percent of full scale reading limits the filtering function.
+                state (bool):
+                    Specifies whether to turn filter on or off.
+                settle_time (int):
+                    Specifies filter settle time.
+                window (int):
+                    Specifies what percent of full scale reading limits the filtering function.
 
         """
         output_string = self.query(f"FILTER? {str(input_channel)}")
@@ -970,9 +948,9 @@ class Model372(TemperatureController):
         """Sets the IEEE address of the instrument.
 
             Args:
-                address (int)
-                * Specifies the IEEE address. Options are:
-                * 1 - 30
+                address (int):
+                    Specifies the IEEE address. Options are:
+                    1 - 30.
 
         """
         self.command(f"IEEE 0,0,{str(address)}")
@@ -981,24 +959,24 @@ class Model372(TemperatureController):
         """Returns the IEEE address of the instrument.
 
             Returns:
-                address (int)
-                    * The IEEE address.
+                address (int):
+                    The IEEE address.
 
         """
         return int(self.query("IEEE?"))
 
     def get_excitation_power(self, input_channel):
-        """Returns the most recent power calculation for the selected input channel
+        """Returns the most recent power calculation for the selected input channel.
 
-                Args:
-                    input_channel (str or int)
-                        * Specifies which input channel to read from. Options are:
-                        * 1-16
-                        * "A" (control input)
+            Args:
+                input_channel (str or int):
+                    Specifies which input channel to read from. Options are:
+                    1-16, or
+                    "A" (control input).
 
-                Returns:
-                    power (float)
-                        * Most recent power calculation for the input being queried
+            Returns:
+                power (float):
+                    Most recent power calculation for the input being queried.
 
         """
         return float(self.query(f"RDGPWR? {str(input_channel)}"))
@@ -1006,17 +984,17 @@ class Model372(TemperatureController):
     def get_heater_output_settings(self, output_channel):
         """Returns the mode and settings of the given output channel.
 
-                Args:
-                    output_channel (int)
-                        * Specifies which heater to read from. Options:
-                            * 0: sample heater
-                            * 1: output 1 (warm up heater)
-                            * 2: output 2 (analog heater)
+            Args:
+                output_channel (int):
+                    Specifies which heater to read from. Options:
+                    0: sample heater,
+                    1: output 1 (warm up heater), or
+                    2: output 2 (analog heater).
 
-                Returns:
-                    outputmode_settings (Model372HeaterOutputSettings)
-                        * Object of class Model372HeaterOutputSettings whose variables are set to reflect the
-                            current output settings of the queried heater.
+            Returns:
+                outputmode_settings (Model372HeaterOutputSettings):
+                    Object of class Model372HeaterOutputSettings whose variables are set to reflect the
+                    current output settings of the queried heater.
 
         """
         output_mode = self.query(f"OUTMODE? {str(output_channel)}")
@@ -1035,18 +1013,18 @@ class Model372(TemperatureController):
                                             Model372Polarity(int(separated_response[3])))
 
     def configure_heater(self, output_channel, settings):
-        """Sets up a heater output. Analog heaters (outputs 1 and 2) might need to configure further settings in
-        configure_analog_heater.
+        """Sets up a heater output.
+
+            Analog heaters (outputs 1 and 2) might need to configure further settings in configure_analog_heater.
 
             Args:
-                output_channel (int)
-                    * Specifies which heater to read from. Options:
-                        * 0: sample heater
-                        * 1: output 1 (warm up heater)
-                        * 2: output 2 (analog heater)
-
-                settings (Model372HeaterOutputSettings)
-                    * Defines how to set the output mode settings
+                output_channel (int):
+                    Specifies which heater to read from. Options:
+                    0: sample heater,
+                    1: output 1 (warm up heater), or
+                    2: output 2 (analog heater).
+                settings (Model372HeaterOutputSettings):
+                    Defines how to set the output mode settings.
 
         """
         if settings.polarity is None:
@@ -1074,47 +1052,48 @@ class Model372(TemperatureController):
         """Sets common mode reduction to given state for all measurement channels.
 
             Args:
-                state (bool)
-                    * Sets CMR to enabled or disable. Options are:
-                    * False (for disable) or True (for enable)
+                state (bool):
+                    Sets CMR to enabled or disable. Options are:
+                    False (for disable), or
+                    True (for enable).
 
         """
         self.command(f"CMR {str(int(state))}")
 
     def get_common_mode_reduction(self):
-        """Returns whether or not CMR is set for measurement channels
+        """Returns whether CMR is set for measurement channels.
 
             Returns:
-                * False (boolean) if CMR is disabled
-                * True (boolean) if CMR is enabled
+                False (boolean) if CMR is disabled, or
+                True (boolean) if CMR is enabled.
 
         """
         return bool(int(self.query("CMR?")))
 
     def set_scanner_status(self, input_channel, status):
-        """Sets the scanner to the specified channel, and enables or disables auto scan
+        """Sets the scanner to the specified channel, and enables or disables auto scan.
 
             Args:
-                input_channel (int)
-                    * Specifies which measurement input to set the scanner to. Options are:
-                        * 1 - 16
-
-                status (bool)
-                    * Specifies whether to turn auto scan feature on. Options are:
-                        * False (disable) or True (enable)
+                input_channel (int):
+                    Specifies which measurement input to set the scanner to. Options are:
+                    1 - 16.
+                status (bool):
+                    Specifies whether to turn auto scan feature on. Options are:
+                    False (disable), True (enable).
 
         """
         self.command(f"SCAN {str(input_channel)},{str(int(status))}")
 
     def get_scanner_status(self):
-        """Returns which channel the scanner is on and whether the auto scan feature is enabled
+        """Returns which channel the scanner is on and whether the auto scan feature is enabled.
 
             Returns:
-                input_channel (int)
-                    * The measurement channel the scanner is currently on.
+                input_channel (int):
+                    The measurement channel the scanner is currently on.
 
-                status (bool)
-                    * True if autoscan in on, False if autoscan is off
+                status (bool):
+                    True if auto-scan in on, or
+                    False if auto-scan is off.
 
         """
         response = self.query("SCAN?")
@@ -1123,11 +1102,12 @@ class Model372(TemperatureController):
                 "status": bool(int(separated_response[1]))}
 
     def set_alarm_beep(self, status):
-        """Enables or disables a beep for alarms
+        """Enables or disables a beep for alarms.
 
             Args:
-                status (bool)
-                    * False (for disable) or True (for enable)
+                status (bool):
+                    False (for disable), or
+                    True (for enable).
 
         """
         self.command(f"BEEP {str(int(status))}")
@@ -1136,21 +1116,22 @@ class Model372(TemperatureController):
         """Returns whether beep for alarms is enabled or disabled.
 
             Returns
-                status (bool)
-                        * Returns True is beep is enabled.
-                        * Returns False is beep is disabled.
+                status (bool):
+                    True (beep is enabled), or
+                    False (beep is disabled).
 
         """
         return bool(int(self.query("BEEP?")))
 
     def set_still_output(self, power):
-        """Sets the still output of the still/analog heater to power% of full power. Heater gets configured for
-        Still mode if not currently configured.
+        """Sets the still output of the still/analog heater to power% of full power.
+
+            Heater gets configured for still mode if not currently configured.
 
             Args:
-                  power (float)
-                      * Specifies the percent of full power for still output. Options are:
-                        * 0 - 100
+                power (float):
+                    Specifies the percent of full power for still output. Options are:
+                    0 - 100.
 
         """
         settings = self.get_heater_output_settings(2)
@@ -1162,24 +1143,26 @@ class Model372(TemperatureController):
         """Returns the percent of full power being outputted by still heater in still mode.
 
             Returns:
-                    power (float)
-                        * percent of full power being outputted by heater.
+                    power (float):
+                        Percent of full power being outputted by heater.
 
         """
         return float(self.query("STILL?"))
 
     def set_warmup_output(self, auto_control, current):
         """Sets up the warmup output to continuous control at the percent current specified.
-        Configures the warmup heater for continuous control mode from the control input.
+
+            Configures the warmup heater for continuous control mode from the control input.
 
             Args:
-                auto_control (bool)
-                    * Specifies whether or not to turn on auto control. Options are:
-                        * False for auto off, True for continuous
+                auto_control (bool):
+                    Specifies whether to turn on auto control. Options are:
+                    False for auto off, or
+                    True for continuous.
 
-                current (float)
-                    * Specifies percent of full current to apply to external output. Options are:
-                        * 0 - 100
+                current (float):
+                    Specifies percent of full current to apply to external output. Options are:
+                    0 - 100
 
         """
         settings = self.get_heater_output_settings(1)
@@ -1191,12 +1174,13 @@ class Model372(TemperatureController):
         """Returns the control setting and percent current outputted in the warmup heater in warmup mode.
 
             Returns:
-                auto_control (bool)
-                    * Specifies whether or not to turn on auto control. Returns:
-                        * False for auto off, True for continuous
+                auto_control (bool):
+                    Specifies whether to turn on auto control. Returns:
+                    False for auto off, or
+                    True for continuous
 
-                current (float)
-                    * Specifies percent of full current to apply to external output.
+                current (float):
+                    Specifies percent of full current to apply to external output.
 
         """
         output_string = self.query("WARMUP?")
@@ -1205,16 +1189,16 @@ class Model372(TemperatureController):
                 'current': float(separated_response[1])}
 
     def set_setpoint_kelvin(self, output_channel, setpoint):
-        """Sets the control setpoint in Kelvin. Changes input parameters so preferred units are Kelvin.
+        """Sets the control set-point in Kelvin. Changes input parameters so preferred units are Kelvin.
 
             Args:
-                output_channel (int)
-                    * Specifies which heater to set a setpoint. Options are:
-                        * 0: sample heater
-                        * 1: output 1 (warm up heater)
+                output_channel (int):
+                    Specifies which heater to set a set-point. Options are:
+                    0: sample heater, or
+                    1: output 1 (warm up heater).
 
-                setpoint (float)
-                    * Specifies the setpoint the heater ramps to, in Kelvin.
+                setpoint (float):
+                    Specifies the set-point the heater ramps to, in Kelvin.
 
         """
         # First, get control input from OUTMODE settings to change preferred units
@@ -1227,16 +1211,16 @@ class Model372(TemperatureController):
         self.command(f"SETP {str(output_channel)},{str(setpoint)}")
 
     def set_setpoint_ohms(self, output_channel, setpoint):
-        """Sets the control setpoint in Ohms. Changes input parameters so preferred units are Ohms.
+        """Sets the control set-point in Ohms. Changes input parameters so preferred units are Ohms.
 
             Args:
-                output_channel (int)
-                    * Specifies which heater to set a setpoint. Options are:
-                        * 0: sample heater
-                        * 1: output 1 (warm up heater)
+                output_channel (int):
+                    Specifies which heater to set a set-point. Options are:
+                    0: sample heater, or
+                    1: output 1 (warm up heater).
 
-                setpoint (float)
-                    * Specifies the setpoint the heater ramps to, in Kelvin.
+                setpoint (float):
+                    Specifies the set-point the heater ramps to, in Kelvin.
 
         """
 
@@ -1251,18 +1235,19 @@ class Model372(TemperatureController):
         self.command(f"SETP {str(output_channel)},{str(setpoint)}")
 
     def get_setpoint_kelvin(self, output_channel):
-        """Returns the setpoint for the given output channel in kelvin. Changes the control input's preferred
-        units to Kelvin as a result.
+        """Returns the set-point for the given output channel in kelvin.
+
+            Changes the control input's preferred units to Kelvin as a result.
 
             Args:
-                output_channel (int)
-                    * Specifies which heater to set a setpoint. Options are:
-                        * 0: sample heater
-                        * 1: output 1 (warm up heater)
+                output_channel (int):
+                    Specifies which heater to set a set-point. Options are:
+                    0: sample heater, or
+                    1: output 1 (warm up heater).
 
             Returns:
-                setpoint (float)
-                    * Setpoint of the output in Kelvin.
+                setpoint (float):
+                    Set-point of the output in Kelvin.
 
         """
         outmode_settings = self.get_heater_output_settings(output_channel)
@@ -1273,18 +1258,19 @@ class Model372(TemperatureController):
         return float(self.query(f"SETP? {str(output_channel)}"))
 
     def get_setpoint_ohms(self, output_channel):
-        """Returns the setpoint for the given output channel in kelvin. Changes the control input's preferred
-        units to Kelvin as a result.
+        """Returns the set-point for the given output channel in kelvin.
+
+            Changes the control input's preferred units to Kelvin as a result.
 
             Args:
-                output_channel (int)
-                    * Specifies which heater to set a setpoint. Options are:
-                        * 0: sample heater
-                        * 1: output 1 (warm up heater)
+                output_channel (int):
+                    Specifies which heater to set a set-point. Options are:
+                    0: sample heater, or
+                    1: output 1 (warm up heater).
 
             Returns:
-                setpoint (float)
-                    * Setpoint of the output in Ohms.
+                setpoint (float):
+                    Set-point of the output in Ohms.
 
         """
         outmode_settings = self.get_heater_output_settings(output_channel)
@@ -1298,14 +1284,14 @@ class Model372(TemperatureController):
         """Returns the excitation frequency in Hz for either the measurement or control inputs.
 
             Args:
-                input_channel (int or str)
-                    * Specifies which input to get frequency from. Options are:
-                        * 0 : measurement inputs
-                        * "A" : control input
+                input_channel (int or str):
+                    Specifies which input to get frequency from. Options are:
+                    0 : measurement inputs, or
+                    "A" : control input.
 
             Returns:
-                frequency (Enum)
-                    * The excitation frequency in Hz, returned as an object of Model372InputFrequency Enum type
+                frequency (Enum):
+                    The excitation frequency in Hz, returned as an object of Model372InputFrequency Enum type.
 
         """
         key = int(self.query(f"FREQ? {str(input_channel)}"))
@@ -1315,13 +1301,13 @@ class Model372(TemperatureController):
         """Sets the excitation frequency (in Hz) for either the measurement or control inputs.
 
             Args:
-                input_channel (int or str)
-                    * Specifies which input to get frequency from. Options are:
-                        * 0 : measurement inputs
-                        * "A" : control input
+                input_channel (int or str):
+                    Specifies which input to get frequency from. Options are:
+                    0 : measurement inputs, or
+                    "A" : control input.
 
-                frequency (Enum)
-                    * The excitation frequency in Hz (if float), represented as an object of type Model372InputFrequency
+                frequency (Enum):
+                    The excitation frequency in Hz (if float), represented as an object of type Model372InputFrequency.
 
         """
         self.command(f"FREQ {input_channel},{frequency}")
@@ -1330,20 +1316,19 @@ class Model372(TemperatureController):
         """Sets the status of the 5 digital output lines to high or low.
 
             Args:
-                bit_weight (DigitalOutputRegister)
-                    * Determines which bits to set or reset
+                bit_weight (DigitalOutputRegister):
+                    Determines which bits to set or reset.
 
         """
         bit_weight_integer = bit_weight.to_integer()
         self.command(f"DOUT {str(bit_weight_integer)}")
 
     def get_digital_output(self):
-        """Returns which digital output bits are set or reset by representing them in a binary
-        number.
+        """Returns which digital output bits are set or reset by representing them in a binary number.
 
             Returns:
-                bit_weight (DigitalOutputRegister)
-                    * Determines which bits to set or reset
+                bit_weight (DigitalOutputRegister):
+                    Determines which bits to set or reset.
 
         """
         bit_weight_integer = int(self.query("DOUT?"))
@@ -1353,8 +1338,8 @@ class Model372(TemperatureController):
         """Sets the interface for the instrument to communicate over.
 
             Args:
-                interface (Model372Interface)
-                    * selects the interface based on the values as defined in the Model372Interface enum class
+                interface (Model372Interface):
+                    Selects the interface based on the values as defined in the Model372Interface enum class.
 
         """
         self.command(f"INTSEL {interface}")
@@ -1363,8 +1348,8 @@ class Model372(TemperatureController):
         """Returns the interface connected to the instrument.
 
             Returns:
-                interface (Model372Interface)
-                    * returns the interface as an object of the Model372Interface enum class.
+                interface (Model372Interface):
+                    Returns the interface as an object of the Model372Interface enum class.
 
         """
         value = int(self.query("INTSEL?"))
@@ -1374,18 +1359,16 @@ class Model372(TemperatureController):
         """Sets an alarm on the specified channel as defined by parameters.
 
             Args:
-                input_channel (int or str)
-                    * Defines which channel to configure an alarm on. Options are:
-                        * 0 for all measurement inputs
-                        * 1 - 16
-                        * "A" for control input
-
+                input_channel (int or str):
+                    Defines which channel to configure an alarm on. Options are:
+                    0 for all measurement inputs,
+                    1 - 16, or
+                    "A" for control input.
                 alarm_enable (bool)
-                    * Defines whether to turn alarm on or off
-
+                    Defines whether to turn alarm on or off.
                 alarm_settings (Model372AlarmParameters)
-                    * Model372AlarmParameters object containing desired alarm settings
-                    * Optional if alarm is disabled
+                    Model372AlarmParameters object containing desired alarm settings.
+                    Optional if alarm is disabled.
 
         """
         if alarm_settings is not None:
@@ -1411,14 +1394,12 @@ class Model372(TemperatureController):
         """Returns the parameters for the alarm set for the input at the specified channel.
 
             Args:
-                input_channel (int or str)
-                    * Defines which channel to configure an alarm on. Options are:
-                    * 1 - 16
-                    * "A" for control input
+                input_channel (int or str):
+                    Defines which channel to configure an alarm on. Options are: 1 - 16, or "A" for control input.
 
             Returns:
                 (dict):
-                    {alarm_enable: bool, alarm_settings: Model372AlarmParameters
+                    {"alarm_enable": bool, "alarm_settings": Model372AlarmParameters}
 
         """
         settings_string = self.query(f"ALARM? {str(input_channel)}")
@@ -1432,27 +1413,25 @@ class Model372(TemperatureController):
                 'alarm_settings': alarm_settings}
 
     def set_relay_for_sample_heater_control_zone(self, relay_number):
-        """Configures a relay to follow the sample heater output as part of a control zone. Settings can be
-        further configured in set_control_loop_zone_parameters method.
+        """Configures a relay to follow the sample heater output as part of a control zone.
+
+            Settings can be further configured in set_control_loop_zone_parameters method.
 
             Args:
                 relay_number (int):
-                    * The relay to configure.
-                    * Options are:
-                        * 1 or 2
+                    The relay to configure. Options are: 1 or 2.
 
         """
         self.command(f"RELAY {relay_number},3,0,0")
 
     def set_relay_for_warmup_heater_control_zone(self, relay_number):
-        """Configures a relay to follow the warm up heater output as part of a control zone. Settings can be
-            further configured in set_control_loop_zone_parameters method.
+        """Configures a relay to follow the warm-up heater output as part of a control zone.
+
+            Settings can be further configured in set_control_loop_zone_parameters method.
 
                 Args:
                     relay_number (int):
-                        * The relay to configure.
-                        * Options are:
-                            * 1 or 2
+                        The relay to configure. Options are: 1 or 2.
 
             """
         self.command(f"RELAY {relay_number},4,0,0")
@@ -1461,8 +1440,8 @@ class Model372(TemperatureController):
         """Returns the IEEE interface mode of the instrument.
 
             Returns:
-                mode (Model372InterfaceMode)
-                    * returns the mode as an enum type of class Model372InterfaceMode
+                mode (Model372InterfaceMode):
+                    Returns the mode as an enum type of class Model372InterfaceMode.
 
         """
         value = int(self.query("MODE?"))
@@ -1472,8 +1451,8 @@ class Model372(TemperatureController):
         """Sets the IEEE interface mode of the instrument.
 
             Args:
-                mode (Model372InterfaceMode)
-                    * Defines the mode of the instrument as an object of the enum type Model372IEEEInterfaceMode
+                mode (Model372InterfaceMode):
+                    Defines the mode of the instrument as an object of the enum type Model372IEEEInterfaceMode.
 
         """
         value = format(mode)
@@ -1483,8 +1462,8 @@ class Model372(TemperatureController):
         """Sets the source of the monitor output. Also affects the reference output.
 
             Args:
-                source (Model372MonitorOutputSource)
-                    * Defines the source to run the monitor output off of.
+                source (Model372MonitorOutputSource):
+                    Defines the source to run the monitor output off of.
 
         """
         value = format(source)
@@ -1494,8 +1473,8 @@ class Model372(TemperatureController):
         """Returns the source for the monitor output.
 
             Returns:
-                source (Model372MonitorOutputSource)
-                    * returns the source as an object of the Model372MonitorOutputSource class.
+                source (Model372MonitorOutputSource):
+                    Returns the source as an object of the Model372MonitorOutputSource class.
 
         """
         value = int(self.query("MONITOR?"))
@@ -1506,7 +1485,7 @@ class Model372(TemperatureController):
 
             Returns:
                 (dict):
-                    {resistance: float, max_current: float, units: Model372HeaterOutputUnits}
+                    {"resistance": float, "max_current": float, "units": Model372HeaterOutputUnits}
         """
         settings_string = self.query("HTRSET? 1")
         separated_settings = settings_string.split(",")
@@ -1527,7 +1506,7 @@ class Model372(TemperatureController):
 
             Returns:
                 (dict):
-                    {resistance: float, units: Model372HeaterOutputUnits}
+                    {"resistance": float, "units": Model372HeaterOutputUnits}
         """
         settings_string = self.query("HTRSET? 0")
         separated_settings = settings_string.split(",")
@@ -1535,20 +1514,19 @@ class Model372(TemperatureController):
                 'units': Model372HeaterOutputUnits(int(separated_settings[3]))}
 
     def setup_warmup_heater(self, resistance, max_current, units):
-        """Configures the current and power of the warmup heater (output channel 1). The max current must not cause
-        the heater to exceed it's max power (calculated by I = sqrt(P/R)) or it's max voltage (calculated by
-        I = V/R). Check your heater's specifications before setting the max current, and use the lower current
-        produced from the two calculations.
+        """Configures the current and power of the warmup heater (output channel 1).
+
+            The max current must not cause the heater to exceed it's max power (calculated by I = sqrt(P/R)) or it's
+            max voltage (calculated by I = V/R). Check your heater's specifications before setting the max current, and
+            use the lower current produced from the two calculations.
 
             Args:
                 resistance (Model372HeaterResistance):
-                    * Heater load in ohms, as an object of the enum type Model372HeaterResistance
-
+                    Heater load in ohms, as an object of the enum type Model372HeaterResistance.
                 max_current (float):
-                    * User specified max current in A.
-
+                    User specified max current in A.
                 units (Model372HeaterOutputUnits):
-                    * Defines which units the output is displayed in (Current (A) or Power (W))
+                    Defines which units the output is displayed in (Current (A) or Power (W)).
 
         """
         command_string = f"HTRSET 1,{resistance},0,{max_current},{units}"
@@ -1559,32 +1537,33 @@ class Model372(TemperatureController):
 
             Args:
                 resistance (float):
-                    * Heater load in ohms. Options are:
-                        * 1 - 2000
+                    Heater load in ohms. Options are: 1 - 2000.
 
                 units (Model372HeaterOutputUnits):
-                    * Defines which units the output is displayed in (Current (A) or Power (W))
+                    Defines which units the output is displayed in (Current (A) or Power (W)).
 
         """
         command_string = f"HTRSET 0,{resistance},0,0,{units}"
         self.command(command_string)
 
     def configure_analog_monitor_output_heater(self, source, high_value, low_value, settings=None):
-        """Configures the still heater's analog settings for Monitor Out mode. Can fully configure the heater by
-        including the settings parameter, but it is recommended to configure non-analog properties of the heater through
-        the configure_heater method.
+        """Configures the still heater's analog settings for Monitor Out mode.
+
+            Can fully configure the heater by including the settings parameter, but it is recommended to configure
+            non-analog properties of the heater through the configure_heater method.
 
             Args:
-                source (Model372InputSensorUnits)
-                    The units to use for channel data
-                high_value (float)
-                    The data at which the output reaches +100% output
-                low_value (float)
-                    The data at which the outputs reaches 0% output for unipolar output, or -100% for bipolar
+                source (Model372InputSensorUnits):
+                    The units to use for channel data.
+                high_value (float):
+                    The data at which the output reaches +100% output.
+                low_value (float):
+                    The data at which the outputs reach 0% output for unipolar output, or -100% for bipolar.
                     output.
-                settings (Model372HeaterOutputSettings)
+                settings (Model372HeaterOutputSettings):
                     Optional if heater is already configured using configure_heater. Gives non-analog configurations
                     for heater.
+
         """
         if settings is None:
             # Use the settings already configured to avoid changing any settings
@@ -1602,7 +1581,8 @@ class Model372(TemperatureController):
 
             Returns:
                 (dict):
-                    {source: Model372InputSensorUnits, high_value: float, low_value: float}
+                    {"source": Model372InputSensorUnits, "high_value": float, "low_value": float}
+
         """
         settings_string = self.query("ANALOG? 2")
         separated_settings = settings_string.split(",")
@@ -1612,20 +1592,20 @@ class Model372(TemperatureController):
 
     def configure_analog_heater(self, output_channel, manual_value, settings=None):
         """Configures the analog settings of a heater for modes other than Monitor Out.
-        (Use configure_analog_monitor_out_heater for Monitor Out mode). Can fully configure the heater by including the
-        settings parameter, but it is recommended to first configure the heater using the configure_heater method before
-        using this method.
+
+            (Use configure_analog_monitor_out_heater for Monitor Out mode). Can fully configure the heater by including
+            the settings parameter, but it is recommended to first configure the heater using the configure_heater
+            method before using this method.
 
             Args:
                 output_channel (Model372HeaterOutput):
                     The output to configure.
-
                 manual_value (float):
                     The value of the analog output as it applies to the set analog mode.
-
-                settings (Model372HeaterOutputSettings)
+                settings (Model372HeaterOutputSettings):
                     Optional if heater is already configured using configure_heater. Gives non-analog configurations
                     for heater.
+
         """
         if settings is None:
             settings = self.get_heater_output_settings(output_channel)
@@ -1637,14 +1617,13 @@ class Model372(TemperatureController):
         self.command(command_string)
 
     def get_analog_manual_value(self, output_channel):
-        """Returns the manual value of an analog heater. The manual value is the analog value used for Open Loop,
-        Closed Loop, Warm Up, or Still mode.
+        """Returns the manual value of an analog heater.
+
+            The manual value is the analog value used for Open Loop, Closed Loop, Warm Up, or Still mode.
 
             Args:
                 output_channel (int):
-                    The analog output to query. Options are:
-                        * 1 (Warm up heater)
-                        * 2 (Still heater)
+                    The analog output to query. Options are: 1 (Warm up heater), or 2 (Still heater).
 
             Returns:
                 (float):
@@ -1658,15 +1637,14 @@ class Model372(TemperatureController):
         """Sets the username and password to connect instrument to website.
 
             Args:
-                username (str)
-                    * username to set for login. Must be less than or equal to 15 characters. Method
-                        automatically puts quotation marks around string, so they are not needed in the
-                        string literal passed into the method.
-
-                password (str)
-                    * password to set for login. Must be less than or equal to 15 characters. Method
-                        automatically puts quotation marks around string, so they are not needed in the
-                        string literal passed into the method.
+                username (str):
+                    Username to set for login. Must be less than or equal to 15 characters. Method
+                    automatically puts quotation marks around string, so they are not needed in the
+                    string literal passed into the method.
+                password (str):
+                    Password to set for login. Must be less than or equal to 15 characters. Method
+                    automatically puts quotation marks around string, so they are not needed in the
+                    string literal passed into the method.
 
         """
         self.command(f"WEBLOG \"{username}\",\"{password}\"")
@@ -1676,10 +1654,9 @@ class Model372(TemperatureController):
 
             Returns:
                 username (str):
-                    * The current set username for the web login
-
+                    The current set username for the web login
                 password (str):
-                    * The current set password for the web login
+                    The current set password for the web login
 
         """
         username_password = self.query("WEBLOG?")
@@ -1693,23 +1670,19 @@ class Model372(TemperatureController):
                 "password": password}
 
     def get_control_loop_zone_parameters(self, output_channel, zone):
-        """Returns the settings parameters of the control loop on the specified output channel
-        and zone.
+        """Returns the settings parameters of the control loop on the specified output channel and zone.
 
             Args:
-                output_channel (int)
-                    * Channel of the heater being queried. Options are:
-                        * 0 for sample heater
-                        * 1 for warm-up heater
-
-                zone (int)
-                    * Control loop zone to configure. Options are:
-                        * 1 - 10
+                output_channel (int):
+                    Channel of the heater being queried. Options are: 0 for sample heater, or 1 for warm-up heater.
+                zone (int):
+                    Control loop zone to configure. Options are: 1 - 10.
 
             Returns:
-                settings (Model372ControlLoopZoneSettings)
-                    * An object of the Model372ControlLoopZoneSettings class containing information of the
-                        settings in the values of its variables.
+                settings (Model372ControlLoopZoneSettings):
+                    An object of the Model372ControlLoopZoneSettings class containing information of the
+                    settings in the values of its variables.
+
         """
         settings_string = self.query(f"ZONE? {str(output_channel)},{str(zone)}")
         separated_settings = settings_string.split(",")
@@ -1726,22 +1699,16 @@ class Model372(TemperatureController):
         return settings
 
     def set_control_loop_parameters(self, output_channel, zone, settings):
-        """Returns the parameters of the control loop set in the specified zone for the specified
-        heater output.
+        """Returns the parameters of the control loop set in the specified zone for the specified heater output.
 
             Args:
-                 output_channel (int)
-                    * Channel of the heater being queried. Options are:
-                        * 0 for sample heater
-                        * 1 for warm-up heater
-
-                zone (int)
-                    * Control loop zone to configure. Options are:
-                        * 1 - 10
-
-                settings (Model372ControlLoopZoneSettings)
-                    * An object of the Model372ControlLoopZoneSettings with the variable set to
-                        configure the desired settings.
+                output_channel (int):
+                    Channel of the heater being queried. Options are: 0 for sample heater, or 1 for warm-up heater.
+                zone (int):
+                    Control loop zone to configure. Options are: 1 - 10.
+                settings (Model372ControlLoopZoneSettings):
+                    An object of the Model372ControlLoopZoneSettings with the variable set to
+                    configure the desired settings.
 
         """
         # Use if statement to correctly interpret range variable
@@ -1759,15 +1726,14 @@ class Model372(TemperatureController):
         """Returns any flags raised during a measurement reading.
 
             Args:
-                input_channel (str or int)
-                    * The input whose reading status is being queried. Options are:
-                        * 1 - 16
-                        * "A" (control input)
+                input_channel (str or int):
+                    The input whose reading status is being queried. Options are:
+                    1 - 16, or "A" (control input).
 
             Returns:
-                bit_states (dict)
-                    * Dictionary containing the names of the flag and a boolean value corresponding to
-                        if the flag is raised or not.
+                bit_states (dict):
+                    Dictionary containing the names of the flag and a boolean value corresponding to
+                    if the flag is raised or not.
 
         """
         integer_representation = int(self.query(f"RDGST? {str(input_channel)}"))

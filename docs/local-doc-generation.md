@@ -1,3 +1,15 @@
+Documentation Style
+---------------------
+In this repository, use Google Python Style when documenting your code.
+Before merging your branch, make sure that your docstrings matches the style.
+
+**Google Python Style**
+https://google.github.io/styleguide/pyguide.html
+
+**Examples**
+https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html
+
+
 Building a local copy of the HTML manual
 ----------------------------------------
 1. Install python and pip

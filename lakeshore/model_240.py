@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Implements functionality unique to the Lake Shore Model 240 channel modules"""
+"""Implements functionality unique to the Lake Shore Model 240 channel modules."""
 from enum import IntEnum
 import serial
 
@@ -7,7 +7,7 @@ from .generic_instrument import GenericInstrument
 
 
 class Model240Units(IntEnum):
-    """Enumerations that specify temperature units"""
+    """Enumerations that specify temperature units."""
     KELVIN = 1
     CELSIUS = 2
     SENSOR = 3
@@ -15,27 +15,27 @@ class Model240Units(IntEnum):
 
 
 class Model240CurveFormat(IntEnum):
-    """Enumerations that specify temperature sensor curve format units"""
+    """Enumerations that specify temperature sensor curve format units."""
     VOLTS_PER_KELVIN = 2
     OHMS_PER_KELVIN = 3
     LOG_OHMS_PER_KELVIN = 4
 
 
 class Model240Coefficients(IntEnum):
-    """Enumerations that specify a positive or negative coefficient"""
+    """Enumerations that specify a positive or negative coefficient."""
     NEGATIVE = 1
     POSITIVE = 2
 
 
 class Model240SensorTypes(IntEnum):
-    """Enumerations specify types of temperature sensors"""
+    """Enumerations specify types of temperature sensors."""
     DIODE = 1
     PLATINUM_RTD = 2
     NTC_RTD = 3
 
 
 class Model240BrightnessLevel(IntEnum):
-    """Enumerations for the screen brightness levels"""
+    """Enumerations for the screen brightness levels."""
     OFF = 0
     LOW = 25
     MED_LOW = 50
@@ -44,13 +44,13 @@ class Model240BrightnessLevel(IntEnum):
 
 
 class Model240TemperatureCoefficient(IntEnum):
-    """Enumerations specify positive/negative temperature sensor curve coefficients"""
+    """Enumerations specify positive/negative temperature sensor curve coefficients."""
     NEGATIVE = 1
     POSITIVE = 2
 
 
 class Model240InputRange(IntEnum):
-    """Enumerations to specify the input range when autorange is off"""
+    """Enumerations to specify the input range when auto-range is off."""
     RANGE_DIODE = 0
     RANGE_PTRTD_1_KIL_OHMS = 0
     RANGE_NTCRTD_10_OHMS = 0
@@ -64,26 +64,22 @@ class Model240InputRange(IntEnum):
 
 
 class Model240CurveHeader:
-    """A class that configures the user curve header and corresponding parameters"""
+    """A class that configures the user curve header and corresponding parameters."""
 
     def __init__(self, curve_name, serial_number, curve_data_format, temperature_limit, coefficient):
-        """Constructor for CurveHeader class
+        """Constructor for CurveHeader class.
 
             Args:
                 curve_name (str):
-                    * Specifies curve name (limit of 15 characters)
-
+                    Specifies curve name (limit of 15 characters).
                 serial_number (str):
-                    * Specifies curve serial number (limit of 10 characters)
-
+                    Specifies curve serial number (limit of 10 characters).
                 curve_data_format (Model240CurveFormat):
-                    * Specifies the curve data format
-
+                    Specifies the curve data format.
                 temperature_limit (float):
-                    * Specifies the curve temperature limit in Kelvin
-
+                    Specifies the curve temperature limit in Kelvin.
                 coefficient (Model240TemperatureCoefficient):
-                    * Specifies the curve temperature coefficient
+                    Specifies the curve temperature coefficient.
 
         """
 
@@ -101,29 +97,22 @@ class Model240InputParameter:
         """The constructor for InputParameter class.
 
             Args:
-
                 sensor (Model240SensorTypes):
-                    * Specifies the type of sensor configured at the input
-                    * Member of the Model240SensorTypes IntEnum class
-
+                    Specifies the type of sensor configured at the input.
+                    Member of the Model240SensorTypes IntEnum class.
                 auto_range_enable (bool):
-                    Specifies if autoranging is enabled
-
+                    Specifies if auto-ranging is enabled.
                 current_reversal_enable (bool):
-                    * Specifies channel current reversal
-                    * Current reversal is used to remove thermal EMF errors on resistive sensors.
-                    * Always False if channel is a diode
-                    * False = OFF, True = ON
-
+                    Specifies channel current reversal.
+                    Current reversal is used to remove thermal EMF errors on resistive sensors.
+                    Always False if channel is a diode (False = OFF, True = ON).
                 units (Model240Units):
-                    * Member of the Model240Units IntEnum class
-                    * Specifies the preferred units parameter.
-
+                    Member of the Model240Units IntEnum class.
+                    Specifies the preferred units parameter.
                 input_enable (bool):
-                    Specifies whether the channel is disabled or enabled
-
+                    Specifies whether the channel is disabled or enabled.
                 input_range (Model240InputRange):
-                    Specifies channel range when autorange is off
+                    Specifies channel range when auto-range is off.
 
         """
 
@@ -143,11 +132,10 @@ class Model240ProfiSlot:
 
             Args:
                 channel (int):
-                    Specifies which slot to configure (1-8)
-
+                    Specifies which slot to configure (1-8).
                 temp_unit (Model240Units):
-                    * Member of Model240Units IntEnum class
-                    * Specifies the units to use for the data in this slot
+                    Member of Model240Units IntEnum class.
+                    Specifies the units to use for the data in this slot.
 
         """
 
@@ -156,7 +144,7 @@ class Model240ProfiSlot:
 
 
 class Model240(GenericInstrument):
-    """A class object representing the Lake Shore Model 240 channel modules"""
+    """A class object representing the Lake Shore Model 240 channel modules."""
 
     vid_pid = [(0x1FB9, 0x0205)]
 
@@ -174,7 +162,7 @@ class Model240(GenericInstrument):
 
             Returns:
                 id (list):
-                    List defining instrument's manufacturer, model, instrument serial, firmware version
+                    List defining instrument's manufacturer, model, instrument serial, firmware version.
 
         """
         id_parameter = self.query("*IDN?").split(",")
@@ -186,21 +174,21 @@ class Model240(GenericInstrument):
         return id_list
 
     def set_brightness(self, brightness_level):
-        """Sets the brightness for the front panel display
+        """Sets the brightness for the front panel display.
 
             Args:
                 brightness_level (Model240BrightnessLevel):
-                    * Display brightness in percent
+                    Display brightness in percent.
 
         """
         self.command(f"BRIGT {brightness_level}")
 
     def get_brightness(self):
-        """Returns the brightness level of front panel display
+        """Returns the brightness level of front panel display.
 
             Return:
                 brightness_level (Model240BrightnessLevel):
-                    * Display brightness in percent
+                    Display brightness in percent.
 
         """
         brightness_level = Model240BrightnessLevel(int(self.query("BRIGT?")))
@@ -211,13 +199,13 @@ class Model240(GenericInstrument):
 
             Args:
                 channel (int):
-                    Specifies channel (1-8)
+                    Specifies channel (1-8).
 
         """
         return self.query(f"CRDG? {channel}")
 
     def set_factory_defaults(self):
-        """Sets all configuration values to factory defaults and resets the instrument"""
+        """Sets all configuration values to factory defaults and resets the instrument."""
         self.command("DFLT 99")
 
     def get_kelvin_reading(self, channel):
@@ -225,17 +213,17 @@ class Model240(GenericInstrument):
 
             Args:
                 channel (int):
-                    Specifies channel (1-8)
+                    Specifies channel (1-8).
 
         """
         return float(self.query(f"KRDG? {channel}"))
 
     def get_fahrenheit_reading(self, channel):
-        """Returns the temperature value in Farenheit of channel selected
+        """Returns the temperature value in Farenheit of channel selected.
 
             Args:
                 channel (int):
-                    Specifies channel (1-8)
+                    Specifies channel (1-8).
 
         """
         return self.query(f"FRDG? {channel}")
@@ -245,31 +233,29 @@ class Model240(GenericInstrument):
 
             Returns:
                 reading (float):
-                    * The raw sensor reading in the units of the connected sensor
+                    The raw sensor reading in the units of the connected sensor.
 
         """
         return float(self.query(f"SRDG? {input_channel}"))
 
     def delete_curve(self, curve):
-        """Deletes the user curve
+        """Deletes the user curve.
 
             Args:
                 curve (int):
-                    * Specifies a user curve to delete
+                    Specifies a user curve to delete.
 
         """
         self.command(f"CRVDEL {curve}")
 
     def set_curve_header(self, input_channel, curve_header):
-        """Configures the user curve header
+        """Configures the user curve header.
 
             Args:
                 input_channel (int):
-                    * Specifies which input_channel curve to configure
-                    * 1 - 8
-
+                    Specifies which input_channel curve to configure (1 - 8).
                 curve_header (CurveHeader):
-                    * A CurveHeader class object containing the desired curve information
+                    A CurveHeader class object containing the desired curve information.
 
         """
         command_string = (f"CRVHDR {input_channel},{curve_header.curve_name},{curve_header.serial_number}," +
@@ -277,15 +263,15 @@ class Model240(GenericInstrument):
         self.command(command_string)
 
     def get_curve_header(self, curve):
-        """Returns parameters set on a particular user curve header
+        """Returns parameters set on a particular user curve header.
 
             Args:
                 curve:
-                    * Specifies a curve to retrieve
+                    Specifies a curve to retrieve.
 
             Returns:
                 header (CurveHeader):
-                    * A CurveHeader class object containing the desired curve information
+                    A CurveHeader class object containing the desired curve information.
 
         """
         response = self.query(f"CRVHDR? {curve}")
@@ -298,56 +284,51 @@ class Model240(GenericInstrument):
         return header
 
     def set_curve_data_point(self, channel, index, units, temp):
-        """Configures a user curve point
+        """Configures a user curve point.
 
             Args:
                 channel (int):
-                    Specifies which channel curve to configure (1-8)
-
+                    Specifies which channel curve to configure (1-8).
                 index (int):
-                    Specifies the points index in the curve (1-200)
-
+                    Specifies the points index in the curve (1-200).
                 units (float):
-                    Specifies sensor units for this point to 6 digits
-
+                    Specifies sensor units for this point to 6 digits.
                 temp (float):
-                    Specifies the corresponding temperature in Kelvin for this point to 6 digits
+                    Specifies the corresponding temperature in Kelvin for this point to 6 digits.
 
         """
         self.command(f"CRVPT {channel},{index},{units},{temp}")
 
     def get_curve_data_point(self, channel, index):
-        """Returns a standard or user curve data point
+        """Returns a standard or user curve data point.
 
             Args:
                 channel (int):
-                    Specifies channel (1-8)
-
+                    Specifies channel (1-8).
                 index (int):
-                    Specifies the points index in the curve (1–200)
+                    Specifies the points index in the curve (1–200).
 
         """
         return self.query(f"CRVPT? {channel},{index}")
 
     def set_filter(self, channel, length):
-        """Sets the channel filter parameter
+        """Sets the channel filter parameter.
 
             Args:
                 channel (int):
-                    Specifies which channel to configure (1-8)
-
+                    Specifies which channel to configure (1-8).
                 length (int):
-                    Specifies the number of 1 ms points to average for each update (1-100)
+                    Specifies the number of 1 ms points to average for each update (1-100).
 
         """
         self.command(f"FILTER {channel},{length}")
 
     def get_filter(self, channel):
-        """Returns the filter parameter
+        """Returns the filter parameter.
 
             Args:
                 channel (int):
-                    Specifies channel (1-8)
+                    Specifies channel (1-8).
 
         """
         return self.query(f"FILTER? {channel}")
@@ -357,10 +338,9 @@ class Model240(GenericInstrument):
 
             Args:
                 channel (int):
-                    Specifies which channel to configure (1-8)
-
+                    Specifies which channel to configure (1-8).
                 name (str):
-                    Specifies the name to associate with the sensor channel
+                    Specifies the name to associate with the sensor channel.
 
         """
         self.command(f"INNAME {channel},{name}")
@@ -370,7 +350,7 @@ class Model240(GenericInstrument):
 
             Args:
                 channel (int):
-                    Specifies channel (1-8)
+                    Specifies channel (1-8).
 
         """
         return str(self.query(f"INNAME? {channel}"))
@@ -380,10 +360,9 @@ class Model240(GenericInstrument):
 
             Args:
                 channel (int):
-                    Specifies which channel to configure (1-8)
-
+                    Specifies which channel to configure (1-8).
                 input_parameter (InputParameter):
-                    See InputParameter class
+                    See InputParameter class.
 
         """
         if input_parameter.auto_range_enable is None:
@@ -398,11 +377,11 @@ class Model240(GenericInstrument):
         self.command(command_string)
 
     def get_input_parameter(self, channel):
-        """Returns channel type parameter details
+        """Returns channel type parameter details.
 
             Args:
                 channel (int):
-                    Specifies channel (1-8)
+                    Specifies channel (1-8).
 
         """
         response = self.query(f"INTYPE? {channel}")
@@ -420,48 +399,49 @@ class Model240(GenericInstrument):
 
             Args:
                 name (str):
-                    Specifies the name or description to help identify the module
+                    Specifies the name or description to help identify the module.
 
         """
         self.command(f"MODNAME {name}")
 
     def get_modname(self):
-        """Returns module name
+        """Returns module name.
 
             Returns:
                 modname (str):
-                    Specifies name of module
+                    Specifies name of module.
 
         """
         return self.query("MODNAME?")
 
     def set_profibus_slot_count(self, count):
-        """Configures the number of PROFIBUS slots for the instrument to present to the bus as a modular station
+        """Configures the number of PROFIBUS slots for the instrument to present to the bus as a modular station.
 
             Args:
                 count (int):
-                    Specifies the number of PROFIBUS slots (1-8)
+                    Specifies the number of PROFIBUS slots (1-8).
 
         """
         self.command(f"PROFINUM {count}")
 
     def get_profibus_slot_count(self):
-        """Returns the number of PROFIBUS slots for the instrument present to the bus as a modular station
+        """Returns the number of PROFIBUS slots for the instrument present to the bus as a modular station.
 
             Returns:
                 slot_count (str):
-                    Specifies PROFIBUS slot count
+                    Specifies PROFIBUS slot count.
 
         """
         return self.query("PROFINUM?")
 
     def set_profibus_address(self, address):
-        """Configures the PROFIBUS address for the module. An address of 126 indicates that it is not configured and it
-        then can be set by a PROFIBUS master.
+        """Configures the PROFIBUS address for the module.
+
+            An address of 126 indicates that it is not configured, and it then can be set by a PROFIBUS master.
 
             Args:
                 address (str):
-                    Specifies the PROFIBUS address (1-126)
+                    Specifies the PROFIBUS address (1-126).
 
         """
         self.command(f"ADDR {address}")
@@ -471,21 +451,22 @@ class Model240(GenericInstrument):
 
             Returns:
                 address (str):
-                    Specifies PROFIBUS address of module
+                    Specifies PROFIBUS address of module.
 
         """
         return int(self.query("ADDR?"))
 
     def set_profibus_slot_configuration(self, slot, profislot_config):
-        """Configures what data to present on the given PROFIBUS slot. Note that the correct
-            number of slots must be configured with the PROFINUM command, or the slot may be ignored.
+        """Configures what data to present on the given PROFIBUS slot.
+
+            Note that the correct number of slots must be configured with the PROFINUM command, or the slot may be
+            ignored.
 
             Args:
                 slot (int):
-                    Specifies the slot to be configured
-
+                    Specifies the slot to be configured.
                 profislot_config (Model240ProfiSlot):
-                    A Model240ProfiSlot class object containing the desired PROFIBUS slot configuration information
+                    A Model240ProfiSlot class object containing the desired PROFIBUS slot configuration information.
 
         """
         self.command(f"PROFISLOT {slot},{profislot_config.slot_channel},{profislot_config.slot_units}")
@@ -495,7 +476,7 @@ class Model240(GenericInstrument):
 
             Returns:
                 slot_config (Model240ProfiSlot):
-                    See Model240ProfiSlot class
+                    See Model240ProfiSlot class.
 
         """
         response = self.query(f"PROFISLOT? {slot_num}").split(",")
@@ -507,22 +488,24 @@ class Model240(GenericInstrument):
 
             Returns:
                 status (str):
-                    Specifies connection status of PROFIBUS
+                    Specifies connection status of PROFIBUS.
 
         """
         return self.query("PROFISTAT?")
 
     def get_channel_reading_status(self, channel):
-        """The integer returned represents the sum of the bit weighting of the channel status flag
-            bits. A “000” response indicates a valid reading is present.
+        """Returns the current status indicator of the specified channel
+
+            The integer returned represents the sum of the bit weighting of the channel status flag bits. A “000”
+            response indicates a valid reading is present.
 
             Args:
                 channel (int):
-                    Specifies which channel to query (1-8)
+                    Specifies which channel to query (1-8).
 
             Returns:
                 bit_status (dict):
-                    Dictionary containing the current status indicator
+                    Dictionary containing the current status indicator.
 
         """
         bit_status = {}
@@ -545,11 +528,11 @@ class Model240(GenericInstrument):
         return bit_status
 
     def get_sensor_units_channel_reading(self, channel):
-        """Returns the sensor units value of channel being queried
+        """Returns the sensor units value of channel being queried.
 
             Args:
                 channel (int):
-                    Specifies which channel to query (1-8)
+                    Specifies which channel to query (1-8).
 
         """
         return self.query(f"SRDG? {channel}")

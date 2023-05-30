@@ -1,11 +1,11 @@
-"""Implements functionality unique to the Lake Shore Model 350 cryogenic temperature controller"""
+"""Implements functionality unique to the Lake Shore Model 350 cryogenic temperature controller."""
 import serial
 
 from .generic_instrument import GenericInstrument
 
 
 class Model350(GenericInstrument):
-    """A class object representing the Lake Shore Model 350 cryogenic temperature controller"""
+    """A class object representing the Lake Shore Model 350 cryogenic temperature controller."""
 
     vid_pid = [(0x1FB9, 0x0302)]
 

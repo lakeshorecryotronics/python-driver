@@ -17,7 +17,7 @@ DataPoint = namedtuple("DataPoint", ['elapsed_time', 'time_stamp',
 
 
 class TeslameterOperationRegister(RegisterBase):
-    """Class object representing the operation status register"""
+    """Class object representing the operation status register."""
 
     bit_names = [
         "no_probe",
@@ -43,7 +43,7 @@ class TeslameterOperationRegister(RegisterBase):
 
 
 class TeslameterQuestionableRegister(RegisterBase):
-    """Class object representing the questionable status register"""
+    """Class object representing the questionable status register."""
 
     bit_names = [
         "x_axis_sensor_error",
@@ -82,7 +82,7 @@ class TeslameterQuestionableRegister(RegisterBase):
 
 
 class Teslameter(XIPInstrument):
-    """A class object representing a Lake Shore F41 or F71 Teslameter"""
+    """A class object representing a Lake Shore F41 or F71 Teslameter."""
 
     vid_pid = [(0x1FB9, 0x0405), (0x1FB9, 0x0406)]
 
@@ -97,7 +97,8 @@ class Teslameter(XIPInstrument):
                  **kwargs):
 
         # Call the parent init, then fill in values specific to the Teslameter
-        XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port, **kwargs)
+        XIPInstrument.__init__(self, serial_number, com_port, baud_rate, flow_control, timeout, ip_address, tcp_port,
+                               **kwargs)
         self.status_byte_register = StatusByteRegister
         self.standard_event_register = StandardEventRegister
         self.operation_register = TeslameterOperationRegister
@@ -106,17 +107,17 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version('1.1.2018091003')
     def stream_buffered_data(self, length_of_time_in_seconds, sample_rate_in_ms):
         """Yield a generator object for the buffered field data.
-        Useful for getting the data in real time when doing a lengthy acquisition.
+
+            Useful for getting the data in real time when doing a lengthy acquisition.
 
             Args:
                 length_of_time_in_seconds (float):
                     The period of time over which to stream the data.
-
                 sample_rate_in_ms (int):
                     The averaging window (sampling period) of the instrument.
 
             Returns:
-               A generator object that returns the data as datapoint tuples
+               A generator object that returns the data as datapoint tuples.
         """
 
         # Set the sample rate
@@ -174,17 +175,16 @@ class Teslameter(XIPInstrument):
 
     @requires_firmware_version('1.1.2018091003')
     def get_buffered_data_points(self, length_of_time_in_seconds, sample_rate_in_ms):
-        """Returns a list of namedtuples that contain the buffered data.
+        """Returns a list of named tuples that contain the buffered data.
 
             Args:
                 length_of_time_in_seconds (float):
                     The period of time over which to collect the data.
-
                 sample_rate_in_ms (int):
                     The averaging window (sampling period) of the instrument.
 
             Returns:
-               The data as a list of datapoint tuples
+               The data as a list of datapoint tuples.
         """
         return list(self.stream_buffered_data(length_of_time_in_seconds, sample_rate_in_ms))
 
@@ -195,10 +195,8 @@ class Teslameter(XIPInstrument):
             Args:
                 length_of_time_in_seconds (float):
                     The period of time over which to collect the data.
-
                 sample_rate_in_ms (int):
                     The averaging window (sampling period) of the instrument.
-
                 file (file_object):
                     Field measurement data will be written to this file object in a CSV format.
         """
@@ -312,18 +310,15 @@ class Teslameter(XIPInstrument):
 
             Args:
                 mode (str):
-                    * Modes are as follows:
-                    * "DC"
-                    * "AC" (0.1 - 500 Hz)
-                    * "HIFR" (50 Hz - 100 kHz)
-
+                    Modes are as follows:
+                    "DC",
+                    "AC" (0.1 - 500 Hz), and
+                    "HIFR" (50 Hz - 100 kHz).
                 autorange (bool):
-                    Chooses whether the instrument automatically selects the best range for the measured value
-
+                    Chooses whether the instrument automatically selects the best range for the measured value.
                 expected_field (float):
                     When autorange is False, the expected_field is the largest field expected to be measured.
                     It sets the lowest instrument field range capable of measuring the value.
-
                 averaging_samples (int):
                     The number of field samples to average. Each sample is 10 milliseconds of field information.
 
@@ -348,11 +343,10 @@ class Teslameter(XIPInstrument):
 
             Args:
                 temperature_source (str):
-                    * Determines where the temperature measurement is drawn from. Options are:
-                    * "PROBE" (Compensation is based on measurement of a thermistor in the probe)
-                    * "MTEM" (Compensation is based on a manual temperature value provided by the user)
-                    * "NONE" (Temperature compensation is not applied)
-
+                    Determines where the temperature measurement is drawn from. Options are:
+                    "PROBE" (Compensation is based on measurement of a thermistor in the probe),
+                    "MTEM" (Compensation is based on a manual temperature value provided by the user),
+                    "NONE" (Temperature compensation is not applied).
                 manual_temperature (float):
                     Sets the temperature provided by the user for MTEMP (manual temperature) source in Celsius.
 
@@ -374,9 +368,9 @@ class Teslameter(XIPInstrument):
 
             Args:
                 units (str):
-                    * A unit of magnetic field. Options are:
-                    * "TESLA"
-                    * "GAUSS"
+                    A unit of magnetic field. Options are:
+                    "TESLA", or
+                    "GAUSS".
 
         """
         self.command(f"UNIT:FIELD {units}")
@@ -392,7 +386,6 @@ class Teslameter(XIPInstrument):
             Args:
                 voltage_limit (float):
                     The maximum voltage permitted at the field control output. Must be between 0 and 10V.
-
                 slew_rate_limit (float):
                     The maximum rate of change of the field control output voltage in volts per second.
 
@@ -414,10 +407,9 @@ class Teslameter(XIPInstrument):
 
             Args:
                 mode (str):
-                    * Determines whether the field control is in open or closed loop mode
-                    * "CLLOOP" (closed loop control)
-                    * "OPLOOP" (open loop control, voltage output)
-
+                    Determines whether the field control is in open or closed loop mode. Options:
+                    "CLLOOP" (closed loop control), or
+                    "OPLOOP" (open loop control, voltage output).
                 output_enabled (bool):
                     Turn the field control voltage output on or off.
 
@@ -443,13 +435,11 @@ class Teslameter(XIPInstrument):
                     Also known as P or Proportional in PID control.
                     This controls how strongly the control output reacts to the present error.
                     Note that the integral value is multiplied by the gain value.
-
                 integral (float):
                     Also known as I or Integral in PID control.
-                    This controls how strongly the control output reacts to the past error *history*
-
+                    This controls how strongly the control output reacts to the past error *history*.
                 ramp_rate (float):
-                    This value controls how quickly the present field setpoint will transition to a new setpoint.
+                    This value controls how quickly the present field set-point will transition to a new set-point.
                     The ramp rate is configured in field units per second.
 
         """
@@ -491,7 +481,7 @@ class Teslameter(XIPInstrument):
 
     @requires_firmware_version("1.4.2019061411")
     def set_analog_output(self, analog_output_mode):
-        """Configures what signal is provided by the analog output BNC"""
+        """Configures what signal is provided by the analog output BNC."""
         warnings.warn(
             "set_analog_output will be depreciated in a future version, use set_analog_output_signal instead",
             PendingDeprecationWarning
@@ -500,19 +490,19 @@ class Teslameter(XIPInstrument):
 
     @requires_firmware_version("1.6.2019092002")
     def set_analog_output_signal(self, analog_output_mode):
-        """Configures what signal is provided by the analog output BNC
+        """Configures what signal is provided by the analog output BNC.
 
             Args:
                 analog_output_mode (str):
-                    * Configures what signal is provided by the analog output BNC. Options are:
-                    * "OFF"  (output off)
-                    * "XRAW" (raw amplified X channel Hall voltage)
-                    * "YRAW" (raw amplified Y channel Hall voltage)
-                    * "ZRAW" (raw amplified Z channel Hall voltage)
-                    * "XCOR" (Corrrected X channel field measurement)
-                    * "YCOR" (Corrected Y channel field measurement)
-                    * "ZCOR" (Corrected Z channel field measurement)
-                    * "MCOR" (Corrected magnitude field measurement)
+                    Configures what signal is provided by the analog output BNC. Options:
+                    "OFF" (output off),
+                    "XRAW" (raw amplified X channel Hall voltage),
+                    "YRAW" (raw amplified Y channel Hall voltage),
+                    "ZRAW" (raw amplified Z channel Hall voltage),
+                    "XCOR" (Corrrected X channel field measurement),
+                    "YCOR" (Corrected Y channel field measurement),
+                    "ZCOR" (Corrected Z channel field measurement), or
+                    "MCOR" (Corrected magnitude field measurement)
 
         """
         self.command(f"SOURCE:AOUT {analog_output_mode}")
@@ -524,7 +514,6 @@ class Teslameter(XIPInstrument):
             Args:
                 scale_factor (float):
                     Scale factor in volts per unit field.
-
                 baseline (float):
                     The field value at which the analog output voltage is zero.
 
@@ -537,7 +526,7 @@ class Teslameter(XIPInstrument):
         return float(self.query("SOURCE:AOUT:SFACTOR?")), float(self.query("SOURCE:AOUT:BASELINE?"))
 
     def get_analog_output(self):
-        """Returns what signal is being provided by the analog output"""
+        """Returns what signal is being provided by the analog output."""
         warnings.warn(
             "get_analog_output will be depreciated in a future version, use get_analog_output_signal instead",
             PendingDeprecationWarning
@@ -545,127 +534,129 @@ class Teslameter(XIPInstrument):
         return self.query("SOURCE:AOUT?")
 
     def get_analog_output_signal(self):
-        """Returns what signal is being provided by the analog output"""
+        """Returns what signal is being provided by the analog output."""
         return self.query("SOURCE:AOUT?")
 
     @requires_firmware_version("1.6.2019092002")
     def enable_high_frequency_filters(self):
-        """Applies filtering to the high frequency RMS measurements"""
+        """Applies filtering to the high frequency RMS measurements."""
         self.command("SENSE:FILT 1")
 
     @requires_firmware_version("1.6.2019092002")
     def disable_high_frequency_filters(self):
-        """Turns off filtering of the high frequency mode measurements"""
+        """Turns off filtering of the high frequency mode measurements."""
         self.command("SENSE:FILT 0")
 
     @requires_firmware_version("1.6.2019092002")
     def set_frequency_filter_type(self, filter_type):
-        """Configures which filter is applied to the high frequency measurements
+        """Configures which filter is applied to the high frequency measurements.
 
             Args:
                 filter_type (str):
-                    * "LPASS"  (low pass filter)
-                    * "HPASS" (high pass filter)
-                    * "BPASS" (band pass filter)
+                    Options: "LPASS" (low pass filter), "HPASS" (high pass filter), or "BPASS" (band pass filter).
         """
         self.command(f"SENSE:FILT:TYPE {str(filter_type)}")
 
     @requires_firmware_version("1.6.2019092002")
     def get_frequency_filter_type(self):
-        """Returns the type of filter that is or will be applied to the high frequency measurements"""
+        """Returns the type of filter that is or will be applied to the high frequency measurements."""
         return self.query("SENSE:FILTER:TYPE?")
 
     @requires_firmware_version("1.6.2019092002")
     def get_low_pass_filter_cutoff(self):
-        """Returns the cutoff frequency setting of the low pass filter"""
+        """Returns the cutoff frequency setting of the low pass filter."""
         return float(self.query("SENSE:FILTER:LPASS:CUTOFF?"))
 
     @requires_firmware_version("1.6.2019092002")
     def set_low_pass_filter_cutoff(self, cutoff_frequency):
-        """Configures the low pass filter cutoff
+        """Configures the low pass filter cutoff.
 
             Args:
-                cutoff_frequency (float)
+                cutoff_frequency (float):
+                    Options: NONE, F10, F30, F100, F300, F1000, F3000, or F10000
+                    F10 = 10 Hz, etc.
         """
         self.command(f"SENSE:FILTER:LPASS:CUTOFF {str(cutoff_frequency)}")
 
     @requires_firmware_version("1.6.2019092002")
     def get_high_pass_filter_cutoff(self):
-        """Returns the cutoff frequency setting of the low pass filter"""
+        """Returns the cutoff frequency setting of the low pass filter."""
         return float(self.query("SENSE:FILTER:HPASS:CUTOFF?"))
 
     @requires_firmware_version("1.6.2019092002")
     def set_high_pass_filter_cutoff(self, cutoff_frequency):
-        """Configures the high pass filter cutoff
+        """Configures the high pass filter cutoff.
 
             Args:
-                cutoff_frequency (float)
+                cutoff_frequency (float):
+                    Options: NONE, F10, F30, F100, F300, F1000, F3000, or F10000
+                    F10 = 10 Hz, etc.
         """
         self.command(f"SENSE:FILTER:HPASS:CUTOFF {str(cutoff_frequency)}")
 
     @requires_firmware_version("1.6.2019092002")
     def get_band_pass_filter_center(self):
-        """Returns the center of the band pass filter"""
+        """Returns the center of the band pass filter."""
         return float(self.query("SENSE:FILTER:BPASS:CENTER?"))
 
     @requires_firmware_version("1.6")
     def set_band_pass_filter_center(self, center_frequency):
-        """Configures the band pass filter parameters
+        """Configures the band pass filter parameters.
 
             Args:
                 center_frequency (float):
-                    The frequency at which the gain of the filter is 1
+                    The frequency at which the gain of the filter is 1.
         """
         self.command(f"SENSE:FILTER:BPASS:CENTER {str(center_frequency)}")
 
     @requires_firmware_version("1.6.2019092002")
     def enable_qualifier(self):
-        """Enables the qualifier"""
+        """Enables the qualifier."""
         self.command("SENSE:QUALIFIER 1")
 
     @requires_firmware_version("1.6.2019092002")
     def disable_qualifier(self):
-        """Disables the qualifier"""
+        """Disables the qualifier."""
         self.command("SENSE:QUALIFIER 0")
 
     @requires_firmware_version("1.6.2019092002")
     def is_qualifier_condition_met(self):
-        """Returns whether the qualifier condition is met"""
+        """Returns whether the qualifier condition is met."""
         return bool(int(self.query("SENSE:QUALIFIER:CONDITION?")))
 
     @requires_firmware_version("1.6.2019092002")
     def enable_qualifier_latching(self):
-        """Enables the qualifier condition latching"""
+        """Enables the qualifier condition latching."""
         self.command("SENSE:QUALIFIER:LATCH 1")
 
     @requires_firmware_version("1.6.2019092002")
     def disable_qualifier_latching(self):
-        """Disables the qualifier condition latching"""
+        """Disables the qualifier condition latching."""
         self.command("SENSE:QUALIFIER:LATCH 0")
 
     @requires_firmware_version("1.6.2019092002")
     def get_qualifier_latching_setting(self):
-        """Returns whether the qualifier latches"""
+        """Returns whether the qualifier latches."""
         return self.query("SENSE:QUALIFIER:LATCH?")
 
     @requires_firmware_version("1.6.2019092002")
     def set_qualifier_latching_setting(self, latching):
-        """Sets whether the qualifier latches
+        """Sets whether the qualifier latches.
 
             Args:
                 latching (bool):
-                    Determines whether the qualifier latches
+                    Determines whether the qualifier latches.
         """
         self.command(f"SENSE:QUALIFIER:LATCH {str(latching)}")
 
     @requires_firmware_version("1.6.2019092002")
     def reset_qualifier_latch(self):
-        """Resets the condition status of the qualifier"""
+        """Resets the condition status of the qualifier."""
         self.command("SENSE:QUALIFIER:LRESET")
 
     @requires_firmware_version("1.6.2019092002")
     def get_qualifier_configuration(self):
-        """Returns the threshold mode and field threshold values"""
+        """Returns the threshold mode and field threshold values."""
         response = self.query("SENSE:QUALIFIER:THRESHOLD?")
         elements = response.split(',')
         mode = elements[0]
@@ -682,19 +673,12 @@ class Teslameter(XIPInstrument):
 
             Args:
                 mode (str):
-                    The type of threshold condition used by the qualifer
-                    * "OVER"
-                    * "UNDER"
-                    * "BETWEEN"
-                    * "OUTSIDE"
-                    * "ABSBETWEEN"
-                    * "ABSOUTSIDE"
-
+                    The type of threshold condition used by the qualifier.
+                    Options: "OVER", "UNDER", "BETWEEN", "OUTSIDE", "ABSBETWEEN", or "ABSOUTSIDE".
                 lower_field (float):
-                    The lower field value threshold used by the qualifier
-
+                    The lower field value threshold used by the qualifier.
                 upper_field (float):
-                    The upper field value threshold used by the qualifier. Not used for OVER or UNDER
+                    The upper field value threshold used by the qualifier. Not used for OVER or UNDER.
         """
         if upper_field is None:
             self.command(f"SENSE:QUALIFIER:THRESHOLD {mode},{str(lower_field)}")
