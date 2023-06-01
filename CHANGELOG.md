@@ -10,9 +10,6 @@ Added:
 Fixed:
 - Inconsistencies in documentation style
 
-Removed:
-- Obsolete single sweep abort function
-
 Release 1.6.1
 -------------
 Added:
