@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+Release 1.7.0
+-------------
+Added:
+- Alternative instrument connection support (Ex. GPIB)
+- Frequency sweep support for M81
+
+Fixed:
+- Inconsistencies in documentation style
+
 Release 1.6.1
 -------------
 Added:
