@@ -13,6 +13,7 @@ The [Lake Shore](https://www.lakeshore.com) python driver allows users to quickl
 ## Supported Products
 Advanced support
 * [F41 and F71 Teslameters](https://www.lakeshore.com/products/Gaussmeters/F71-F41-teslameters/Pages/Overview.aspx)
+* [Model 121 Programmable DC Current Source](https://www.lakeshore.com/products/categories/overview/temperature-products/ac-and-dc-current-sources/model-121-programmable-dc-current-source)
 * [155 Precision I/V Source](https://www.lakeshore.com/products/measureready/model-155/Pages/Overview.aspx) 
 * [M91 FastHall Controller](https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-instruments/measureready-m91-fasthall-measurement-controller) 
 * [M81 Synchronous Source Measure System](https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-m81-synchronous-source-measure-system/measureready-m81-synchronous-source-measure-system)
@@ -22,8 +23,7 @@ Advanced support
 * [Model 336 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-336-cryogenic-temperature-controller)
 * [Model 372 AC Resistance Bridge](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-372-ac-resistance-bridge-temperature-controller)
 
-Basic support
-* [Model 121 Programmable DC Current Source](https://www.lakeshore.com/products/categories/overview/temperature-products/ac-and-dc-current-sources/model-121-programmable-dc-current-source)
+  Basic support
 * [Model 350 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-350-cryogenic-temperature-controller)
 * [Model 425 Gaussmeter](https://www.lakeshore.com/products/categories/overview/magnetic-products/gaussmeters-teslameters/model-425-gaussmeter)
 * [Model 643 Electromagnet Power Supply](https://www.lakeshore.com/products/categories/overview/material-characterization-products/electromagnet-power-supplies/model-643-electromagnet-power-supply)
