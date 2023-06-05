@@ -157,6 +157,96 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command("STOP")
 
+    def set_internal_water(self, mode: int) -> None:
+        """Configures the internal water mode.
+
+        Args:
+            mode (int): Internal water mode (0, 1, 2, or 3). 0 = Manual-Off, 1 = Manual-On, 2 = Auto, 3 = Disabled.
+        """
+        self.command(f"INTWTR {mode}")
+
+    def get_internal_water(self) -> int:
+        """Returns the internal water mode.
+
+        Returns:
+            int: Internal water mode. 0 = Manual-Off, 1 = Manual-On, 2 = Auto, 3 = Disabled.
+
+        """
+        return int(self.query(f"INTWTR?"))
+
+    def set_magnet_water(self, mode: int) -> None:
+        """Configures the magnet water mode.
+
+        Args:
+            mode (int): Magnet water mode. (0, 1, 2, or 3). 0 = Manual-Off, 1 = Manual-On, 2 = Auto, 3 = Disabled.
+        """
+        self.command(f"MAGWTR {mode}")
+
+    def get_magnet_water(self) -> int:
+        """Returns the magnet water mode.
+
+        Returns:
+            int: Magnet water mode. 0 = Manual-Off, 1 = Manual-On, 2 = Auto, 3 = Disabled.
+        """
+        return int(self.query("MAGWTR?"))
+
+    def set_display_brightness(self, brightness_level: int) -> None:
+        """Specifies display brightness.
+
+        Args:
+            brightness_level (int): The display brightness. 0=25%, 1=50%, 2=75%, 3=100%.
+        """
+        self.command(f"DISP {brightness_level}")
+
+    def get_display_brightness(self) -> int:
+        """Returns display brightness.
+
+        Returns:
+            int: The display brightness. 0=25%, 1=50%, 2=75%, 3=100%.
+        """
+        return int(self.query(f"DISP?"))
+
+    def set_front_panel_lock(self, lock_state: int, code: int) -> None:
+        """Sets the lock status of the front panel keypad.
+
+        Args:
+            lock_state (int): The lock state to be set (0, 1, or 2). 0=unlock, 1=lock, and 2=lock limits.
+            code (int): Keypad lock code required to make changes to the lock state of the front panel.
+        """
+        self.command(f"LOCK {lock_state},{code}")
+
+    def get_front_panel_status(self) -> int:
+        """Returns what lock state the front panel keypad is in.
+
+        Returns:
+            int: The state of the front panel keypad lock (0, 1, or 2). 0=unlock, 1=lock, 2=lock limits.
+        """
+        return int(self.query("LOCK?").split(',')[0])
+
+    def get_front_panel_lock_code(self) -> int:
+        """Returns the lock code for the front panel.
+
+        Returns:
+            int: Front panel lock code.
+        """
+        return int(self.query("LOCK?").split(',')[1])
+
+    def set_programming_mode(self, mode: int) -> None:
+        """Sets the current programming mode of the instrument.
+
+        Args:
+            mode (int): Programming mode (0, 1, or 2). 0=Internal, 1=External, 2=Sum.
+        """
+        self.command(f"XPGM {mode}")
+
+    def get_programming_mode(self) -> int:
+        """Returns the current programming mode of the instrument.
+
+        Returns:
+            int: Programming mode. 0=Internal, 1=External, 2=Sum.
+        """
+        return int(self.query("XPGM?"))
+
 
 # Create an aliases using the product names
 Model643 = ElectromagnetPowerSupply
