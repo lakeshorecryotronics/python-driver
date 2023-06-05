@@ -247,6 +247,46 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return int(self.query("XPGM?"))
 
+    def set_ieee_488(self, terminator: int, eoi_enable: int, address:int) -> None:
+        """Configures the IEEE-488 interface.
+
+        Args:
+            terminator(int): the terminator. 0=<CR><LF>, 1=<LF><CR>, 2=<LF>, 3 =no terminator (must
+                have EOI enabled).
+            eoi_enable(int): Sets EOI (End of Interrupt) mode. 0=Enabled, 1=Disabled.
+            address (int): Specifies IEEE address. 1 - 30(0 and 31 are reserved).
+        """
+        self.command(f"IEEE {terminator},{eoi_enable},{address}")
+
+    def get_iee_488(self) -> list[int]:
+        """Returns IEEE-488 interface configuration.
+
+        Returns:
+            list[int]: [terminator, eoi_enable, address]
+                terminator(int): the terminator. 0=<CR><LF>, 1=<LF><CR>, 2=<LF>, 3=no terminator (must
+                have EOI enabled).
+                eoi_enable(int): Sets EOI (End of Interrupt) mode. 0=Enabled, 1=Disabled.
+                address (int): Specifies IEEE address. 1 - 30(0 and 31 are reserved).
+        """
+        return [int(x) for x in self.query("IEEE?").split(',')]
+
+    def set_ieee_interface_mode(self, mode: int) -> None:
+        """Sets the interface mode of the instrument.
+
+        Args:
+            mode (int): Interface mode. 0, 1 or 2. 0=local, 1=remote, and 2=remote with local lockout.
+        """
+        self.command(f"MODE {mode}")
+
+    def get_ieee_interface_mode(self) -> int:
+        """Returns the interface mode of the instrument.
+
+        Returns:
+            int: Interface mode of the instrument. 0, 1 or 2. 0=local, 1=remote, and 2=remote with local lockout.
+        """
+        return int(self.query("MODE?"))
+
+
 
 # Create an aliases using the product names
 Model643 = ElectromagnetPowerSupply
