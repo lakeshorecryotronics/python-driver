@@ -5,7 +5,7 @@ from .generic_instrument import GenericInstrument, RegisterBase, _parse_response
 
 
 class ElectromagnetPowerSupply(GenericInstrument):
-    """ class object representing a Lake Shore Model 643 or 648 electromagnet power supply."""
+    """Class object representing a Lake Shore Model 643 or 648 electromagnet power supply."""
     vid_pid = [(0x1FB9, 0x0601), (0x1FB9, 0x0602)]  # 643, 648
 
     def __init__(self,
@@ -208,6 +208,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
 
         Args:
             query_string (str): A serial query ending in a question mark.
+
             check_errors (bool): Specifies if command errors should be checked. Optional parameter. Defaults to True.
 
         Returns:
@@ -242,12 +243,13 @@ class ElectromagnetPowerSupply(GenericInstrument):
     def set_limits(self, max_current: float, max_ramp_rate: float) -> None:
         """Sets the upper setting limits for output current, and output current ramp rate.
 
-            This is a software limit that will limit the setting of the values. Only limits internal
-            setting of the current.
+            This is a software limit that will limit the setting of the values. Only limits internal setting of the
+            current.
 
         Args:
-            max_current (float): The maximum output current setting allowed. The Model
-                643 bounds are 0.0000 - 70.1000 A. The Model 648 bounds are 0.0000 - 135.1000 A.
+            max_current (float): The maximum output current setting allowed. The Model 643 bounds are 0.0000 - 70.1000
+                A. The Model 648 bounds are 0.0000 - 135.1000 A.
+
             max_ramp_rate (float): The maximum output current ramp rate setting allowed (0.0001 - 50.000 A/s).
         """
         self.command(f"LIMIT {max_current}, {max_ramp_rate}")
@@ -269,7 +271,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
             This value will be used in both the positive and negative directions. Setting value is limited by set_limit.
 
         Args:
-            ramp_rate (float):  The rate at which the current will ramp when a new output current setting is entered
+            ramp_rate (float): The rate at which the current will ramp when a new output current setting is entered
                 (0.0001 - 50.000 A/s).
         """
         self.command(f"RATE {ramp_rate}")
@@ -289,10 +291,9 @@ class ElectromagnetPowerSupply(GenericInstrument):
 
         Args:
             segment (int): Specifies the ramp segment to be modified (1 - 5).
-            current (float): Specifies the upper output current setting that will use this segment. The Model
-                643 bounds are 0.0000 - 70.1000 A. The Model 648 bounds are 0.0000 - 135.1000 A.
-            ramp_rate (float): Specifies the rate at which the current will ramp at when the output current is in this
-                segment. (0.0001 - 50.000 A/s)
+            current (float): Specifies the upper output current setting that will use this segment.
+            ramp_rate (float): Specifies the rate at which the current will ramp. (0.0001 - 50.000 A/s).
+
         """
         self.command(f"RSEGS {segment}, {current}, {ramp_rate}")
 
@@ -464,8 +465,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """Configures the IEEE-488 interface.
 
         Args:
-            terminator(int): the terminator. 0=<CR><LF>, 1=<LF><CR>, 2=<LF>, 3 =no terminator (must
-                have EOI enabled).
+            terminator(int): the terminator. 0=<CR><LF>, 1=<LF><CR>, 2=<LF>, 3=no terminator (must have EOI enabled).
             eoi_enable(int): Sets EOI (End of Interrupt) mode. 0=Enabled, 1=Disabled.
             address (int): Specifies IEEE address. 1 - 30(0 and 31 are reserved).
         """

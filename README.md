@@ -22,12 +22,11 @@ Advanced support
 * [Model 335 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-335-cryogenic-temperature-controller)
 * [Model 336 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-336-cryogenic-temperature-controller)
 * [Model 372 AC Resistance Bridge](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-372-ac-resistance-bridge-temperature-controller)
+* [Model 643 and 648 Electromagnet Power Supplies](https://www.lakeshore.com/products/categories/material-characterization-products/electromagnet-power-supplies)
 
   Basic support
 * [Model 350 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-350-cryogenic-temperature-controller)
 * [Model 425 Gaussmeter](https://www.lakeshore.com/products/categories/overview/magnetic-products/gaussmeters-teslameters/model-425-gaussmeter)
-* [Model 643 Electromagnet Power Supply](https://www.lakeshore.com/products/categories/overview/material-characterization-products/electromagnet-power-supplies/model-643-electromagnet-power-supply)
-* [Model 648 Electromagnet Power Supply](https://www.lakeshore.com/products/categories/overview/material-characterization-products/electromagnet-power-supplies/model-648-electromagnet-power-supply)
 
 ## Getting Started
 Install the driver using [pip](https://pip.pypa.io/en/stable/quickstart/):
