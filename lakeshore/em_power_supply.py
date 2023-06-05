@@ -1,7 +1,7 @@
 """Implements functionality unique to the Model 643 and 648 electromagnet power supplies."""
 
 import serial
-from .generic_instrument import GenericInstrument
+from .generic_instrument import GenericInstrument, RegisterBase
 
 
 class ElectromagnetPowerSupply(GenericInstrument):
@@ -25,6 +25,168 @@ class ElectromagnetPowerSupply(GenericInstrument):
         # Call the parent init, then fill in values specific to the instrument
         GenericInstrument.__init__(self, serial_number, com_port, baud_rate, data_bits, stop_bits, parity, flow_control,
                                    handshaking, timeout, ip_address, tcp_port, **kwargs)
+
+    class EMPowerSupplyServiceRequestEnableRegister(RegisterBase):
+        """Class object representing the service request enable register LSB to MSB."""
+        bit_names = [
+            "",
+            "operational_errors_summary",
+            "hardware_errors_summary",
+            "",
+            "message_available",
+            "event_summary",
+            "",
+            "operation_summary"
+        ]
+
+        def __init__(self,
+                     operational_errors_summary: bool,
+                     hardware_errors_summary: bool,
+                     message_available: bool,
+                     event_summary: bool,
+                     operation_summary: bool
+                     ) -> None:
+            self.operational_errors_summary: bool = operational_errors_summary
+            self.hardware_errors_summary: bool = hardware_errors_summary
+            self.message_available: bool = message_available
+            self.event_summary: bool = event_summary
+            self.operation_summary: bool = operation_summary
+
+    class EMPowerSupplyStatusByteRegister(RegisterBase):
+        """Class object representing the status byte register LSB to MSB."""
+        bit_names = [
+            "",
+            "operational_errors_summary",
+            "hardware_errors_summary",
+            "",
+            "message_available",
+            "event_summary",
+            "service_request",
+            "operation_summary"
+        ]
+
+        def __init__(self,
+                     operational_errors_summary: bool,
+                     hardware_errors_summary: bool,
+                     message_available: bool,
+                     event_summary: bool,
+                     service_request: bool,
+                     operation_summary: bool
+                     ) -> None:
+            self.operational_errors_summary: bool = operational_errors_summary
+            self.hardware_errors_summary: bool = hardware_errors_summary
+            self.message_available: bool = message_available
+            self.event_summary: bool = event_summary
+            self.service_request: bool = service_request
+            self.operation_summary: bool = operation_summary
+
+    class EMPowerSupplyStandardEventStatusRegister(RegisterBase):
+        """Class object representing the standard event status register LSB to MSB."""
+        bit_names = [
+            "operation_complete",
+            "",
+            "query_error",
+            "",
+            "execution_error",
+            "command_error",
+            "",
+            "power_on"
+        ]
+
+        def __init__(self,
+                     operation_complete: bool,
+                     query_error: bool,
+                     execution_error: bool,
+                     command_error: bool,
+                     power_on: bool
+                     ) -> None:
+            self.operation_complete: bool = operation_complete
+            self.query_error: bool = query_error
+            self.execution_error: bool = execution_error
+            self.command_error: bool = command_error
+            self.power_on: bool = power_on
+
+    class EMPowerSupplyOperationEventRegister(RegisterBase):
+        """Class object representing the operation event register LSB to MSB."""
+        bit_names = [
+            "compliance",
+            "ramp_done",
+            "power_limit",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]
+
+        def __init__(self,
+                     compliance: bool,
+                     ramp_done: bool,
+                     power_limit: bool
+                     ) -> None:
+            self.compliance: bool = compliance
+            self.ramp_done: bool = ramp_done
+            self.power_limit: bool = power_limit
+
+    class EMPowerSupplyHardwareErrorsRegister(RegisterBase):
+        """Class object representing the hardware errors register LSB to MSB."""
+        bit_names = [
+            "output_control_failure",
+            "dac_processor_not_responding",
+            "output_over_current",
+            "output_over_voltage",
+            "temperature_fault",
+            "output_stage_protect",
+            "",
+            ""
+        ]
+
+        def __init__(self,
+                     output_control_failure: bool,
+                     dac_processor_not_responding: bool,
+                     output_over_current: bool,
+                     output_over_voltage: bool,
+                     temperature_fault: bool,
+                     output_stage_protect: bool
+                     ) -> None:
+            self.output_control_failure: bool = output_control_failure
+            self.dac_processor_not_responding: bool = dac_processor_not_responding
+            self.output_over_current: bool = output_over_current
+            self.output_over_voltage: bool = output_over_voltage
+            self.temperature_fault: bool = temperature_fault
+            self.output_stage_protect: bool = output_stage_protect
+
+    class EMPowerSupplyOperationalErrorsRegister(RegisterBase):
+        """Class object representing the operational errors register LSB to MSB."""
+        bit_names = [
+            "calibration_error",
+            "external_current_program_error",
+            "temperature_high",
+            "low_line_voltage",
+            "high_line_voltage",
+            "magnet_flow_switch_fault",
+            "power_supply_flow_switch_fault",
+            "remote_enable_fault"
+        ]
+
+        def __init__(self,
+                     calibration_error: bool,
+                     external_current_program_error: bool,
+                     temperature_high: bool,
+                     low_line_voltage: bool,
+                     high_line_voltage: bool,
+                     magnet_flow_switch_fault: bool,
+                     power_supply_flow_switch_fault: bool,
+                     remote_enable_fault: bool
+                     ) -> None:
+            self.calibration_error: bool = calibration_error
+            self.external_current_program_error: bool = external_current_program_error
+            self.temperature_high: bool = temperature_high
+            self.low_line_voltage: bool = low_line_voltage
+            self.high_line_voltage: bool = high_line_voltage
+            self.magnet_flow_switch_fault: bool = magnet_flow_switch_fault
+            self.power_supply_flow_switch_fault: bool = power_supply_flow_switch_fault
+            self.remote_enable_fault: bool = remote_enable_fault
 
     def set_limits(self, max_current: float, max_ramp_rate: float) -> None:
         """Sets the upper setting limits for output current, and output current ramp rate.
@@ -316,6 +478,229 @@ class ElectromagnetPowerSupply(GenericInstrument):
             bool: True means errors found, and False means no errors found.
         """
         return bool(int(self.query("*TST?")))
+
+    def set_service_request_enable_mask(self, register_mask: EMPowerSupplyServiceRequestEnableRegister) -> None:
+        """Configures the Service Request Enable Register.
+
+            The Service Request Enable Register determines which summary bits of the Status
+            Byte may set bit 6 (RQS/MSS) of the Status Byte to generate a Service Request.
+
+        Args:
+            register_mask (ElectromagnetPowerSupply.EMPowerSupplyServiceRequestEnableRegister): Register configuration object.
+        """
+        self.command(f"*SRE {register_mask.to_integer()}")
+
+    def get_service_request_enable_mask(self) -> EMPowerSupplyServiceRequestEnableRegister:
+        """Returns Service Request Enable Register configuration.
+
+            The Service Request Enable Register determines which summary bits of the Status
+            Byte may set bit 6 (RQS/MSS) of the Status Byte to generate a Service Request.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyServiceRequestEnableRegister: Register configuration object.
+        """
+        bit_weighting = int(self.query("*SRE?"))
+        return self.EMPowerSupplyServiceRequestEnableRegister.from_integer(bit_weighting)
+
+    def get_status_byte(self) -> EMPowerSupplyStatusByteRegister:
+        """Returns state of the Status Byte Register.
+
+            The Status Byte register, typically referred to as the Status Byte, is a non-latching,
+            read-only register that contains all the summary bits from the register sets.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyStatusByteRegister: Register state object.
+        """
+        bit_weighting = int(self.query("*STB?"))
+        return self.EMPowerSupplyStatusByteRegister.from_integer(bit_weighting)
+
+    def set_standard_event_status_enable_mask(self, register_mask: EMPowerSupplyStandardEventStatusRegister) -> None:
+        """Configures Standard Event Status Enable Register group.
+
+            The Standard Event Status Enable Register determines which bits in the Standard
+            Event Status Register will set the summary bit in the Status Byte (bit 5).
+
+        Args:
+            register_mask (ElectromagnetPowerSupply.EMPowerSupplyStandardEventStatusRegister): Register configuration
+                object.
+        """
+        self.command(f"*ESE {register_mask.to_integer()}")
+
+    def get_standard_event_status_enable_mask(self) -> EMPowerSupplyStandardEventStatusRegister:
+        """Returns Standard Event Status Enable Register configuration.
+
+            The Standard Event Status Enable Register determines which bits in the Standard
+            Event Status Register will set the summary bit in the Status Byte (bit 5).
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyStandardEventStatusRegister: Register configuration object.
+        """
+        bit_weighting: int = int(self.query("*ESE?"))
+        return self.EMPowerSupplyStandardEventStatusRegister.from_integer(bit_weighting)
+
+    def get_standard_event_status_event(self) -> EMPowerSupplyStandardEventStatusRegister:
+        """Returns state of the Standard Event Status Register.
+
+            Bits in this register correspond to various system events and latch when the event
+            occurs. When an event bit is set, subsequent events corresponding to that bit are
+            ignored. Set bits remain latched until the register is reset by this query or clear_interface.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyStandardEventStatusRegister: Register state object.
+        """
+        bit_weighting: int = int(self.query("*ESR?"))
+        return self.EMPowerSupplyStandardEventStatusRegister.from_integer(bit_weighting)
+
+    def set_operation_event_enable_mask(self, register_mask: EMPowerSupplyOperationEventRegister) -> None:
+        """Configures the Operational Event Enable Register.
+
+            Each bit has a bit weighting and represents the enable/disable mask of the corresponding operational status
+            bit in the Operational Status Register. This determines which status bits can set the corresponding summary
+            bit in the Status Byte Register.
+
+        Args:
+            ElectromagnetPowerSupply.EMPowerSupplyOperationEventRegister: Register configuration object.
+        """
+        self.command(f"OPSTE {register_mask.to_integer()}")
+
+    def get_operation_event_enable_mask(self) -> EMPowerSupplyOperationEventRegister:
+        """Returns Operational Event Enable Register configuration.
+
+            Each bit has a bit weighting and represents the enable/disable mask of the corresponding operational status
+            bit in the Operational Status Register. This determines which status bits can set the corresponding summary
+            bit in the Status Byte Register.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyOperationEventRegister: Register configuration object.
+        """
+        bit_weighting: int = int(self.query("OPSTE?"))
+        return self.EMPowerSupplyOperationEventRegister.from_integer(bit_weighting)
+
+    def get_operation_event_condition(self) -> EMPowerSupplyOperationEventRegister:
+        """Returns the real-time state of the operation event bits.
+
+            The condition register constantly monitors the instrument status. The data bits are real-time and are not
+            latched or buffered. The register is read-only.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyOperationEventRegister: Object with each of the register bits' status.
+        """
+        weighted_operation_events = int(self.query("OPSTR?"))
+        return self.EMPowerSupplyOperationEventRegister.from_integer(weighted_operation_events)
+
+    def get_operation_event_event(self) -> EMPowerSupplyOperationEventRegister:
+        """Returns the latched state of the operation event bits.
+
+            Bits in the event register correspond to various system events and latch when the event occurs. When
+            an event bit is set, subsequent events corresponding to that bit are ignored.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyOperationEventRegister: Object with each of the register bits' status.
+        """
+        weighted_operation_events = int(self.query("OPST?"))
+        return self.EMPowerSupplyOperationEventRegister.from_integer(weighted_operation_events)
+
+    def set_hardware_error_enable_mask(self, register_mask: EMPowerSupplyHardwareErrorsRegister) -> None:
+        """Sets which hardware error bits will set the summary bit in the Status Byte Register.
+
+            Each bit has a bit weighting and represents the enable/disable mask of the corresponding error bits in the
+            Error Status Register. This determines which status bits can set the corresponding summary bits in the
+            Status Byte Register.
+
+        Args:
+            register_mask (ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister): Register mask configuration
+                object.
+        """
+        operational_mask: str = self.query("ERSTE?").split(',')[1]
+        self.command(f"ERSTE {register_mask.to_integer()},{operational_mask}")
+
+    def get_hardware_error_enable_mask(self) -> EMPowerSupplyHardwareErrorsRegister:
+        """Returns which hardware error bits will set the summary bit in the Status Byte Register.
+
+            Each bit has a bit weighting and represents the enable/disable mask of the corresponding error bits in the
+            Error Status Register. This determines which status bits can set the corresponding summary bits in the
+            Status Byte Register.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister: Register mask configuration object.
+        """
+        hardware_mask = int(self.query("ERSTE?").split(',')[0])
+        return self.EMPowerSupplyHardwareErrorsRegister.from_integer(hardware_mask)
+
+    def get_hardware_error_condition(self) -> EMPowerSupplyHardwareErrorsRegister:
+        """Returns the real-time state of the hardware error bits.
+
+            The condition register constantly monitors the instrument status. The data bits are real-time and are not
+            latched or buffered. The register is read-only.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister: Object with each of the register bits' status.
+        """
+        weighted_hardware_errors = int(self.query("ERST?").split(',')[0])
+        return self.EMPowerSupplyHardwareErrorsRegister.from_integer(weighted_hardware_errors)
+
+    def get_hardware_error_event(self) -> EMPowerSupplyHardwareErrorsRegister:
+        """Returns the latched state of the hardware error bits.
+
+            Bits in the event register correspond to various system events and latch when the event occurs. When
+            an event bit is set, subsequent events corresponding to that bit are ignored.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister: Object with each of the register bits' status.
+        """
+        weighted_hardware_errors = int(self.query("ERSTR?").split(',')[0])
+        return self.EMPowerSupplyHardwareErrorsRegister.from_integer(weighted_hardware_errors)
+
+    def set_operational_error_enable_mask(self, register_mask: EMPowerSupplyOperationalErrorsRegister) -> None:
+        """Sets which operational error bits will set the summary bit in the Status Byte Register.
+
+            Each bit has a bit weighting and represents the enable/disable mask of the corresponding error bits in the
+            Error Status Register. This determines which status bits can set the corresponding summary bits in the
+            Status Byte Register.
+
+        Args:
+            register_mask (ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister): Register mask configuration
+                object.
+        """
+        hardware_mask: str = self.query("ERSTE?").split(',')[0]
+        self.command(f"ERSTE {register_mask.to_integer()},{hardware_mask}")
+
+    def get_operational_error_enable_mask(self) -> EMPowerSupplyOperationalErrorsRegister:
+        """Returns which operational error bits will set the summary bit in the Status Byte Register.
+
+            Each bit has a bit weighting and represents the enable/disable mask of the corresponding error bits in the
+            Error Status Register. This determines which status bits can set the corresponding summary bits in the
+            Status Byte Register.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister: Register mask configuration object.
+        """
+        operational_mask = int(self.query("ERSTE?").split(',')[1])
+        return self.EMPowerSupplyOperationalErrorsRegister.from_integer(operational_mask)
+
+    def get_operational_error_condition(self) -> EMPowerSupplyOperationalErrorsRegister:
+        """Returns the real-time state of the operational error bits.
+
+            The condition register constantly monitors the instrument status. The data bits are real-time and are not
+            latched or buffered. The register is read-only.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyOperationalErrorsRegister: Object with each of the register bits' status.
+        """
+        weighted_operational_errors = int(self.query("ERST?").split(',')[1])
+        return self.EMPowerSupplyOperationalErrorsRegister.from_integer(weighted_operational_errors)
+
+    def get_operational_error_event(self) -> EMPowerSupplyOperationalErrorsRegister:
+        """Returns the latched state of the operational error bits.
+
+            Bits in the event register correspond to various system events and latch when the event occurs. When
+            an event bit is set, subsequent events corresponding to that bit are ignored.
+
+        Returns:
+            ElectromagnetPowerSupply.EMPowerSupplyOperationalErrorsRegister: Object with each of the register bits' status.
+        """
+        weighted_operational_bits = int(self.query("ERSTR?").split(',')[1])
+        return self.EMPowerSupplyOperationalErrorsRegister.from_integer(weighted_operational_bits)
 
 
 # Create an aliases using the product names
