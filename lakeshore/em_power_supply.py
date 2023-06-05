@@ -1,7 +1,7 @@
 """Implements functionality unique to the Model 643 and 648 electromagnet power supplies."""
 
 import serial
-from .generic_instrument import GenericInstrument, RegisterBase
+from .generic_instrument import GenericInstrument, RegisterBase, _parse_response, InstrumentException
 
 
 class ElectromagnetPowerSupply(GenericInstrument):
@@ -187,6 +187,57 @@ class ElectromagnetPowerSupply(GenericInstrument):
             self.magnet_flow_switch_fault: bool = magnet_flow_switch_fault
             self.power_supply_flow_switch_fault: bool = power_supply_flow_switch_fault
             self.remote_enable_fault: bool = remote_enable_fault
+
+    def command(self, command_string: str, check_errors: bool = True) -> None:
+        """Send a command to the instrument.
+
+        Args:
+            command_string (str): A serial command
+            check_errors (bool): Specifies if command errors should be checked. Optional parameter. Defaults to True.
+        """
+
+        if check_errors:
+            # Performs a query to check the errors.
+            self.query(command_string)
+        else:
+            # Call generic command
+            super().command(command_string)
+
+    def query(self, query_string: str, check_errors: bool = True) -> str:
+        """Send a query to the instrument and return the response
+
+        Args:
+            query_string (str): A serial query ending in a question mark.
+            check_errors (bool): Specifies if command errors should be checked. Optional parameter. Defaults to True.
+
+        Returns:
+            str: The instrument query response as a string.
+        """
+
+        if check_errors:
+            # Append command error query (*R)
+            query_string += "; *ESR?"
+
+        # Generic query
+        response: str = super().query(query_string)
+
+        if check_errors:
+            # Remove command error response from full response
+            response_list = _parse_response(response)
+            error_response = response_list.pop()
+            register = self.EMPowerSupplyStandardEventStatusRegister.from_integer(int(error_response))
+            if register.command_error:
+                InstrumentException("Command Error: The instrument could not interpret the command due to a syntax "
+                                    "error, an unrecognized header, unrecognized terminator, or an unsupported "
+                                    "command.")
+            elif register.execution_error:
+                InstrumentException("Execution Error: The instrument was instructed to do something not within its "
+                                    "capabilities.")
+            elif register.query_error:
+                InstrumentException("Query Error: The output queue is full.")
+            response = ';'.join(response_list)
+
+        return response
 
     def set_limits(self, max_current: float, max_ramp_rate: float) -> None:
         """Sets the upper setting limits for output current, and output current ramp rate.
