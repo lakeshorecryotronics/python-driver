@@ -45,11 +45,11 @@ class Model121(GenericInstrument):
         """Set and start outputting a specific current from the instrument.
 
             Switches to the user current range and applies the specified current. Current can be set between 100nA and
-            100mA. The sign of the current determines the polarity of the output (+-nnne-nn).
+            100mA. The sign of the current determines the polarity of the output.
 
         Args:
-            current (float): New current value as a floating point number. (+-100e-9A - +-100e-3A). Up to three
-            significant digits.
+            current (float): New current value as a floating point number. The minimum value is 100e-9 A and the maximum
+                is 100e-3 A. Positive or negative. Up to three significant digits.
 
         """
         self.command("RANGE 13")
