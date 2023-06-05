@@ -286,6 +286,36 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return int(self.query("MODE?"))
 
+    def set_factory_defaults(self) -> None:
+        """Sets all configuration values to factory defaults and resets the instrument.
+
+            The instrument must be at zero amps for this command to work.
+        """
+        self.command("DFLT 99")
+
+    def reset_instrument(self) -> None:
+        """Sets the controller parameters to power-up settings.
+
+            Use the set_factory_defaults command to set factory-defaults.
+        """
+        self.command("*RST")
+
+    def clear_interface(self) -> None:
+        """Clears the event registers in all register groups. Also clears the error queue.
+
+            Clears the bits in the Status Byte Register, Standard Event Status Register, and Operation event Register,
+            and terminates al pending operations. Clears the interface, but not the instrument. The related instrument
+            command is reset_instrument.
+        """
+        self.command("*CLS")
+
+    def get_self_test(self) -> bool:
+        """Returns result of instrument self test completed at power up.
+
+        Returns:
+            bool: True means errors found, and False means no errors found.
+        """
+        return bool(int(self.query("*TST?")))
 
 
 # Create an aliases using the product names
