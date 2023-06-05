@@ -1,7 +1,5 @@
 """This module implements a parent class that contains all functionality shared by Lake Shore XIP instruments."""
 
-import re
-
 import serial
 
 from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase, _parse_response

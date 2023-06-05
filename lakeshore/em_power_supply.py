@@ -228,14 +228,14 @@ class ElectromagnetPowerSupply(GenericInstrument):
             error_response = response_list.pop()
             register = self.EMPowerSupplyStandardEventStatusRegister.from_integer(int(error_response))
             if register.command_error:
-                InstrumentException("Command Error: The instrument could not interpret the command due to a syntax "
-                                    "error, an unrecognized header, unrecognized terminator, or an unsupported "
-                                    "command.")
-            elif register.execution_error:
-                InstrumentException("Execution Error: The instrument was instructed to do something not within its "
-                                    "capabilities.")
-            elif register.query_error:
-                InstrumentException("Query Error: The output queue is full.")
+                raise InstrumentException("Command Error: The instrument could not interpret the command due to a "
+                                          "syntax error, an unrecognized header, unrecognized terminator, or an "
+                                          "unsupported command.")
+            if register.execution_error:
+                raise InstrumentException("Execution Error: The instrument was instructed to do something not within "
+                                          "its capabilities.")
+            if register.query_error:
+                raise InstrumentException("Query Error: The output queue is full.")
             response = ';'.join(response_list)
 
         return response
@@ -386,7 +386,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
             int: Internal water mode. 0 = Manual-Off, 1 = Manual-On, 2 = Auto, 3 = Disabled.
 
         """
-        return int(self.query(f"INTWTR?"))
+        return int(self.query("INTWTR?"))
 
     def set_magnet_water(self, mode: int) -> None:
         """Configures the magnet water mode.
@@ -418,7 +418,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         Returns:
             int: The display brightness. 0=25%, 1=50%, 2=75%, 3=100%.
         """
-        return int(self.query(f"DISP?"))
+        return int(self.query("DISP?"))
 
     def set_front_panel_lock(self, lock_state: int, code: int) -> None:
         """Sets the lock status of the front panel keypad.
