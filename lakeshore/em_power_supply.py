@@ -1,13 +1,12 @@
-"""Implements functionality unique to the Lake Shore Model 643 electromagnet magnet power supply."""
-import serial
+"""Implements functionality unique to the Model 643 and 648 electromagnet power supplies."""
 
+import serial
 from .generic_instrument import GenericInstrument
 
 
-class Model643(GenericInstrument):
-    """A class object representing the Lake Shore Model 643 electromagnet magnet power supply."""
-
-    vid_pid = [(0x1FB9, 0x0601)]
+class ElectromagnetPowerSupply(GenericInstrument):
+    """ class object representing a Lake Shore Model 643 or 648 electromagnet power supply."""
+    vid_pid = [(0x1FB9, 0x0601), (0x1FB9, 0x0602)]  # 643, 648
 
     def __init__(self,
                  serial_number=None,
@@ -23,6 +22,11 @@ class Model643(GenericInstrument):
                  tcp_port=7777,
                  **kwargs):
 
-        # Call the parent init, then fill in values specific to the 121
+        # Call the parent init, then fill in values specific to the instrument
         GenericInstrument.__init__(self, serial_number, com_port, baud_rate, data_bits, stop_bits, parity, flow_control,
                                    handshaking, timeout, ip_address, tcp_port, **kwargs)
+
+
+# Create an aliases using the product names
+Model643 = ElectromagnetPowerSupply
+Model648 = ElectromagnetPowerSupply
