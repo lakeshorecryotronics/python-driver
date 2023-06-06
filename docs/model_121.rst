@@ -8,6 +8,13 @@ More information about the instrument can be found `on our website`_ including t
 
 .. _on our website: https://www.lakeshore.com/products/categories/overview/temperature-products/ac-and-dc-current-sources/model-121-programmable-dc-current-source
 
+Example Scripts
+_______________
+
+Setting a current
+~~~~~~~~~~~~~~~~~
+.. literalinclude:: examples/121_setting_current_example.py
+
 Instrument methods
 ------------------
 .. module:: lakeshore.model_121
