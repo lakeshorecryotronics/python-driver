@@ -4,6 +4,7 @@ from datetime import datetime
 from warnings import warn
 from lakeshore.xip_instrument import RegisterBase
 from lakeshore.ssm_base_module import SSMSystemModuleQuestionableRegister, BaseModule
+from lakeshore.ssm_system_enums import SSMSystemEnums
 
 
 class SSMSystemMeasureModuleOperationRegister(RegisterBase):
@@ -23,6 +24,7 @@ class SSMSystemMeasureModuleOperationRegister(RegisterBase):
         self.overload = overload
         self.settling = settling
         self.unlocked = unlocked
+
 
 # pylint: disable=R0904
 class MeasureModule(BaseModule):
@@ -937,24 +939,128 @@ class MeasureModule(BaseModule):
         self.device.command(f'SENSe{self.module_number}:DIGital:FILTer:HPASs:STATE {int(state)}')
 
     def get_resistance(self):
-        """Returns the present resistance measurement in Ohms.  A valid source must be configured."""
+        """Returns the present resistance measurement in Ohms. A valid source must be configured.
+
+        Returns:
+            float: Present resistance measurement in Ohms.
+        """
 
         return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance?'))
 
-    def set_resistance_source(self, source):
+    def set_resistance_source(self, source_module):
         """Configures the resistance feature to use a specified source module to calculate resistance.
 
-            Args:
-                source (str):
-                    The channel used for calculating resistance ('S1', 'S2', or 'S3').
+        Args:
+            source_module (SourceModule): The channel used for calculating resistance.
         """
+
+        if isinstance(source_module, SSMSystemEnums.SourceModule):
+            source = source_module.name
+        else:
+            source = source_module
 
         self.device.command(f'CALCulate:SENSe{self.module_number}:RESistance:SOURce {source}')
 
     def get_resistance_source(self):
-        """Returns the present source module being used to calculate resistance."""
+        """Returns the present source module being used to calculate resistance.
 
-        return self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:SOURce?')
+                Returns:
+                    SourceModule: The channel used for calculating resistance.
+                """
+        return SSMSystemEnums.SourceModule(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:SOURce?'))
+
+    def set_resistance_excitation_type(self, excitation_type):
+        """Sets the present resistance excitation type of the specified module.
+
+            For "DC", the measure mode is DC and source shape is DC.
+            For "AC", the measure mode is Lock-in and source shape is Sine.
+
+        Args:
+            excitation_type (ResistanceExcitationType): The desired resistance excitation type.
+        """
+
+        if isinstance(excitation_type, SSMSystemEnums.ResistanceExcitationType):
+            excitation = excitation_type.name
+        else:
+            excitation = excitation_type
+
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:ETYPe {excitation}")
+
+    def get_resistance_excitation_type(self):
+        """Returns the present resistance excitation type of the specified module.
+
+            This represents the combination of the specified measure module mode and the selected source module shape.
+            For "DC", the measure mode is DC and source shape is DC.
+            For "AC", the measure mode is Lock-in and source shape is Sine.
+
+        Returns:
+            ResistanceExcitationType: The resistance excitation type.
+        """
+
+        return SSMSystemEnums.ResistanceExcitationType(self.device.query(
+            f"CALCulate:SENSe{self.module_number}:RESistance:ETYPe?"))
+
+    def set_resistance_mode(self, resistance_mode):
+        """Sets the resistance optimization mode of the specified module.
+
+        Args:
+            resistance_mode (ResistanceMode): The desired resistance optimization mode.
+        """
+        if isinstance(resistance_mode, SSMSystemEnums.ResistanceExcitationType):
+            mode = resistance_mode.name
+        else:
+            mode = resistance_mode
+
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:MODE {mode}")
+
+    def get_resistance_mode(self):
+        """Returns the preset resistance optimization mode of the specified module.
+
+        Returns:
+            ResistanceMode: The present resistance optimization mode. "NOISe" or "POWer".
+        """
+
+        return SSMSystemEnums.ResistanceMode(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:MODE?"))
+
+    def set_resistance_range(self, resistance_range):
+        """Sets the resistance range of the specified module.
+
+        Args:
+            resistance_range (float): The desired resistance range in Ohms.
+        """
+
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe {resistance_range}")
+
+    def get_resistance_range(self):
+        """Returns the present resistance range of the specified module.
+        
+        Returns:
+            float: The resistance range in Ohms.
+        """
+
+        return float(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe?"))
+
+    def set_resistance_optimization_state(self, optimization_state):
+        """Sets the state of resistance optimization on the specified module
+
+        Args:
+            optimization_state (bool): The desired state of resistance optimization. True if optimizing for resistance,
+                else False.
+        """
+
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:OPTimize {int(optimization_state)}")
+
+    def get_resistance_optimization_state(self):
+        """Returns the present state of optimization on the specified module.
+
+            When optimization is enabled, the instrument will set other settings based on the selected resistance
+            range and mode settings.
+
+        Returns:
+            bool: The state of resistance optimization. True if optimizing for resistance, else False.
+        """
+
+        return bool(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OPTimize?"))
 
     def reset_settings(self):
         """Resets the settings for the specified module to their power on defaults."""

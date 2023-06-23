@@ -126,3 +126,33 @@ class SSMSystemEnums:
             self.dwell = dwell
             self.direction = direction
             self.round_trip = round_trip
+
+    class SourceModule(str, Enum):
+        """Class object representing the available source modules
+        """
+        S1 = 'S1'
+        S2 = 'S2'
+        S3 = 'S3'
+
+        # Gets around having to use .value to access the string
+        def __str__(self) -> str:
+            return str.__str__(self)
+
+    class ResistanceExcitationType(str, Enum):
+        """Class object representing the possible excitation types that create a valid resistance configuration."""
+        AC = 'AC'
+        DC = 'DC'
+        INVALID = 'INVAlid'
+
+        # Gets around having to use .value to access the string
+        def __str__(self) -> str:
+            return str.__str__(self)
+
+    class ResistanceMode(str, Enum):
+        """Class object representing the possible resistance modes."""
+        NOISE = 'NOISe'
+        POWER = 'POWer'
+
+        # Gets around having to use .value to access the string
+        def __str__(self) -> str:
+            return str.__str__(self)
