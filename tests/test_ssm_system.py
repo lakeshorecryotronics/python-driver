@@ -1757,6 +1757,70 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.dut_module.set_frequency_range_threshold(0.9)
         self.assertIn('SENSe1:FRTHreshold 0.9', self.fake_connection.get_outgoing_message())
 
+    def test_get_resistance(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance?', self.fake_connection.get_outgoing_message())
+
+    def test_set_resistance_source(self):
+        self.fake_connection.setup_response("No error")
+        self.dut_module.set_resistance_source(SSMSystemEnums.SourceModule.S1)
+        self.assertIn('CALCulate:SENSe1:RESistance:SOURce S1', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_source(self):
+        self.fake_connection.setup_response("S1;No error")
+        response = self.dut_module.get_resistance_source()
+        self.assertEqual(response, "S1")
+        self.assertEqual(response, SSMSystemEnums.SourceModule.S1)
+        self.assertIn('CALCulate:SENSe1:RESistance:SOURce?', self.fake_connection.get_outgoing_message())
+
+    def test_set_resistance_excitation_type(self):
+        self.fake_connection.setup_response("No error")
+        self.dut_module.set_resistance_excitation_type(SSMSystemEnums.ResistanceExcitationType.DC)
+        self.assertIn('CALCulate:SENSe1:RESistance:ETYPe DC', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_excitation_type(self):
+        self.fake_connection.setup_response("DC;No error")
+        response = self.dut_module.get_resistance_excitation_type()
+        self.assertEqual(response, "DC")
+        self.assertEqual(response, SSMSystemEnums.ResistanceExcitationType.DC)
+        self.assertIn('CALCulate:SENSe1:RESistance:ETYPe?', self.fake_connection.get_outgoing_message())
+
+    def test_set_resistance_mode(self):
+        self.fake_connection.setup_response("No error")
+        self.dut_module.set_resistance_mode(SSMSystemEnums.ResistanceMode.POWER)
+        self.assertIn('CALCulate:SENSe1:RESistance:MODE POWer', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_mode(self):
+        self.fake_connection.setup_response("POWer;No error")
+        response = self.dut_module.get_resistance_mode()
+        self.assertEqual(response, "POWer")
+        self.assertEqual(response, SSMSystemEnums.ResistanceMode.POWER)
+        self.assertIn('CALCulate:SENSe1:RESistance:MODE?', self.fake_connection.get_outgoing_message())
+
+    def test_set_resistance_range(self):
+        self.fake_connection.setup_response("No error")
+        self.dut_module.set_resistance_range(123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:RANGe 123.45', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_range(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_range()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:RANGe?', self.fake_connection.get_outgoing_message())
+
+    def test_set_resistance_optimization_state(self):
+        self.fake_connection.setup_response("No error")
+        self.dut_module.set_resistance_optimization_state(True)
+        self.assertIn('CALCulate:SENSe1:RESistance:OPTimize 1', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance__optimization_state(self):
+        self.fake_connection.setup_response("1;No error")
+        response = self.dut_module.get_resistance_optimization_state()
+        self.assertEqual(response, True)
+        self.assertIn('CALCulate:SENSe1:RESistance:OPTimize?', self.fake_connection.get_outgoing_message())
+
     def test_get_self_cal_datetime(self):
         self.fake_connection.setup_response('1985,10,26,1,20,0;No error')
         response = self.dut_module.get_self_cal_datetime()
