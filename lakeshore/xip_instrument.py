@@ -1,10 +1,8 @@
 """This module implements a parent class that contains all functionality shared by Lake Shore XIP instruments."""
 
-import re
-
 import serial
 
-from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase
+from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase, _parse_response
 
 
 class StatusByteRegister(RegisterBase):
@@ -155,6 +153,7 @@ class XIPInstrument(GenericInstrument):
             elif self.user_connection is not None:
                 response = self._user_connection_query(query_string)
             else:
+                response = ""
                 raise InstrumentException("No connections configured")
 
             self.logger.info('Sent SCPI query to %s: %s', self.serial_number, query_string)
@@ -163,7 +162,7 @@ class XIPInstrument(GenericInstrument):
         if check_errors:
             # Split the responses to each query, remove the last response which is to the error buffer query,
             # and check whether it contains an error
-            response_list = re.split(''';(?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', response)
+            response_list = _parse_response(response)
             error_response = response_list.pop()
             self._error_check(error_response)
             response = ';'.join(response_list)

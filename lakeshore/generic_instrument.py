@@ -2,6 +2,7 @@
 Lake Shore instruments.
 """
 import logging
+import re
 import select
 import socket
 from threading import Lock
@@ -59,6 +60,19 @@ def _is_valid_user_connection(connection):
         return callable(connection.write) and callable(connection.query)
     except AttributeError:
         return 0
+
+
+def _parse_response(full_response):
+    """Splits full response into list of responses to each query.
+
+    Args:
+        full_response (str): Query response string with all responses.
+
+    Returns:
+        list[str]: List of individual responses.
+    """
+
+    return re.split(''';(?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', full_response)
 
 
 class GenericInstrument:
@@ -142,6 +156,7 @@ class GenericInstrument:
                     A serial command.
         """
         self.command(command_string)
+
     def command(self, command_string):
         """Send a command to the instrument.
 

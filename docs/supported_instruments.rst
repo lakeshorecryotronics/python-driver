@@ -17,8 +17,7 @@ Magnet System Power Supplies
 .. toctree::
     :maxdepth: 1
 
-    model_643
-    model_648
+    em_power_supply
 
 Materials Characterization
 --------------------------

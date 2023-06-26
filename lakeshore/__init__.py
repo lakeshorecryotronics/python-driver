@@ -1,6 +1,7 @@
 """Python driver for Lake Shore instruments"""
 from .generic_instrument import InstrumentException
 from .xip_instrument import XIPInstrumentException
+from .em_power_supply import ElectromagnetPowerSupply, Model643, Model648
 from .teslameter import Teslameter, TeslameterOperationRegister, TeslameterQuestionableRegister, F41, F71
 from .fast_hall_controller import FastHall, FastHallOperationRegister, FastHallQuestionableRegister, ContactCheckManualParameters,\
     ContactCheckOptimizedParameters, FastHallManualParameters, FastHallLinkParameters, FourWireParameters,\
@@ -15,8 +16,6 @@ from .model_336 import Model336
 from .model_350 import Model350
 from .model_372 import *
 from .model_425 import Model425
-from .model_643 import Model643
-from .model_648 import Model648
 from .ssm_system import SSMSystem, SSMSystemQuestionableRegister, SSMSystemOperationRegister
 from .ssm_system_enums import SSMSystemEnums
 from .ssm_base_module import SSMSystemModuleQuestionableRegister
