@@ -40,17 +40,17 @@ class ElectromagnetPowerSupply(GenericInstrument):
         ]
 
         def __init__(self,
-                     operational_errors_summary: bool,
-                     hardware_errors_summary: bool,
-                     message_available: bool,
-                     event_summary: bool,
-                     operation_summary: bool
-                     ) -> None:
-            self.operational_errors_summary: bool = operational_errors_summary
-            self.hardware_errors_summary: bool = hardware_errors_summary
-            self.message_available: bool = message_available
-            self.event_summary: bool = event_summary
-            self.operation_summary: bool = operation_summary
+                     operational_errors_summary,
+                     hardware_errors_summary,
+                     message_available,
+                     event_summary,
+                     operation_summary
+                     ):
+            self.operational_errors_summary = operational_errors_summary
+            self.hardware_errors_summary = hardware_errors_summary
+            self.message_available = message_available
+            self.event_summary = event_summary
+            self.operation_summary = operation_summary
 
     class EMPowerSupplyStatusByteRegister(RegisterBase):
         """Class object representing the status byte register LSB to MSB."""
@@ -66,19 +66,19 @@ class ElectromagnetPowerSupply(GenericInstrument):
         ]
 
         def __init__(self,
-                     operational_errors_summary: bool,
-                     hardware_errors_summary: bool,
-                     message_available: bool,
-                     event_summary: bool,
-                     service_request: bool,
-                     operation_summary: bool
-                     ) -> None:
-            self.operational_errors_summary: bool = operational_errors_summary
-            self.hardware_errors_summary: bool = hardware_errors_summary
-            self.message_available: bool = message_available
-            self.event_summary: bool = event_summary
-            self.service_request: bool = service_request
-            self.operation_summary: bool = operation_summary
+                     operational_errors_summary,
+                     hardware_errors_summary,
+                     message_available,
+                     event_summary,
+                     service_request,
+                     operation_summary
+                     ):
+            self.operational_errors_summary = operational_errors_summary
+            self.hardware_errors_summary = hardware_errors_summary
+            self.message_available = message_available
+            self.event_summary = event_summary
+            self.service_request = service_request
+            self.operation_summary = operation_summary
 
     class EMPowerSupplyStandardEventStatusRegister(RegisterBase):
         """Class object representing the standard event status register LSB to MSB."""
@@ -94,17 +94,17 @@ class ElectromagnetPowerSupply(GenericInstrument):
         ]
 
         def __init__(self,
-                     operation_complete: bool,
-                     query_error: bool,
-                     execution_error: bool,
-                     command_error: bool,
-                     power_on: bool
-                     ) -> None:
-            self.operation_complete: bool = operation_complete
-            self.query_error: bool = query_error
-            self.execution_error: bool = execution_error
-            self.command_error: bool = command_error
-            self.power_on: bool = power_on
+                     operation_complete,
+                     query_error,
+                     execution_error,
+                     command_error,
+                     power_on
+                     ):
+            self.operation_complete = operation_complete
+            self.query_error = query_error
+            self.execution_error = execution_error
+            self.command_error = command_error
+            self.power_on = power_on
 
     class EMPowerSupplyOperationEventRegister(RegisterBase):
         """Class object representing the operation event register LSB to MSB."""
@@ -120,13 +120,13 @@ class ElectromagnetPowerSupply(GenericInstrument):
         ]
 
         def __init__(self,
-                     compliance: bool,
-                     ramp_done: bool,
-                     power_limit: bool
-                     ) -> None:
-            self.compliance: bool = compliance
-            self.ramp_done: bool = ramp_done
-            self.power_limit: bool = power_limit
+                     compliance,
+                     ramp_done,
+                     power_limit
+                     ):
+            self.compliance = compliance
+            self.ramp_done = ramp_done
+            self.power_limit = power_limit
 
     class EMPowerSupplyHardwareErrorsRegister(RegisterBase):
         """Class object representing the hardware errors register LSB to MSB."""
@@ -142,19 +142,19 @@ class ElectromagnetPowerSupply(GenericInstrument):
         ]
 
         def __init__(self,
-                     output_control_failure: bool,
-                     dac_processor_not_responding: bool,
-                     output_over_current: bool,
-                     output_over_voltage: bool,
-                     temperature_fault: bool,
-                     output_stage_protect: bool
-                     ) -> None:
-            self.output_control_failure: bool = output_control_failure
-            self.dac_processor_not_responding: bool = dac_processor_not_responding
-            self.output_over_current: bool = output_over_current
-            self.output_over_voltage: bool = output_over_voltage
-            self.temperature_fault: bool = temperature_fault
-            self.output_stage_protect: bool = output_stage_protect
+                     output_control_failure,
+                     dac_processor_not_responding,
+                     output_over_current,
+                     output_over_voltage,
+                     temperature_fault,
+                     output_stage_protect
+                     ):
+            self.output_control_failure = output_control_failure
+            self.dac_processor_not_responding = dac_processor_not_responding
+            self.output_over_current = output_over_current
+            self.output_over_voltage = output_over_voltage
+            self.temperature_fault = temperature_fault
+            self.output_stage_protect = output_stage_protect
 
     class EMPowerSupplyOperationalErrorsRegister(RegisterBase):
         """Class object representing the operational errors register LSB to MSB."""
@@ -170,25 +170,25 @@ class ElectromagnetPowerSupply(GenericInstrument):
         ]
 
         def __init__(self,
-                     calibration_error: bool,
-                     external_current_program_error: bool,
-                     temperature_high: bool,
-                     low_line_voltage: bool,
-                     high_line_voltage: bool,
-                     magnet_flow_switch_fault: bool,
-                     power_supply_flow_switch_fault: bool,
-                     remote_enable_fault: bool
-                     ) -> None:
-            self.calibration_error: bool = calibration_error
-            self.external_current_program_error: bool = external_current_program_error
-            self.temperature_high: bool = temperature_high
-            self.low_line_voltage: bool = low_line_voltage
-            self.high_line_voltage: bool = high_line_voltage
-            self.magnet_flow_switch_fault: bool = magnet_flow_switch_fault
-            self.power_supply_flow_switch_fault: bool = power_supply_flow_switch_fault
-            self.remote_enable_fault: bool = remote_enable_fault
+                     calibration_error,
+                     external_current_program_error,
+                     temperature_high,
+                     low_line_voltage,
+                     high_line_voltage,
+                     magnet_flow_switch_fault,
+                     power_supply_flow_switch_fault,
+                     remote_enable_fault
+                     ):
+            self.calibration_error = calibration_error
+            self.external_current_program_error = external_current_program_error
+            self.temperature_high = temperature_high
+            self.low_line_voltage = low_line_voltage
+            self.high_line_voltage = high_line_voltage
+            self.magnet_flow_switch_fault = magnet_flow_switch_fault
+            self.power_supply_flow_switch_fault = power_supply_flow_switch_fault
+            self.remote_enable_fault = remote_enable_fault
 
-    def command(self, command_string: str, check_errors: bool = True) -> None:
+    def command(self, command_string, check_errors=True):
         """Send a command to the instrument.
 
         Args:
@@ -203,7 +203,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
             # Call generic command
             super().command(command_string)
 
-    def query(self, query_string: str, check_errors: bool = True) -> str:
+    def query(self, query_string, check_errors=True):
         """Send a query to the instrument and return the response
 
         Args:
@@ -220,7 +220,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
             query_string += "; *ESR?"
 
         # Generic query
-        response: str = super().query(query_string)
+        response = super().query(query_string)
 
         if check_errors:
             # Remove command error response from full response
@@ -240,7 +240,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
 
         return response
 
-    def set_limits(self, max_current: float, max_ramp_rate: float) -> None:
+    def set_limits(self, max_current, max_ramp_rate):
         """Sets the upper setting limits for output current, and output current ramp rate.
 
             This is a software limit that will limit the setting of the values. Only limits internal setting of the
@@ -254,7 +254,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"LIMIT {max_current}, {max_ramp_rate}")
 
-    def get_limits(self) -> list[float]:
+    def get_limits(self):
         """Returns the upper setting limits for output current, and output current ramp rate.
 
             This is a software limit that limits the setting of the values. Only limits the internal
@@ -265,7 +265,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return [float(element) for element in self.query("LIMIT?").split(',')]
 
-    def set_ramp_rate(self, ramp_rate: float) -> None:
+    def set_ramp_rate(self, ramp_rate):
         """Sets the output current ramp rate.
 
             This value will be used in both the positive and negative directions. Setting value is limited by set_limit.
@@ -276,7 +276,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"RATE {ramp_rate}")
 
-    def get_ramp_rate(self) -> float:
+    def get_ramp_rate(self):
         """Returns the output current ramp rate.
 
             This value is used in both the positive and negative directions.
@@ -286,7 +286,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return float(self.query("RATE?"))
 
-    def set_ramp_segment(self, segment: int, current: float, ramp_rate: float) -> None:
+    def set_ramp_segment(self, segment, current, ramp_rate):
         """Sets the current and ramp rate of one of the ramp segments.
 
         Args:
@@ -297,7 +297,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"RSEGS {segment}, {current}, {ramp_rate}")
 
-    def get_ramp_segment(self, segment: int) -> list[float]:
+    def get_ramp_segment(self, segment):
         """Returns the current and ramp rate of a specific ramp segment.
 
         Args:
@@ -308,7 +308,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return [float(x) for x in self.query(f"RSEGS? {segment}").split(',')]
 
-    def set_ramp_segments_enable(self, state: bool) -> None:
+    def set_ramp_segments_enable(self, state):
         """Specifies if ramp segments are to be used.
 
             Ramp segments are used to change the output current ramp rate based on the output current.
@@ -318,7 +318,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"RSEG {int(state)}")
 
-    def get_ramp_segments_enable(self) -> bool:
+    def get_ramp_segments_enable(self):
         """Returns if ramp segments are to be used.
 
             Ramp segments are used to change the output current ramp rate based on the output current.
@@ -328,7 +328,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return bool(int(self.query("RSEG?")))
 
-    def set_current(self, current: float) -> None:
+    def set_current(self, current):
         """Sets the output current setting.
 
             The setting value is limited by set_limit.
@@ -339,7 +339,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"SETI {current}")
 
-    def get_current(self) -> float:
+    def get_current(self):
         """Returns the output current setting.
 
         Returns:
@@ -347,7 +347,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return float(self.query("SETI?"))
 
-    def get_measured_current(self) -> float:
+    def get_measured_current(self):
         """Returns actual measured output current.
 
         Returns:
@@ -355,7 +355,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return float(self.query("RDGI?"))
 
-    def get_measured_voltage(self) -> float:
+    def get_measured_voltage(self):
         """Returns actual output voltage measured at the power supply terminals.
 
         Returns:
@@ -363,7 +363,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return float(self.query("RDGV?"))
 
-    def stop_output_current_ramp(self) -> None:
+    def stop_output_current_ramp(self):
         """Stops the output current ramp.
 
             Stops within 2 s of sending command. TO restart the ramp, use the set_current method to set a new output
@@ -371,7 +371,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command("STOP")
 
-    def set_internal_water(self, mode: int) -> None:
+    def set_internal_water(self, mode):
         """Configures the internal water mode.
 
         Args:
@@ -379,7 +379,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"INTWTR {mode}")
 
-    def get_internal_water(self) -> int:
+    def get_internal_water(self) :
         """Returns the internal water mode.
 
         Returns:
@@ -388,7 +388,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return int(self.query("INTWTR?"))
 
-    def set_magnet_water(self, mode: int) -> None:
+    def set_magnet_water(self, mode):
         """Configures the magnet water mode.
 
         Args:
@@ -396,7 +396,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"MAGWTR {mode}")
 
-    def get_magnet_water(self) -> int:
+    def get_magnet_water(self) :
         """Returns the magnet water mode.
 
         Returns:
@@ -404,7 +404,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return int(self.query("MAGWTR?"))
 
-    def set_display_brightness(self, brightness_level: int) -> None:
+    def set_display_brightness(self, brightness_level):
         """Specifies display brightness.
 
         Args:
@@ -412,7 +412,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"DISP {brightness_level}")
 
-    def get_display_brightness(self) -> int:
+    def get_display_brightness(self) :
         """Returns display brightness.
 
         Returns:
@@ -420,7 +420,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return int(self.query("DISP?"))
 
-    def set_front_panel_lock(self, lock_state: int, code: int) -> None:
+    def set_front_panel_lock(self, lock_state, code):
         """Sets the lock status of the front panel keypad.
 
         Args:
@@ -429,7 +429,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"LOCK {lock_state},{code}")
 
-    def get_front_panel_status(self) -> int:
+    def get_front_panel_status(self):
         """Returns what lock state the front panel keypad is in.
 
         Returns:
@@ -437,7 +437,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return int(self.query("LOCK?").split(',')[0])
 
-    def get_front_panel_lock_code(self) -> int:
+    def get_front_panel_lock_code(self) :
         """Returns the lock code for the front panel.
 
         Returns:
@@ -445,7 +445,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return int(self.query("LOCK?").split(',')[1])
 
-    def set_programming_mode(self, mode: int) -> None:
+    def set_programming_mode(self, mode):
         """Sets the current programming mode of the instrument.
 
         Args:
@@ -453,7 +453,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"XPGM {mode}")
 
-    def get_programming_mode(self) -> int:
+    def get_programming_mode(self):
         """Returns the current programming mode of the instrument.
 
         Returns:
@@ -461,7 +461,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return int(self.query("XPGM?"))
 
-    def set_ieee_488(self, terminator: int, eoi_enable: int, address:int) -> None:
+    def set_ieee_488(self, terminator, eoi_enable, address):
         """Configures the IEEE-488 interface.
 
         Args:
@@ -471,7 +471,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"IEEE {terminator},{eoi_enable},{address}")
 
-    def get_iee_488(self) -> list[int]:
+    def get_iee_488(self):
         """Returns IEEE-488 interface configuration.
 
         Returns:
@@ -483,7 +483,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return [int(x) for x in self.query("IEEE?").split(',')]
 
-    def set_ieee_interface_mode(self, mode: int) -> None:
+    def set_ieee_interface_mode(self, mode):
         """Sets the interface mode of the instrument.
 
         Args:
@@ -491,7 +491,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"MODE {mode}")
 
-    def get_ieee_interface_mode(self) -> int:
+    def get_ieee_interface_mode(self):
         """Returns the interface mode of the instrument.
 
         Returns:
@@ -499,21 +499,21 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return int(self.query("MODE?"))
 
-    def set_factory_defaults(self) -> None:
+    def set_factory_defaults(self):
         """Sets all configuration values to factory defaults and resets the instrument.
 
             The instrument must be at zero amps for this command to work.
         """
         self.command("DFLT 99")
 
-    def reset_instrument(self) -> None:
+    def reset_instrument(self):
         """Sets the controller parameters to power-up settings.
 
             Use the set_factory_defaults command to set factory-defaults.
         """
         self.command("*RST")
 
-    def clear_interface(self) -> None:
+    def clear_interface(self):
         """Clears the event registers in all register groups. Also clears the error queue.
 
             Clears the bits in the Status Byte Register, Standard Event Status Register, and Operation event Register,
@@ -522,7 +522,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command("*CLS")
 
-    def get_self_test(self) -> bool:
+    def get_self_test(self):
         """Returns result of instrument self test completed at power up.
 
         Returns:
@@ -530,7 +530,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return bool(int(self.query("*TST?")))
 
-    def set_service_request_enable_mask(self, register_mask: EMPowerSupplyServiceRequestEnableRegister) -> None:
+    def set_service_request_enable_mask(self, register_mask):
         """Configures the Service Request Enable Register.
 
             The Service Request Enable Register determines which summary bits of the Status
@@ -541,7 +541,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"*SRE {register_mask.to_integer()}")
 
-    def get_service_request_enable_mask(self) -> EMPowerSupplyServiceRequestEnableRegister:
+    def get_service_request_enable_mask(self):
         """Returns Service Request Enable Register configuration.
 
             The Service Request Enable Register determines which summary bits of the Status
@@ -553,7 +553,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         bit_weighting = int(self.query("*SRE?"))
         return self.EMPowerSupplyServiceRequestEnableRegister.from_integer(bit_weighting)
 
-    def get_status_byte(self) -> EMPowerSupplyStatusByteRegister:
+    def get_status_byte(self):
         """Returns state of the Status Byte Register.
 
             The Status Byte register, typically referred to as the Status Byte, is a non-latching,
@@ -565,7 +565,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         bit_weighting = int(self.query("*STB?"))
         return self.EMPowerSupplyStatusByteRegister.from_integer(bit_weighting)
 
-    def set_standard_event_status_enable_mask(self, register_mask: EMPowerSupplyStandardEventStatusRegister) -> None:
+    def set_standard_event_status_enable_mask(self, register_mask):
         """Configures Standard Event Status Enable Register group.
 
             The Standard Event Status Enable Register determines which bits in the Standard
@@ -577,7 +577,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"*ESE {register_mask.to_integer()}")
 
-    def get_standard_event_status_enable_mask(self) -> EMPowerSupplyStandardEventStatusRegister:
+    def get_standard_event_status_enable_mask(self):
         """Returns Standard Event Status Enable Register configuration.
 
             The Standard Event Status Enable Register determines which bits in the Standard
@@ -586,10 +586,10 @@ class ElectromagnetPowerSupply(GenericInstrument):
         Returns:
             ElectromagnetPowerSupply.EMPowerSupplyStandardEventStatusRegister: Register configuration object.
         """
-        bit_weighting: int = int(self.query("*ESE?"))
+        bit_weighting = int(self.query("*ESE?"))
         return self.EMPowerSupplyStandardEventStatusRegister.from_integer(bit_weighting)
 
-    def get_standard_event_status_event(self) -> EMPowerSupplyStandardEventStatusRegister:
+    def get_standard_event_status_event(self):
         """Returns state of the Standard Event Status Register.
 
             Bits in this register correspond to various system events and latch when the event
@@ -599,10 +599,10 @@ class ElectromagnetPowerSupply(GenericInstrument):
         Returns:
             ElectromagnetPowerSupply.EMPowerSupplyStandardEventStatusRegister: Register state object.
         """
-        bit_weighting: int = int(self.query("*ESR?"))
+        bit_weighting = int(self.query("*ESR?"))
         return self.EMPowerSupplyStandardEventStatusRegister.from_integer(bit_weighting)
 
-    def set_operation_event_enable_mask(self, register_mask: EMPowerSupplyOperationEventRegister) -> None:
+    def set_operation_event_enable_mask(self, register_mask):
         """Configures the Operational Event Enable Register.
 
             Each bit has a bit weighting and represents the enable/disable mask of the corresponding operational status
@@ -614,7 +614,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         self.command(f"OPSTE {register_mask.to_integer()}")
 
-    def get_operation_event_enable_mask(self) -> EMPowerSupplyOperationEventRegister:
+    def get_operation_event_enable_mask(self):
         """Returns Operational Event Enable Register configuration.
 
             Each bit has a bit weighting and represents the enable/disable mask of the corresponding operational status
@@ -624,10 +624,10 @@ class ElectromagnetPowerSupply(GenericInstrument):
         Returns:
             ElectromagnetPowerSupply.EMPowerSupplyOperationEventRegister: Register configuration object.
         """
-        bit_weighting: int = int(self.query("OPSTE?"))
+        bit_weighting = int(self.query("OPSTE?"))
         return self.EMPowerSupplyOperationEventRegister.from_integer(bit_weighting)
 
-    def get_operation_event_condition(self) -> EMPowerSupplyOperationEventRegister:
+    def get_operation_event_condition(self):
         """Returns the real-time state of the operation event bits.
 
             The condition register constantly monitors the instrument status. The data bits are real-time and are not
@@ -639,7 +639,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         weighted_operation_events = int(self.query("OPSTR?"))
         return self.EMPowerSupplyOperationEventRegister.from_integer(weighted_operation_events)
 
-    def get_operation_event_event(self) -> EMPowerSupplyOperationEventRegister:
+    def get_operation_event_event(self):
         """Returns the latched state of the operation event bits.
 
             Bits in the event register correspond to various system events and latch when the event occurs. When
@@ -651,7 +651,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         weighted_operation_events = int(self.query("OPST?"))
         return self.EMPowerSupplyOperationEventRegister.from_integer(weighted_operation_events)
 
-    def set_hardware_error_enable_mask(self, register_mask: EMPowerSupplyHardwareErrorsRegister) -> None:
+    def set_hardware_error_enable_mask(self, register_mask):
         """Sets which hardware error bits will set the summary bit in the Status Byte Register.
 
             Each bit has a bit weighting and represents the enable/disable mask of the corresponding error bits in the
@@ -662,10 +662,10 @@ class ElectromagnetPowerSupply(GenericInstrument):
             register_mask (ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister): Register mask configuration
                 object.
         """
-        operational_mask: str = self.query("ERSTE?").split(',')[1]
+        operational_mask = self.query("ERSTE?").split(',')[1]
         self.command(f"ERSTE {register_mask.to_integer()},{operational_mask}")
 
-    def get_hardware_error_enable_mask(self) -> EMPowerSupplyHardwareErrorsRegister:
+    def get_hardware_error_enable_mask(self):
         """Returns which hardware error bits will set the summary bit in the Status Byte Register.
 
             Each bit has a bit weighting and represents the enable/disable mask of the corresponding error bits in the
@@ -678,7 +678,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         hardware_mask = int(self.query("ERSTE?").split(',')[0])
         return self.EMPowerSupplyHardwareErrorsRegister.from_integer(hardware_mask)
 
-    def get_hardware_error_condition(self) -> EMPowerSupplyHardwareErrorsRegister:
+    def get_hardware_error_condition(self):
         """Returns the real-time state of the hardware error bits.
 
             The condition register constantly monitors the instrument status. The data bits are real-time and are not
@@ -690,7 +690,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         weighted_hardware_errors = int(self.query("ERST?").split(',')[0])
         return self.EMPowerSupplyHardwareErrorsRegister.from_integer(weighted_hardware_errors)
 
-    def get_hardware_error_event(self) -> EMPowerSupplyHardwareErrorsRegister:
+    def get_hardware_error_event(self):
         """Returns the latched state of the hardware error bits.
 
             Bits in the event register correspond to various system events and latch when the event occurs. When
@@ -702,7 +702,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         weighted_hardware_errors = int(self.query("ERSTR?").split(',')[0])
         return self.EMPowerSupplyHardwareErrorsRegister.from_integer(weighted_hardware_errors)
 
-    def set_operational_error_enable_mask(self, register_mask: EMPowerSupplyOperationalErrorsRegister) -> None:
+    def set_operational_error_enable_mask(self, register_mask):
         """Sets which operational error bits will set the summary bit in the Status Byte Register.
 
             Each bit has a bit weighting and represents the enable/disable mask of the corresponding error bits in the
@@ -713,10 +713,10 @@ class ElectromagnetPowerSupply(GenericInstrument):
             register_mask (ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister): Register mask configuration
                 object.
         """
-        hardware_mask: str = self.query("ERSTE?").split(',')[0]
+        hardware_mask = self.query("ERSTE?").split(',')[0]
         self.command(f"ERSTE {register_mask.to_integer()},{hardware_mask}")
 
-    def get_operational_error_enable_mask(self) -> EMPowerSupplyOperationalErrorsRegister:
+    def get_operational_error_enable_mask(self):
         """Returns which operational error bits will set the summary bit in the Status Byte Register.
 
             Each bit has a bit weighting and represents the enable/disable mask of the corresponding error bits in the
@@ -729,7 +729,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         operational_mask = int(self.query("ERSTE?").split(',')[1])
         return self.EMPowerSupplyOperationalErrorsRegister.from_integer(operational_mask)
 
-    def get_operational_error_condition(self) -> EMPowerSupplyOperationalErrorsRegister:
+    def get_operational_error_condition(self):
         """Returns the real-time state of the operational error bits.
 
             The condition register constantly monitors the instrument status. The data bits are real-time and are not
@@ -741,7 +741,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
         weighted_operational_errors = int(self.query("ERST?").split(',')[1])
         return self.EMPowerSupplyOperationalErrorsRegister.from_integer(weighted_operational_errors)
 
-    def get_operational_error_event(self) -> EMPowerSupplyOperationalErrorsRegister:
+    def get_operational_error_event(self):
         """Returns the latched state of the operational error bits.
 
             Bits in the event register correspond to various system events and latch when the event occurs. When

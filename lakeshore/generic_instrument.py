@@ -62,7 +62,7 @@ def _is_valid_user_connection(connection):
         return 0
 
 
-def _parse_response(full_response: str) -> list[str]:
+def _parse_response(full_response):
     """Splits full response into list of responses to each query.
 
     Args:
