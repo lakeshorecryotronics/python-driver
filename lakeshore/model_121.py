@@ -27,7 +27,7 @@ class Model121(GenericInstrument):
         GenericInstrument.__init__(self, serial_number, com_port, baud_rate, data_bits, stop_bits, parity, flow_control,
                                    handshaking, timeout, ip_address, tcp_port, **kwargs)
 
-    def command(self, command_string: str) -> None:
+    def command(self, command_string):
         """Sends a command to the instrument.
 
         Args:
@@ -41,7 +41,7 @@ class Model121(GenericInstrument):
         # is to sleep 50 ms after each command is sent.
         GenericInstrument.query(self, command_string + '; COMP?')
 
-    def set_current(self, current: float) -> None:
+    def set_current(self, current):
         """Set and start outputting a specific current from the instrument.
 
             Switches to the user current range and applies the specified current. Current can be set between 100nA and
@@ -56,7 +56,7 @@ class Model121(GenericInstrument):
         self.command(f"SETI {current}")
         self.command("IENBL 1")
 
-    def get_current(self) -> float:
+    def get_current(self):
         """Returns the present user current setting in Amps.
 
         Returns:
@@ -65,19 +65,19 @@ class Model121(GenericInstrument):
         """
         return float(self.query("SETI?"))
 
-    def enable_current(self) -> None:
+    def enable_current(self):
         """Enables current source output."""
         self.command("IENBL 1")
 
-    def disable_current(self) -> None:
+    def disable_current(self):
         """Disables current source output."""
         self.command("IENBL 0")
 
-    def reset_instrument(self) -> None:
+    def reset_instrument(self):
         """Sets instrument parameters to power-up settings."""
         self.command("*RST")
 
-    def set_display_brightness(self, brightness_level: int) -> None:
+    def set_display_brightness(self, brightness_level):
         """Sets the display contrast for the front panel seven-segment display.
 
             A higher number makes the display brighter. The default setting is 8. The display can be turned off by
@@ -89,7 +89,7 @@ class Model121(GenericInstrument):
         """
         self.command(f"BRIGT {brightness_level}")
 
-    def get_display_brightness(self) -> int:
+    def get_display_brightness(self):
         """Gets the display contrast for the front panel seven-segment display.
 
             A higher number makes the display brighter. The default setting is 8. Brightness level 0 means the display
@@ -101,7 +101,7 @@ class Model121(GenericInstrument):
         """
         return int(self.query("BRIGT?"))
 
-    def get_compliance_limit_status(self) -> bool:
+    def get_compliance_limit_status(self):
         """Returns the voltage compliance status of the current source output.
 
         Returns:
@@ -110,19 +110,19 @@ class Model121(GenericInstrument):
         """
         return bool(int(self.query("COMP?")))
 
-    def set_factory_defaults(self) -> None:
+    def set_factory_defaults(self):
         """Sets all configuration values to factory defaults and resets the instrument."""
         self.command("DFLT 99")
 
-    def lock_front_panel(self) -> None:
+    def lock_front_panel(self):
         """Locks the front panel keypad."""
         self.command("LOCK 1")
 
-    def unlock_front_panel(self) -> None:
+    def unlock_front_panel(self):
         """Unlocks the front panel keypad."""
         self.command("LOCK 0")
 
-    def get_front_panel_lock_status(self) -> bool:
+    def get_front_panel_lock_status(self):
         """Returns if the front panel keypad  is locked or not.
 
         Returns:
@@ -130,7 +130,7 @@ class Model121(GenericInstrument):
         """
         return bool(int(self.query("LOCK?")))
 
-    def set_power_up_enable(self, state: bool) -> None:
+    def set_power_up_enable(self, state):
         """Specifies whether the output remains on or shuts off after power cycle.
 
         Args:
@@ -139,7 +139,7 @@ class Model121(GenericInstrument):
         """
         self.command(f"PWUPENBL {int(state)}")
 
-    def save_current_state(self) -> None:
+    def save_current_state(self):
         """Saves the present range, polarity, and user current value.
 
             This saved state will be loaded on future power ups.
