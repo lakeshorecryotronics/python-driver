@@ -34,7 +34,7 @@ class SSMSystemEnums:
         GENERAL_PURPOSE_OUTPUT_STATES = 'GPOStates'
 
         # Gets around having to use .value to access the string
-        def __str__(self) -> str:
+        def __str__(self):
             return str.__str__(self)
 
     class ReadDataSourceMnemonic(str, Enum):
@@ -47,7 +47,7 @@ class SSMSystemEnums:
         MEASURE_RANGE = 'MRANge'
 
         # Gets around having to use .value to access the string
-        def __str__(self) -> str:
+        def __str__(self):
             return str.__str__(self)
 
     class ExcitationType(str, Enum):
@@ -56,7 +56,7 @@ class SSMSystemEnums:
         VOLTAGE = 'VOLTAGE'
 
         # Gets around having to use .value to access the string
-        def __str__(self) -> str:
+        def __str__(self):
             return str.__str__(self)
 
     class SourceSweepType(str, Enum):
@@ -66,7 +66,7 @@ class SSMSystemEnums:
         FREQUENCY = 'FREQuency'
 
         # Gets around having to use .value to access the string
-        def __str__(self) -> str:
+        def __str__(self):
             return str.__str__(self)
 
     class SourceSweepSettings:
@@ -78,7 +78,7 @@ class SSMSystemEnums:
             LOGARITHMIC = 'LOGARITHMIC'
 
             # Gets around having to use .value to access the string
-            def __str__(self) -> str:
+            def __str__(self):
                 return str.__str__(self)
 
         class Direction(str, Enum):
@@ -87,7 +87,7 @@ class SSMSystemEnums:
             UP = 'UP'
 
             # Gets around having to use .value to access the string
-            def __str__(self) -> str:
+            def __str__(self):
                 return str.__str__(self)
 
         def __init__(self, sweep_type, start, stop, points, dwell,
