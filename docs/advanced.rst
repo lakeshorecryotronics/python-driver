@@ -74,7 +74,7 @@ By default the error flags or queue will be reset upon connecting to an instrume
 
 Alternative instrument connections
 ----------------------------------
-Alternative connections to the instrument can be used by the driver. Create your connection and pass it into the constructor for your instrument. The connection must have both write and query methods for this to work.
+Alternative connections to the instrument can be used by the driver. Create your connection and pass it into the constructor for your instrument. The connection must have write, query, and clear methods for this to work.
 
 GPIB connection with PyVISA
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

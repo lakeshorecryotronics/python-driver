@@ -55,9 +55,13 @@ class RegisterBase:
 
 
 def _is_valid_user_connection(connection):
-    """Verifies connection can be used and has write and query methods."""
+    """Verifies user connection can be used.
+
+        Must implement write, query, and clear methods.
+    """
+
     try:
-        return callable(connection.write) and callable(connection.query)
+        return callable(connection.write) and callable(connection.query) and callable(connection.clear)
     except AttributeError:
         return 0
 
@@ -110,8 +114,9 @@ class GenericInstrument:
             # Check validity of provided connection with duck-typing
             elif _is_valid_user_connection(connection):
                 self.user_connection = connection
+                self.user_connection.clear()
             else:
-                raise ValueError("Invalid connection. Connection must have callable write and query methods.")
+                raise ValueError("Invalid connection. Connection must have callable write, query, and clear methods.")
         # USB connection (default)
         else:
             self.connect_usb(serial_number, com_port, baud_rate, data_bits, stop_bits, parity,

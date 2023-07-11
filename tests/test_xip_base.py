@@ -10,20 +10,21 @@ class ValidFakeUserConnection:
         self.responses = deque()
         self.responses.append('No error')
         self.responses.append('LSCI,F71,FakeSerial,999.999.999')
+
     def write(self, command):
         return
 
     def query(self, query):
         return self.responses.pop()
 
+    def clear(self):
+        return
+
 
 class InvalidFakeUserConnection:
 
     def send(self, command):
         return
-
-    def query(self, query):
-        return "response"
 
 
 class TestDiscovery(unittest.TestCase):
@@ -58,9 +59,11 @@ class TestUserConnections(unittest.TestCase):
 
     def test_invalid_connection(self):
         provided_connection = InvalidFakeUserConnection()
-        with self.assertRaisesRegex(ValueError,
-                                    "Invalid connection. Connection must have callable write and query methods."):
+        with self.assertRaisesRegex(
+                ValueError,
+                "Invalid connection. Connection must have callable write, query, and clear methods."):
             Teslameter(connection=provided_connection)
+
 
 class TestCommands(TestWithFakeTeslameter):
     def test_basic_command(self):
