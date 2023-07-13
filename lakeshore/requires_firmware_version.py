@@ -16,7 +16,11 @@ def requires_firmware_version(required_version):
             if Version(required_version) > Version(self.firmware_version.split('-')[0]):
                 raise XIPInstrumentException(func.__name__ + ' requires instrument firmware version ' +
                                              str(required_version) +
-                                             ' or later. Please update your instrument.')
+                                             ' or later (' +
+                                             str(self.firmware_version.split('-')[0]) +
+                                             ' < ' +
+                                             str(required_version) +
+                                             '). Please update your instrument.')
 
             value = func(self, *args, **kwargs)
 
