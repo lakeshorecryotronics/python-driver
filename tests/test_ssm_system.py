@@ -1389,10 +1389,20 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.dut_module.configure_current_range(False, 2.5)
         self.assertIn('SENSe1:CURRent:RANGe 2.5', self.fake_connection.get_outgoing_message())
 
-    def test_configure_current_range_auto(self):
+    def test_configure_current_range_auto_explicit(self):
         self.fake_connection.setup_response('No error')
         self.dut_module.configure_current_range(True, max_level=None)
         self.assertIn('SENSe1:CURRent:RANGe:AUTO 1', self.fake_connection.get_outgoing_message())
+
+    def test_configure_current_range_auto_implicit(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.configure_current_range(True)
+        self.assertIn('SENSe1:CURRent:RANGe:AUTO 1', self.fake_connection.get_outgoing_message())
+
+    def test_configure_current_range_disable_auto(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.configure_current_range(False)
+        self.assertIn('SENSe1:CURRent:RANGe:AUTO 0', self.fake_connection.get_outgoing_message())
 
     def test_configure_current_range_exception(self):
         self.fake_connection.setup_response('No error')
@@ -1411,10 +1421,20 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.assertEqual(response, False)
         self.assertIn('SENSe1:VOLTage:RANGe:AUTO?', self.fake_connection.get_outgoing_message())
 
-    def test_configure_voltage_range_autorange(self):
+    def test_configure_voltage_range_autorange_explicit(self):
         self.fake_connection.setup_response('No error')
         self.dut_module.configure_voltage_range(True, max_level=None)
         self.assertIn('SENSe1:VOLTage:RANGe:AUTO 1', self.fake_connection.get_outgoing_message())
+
+    def test_configure_voltage_range_autorange_implicit(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.configure_voltage_range(True)
+        self.assertIn('SENSe1:VOLTage:RANGe:AUTO 1', self.fake_connection.get_outgoing_message())
+
+    def test_configure_voltage_range_disable_autorange(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.configure_voltage_range(False)
+        self.assertIn('SENSe1:VOLTage:RANGe:AUTO 0', self.fake_connection.get_outgoing_message())
 
     def test_configure_voltage_range_exception(self):
         self.fake_connection.setup_response('No error')
