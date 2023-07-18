@@ -319,6 +319,8 @@ class MeasureModule(BaseModule):
         else:
             if max_level is not None:
                 self.device.command(f'SENSe{self.module_number}:CURRent:RANGe {str(max_level)}')
+            else:
+                self.device.command(f'SENSe{self.module_number}:CURRent:RANGe:AUTO 0')
 
     def configure_i_range(self, autorange, max_level=None):
         """
@@ -347,7 +349,7 @@ class MeasureModule(BaseModule):
 
         return bool(int(self.device.query(f'SENSe{self.module_number}:VOLTage:RANGe:AUTO?')))
 
-    def configure_voltage_range(self, autorange, max_level):
+    def configure_voltage_range(self, autorange, max_level=None):
         """Configure voltage ranging for the module.
 
             Args:
@@ -365,6 +367,8 @@ class MeasureModule(BaseModule):
         else:
             if max_level is not None:
                 self.device.command(f'SENSe{self.module_number}:VOLTage:RANGe {str(max_level)}')
+            else:
+                self.device.command(f'SENSe{self.module_number}:VOLTage:RANGe:AUTO 0')
 
     def get_reference_source(self):
         """Returns the lock-in reference source. 'S1', 'S2', 'S3', 'RIN'."""
