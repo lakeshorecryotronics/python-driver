@@ -825,6 +825,14 @@ class MeasureModule(BaseModule):
 
         return status_register.settling
 
+    def get_unlocked_status(self):
+        """Returns whether the module is presently unlocked or not"""
+
+        response = self.device.query(f'STATus:OPERation:SENSe{self.module_number}:CONDition?', check_errors=False)
+        status_register = SSMSystemMeasureModuleOperationRegister.from_integer(response)
+
+        return status_register.unlocked
+
     def get_operation_events(self):
         """Returns the names of operation event status register bits that are currently high.
 
