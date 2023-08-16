@@ -1,25 +1,23 @@
 """Implements functionality unique to the Lake Shore Model 335 cryogenic temperature controller."""
 from enum import IntEnum
 
-from .temperature_controllers import TemperatureController, InstrumentException
-from .temperature_controllers import RelayControlMode, RelayControlAlarm, InterfaceMode, HeaterError, \
-    CurveFormat, CurveTemperatureCoefficient, BrightnessLevel, AutotuneMode, HeaterResistance, Polarity, \
-    DiodeCurrent, HeaterOutputUnits, InputSensorUnits, ControlTypes, StandardEventRegister, OperationEvent, RegisterBase
+from .temperature_controllers import TemperatureController, InstrumentException, StandardEventRegister, \
+    OperationEvent, RegisterBase
 
-Model335RelayControlMode = RelayControlMode
-Model335RelayControlAlarm = RelayControlAlarm
-Model335InterfaceMode = InterfaceMode
-Model335HeaterError = HeaterError
-Model335CurveFormat = CurveFormat
-Model335CurveTemperatureCoefficient = CurveTemperatureCoefficient
-Model335BrightnessLevel = BrightnessLevel
-Model335AutoTuneMode = AutotuneMode
-Model335HeaterResistance = HeaterResistance
-Model335Polarity = Polarity
-Model335DiodeCurrent = DiodeCurrent
-Model335HeaterOutputUnits = HeaterOutputUnits
-Model335InputSensorUnits = InputSensorUnits
-Model335ControlTypes = ControlTypes
+Model335RelayControlMode = TemperatureController.RelayControlMode
+Model335RelayControlAlarm = TemperatureController.RelayControlAlarm
+Model335InterfaceMode = TemperatureController.InterfaceMode
+Model335HeaterError = TemperatureController.HeaterError
+Model335CurveFormat = TemperatureController.CurveFormat
+Model335CurveTemperatureCoefficient = TemperatureController.CurveTemperatureCoefficient
+Model335BrightnessLevel = TemperatureController.BrightnessLevel
+Model335AutoTuneMode = TemperatureController.AutotuneMode
+Model335HeaterResistance = TemperatureController.HeaterResistance
+Model335Polarity = TemperatureController.Polarity
+Model335DiodeCurrent = TemperatureController.DiodeCurrent
+Model335HeaterOutputUnits = TemperatureController.HeaterOutputUnits
+Model335InputSensorUnits = TemperatureController.InputSensorUnits
+Model335ControlTypes = TemperatureController.ControlTypes
 
 Model335StandardEventRegister = StandardEventRegister
 Model335OperationEvent = OperationEvent
@@ -286,10 +284,6 @@ class Model335InputReadingStatus(RegisterBase):
 class Model335(TemperatureController):
     """A class object representing the Lake Shore Model 335 cryogenic temperature controller."""
 
-    # Initiate enum types for temperature controllers
-    _input_channel_enum = Model335DisplayInputChannel
-    _display_units_enum = Model335DisplayFieldUnits
-
     # Initiate instrument specific registers
     _status_byte_register = Model335StatusByteRegister
     _service_request_enable = Model335ServiceRequestEnable
@@ -310,6 +304,10 @@ class Model335(TemperatureController):
 
         # Disable emulation mode
         self._disable_emulation()
+
+        # Initiate enum types for temperature controllers
+        self.InputChannel = Model335DisplayInputChannel
+        self.DisplayFieldUnits = Model335DisplayFieldUnits
 
     # Alias specific temperature controller methods
     get_analog_output_percentage = TemperatureController._get_analog_output_percentage

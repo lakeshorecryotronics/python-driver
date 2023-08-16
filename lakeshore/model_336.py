@@ -2,31 +2,28 @@
 from enum import IntEnum
 
 from .generic_instrument import RegisterBase
-from .temperature_controllers import TemperatureController, InstrumentException
-from .temperature_controllers import RelayControlMode, RelayControlAlarm, InterfaceMode, HeaterError, \
-    CurveFormat, CurveTemperatureCoefficient, AutotuneMode, HeaterResistance, Polarity, DiodeCurrent, \
-    HeaterOutputUnits, InputSensorUnits, ControlTypes, StandardEventRegister, OperationEvent, \
-    LanStatus, Interface, CurveHeader, AlarmSettings, DisplayFields, DisplayFieldsSize
+from .temperature_controllers import TemperatureController, InstrumentException, StandardEventRegister, OperationEvent, \
+    CurveHeader, AlarmSettings
 
-Model336RelayControlMode = RelayControlMode
-Model336RelayControlAlarm = RelayControlAlarm
-Model336InterfaceMode = InterfaceMode
-Model336HeaterError = HeaterError
-Model336CurveFormat = CurveFormat
-Model336CurveTemperatureCoefficients = CurveTemperatureCoefficient
-Model336AutoTuneMode = AutotuneMode
-Model336HeaterResistance = HeaterResistance
-Model336Polarity = Polarity
-Model336DiodeCurrent = DiodeCurrent
-Model336HeaterOutputUnits = HeaterOutputUnits
-Model336InputSensorUnits = InputSensorUnits
-Model336ControlTypes = ControlTypes
-Model336LanStatus = LanStatus
-Model336Interface = Interface
+Model336RelayControlMode = TemperatureController.RelayControlMode
+Model336RelayControlAlarm = TemperatureController.RelayControlAlarm
+Model336InterfaceMode = TemperatureController.InterfaceMode
+Model336HeaterError = TemperatureController.HeaterError
+Model336CurveFormat = TemperatureController.CurveFormat
+Model336CurveTemperatureCoefficients = TemperatureController.CurveTemperatureCoefficient
+Model336AutoTuneMode = TemperatureController.AutotuneMode
+Model336HeaterResistance = TemperatureController.HeaterResistance
+Model336Polarity = TemperatureController.Polarity
+Model336DiodeCurrent = TemperatureController.DiodeCurrent
+Model336HeaterOutputUnits = TemperatureController.HeaterOutputUnits
+Model336InputSensorUnits = TemperatureController.InputSensorUnits
+Model336ControlTypes = TemperatureController.ControlTypes
+Model336LanStatus = TemperatureController.LanStatus
+Model336Interface = TemperatureController.Interface
 Model336CurveHeader = CurveHeader
 Model336AlarmSettings = AlarmSettings
-Model336DisplayFields = DisplayFields
-Model336DisplayFieldsSize = DisplayFieldsSize
+Model336DisplayFields = TemperatureController.DisplayFields
+Model336DisplayFieldsSize = TemperatureController.DisplayFieldsSize
 Model336StandardEventRegister = StandardEventRegister
 Model336OperationEvent = OperationEvent
 
@@ -273,10 +270,6 @@ class Model336(TemperatureController):
 
     vid_pid = [(0x1FB9, 0x0301)]
 
-    # Initiate enum types for temperature controllers class
-    _input_channel_enum = Model336InputChannel
-    _display_units_enum = Model336DisplayUnits
-
     # Initiate instrument specific registers
     status_byte_register = Model336StatusByteRegister
     service_request_enable = Model336ServiceRequestEnable
@@ -292,6 +285,10 @@ class Model336(TemperatureController):
         # Call the parent init, then fill in values specific to the 336
         TemperatureController.__init__(self, serial_number, com_port, 57600, timeout, ip_address,
                                        tcp_port, **kwargs)
+
+        # Initiate enum types for temperature controllers class
+        self.InputChannel = Model336InputChannel
+        self.DisplayFieldUnits = Model336DisplayUnits
 
     # Alias specific temperature controller methods
     get_analog_output_percentage = TemperatureController._get_analog_output_percentage

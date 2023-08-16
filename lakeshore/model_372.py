@@ -1,20 +1,18 @@
 """Implements functionality unique to the Lake Shore Model 372 AC bridge and temperature controller."""
 from enum import Enum, IntEnum
 
-from .temperature_controllers import TemperatureController, CurveTemperatureCoefficient, InterfaceMode, \
-    BrightnessLevel, HeaterError, CurveHeader, StandardEventRegister, DisplayFields, Polarity, HeaterOutputUnits, \
-    HeaterResistance, Interface, OperationEvent
+from .temperature_controllers import TemperatureController, CurveHeader, StandardEventRegister, OperationEvent
 from .generic_instrument import RegisterBase
 
-Model372CurveTemperatureCoefficient = CurveTemperatureCoefficient
-Model372InterfaceMode = InterfaceMode
-Model372DisplayFields = DisplayFields
-Model372Polarity = Polarity
-Model372HeaterOutputUnits = HeaterOutputUnits
-Model372BrightnessLevel = BrightnessLevel
-Model372HeaterError = HeaterError
-Model372HeaterResistance = HeaterResistance
-Model372Interface = Interface
+Model372CurveTemperatureCoefficient = TemperatureController.CurveTemperatureCoefficient
+Model372InterfaceMode = TemperatureController.InterfaceMode
+Model372DisplayFields = TemperatureController.DisplayFields
+Model372Polarity = TemperatureController.Polarity
+Model372HeaterOutputUnits = TemperatureController.HeaterOutputUnits
+Model372BrightnessLevel = TemperatureController.BrightnessLevel
+Model372HeaterError = TemperatureController.HeaterError
+Model372HeaterResistance = TemperatureController.HeaterResistance
+Model372Interface = TemperatureController.Interface
 Model372CurveHeader = CurveHeader
 Model372OperationEventRegister = OperationEvent
 Model372StandardEventRegister = StandardEventRegister
@@ -572,12 +570,6 @@ class Model372(TemperatureController):
 
     vid_pid = [(0x1FB9, 0x0305)]
 
-    # Override enums in base class
-    _curve_format_enums = Model372CurveFormat
-    _input_channel_enum = Model372InputChannel
-    _display_units_enum = Model372DisplayFieldUnits
-    _relay_control_mode_enum = Model372RelayControlMode
-
     # Initialize registers
     _status_byte_register = Model372StatusByteRegister
     _service_request_enable = Model372ServiceRequestEnable
@@ -596,6 +588,12 @@ class Model372(TemperatureController):
                                        tcp_port, **kwargs)
         # Disable emulation upon initialization
         self._disable_emulation_mode()
+
+        # Override enums in base class
+        self.CurveFormat = Model372CurveFormat
+        self.InputChannel = Model372InputChannel
+        self.DisplayFieldUnits = Model372DisplayFieldUnits
+        self.RelayControlMode = Model372RelayControlMode
 
     def clear_interface(self):
         """Clears the interface.
