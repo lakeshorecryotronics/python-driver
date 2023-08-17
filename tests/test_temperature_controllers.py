@@ -1,8 +1,7 @@
 from tests.utils import TestWithFakeModel372
 from lakeshore import InstrumentException
 from lakeshore.temperature_controllers import TemperatureController
-from lakeshore.model_372 import Model372CurveFormat, Model372CurveTemperatureCoefficient, Model372CurveHeader, \
-    Model372StandardEventRegister, Model372OperationEventRegister
+from lakeshore.model_372 import  Model372CurveHeader, Model372StandardEventRegister, Model372OperationEventRegister
 
 
 class TestBasicMethods(TestWithFakeModel372):
@@ -36,8 +35,8 @@ class TestBasicMethods(TestWithFakeModel372):
     def test_set_curve_header(self):
         self.fake_connection.setup_response('0;0')
         curve_header = Model372CurveHeader('Curve1', '1234',
-                                            Model372CurveFormat.OHM_PER_KELVIN,
-                                            12.3, Model372CurveTemperatureCoefficient.NEGATIVE)
+                                            self.dut.CurveFormat.OHM_PER_KELVIN,
+                                            12.3, self.dut.CurveTemperatureCoefficient.NEGATIVE)
         self.dut.set_curve_header(2, curve_header)
         self.assertIn('CRVHDR 2,"Curve1","1234",3,12.3,1;*ESR?', self.fake_connection.get_outgoing_message())
 
@@ -181,8 +180,8 @@ class TestBasicMethods(TestWithFakeModel372):
         self.assertIn("CRVPT? 1,2", self.fake_connection.get_outgoing_message())
 
     def test_get_curve_header(self):
-        curve_header = Model372CurveHeader('Curve1', '1234', Model372CurveFormat.OHM_PER_KELVIN, 12.3,
-                                            Model372CurveTemperatureCoefficient.NEGATIVE)
+        curve_header = Model372CurveHeader('Curve1', '1234', self.dut.CurveFormat.OHM_PER_KELVIN, 12.3,
+                                            self.dut.CurveTemperatureCoefficient.NEGATIVE)
         self.fake_connection.setup_response('Curve1,1234,3,12.3,1;0')
         response = self.dut.get_curve_header(2)
         self.assertEqual(response.curve_name, curve_header.curve_name)

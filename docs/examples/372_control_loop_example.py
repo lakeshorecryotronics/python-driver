@@ -1,5 +1,4 @@
-from lakeshore import Model372
-from lakeshore import Model372HeaterOutputSettings, Model372OutputMode, Model372InputChannel, Model372ControlLoopZoneSettings
+from lakeshore import Model372, Model372HeaterOutputSettings, Model372ControlLoopZoneSettings
 
 # Include baud rate when initializing instrument
 my_model_372 = Model372(57600)
@@ -7,7 +6,7 @@ my_model_372 = Model372(57600)
 # Configure output for zone mode, controlled by control input, with power up enabled filter enabled and a reading
 # delay of 10 seconds
 # Note; it's assumed that the control input is enabled and configured
-heater_settings = Model372HeaterOutputSettings(Model372OutputMode.ZONE, Model372InputChannel.CONTROL, True, True, 10)
+heater_settings = Model372HeaterOutputSettings(my_model_372.OutputMode.ZONE, my_model_372.InputChannel.CONTROL, True, True, 10)
 my_model_372.configure_heater(1, heater_settings)
 
 # Configure a relay for Warmup Heater Zone

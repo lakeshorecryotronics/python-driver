@@ -31,7 +31,7 @@ ________________________
 .. autoclass:: Model372
     :member-order: bysource
     :members:
-    :inherited-members:
+    :inherited-members: Model372Enums
 
 Instrument settings classes and registers
 _________________________________________
@@ -94,106 +94,6 @@ to the instrument. The purpose of these objects is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
 the instrument.
 
-.. autoclass:: Model372OutputMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372InputChannel
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372SensorExcitationMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372AutoRangeMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372InputSensorUnits
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372MonitorOutputSource
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372RelayControlMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372DisplayMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372DisplayInfo
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372CurveFormat
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372DisplayFieldUnits
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372SampleHeaterOutputRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372InputFrequency
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372MeasurementInputVoltageRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372MeasurementInputCurrentRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372ControlInputCurrentRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372MeasurementInputResistance
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372CurveTemperatureCoefficient
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372InterfaceMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372DisplayFields
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372Polarity
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372HeaterOutputUnits
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372BrightnessLevel
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372HeaterError
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372HeaterResistance
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model372Interface
+.. autoclass:: Model372Enums
     :members:
     :undoc-members:
