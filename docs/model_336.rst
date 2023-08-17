@@ -27,7 +27,7 @@ ________________________
 .. autoclass:: Model336
     :member-order: bysource
     :members:
-    :inherited-members:
+    :inherited-members: Model336Enums
 
 Settings classes
 ________________
@@ -72,127 +72,7 @@ to the instrument. The purpose of these enum types is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
 the instrument.
 
-.. autoclass:: Model336InputChannel
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336DisplaySetupMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336InputSensorType
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336DiodeRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336RTDRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336ThermocoupleRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336HeaterOutputMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336HeaterRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336HeaterVoltageRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336DisplayUnits
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336RelayControlMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336RelayControlAlarm
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336InterfaceMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336HeaterError
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336CurveFormat
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336CurveTemperatureCoefficients
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336AutoTuneMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336HeaterResistance
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336Polarity
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336DiodeCurrent
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336HeaterOutputUnits
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336InputSensorUnits
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336ControlTypes
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336LanStatus
-    :members:
-    :undoc-members:
-
-.. autoclass:: lakeshore.temperature_controllers.LanStatus
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336Interface
-    :members:
-    :undoc-members:
-
-.. autoclass:: lakeshore.temperature_controllers.Interface
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336DisplayFields
-    :members:
-    :undoc-members:
-
-.. autoclass:: lakeshore.temperature_controllers.DisplayFields
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model336DisplayFieldsSize
-    :members:
-    :undoc-members:
-
-.. autoclass:: lakeshore.temperature_controllers.DisplayFieldsSize
+.. autoclass:: Model336Enums
     :members:
     :undoc-members:
 
