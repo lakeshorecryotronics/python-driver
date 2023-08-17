@@ -1,4 +1,4 @@
-from lakeshore import Model240, Model240Units, Model240ProfiSlot
+from lakeshore import Model240, Model240ProfiSlot
 
 # Connect to the first available Model 240 over USB
 my_model_240 = Model240()
@@ -13,7 +13,7 @@ my_model_240.set_profibus_slot_count(2)
 # Create the ProfiSlot class object by specifying which input to associate the
 # slot with and what temperature units the data will be presented in
 # Setting the input channel as 2 and temperature units to Celsius
-my_profibus_slot = Model240ProfiSlot(2, Model240Units.CELSIUS)
+my_profibus_slot = Model240ProfiSlot(2, my_model_240.Units.CELSIUS)
 
 # Configure what data to be presented on the given PROFIBUS slot
 # Profibus slot 1 will be associated with channel 2

@@ -1,66 +1,9 @@
 # -*- coding: utf-8 -*-
 """Implements functionality unique to the Lake Shore Model 240 channel modules."""
-from enum import IntEnum
 import serial
 
 from .generic_instrument import GenericInstrument
-
-
-class Model240Units(IntEnum):
-    """Enumerations that specify temperature units."""
-    KELVIN = 1
-    CELSIUS = 2
-    SENSOR = 3
-    FAHRENHEIT = 4
-
-
-class Model240CurveFormat(IntEnum):
-    """Enumerations that specify temperature sensor curve format units."""
-    VOLTS_PER_KELVIN = 2
-    OHMS_PER_KELVIN = 3
-    LOG_OHMS_PER_KELVIN = 4
-
-
-class Model240Coefficients(IntEnum):
-    """Enumerations that specify a positive or negative coefficient."""
-    NEGATIVE = 1
-    POSITIVE = 2
-
-
-class Model240SensorTypes(IntEnum):
-    """Enumerations specify types of temperature sensors."""
-    DIODE = 1
-    PLATINUM_RTD = 2
-    NTC_RTD = 3
-
-
-class Model240BrightnessLevel(IntEnum):
-    """Enumerations for the screen brightness levels."""
-    OFF = 0
-    LOW = 25
-    MED_LOW = 50
-    MED_HIGH = 75
-    HIGH = 100
-
-
-class Model240TemperatureCoefficient(IntEnum):
-    """Enumerations specify positive/negative temperature sensor curve coefficients."""
-    NEGATIVE = 1
-    POSITIVE = 2
-
-
-class Model240InputRange(IntEnum):
-    """Enumerations to specify the input range when auto-range is off."""
-    RANGE_DIODE = 0
-    RANGE_PTRTD_1_KIL_OHMS = 0
-    RANGE_NTCRTD_10_OHMS = 0
-    RANGE_NTCRTD_30_OHMS = 1
-    RANGE_NTCRTD_100_OHMS = 2
-    RANGE_NTCRTD_1_KIL_OHMS = 4
-    RANGE_NTCRTD_3_KIL_OHMS = 5
-    RANGE_NTCRTD_10_KIL_OHMS = 6
-    RANGE_NTCRTD_30_KIL_OHMS = 7
-    RANGE_NTCRTD_100_KIL_OHMS = 8
+from .model_240_enums import Model240Enums
 
 
 class Model240CurveHeader:
@@ -143,7 +86,7 @@ class Model240ProfiSlot:
         self.slot_units = temp_unit
 
 
-class Model240(GenericInstrument):
+class Model240(Model240Enums, GenericInstrument):
     """A class object representing the Lake Shore Model 240 channel modules."""
 
     vid_pid = [(0x1FB9, 0x0205)]
@@ -191,7 +134,7 @@ class Model240(GenericInstrument):
                     Display brightness in percent.
 
         """
-        brightness_level = Model240BrightnessLevel(int(self.query("BRIGT?")))
+        brightness_level = self.BrightnessLevel(int(self.query("BRIGT?")))
         return brightness_level
 
     def get_celsius_reading(self, channel):
@@ -278,9 +221,9 @@ class Model240(GenericInstrument):
         curve_header = response.split(",")
         header = Model240CurveHeader(str(curve_header[0]),
                                      str(curve_header[1]),
-                                     Model240CurveFormat(int(curve_header[2])),
+                                     self.CurveFormat(int(curve_header[2])),
                                      float(curve_header[3]),
-                                     Model240TemperatureCoefficient(int(curve_header[4])))
+                                     self.TemperatureCoefficient(int(curve_header[4])))
         return header
 
     def set_curve_data_point(self, channel, index, units, temp):
@@ -386,10 +329,10 @@ class Model240(GenericInstrument):
         """
         response = self.query(f"INTYPE? {channel}")
         data = response.split(",")
-        input_parameter = Model240InputParameter(Model240SensorTypes(int(data[0])),
+        input_parameter = Model240InputParameter(self.SensorTypes(int(data[0])),
                                                  bool(data[1]),
                                                  bool(data[3]),
-                                                 Model240Units(int(data[4])),
+                                                 self.Units(int(data[4])),
                                                  bool(data[5]),
                                                  int(data[2]))
         return input_parameter
@@ -480,7 +423,7 @@ class Model240(GenericInstrument):
 
         """
         response = self.query(f"PROFISLOT? {slot_num}").split(",")
-        slot_configuration = Model240ProfiSlot(int(response[0]), Model240Units(int(response[1])))
+        slot_configuration = Model240ProfiSlot(int(response[0]), self.Units(int(response[1])))
         return slot_configuration
 
     def get_profibus_connection_status(self):
@@ -538,6 +481,4 @@ class Model240(GenericInstrument):
         return self.query(f"SRDG? {channel}")
 
 
-__all__ = ['Model240', 'Model240Units', 'Model240CurveFormat', 'Model240Coefficients', 'Model240SensorTypes',
-           'Model240BrightnessLevel', 'Model240TemperatureCoefficient', 'Model240InputRange', 'Model240CurveHeader',
-           'Model240InputParameter', 'Model240ProfiSlot']
+__all__ = ['Model240', 'Model240CurveHeader', 'Model240InputParameter', 'Model240ProfiSlot']
