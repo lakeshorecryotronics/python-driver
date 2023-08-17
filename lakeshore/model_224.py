@@ -1,8 +1,8 @@
 """Implements functionality unique to the Lake Shore Model 224 temperature monitor."""
 
-from enum import IntEnum
 import serial
 from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase
+from .model_224_enums import Model224Enums
 from .temperature_controllers import StandardEventRegister
 
 
@@ -36,51 +36,6 @@ class Model224AlarmParameters:
         self.latch_enable = latch_enable
         self.audible = audible
         self.visible = visible
-
-
-class Model224InputSensorType(IntEnum):
-    """Enumeration for the type of sensor being used for a given input."""
-    INPUT_DISABLED = 0
-    DIODE = 1
-    PLATINUM_RTD = 2
-    NTC_RTD = 3
-
-
-class Model224InputSensorUnits(IntEnum):
-    """Enumeration for the preferred units of an input sensor."""
-    KELVIN = 1
-    CELSIUS = 2
-    SENSOR = 3
-
-
-class Model224DiodeSensorRange(IntEnum):
-    """Enumeration for the voltage range of a diode sensor."""
-    RANGE_2_POINT_5_VOLTS = 0
-    RANGE_10_VOLTS = 1
-
-
-class Model224PlatinumRTDSensorResistanceRange(IntEnum):
-    """Enumeration of the resistance range of a platinum RTD input sensor."""
-    TEN_OHMS = 0
-    THIRTY_OHMS = 1
-    ONE_HUNDRED_OHMS = 2
-    THREE_HUNDRED_OHMS = 3
-    ONE_KILOHM = 4
-    THREE_KILOHMS = 5
-    TEN_KILOHMS = 6
-
-
-class Model224NTCRTDSensorResistanceRange(IntEnum):
-    """Enumeration of the resistance range of a NTC RTD input sensor."""
-    TEN_OHMS = 0
-    THIRTY_OHMS = 1
-    ONE_HUNDRED_OHMS = 2
-    THREE_HUNDRED_OHMS = 3
-    ONE_KILOHM = 4
-    THREE_KILOHMS = 5
-    TEN_KILOHMS = 6
-    THIRTY_KILOHMS = 7
-    ONE_HUNDRED_KILOHMS = 8
 
 
 class Model224InputSensorSettings:
@@ -117,116 +72,6 @@ class Model224InputSensorSettings:
         self.preferred_units = preferred_units
         self.autorange_enabled = autorange_enabled
         self.compensation = compensation
-
-
-class Model224InterfaceMode(IntEnum):
-    """Enumeration for the mode of the remote interface."""
-    LOCAL = 0
-    REMOTE = 1
-    REMOTE_LOCAL_LOCK = 2
-
-
-class Model224RemoteInterface(IntEnum):
-    """Enumeration for the remote interface being used to communicate with the instrument."""
-    USB = 0
-    ETHERNET = 1
-    IEEE_488 = 2
-
-
-class Model224DisplayFieldUnits(IntEnum):
-    """Enumerated type defining how units are enumerated for settings and using Display Fields."""
-    KELVIN = 1
-    CELSIUS = 2
-    SENSOR = 3
-    MINIMUM_DATA = 4
-    MAXIMUM_DATA = 5
-
-
-class Model224InputChannel(IntEnum):
-    """Enumerated type defining which input channels correspond to ints for setting and using Display Fields."""
-    NO_INPUT = 0
-    INPUT_A = 1
-    INPUT_B = 2
-    INPUT_C = 3
-    INPUT_D1 = 4
-    INPUT_D2 = 5
-    INPUT_D3 = 6
-    INPUT_D4 = 7
-    INPUT_D5 = 8
-    INPUT_C2 = 9
-    INPUT_C3 = 10
-    INPUT_C4 = 11
-    INPUT_C5 = 12
-
-
-class Model224DisplayMode(IntEnum):
-    """Enumeration defining what input or information is shown on the front panel display."""
-    INPUT_A = 0
-    INPUT_B = 1
-    INPUT_C = 2
-    INPUT_D1 = 3
-    CUSTOM = 4
-    ALL_INPUTS = 5
-    INPUT_D2 = 6
-    INPUT_D3 = 7
-    INPUT_D4 = 8
-    INPUT_D5 = 9
-    INPUT_C2 = 10
-    INPUT_C3 = 11
-    INPUT_C4 = 12
-    INPUT_C5 = 13
-
-
-class Model224NumberOfFields(IntEnum):
-    """Enumerated type specifying the number of display fields to configure in the Custom display mode."""
-    LARGE_4 = 0
-    LARGE_8 = 1
-    LARGE_4_SMALL_8 = 2
-    SMALL_16 = 3
-
-
-class Model224RelayControlAlarm(IntEnum):
-    """Enumeration of the setting determining which alarm(s) cause a relay to activate in alarm mode."""
-    LOW_ALARM = 0
-    HIGH_ALARM = 1
-    BOTH_ALARMS = 2
-
-
-class Model224RelayControlMode(IntEnum):
-    """Enumeration of the configured mode of a relay."""
-    RELAY_OFF = 0
-    RELAY_ON = 1
-    ALARMS = 2
-
-
-class Model224CurveFormat(IntEnum):
-    """Enumerations specify formats for temperature sensor curves."""
-    MILLIVOLT_PER_KELVIN = 1
-    VOLTS_PER_KELVIN = 2
-    OHMS_PER_KELVIN = 3
-    LOG_OHMS_PER_KELVIN = 4
-
-
-class Model224CurveTemperatureCoefficients(IntEnum):
-    """Enumerations specify positive/negative temperature sensor curve coefficients."""
-    NEGATIVE = 1
-    POSITIVE = 2
-
-
-class Model224DiodeExcitationCurrent(IntEnum):
-    """Enum type representing the different excitation currents available for a diode sensor."""
-    TEN_MICRO_AMPS = 0
-    ONE_MILLI_AMP = 1
-
-
-class Model224SoftCalSensorTypes(IntEnum):
-    """Enum type representing the standard curves used to generate a SoftCal curve.
-
-        The 3 standard curves each represent a different type of sensor that can be calibrated with a SoftCal curve.
-    """
-    DT_400 = 1
-    PT_100 = 6
-    PT_1000 = 7
 
 
 class Model224CurveHeader:
@@ -335,7 +180,7 @@ class Model224ReadingStatusRegister(RegisterBase):
         self.sensor_units_over_range = sensor_units_over_range
 
 
-class Model224(GenericInstrument):
+class Model224(Model224Enums, GenericInstrument):
     """A class object representing the Lake Shore Model 224 temperature monitor."""
 
     vid_pid = [(0x1FB9, 0x0204)]
@@ -621,7 +466,7 @@ class Model224(GenericInstrument):
 
         """
         diode_current_int = int(self.query(f"DIOCUR? {input_channel}"))
-        return Model224DiodeExcitationCurrent(diode_current_int)
+        return self.DiodeExcitationCurrent(diode_current_int)
 
     def set_sensor_name(self, channel, sensor_name):
         """Sets a given name to a sensor on the specified channel.
@@ -935,9 +780,9 @@ class Model224(GenericInstrument):
         curve_header = response.split(",")
         header = Model224CurveHeader(str(curve_header[0]),
                                      str(curve_header[1]),
-                                     Model224CurveFormat(int(curve_header[2])),
+                                     self.CurveFormat(int(curve_header[2])),
                                      float(curve_header[3]),
-                                     Model224CurveTemperatureCoefficients(int(curve_header[4])))
+                                     self.CurveTemperatureCoefficients(int(curve_header[4])))
 
         return header
 
@@ -1165,17 +1010,17 @@ class Model224(GenericInstrument):
         # Convert sensor_range depending on sensor type
         sensor_type = int(separated_settings[0])
         if sensor_type == 1:
-            sensor_range = Model224DiodeSensorRange(int(separated_settings[2]))
+            sensor_range = self.DiodeSensorRange(int(separated_settings[2]))
         elif sensor_type == 2:
-            sensor_range = Model224PlatinumRTDSensorResistanceRange(int(separated_settings[2]))
+            sensor_range = self.PlatinumRTDSensorResistanceRange(int(separated_settings[2]))
         elif sensor_type == 3:
-            sensor_range = Model224NTCRTDSensorResistanceRange(int(separated_settings[2]))
+            sensor_range = self.NTCRTDSensorResistanceRange(int(separated_settings[2]))
         else:
             # Sensor is disabled
             sensor_range = None
         # Create object
-        return Model224InputSensorSettings(Model224InputSensorType(sensor_type),
-                                           Model224InputSensorUnits(int(separated_settings[4])),
+        return Model224InputSensorSettings(self.InputSensorType(sensor_type),
+                                           self.InputSensorUnits(int(separated_settings[4])),
                                            sensor_range,
                                            bool(int(separated_settings[1])),
                                            bool(int(separated_settings[3])))
@@ -1201,7 +1046,7 @@ class Model224(GenericInstrument):
 
         """
         interface_number = int(self.query("INTSEL?"))
-        return Model224RemoteInterface(interface_number)
+        return self.RemoteInterface(interface_number)
 
     def select_interface_mode(self, interface_mode):
         """Selects the mode for the remote interface being used.
@@ -1222,7 +1067,7 @@ class Model224(GenericInstrument):
 
         """
         mode_number = int(self.query("MODE?"))
-        return Model224InterfaceMode(mode_number)
+        return self.InterfaceMode(mode_number)
 
     def set_display_field_settings(self, field, input_channel, display_units):
         """Configures a display field in custom display mode.
@@ -1254,8 +1099,8 @@ class Model224(GenericInstrument):
         """
         display_field_settings = self.query("DISPFLD? " + str(field))
         separated_settings = display_field_settings.split(",")
-        return {'input_channel': Model224InputChannel(int(separated_settings[0])),
-                'display_units': Model224DisplayFieldUnits(int(separated_settings[1]))}
+        return {'input_channel': self.InputChannel(int(separated_settings[0])),
+                'display_units': self.DisplayFieldUnits(int(separated_settings[1]))}
 
     def configure_display(self, display_mode, number_of_fields=0):
         """Configures the display of the instrument.
@@ -1278,19 +1123,19 @@ class Model224(GenericInstrument):
 
             Returns:
                 (dict):
-                    {"display_mode": Model224DisplayMode, "number_of_fields": Model224NumberOfFields}.
+                    {"display_mode": DisplayMode, "number_of_fields": NumberOfFields}.
 
         """
         display_settings_string = self.query("DISPLAY?")
         separated_settings = display_settings_string.split(",")
         display_mode = int(separated_settings[0])
         if display_mode != 4:
-            return_dictionary = {'display_mode': Model224DisplayMode(display_mode),
+            return_dictionary = {'display_mode': self.DisplayMode(display_mode),
                                  'number_of_fields': None}
         else:
             number_of_fields = int(separated_settings[1])
-            return_dictionary = {'display_mode': Model224DisplayMode(display_mode),
-                                 'number_of_fields': Model224NumberOfFields(number_of_fields)}
+            return_dictionary = {'display_mode': self.DisplayMode(display_mode),
+                                 'number_of_fields': self.NumberOfFields(number_of_fields)}
         return return_dictionary
 
     def turn_relay_on(self, relay_number):
@@ -1346,7 +1191,7 @@ class Model224(GenericInstrument):
 
         relay_config = self.query(f"RELAY? {relay_number}").split(",")
         activating_input_channel = relay_config[1]
-        alarm_relay_trigger_type = Model224RelayControlAlarm(int(relay_config[2]))
+        alarm_relay_trigger_type = self.RelayControlAlarm(int(relay_config[2]))
         return {'activating_input_channel': activating_input_channel,
                 'alarm_relay_trigger_type': alarm_relay_trigger_type}
 
@@ -1365,16 +1210,12 @@ class Model224(GenericInstrument):
         """
         relay_settings = self.query("RELAY? " + str(relay_number))
         split_relay_settings = relay_settings.split(",")
-        return Model224RelayControlMode(int(split_relay_settings[0]))
+        return self.RelayControlMode(int(split_relay_settings[0]))
 
     def _get_identity(self):
         return self.query('*IDN?', check_errors=False).split(',')
 
 
-__all__ = ['Model224', 'Model224AlarmParameters', 'Model224CurveFormat', 'Model224CurveHeader',
-           'Model224CurveTemperatureCoefficients', 'Model224DiodeExcitationCurrent', 'Model224DisplayMode',
-           'Model224DiodeSensorRange', 'Model224InputChannel', 'Model224InterfaceMode', 'Model224DisplayFieldUnits',
-           'Model224StandardEventRegister', 'Model224InputSensorSettings', 'Model224InputSensorType', 'Model224InputSensorUnits',
-           'Model224NTCRTDSensorResistanceRange', 'Model224NumberOfFields', 'Model224PlatinumRTDSensorResistanceRange',
-           'Model224ReadingStatusRegister', 'Model224RelayControlAlarm', 'Model224RelayControlMode', 'Model224RemoteInterface',
-           'Model224ServiceRequestRegister', 'Model224SoftCalSensorTypes', 'Model224StatusByteRegister']
+__all__ = ['Model224', 'Model224AlarmParameters', 'Model224CurveHeader', 'Model224StandardEventRegister',
+           'Model224InputSensorSettings', 'Model224ReadingStatusRegister', 'Model224ServiceRequestRegister',
+           'Model224StatusByteRegister']

@@ -1,5 +1,4 @@
-from lakeshore import Model240
-from lakeshore.model_240 import Model240InputParameter
+from lakeshore import Model240, Model240InputParameter
 from time import sleep
 
 # Connect to the first available Model 240 over USB

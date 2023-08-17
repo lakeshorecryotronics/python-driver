@@ -23,7 +23,7 @@ ________________________
 .. autoclass:: Model224
     :member-order: bysource
     :members:
-    :inherited-members:
+    :inherited-members: Model224Enums
 
 
 Settings classes
@@ -52,71 +52,7 @@ to the instrument. The purpose of these enum types is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
 the instrument.
 
-.. autoclass:: Model224InputSensorType
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224InputSensorUnits
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224DiodeExcitationCurrent
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224DiodeSensorRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224PlatinumRTDSensorResistanceRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224NTCRTDSensorResistanceRange
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224InterfaceMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224RemoteInterface
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224DisplayFieldUnits
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224InputChannel
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224DisplayMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224NumberOfFields
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224RelayControlAlarm
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224RelayControlMode
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224CurveFormat
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224CurveTemperatureCoefficients
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model224SoftCalSensorTypes
+.. autoclass:: Model224Enums
     :members:
     :undoc-members:
 
