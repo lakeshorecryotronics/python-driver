@@ -33,7 +33,7 @@ _______________________
 .. autoclass:: SSMSystem
     :member-order: bysource
     :members:
-    :inherited-members:
+    :inherited-members: str
 
 Source Module methods
 _____________________
