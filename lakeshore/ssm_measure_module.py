@@ -954,7 +954,7 @@ class MeasureModule(BaseModule):
             source_module (SourceModule): The channel used for calculating resistance.
         """
 
-        if isinstance(source_module, SSMSystemEnums.SourceModule):
+        if isinstance(source_module, SSMSystemEnums.ReferenceModule):
             source = source_module.name
         else:
             source = source_module
@@ -967,7 +967,7 @@ class MeasureModule(BaseModule):
                 Returns:
                     SourceModule: The channel used for calculating resistance.
                 """
-        return SSMSystemEnums.SourceModule(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:SOURce?'))
+        return SSMSystemEnums.ReferenceModule(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:SOURce?'))
 
     def set_resistance_excitation_type(self, excitation_type):
         """Sets the present resistance excitation type of the specified module.

@@ -127,7 +127,7 @@ class SSMSystemEnums:
             self.direction = direction
             self.round_trip = round_trip
 
-    class SourceModule(str, Enum):
+    class ReferenceModule(str, Enum):
         """Class object representing the available source modules
         """
         S1 = 'S1'

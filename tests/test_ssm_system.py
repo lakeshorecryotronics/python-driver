@@ -1765,14 +1765,14 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
 
     def test_set_resistance_source(self):
         self.fake_connection.setup_response("No error")
-        self.dut_module.set_resistance_source(SSMSystemEnums.SourceModule.S1)
+        self.dut_module.set_resistance_source(SSMSystemEnums.ReferenceModule.S1)
         self.assertIn('CALCulate:SENSe1:RESistance:SOURce S1', self.fake_connection.get_outgoing_message())
 
     def test_get_resistance_source(self):
         self.fake_connection.setup_response("S1;No error")
         response = self.dut_module.get_resistance_source()
         self.assertEqual(response, "S1")
-        self.assertEqual(response, SSMSystemEnums.SourceModule.S1)
+        self.assertEqual(response, SSMSystemEnums.ReferenceModule.S1)
         self.assertIn('CALCulate:SENSe1:RESistance:SOURce?', self.fake_connection.get_outgoing_message())
 
     def test_set_resistance_excitation_type(self):
