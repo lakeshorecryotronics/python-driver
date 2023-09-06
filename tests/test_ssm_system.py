@@ -1695,6 +1695,24 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.assertEqual(response.unlocked, False)
         self.assertIn('STATus:OPERation:SENSe1:CONDition?', self.fake_connection.get_outgoing_message())
 
+    def test_get_overload_status(self):
+        self.fake_connection.setup_response('1')
+        response = self.dut_module.get_overload_status()
+        self.assertEqual(response, True)
+        self.assertIn('STATus:OPERation:SENSe1:CONDition?', self.fake_connection.get_outgoing_message())
+
+    def test_get_settling_status(self):
+        self.fake_connection.setup_response('2')
+        response = self.dut_module.get_settling_status()
+        self.assertEqual(response, True)
+        self.assertIn('STATus:OPERation:SENSe1:CONDition?', self.fake_connection.get_outgoing_message())
+
+    def test_get_unlocked_status(self):
+        self.fake_connection.setup_response('4')
+        response = self.dut_module.get_unlocked_status()
+        self.assertEqual(response, True)
+        self.assertIn('STATus:OPERation:SENSe1:CONDition?', self.fake_connection.get_outgoing_message())
+
     def test_get_operation_events(self):
         self.fake_connection.setup_response('7')
         response = self.dut_module.get_operation_events()
