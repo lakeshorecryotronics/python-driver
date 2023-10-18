@@ -26,7 +26,7 @@ ________________________
 .. autoclass:: Model240
     :member-order: bysource
     :members:
-    :inherited-members:
+    :inherited-members: Model240Enums
 
 Settings classes
 ________________
@@ -56,30 +56,6 @@ to the instrument. The purpose of these enum types is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
 the instrument.
 
-.. autoclass:: Model240Units
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model240CurveFormat
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model240Coefficients
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model240SensorTypes
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model240BrightnessLevel
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model240TemperatureCoefficient
-    :members:
-    :undoc-members:
-
-.. autoclass:: Model240InputRange
+.. autoclass:: Model240Enums
     :members:
     :undoc-members:

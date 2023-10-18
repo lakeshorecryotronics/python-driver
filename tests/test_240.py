@@ -1,5 +1,5 @@
 from tests.utils import TestWithFakeModel240
-from lakeshore import model_240
+from lakeshore import Model240, Model240ProfiSlot, Model240InputParameter
 
 
 class TestBasicTempReadings(TestWithFakeModel240):
@@ -44,12 +44,12 @@ class TestBasicQueryMethods(TestWithFakeModel240):
         self.assertIn("ADDR?", self.fake_connection.get_outgoing_message())
 
     def test_get_profibus_slot_configuration(self):
-        slot_configuration = model_240.Model240ProfiSlot(1, model_240.Model240Units.CELSIUS)
+        slot_configuration = Model240ProfiSlot(1, Model240.Units.CELSIUS)
         self.fake_connection.setup_response('1,2')
         response = self.dut.get_profibus_slot_configuration(1)
 
         self.assertEqual(response.slot_channel, slot_configuration.slot_channel)
-        self.assertEqual(response.slot_units, model_240.Model240Units.CELSIUS)
+        self.assertEqual(response.slot_units, Model240.Units.CELSIUS)
 
         self.assertIn("PROFISLOT? 1", self.fake_connection.get_outgoing_message())
 
@@ -84,11 +84,11 @@ class TestBasicQueryMethods(TestWithFakeModel240):
         self.fake_connection.setup_response('2,1,2,1,2,1')
         response = self.dut.get_input_parameter(1)
 
-        self.assertEqual(response.sensor_type, model_240.Model240SensorTypes.PLATINUM_RTD)
+        self.assertEqual(response.sensor_type, Model240.SensorTypes.PLATINUM_RTD)
         self.assertEqual(response.auto_range_enable, True)
-        self.assertEqual(response.input_range, model_240.Model240InputRange.RANGE_NTCRTD_100_OHMS)
+        self.assertEqual(response.input_range, Model240.InputRange.RANGE_NTCRTD_100_OHMS)
         self.assertEqual(response.current_reversal_enable, True)
-        self.assertEqual(response.temperature_unit, model_240.Model240Units.CELSIUS)
+        self.assertEqual(response.temperature_unit, Model240.Units.CELSIUS)
         self.assertEqual(response.input_enable, True)
 
         self.assertIn("INTYPE? 1", self.fake_connection.get_outgoing_message())
@@ -117,7 +117,7 @@ class TestBasicCommandMethods(TestWithFakeModel240):
         self.assertIn('CRVPT 2,50,1.2,3.4', self.fake_connection.get_outgoing_message())
 
     def test_set_profibus_slot_configuration(self):
-        slot_configuration = model_240.Model240ProfiSlot(2, 2)
+        slot_configuration = Model240ProfiSlot(2, 2)
         self.dut.set_profibus_slot_configuration("1", slot_configuration)
         self.assertIn("PROFISLOT 1,2,2", self.fake_connection.get_outgoing_message())
 
@@ -132,12 +132,12 @@ class TestBasicCommandMethods(TestWithFakeModel240):
         self.assertIn('PROFINUM 5', self.fake_connection.get_outgoing_message())
 
     def test_set_input_parameter(self):
-        in_parameter = model_240.Model240InputParameter(model_240.Model240SensorTypes.NTC_RTD,
+        in_parameter = Model240InputParameter(Model240.SensorTypes.NTC_RTD,
                                                         False,
                                                         True,
-                                                        model_240.Model240Units.CELSIUS,
+                                                        Model240.Units.CELSIUS,
                                                         True,
-                                                        model_240.Model240InputRange.RANGE_NTCRTD_100_OHMS)
+                                                        Model240.InputRange.RANGE_NTCRTD_100_OHMS)
         self.dut.set_input_parameter(2, in_parameter)
         self.assertIn('INTYPE 2,3,0,2,1,2,1', self.fake_connection.get_outgoing_message())
 

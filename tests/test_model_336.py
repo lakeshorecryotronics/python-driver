@@ -1,6 +1,6 @@
 from tests.utils import TestWithFakeModel336
-from lakeshore import InstrumentException
-from lakeshore.model_336 import *
+from lakeshore import InstrumentException, Model336OperationEvent, Model336AlarmSettings, Model336InputSensorSettings, \
+    Model336InputReadingStatus, AlarmSettings, Model336CurveHeader, Model336ControlLoopZoneSettings
 
 
 class TestBasicReadings(TestWithFakeModel336):
@@ -128,7 +128,7 @@ class TestBasicSettings(TestWithFakeModel336):
         self.fake_connection.setup_response('0,192.16.254.1,255.255.255.0,10.0.1.1,0.0.0.0,0.0.0.1,' + \
                                             '9C-35-58-5F-4C-D7,Host name,Domain;0')
         response = self.dut.get_network_configuration()
-        network_configuration= {"lan_status": Model336LanStatus.STATIC_IP,
+        network_configuration= {"lan_status": self.dut.LanStatus.STATIC_IP,
                                 "ip_address": "192.16.254.1",
                                 "sub_mask": "255.255.255.0",
                                 "gateway": "10.0.1.1",
@@ -168,11 +168,11 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_monitor_output_heater(self):
         self.fake_connection.setup_response('4,2,+236.54,+200.36,1;0')
         response = self.dut.get_monitor_output_heater(3)
-        analog_heater_settings = {"channel": Model336InputChannel.CHANNEL_D,
-                                  "units": Model336InputSensorUnits.CELSIUS,
+        analog_heater_settings = {"channel": self.dut.InputChannel.CHANNEL_D,
+                                  "units": self.dut.InputSensorUnits.CELSIUS,
                                   "high_value": 236.54,
                                   "low_value": 200.36,
-                                  "polarity": Model336Polarity.BIPOLAR}
+                                  "polarity": self.dut.Polarity.BIPOLAR}
         self.assertDictEqual(response, analog_heater_settings)
         self.assertIn("ANALOG? 3", self.fake_connection.get_outgoing_message())
 
@@ -194,9 +194,9 @@ class TestBasicQueries(TestWithFakeModel336):
 
         self.assertEqual(response.curve_name, "some_curve")
         self.assertEqual(response.serial_number, "5555444411")
-        self.assertEqual(response.curve_data_format, Model336CurveFormat.VOLTS_PER_KELVIN)
+        self.assertEqual(response.curve_data_format, self.dut.CurveFormat.VOLTS_PER_KELVIN)
         self.assertEqual(response.temperature_limit, 325)
-        self.assertEqual(response.coefficient, Model336CurveTemperatureCoefficients.NEGATIVE)
+        self.assertEqual(response.coefficient, self.dut.CurveTemperatureCoefficient.NEGATIVE)
 
         self.assertIn("CRVHDR? 22", self.fake_connection.get_outgoing_message())
 
@@ -209,21 +209,21 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_diode_excitation_current(self):
         self.fake_connection.setup_response('0;0')
         response = self.dut.get_diode_excitation_current("A")
-        self.assertAlmostEqual(response, Model336DiodeCurrent.TEN_MICROAMPS)
+        self.assertAlmostEqual(response, self.dut.DiodeCurrent.TEN_MICROAMPS)
         self.assertIn("DIOCUR? A", self.fake_connection.get_outgoing_message())
 
     def test_get_display_field_settings(self):
         self.fake_connection.setup_response('1,2;0')
         response = self.dut.get_display_field_settings(2)
-        display_field = {'input_channel': Model336InputChannel.CHANNEL_A,
-                         'display_units': Model336DisplayUnits.CELSIUS}
+        display_field = {'input_channel': self.dut.InputChannel.CHANNEL_A,
+                         'display_units': self.dut.DisplayFieldUnits.CELSIUS}
         self.assertDictEqual(response, display_field)
         self.assertIn('DISPFLD? 2', self.fake_connection.get_outgoing_message())
 
     def test_get_display_setup(self):
         self.fake_connection.setup_response('3,0,0;0')
         response = self.dut.get_display_setup()
-        display_setup = {"mode": Model336DisplaySetupMode.INPUT_D,
+        display_setup = {"mode": self.dut.DisplaySetupMode.INPUT_D,
                          "num_fields": None,
                          "displayed_output": None}
         self.assertDictEqual(response, display_setup)
@@ -233,8 +233,8 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_display_setup_custom(self):
         self.fake_connection.setup_response('4,1,1;0')
         response = self.dut.get_display_setup()
-        display_setup = {"mode": Model336DisplaySetupMode.CUSTOM,
-                         "num_fields": Model336DisplayFields.LARGE_4,
+        display_setup = {"mode": self.dut.DisplaySetupMode.CUSTOM,
+                         "num_fields": self.dut.DisplayFields.LARGE_4,
                          "displayed_output": 1}
         self.assertDictEqual(response, display_setup)
 
@@ -243,8 +243,8 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_display_setup_all_inputs(self):
         self.fake_connection.setup_response('6,0,0;0')
         response = self.dut.get_display_setup()
-        display_setup = {"mode": Model336DisplaySetupMode.ALL_INPUTS,
-                         "num_fields": Model336DisplayFieldsSize.SMALL,
+        display_setup = {"mode": self.dut.DisplaySetupMode.ALL_INPUTS,
+                         "num_fields": self.dut.DisplayFieldsSize.SMALL,
                          "displayed_output": None}
         self.assertDictEqual(response, display_setup)
 
@@ -280,9 +280,9 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_heater_setup_custom(self):
         self.fake_connection.setup_response('1,0,0.75,1;0')
         response = self.dut.get_heater_setup(2)
-        heater_output = {"heater_resistance": Model336HeaterResistance.HEATER_25_OHM,
+        heater_output = {"heater_resistance": self.dut.HeaterResistance.HEATER_25_OHM,
                          "max_current": 0.75,
-                         "output_display_mode": Model336HeaterOutputUnits.CURRENT}
+                         "output_display_mode": self.dut.HeaterOutputUnits.CURRENT}
         self.assertDictEqual(response, heater_output)
 
         self.assertIn("HTRSET? 2", self.fake_connection.get_outgoing_message())
@@ -290,9 +290,9 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_heater_setup_user(self):
         self.fake_connection.setup_response('1,2,0,1;0')
         response = self.dut.get_heater_setup(2)
-        heater_output = {"heater_resistance": Model336HeaterResistance.HEATER_25_OHM,
+        heater_output = {"heater_resistance": self.dut.HeaterResistance.HEATER_25_OHM,
                          "max_current": 1.0,
-                         "output_display_mode": Model336HeaterOutputUnits.CURRENT}
+                         "output_display_mode": self.dut.HeaterOutputUnits.CURRENT}
         self.assertDictEqual(response, heater_output)
 
         self.assertIn("HTRSET? 2", self.fake_connection.get_outgoing_message())
@@ -300,7 +300,7 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_heater_status(self):
         self.fake_connection.setup_response('2;0')
         response = self.dut.get_heater_status(1)
-        self.assertEqual(response, Model336HeaterError.HEATER_SHORT)
+        self.assertEqual(response, self.dut.HeaterError.HEATER_SHORT)
         self.assertIn("HTRST? 1", self.fake_connection.get_outgoing_message())
 
     def test_get_ieee_488(self):
@@ -312,15 +312,15 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_interface(self):
         self.fake_connection.setup_response("2;0")
         response = self.dut.get_interface()
-        self.assertEqual(response, Model336Interface.IEEE488)
+        self.assertEqual(response, self.dut.Interface.IEEE488)
         self.assertIn("INTSEL?", self.fake_connection.get_outgoing_message())
 
     def test_get_input_sensor(self):
         self.fake_connection.setup_response('4,0,0,1,2;0')
         response = self.dut.get_input_sensor("A")
-        sensor_parameters = Model336InputSensorSettings(Model336InputSensorType.THERMOCOUPLE, False, True,
-                                                        Model336InputSensorUnits.CELSIUS,
-                                                        Model336ThermocoupleRange.FIFTY_MILLIVOLT)
+        sensor_parameters = Model336InputSensorSettings(self.dut.InputSensorType.THERMOCOUPLE, False, True,
+                                                        self.dut.InputSensorUnits.CELSIUS,
+                                                        self.dut.ThermocoupleRange.FIFTY_MILLIVOLT)
 
         self.assertEqual(response.sensor_type, sensor_parameters.sensor_type)
         self.assertEqual(response.autorange_enable, sensor_parameters.autorange_enable)
@@ -355,7 +355,7 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_remote_interface_mode(self):
         self.fake_connection.setup_response('2;0')
         response = self.dut.get_remote_interface_mode()
-        self.assertEqual(response, Model336InterfaceMode.REMOTE_LOCAL_LOCK)
+        self.assertEqual(response, self.dut.InterfaceMode.REMOTE_LOCAL_LOCK)
         self.assertIn('MODE?', self.fake_connection.get_outgoing_message())
 
     def test_get_manual_output(self):
@@ -367,8 +367,8 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_heater_output_mode(self):
         self.fake_connection.setup_response('4,3,1;0')
         response = self.dut.get_heater_output_mode(1)
-        heater_output_settings = {"mode": Model336HeaterOutputMode.MONITOR_OUT,
-                                  "channel": Model336InputChannel.CHANNEL_C,
+        heater_output_settings = {"mode": self.dut.HeaterOutputMode.MONITOR_OUT,
+                                  "channel": self.dut.InputChannel.CHANNEL_C,
                                   "powerup_enable": True}
         self.assertDictEqual(response, heater_output_settings)
 
@@ -386,7 +386,7 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_heater_range(self):
         self.fake_connection.setup_response('2;0')
         response = self.dut.get_heater_range(1)
-        self.assertEqual(response, Model336HeaterRange.MEDIUM)
+        self.assertEqual(response, self.dut.HeaterRange.MEDIUM)
         self.assertIn("RANGE? 1", self.fake_connection.get_outgoing_message())
 
     def test_get_setpoint_ramp_parameter(self):
@@ -401,14 +401,14 @@ class TestBasicQueries(TestWithFakeModel336):
         self.fake_connection.setup_response('0,A,2;0')
         response = self.dut.get_relay_alarm_control_parameters(1)
         relay_alarm = {'activating_input_channel': "A",
-                       'alarm_relay_trigger_type': Model336RelayControlAlarm.BOTH_ALARMS}
+                       'alarm_relay_trigger_type': self.dut.RelayControlAlarm.BOTH_ALARMS}
         self.assertDictEqual(response, relay_alarm)
         self.assertIn("RELAY? 1", self.fake_connection.get_outgoing_message())
 
     def test_get_relay_control_mode(self):
         self.fake_connection.setup_response('2,A,2;0')
         response = self.dut.get_relay_control_mode(1)
-        self.assertEqual(response, Model336RelayControlMode.ALARMS)
+        self.assertEqual(response, self.dut.RelayControlMode.ALARMS)
         self.assertIn("RELAY? 1", self.fake_connection.get_outgoing_message())
 
     def test_get_relay_status(self):
@@ -455,7 +455,7 @@ class TestBasicQueries(TestWithFakeModel336):
     def test_get_warmup_supply(self):
         self.fake_connection.setup_response('0,65.3;0')
         response = self.dut.get_warmup_supply_parameter(3)
-        warmup_supply_config = {"control": Model336ControlTypes.AUTO_OFF,
+        warmup_supply_config = {"control": self.dut.ControlTypes.AUTO_OFF,
                                 "percentage": 65.3}
         self.assertDictEqual(response, warmup_supply_config)
 
@@ -478,8 +478,8 @@ class TestBasicQueries(TestWithFakeModel336):
         self.assertEqual(response.integral, 18)
         self.assertEqual(response.derivative, 1.6)
         self.assertEqual(response.manual_out_value, 54)
-        self.assertEqual(response.heater_range, Model336HeaterRange.LOW)
-        self.assertEqual(response.channel, Model336InputChannel.CHANNEL_C)
+        self.assertEqual(response.heater_range, self.dut.HeaterRange.LOW)
+        self.assertEqual(response.channel, self.dut.InputChannel.CHANNEL_C)
         self.assertEqual(response.rate, 55.68)
 
         self.assertIn("ZONE? 2,9", self.fake_connection.get_outgoing_message())
@@ -495,14 +495,14 @@ class TestBasicCommands(TestWithFakeModel336):
 
     def test_set_monitor_output_heater(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_monitor_output_heater(4, Model336InputChannel.CHANNEL_D, Model336InputSensorUnits.SENSOR,
-                                            236.54, 200.36, Model336Polarity.BIPOLAR)
+        self.dut.set_monitor_output_heater(4, self.dut.InputChannel.CHANNEL_D, self.dut.InputSensorUnits.SENSOR,
+                                            236.54, 200.36, self.dut.Polarity.BIPOLAR)
         self.assertIn("ANALOG 4,4,3,236.54,200.36,1", self.fake_connection.get_outgoing_message())
 
     def test_set_autotune(self):
         self.fake_connection.setup_response('0')
         self.fake_connection.setup_response('0,0,0;0')
-        self.dut.set_autotune(2, Model336AutoTuneMode.P_I)
+        self.dut.set_autotune(2, self.dut.AutotuneMode.P_I)
         self.assertIn("ATUNE 2,1", self.fake_connection.get_outgoing_message())
 
     def test_set_brightness(self):
@@ -512,8 +512,8 @@ class TestBasicCommands(TestWithFakeModel336):
 
     def test_set_curve_header(self):
         self.fake_connection.setup_response('0')
-        curve_header = Model336CurveHeader("some_curve", "5555444411", Model336CurveFormat.MILLIVOLT_PER_KELVIN, 15.65,
-                                           Model336CurveTemperatureCoefficients.NEGATIVE)
+        curve_header = Model336CurveHeader("some_curve", "5555444411", self.dut.CurveFormat.MILLIVOLT_PER_KELVIN, 15.65,
+                                           self.dut.CurveTemperatureCoefficient.NEGATIVE)
         self.dut.set_curve_header(25, curve_header)
         self.assertIn("CRVHDR 25,\"some_curve\",\"5555444411\",1,1", self.fake_connection.get_outgoing_message())
 
@@ -524,27 +524,27 @@ class TestBasicCommands(TestWithFakeModel336):
 
     def test_set_diode_excitation_current(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_diode_excitation_current("A", Model336DiodeCurrent.TEN_MICROAMPS)
+        self.dut.set_diode_excitation_current("A", self.dut.DiodeCurrent.TEN_MICROAMPS)
         self.assertIn("DIOCUR A,0", self.fake_connection.get_outgoing_message())
 
     def test_set_display_field_settings(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_display_field_settings(4, Model336InputChannel.CHANNEL_C, Model336DisplayUnits.KELVIN)
+        self.dut.set_display_field_settings(4, self.dut.InputChannel.CHANNEL_C, self.dut.DisplayFieldUnits.KELVIN)
         self.assertIn("DISPFLD 4,3,1", self.fake_connection.get_outgoing_message())
 
     def test_set_display_setup_custom(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_display_setup(Model336DisplaySetupMode.CUSTOM, Model336DisplayFields.LARGE_4, 1)
+        self.dut.set_display_setup(self.dut.DisplaySetupMode.CUSTOM, self.dut.DisplayFields.LARGE_4, 1)
         self.assertIn("DISPLAY 4,1,1", self.fake_connection.get_outgoing_message())
 
     def test_set_display_setup_all_inputs(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_display_setup(Model336DisplaySetupMode.ALL_INPUTS, Model336DisplayFieldsSize.SMALL)
+        self.dut.set_display_setup(self.dut.DisplaySetupMode.ALL_INPUTS, self.dut.DisplayFieldsSize.SMALL)
         self.assertIn("DISPLAY 6,0,", self.fake_connection.get_outgoing_message())
 
     def test_set_display_setup(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_display_setup(Model336DisplaySetupMode.FOUR_LOOP)
+        self.dut.set_display_setup(self.dut.DisplaySetupMode.FOUR_LOOP)
         self.assertIn("DISPLAY 5,,", self.fake_connection.get_outgoing_message())
 
     def test_set_filter(self):
@@ -554,7 +554,7 @@ class TestBasicCommands(TestWithFakeModel336):
 
     def test_set_heater_setup(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_heater_setup(1, Model336HeaterResistance.HEATER_50_OHM, 0.75, Model336HeaterOutputUnits.POWER)
+        self.dut.set_heater_setup(1, self.dut.HeaterResistance.HEATER_50_OHM, 0.75, self.dut.HeaterOutputUnits.POWER)
         self.assertIn("HTRSET 1,2,0,0.75,2", self.fake_connection.get_outgoing_message())
 
     def test_set_ieee_488(self):
@@ -578,14 +578,14 @@ class TestBasicCommands(TestWithFakeModel336):
 
     def test_set_interface(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_interface(Model336Interface.ETHERNET)
+        self.dut.set_interface(self.dut.Interface.ETHERNET)
         self.assertIn("INTSEL 1", self.fake_connection.get_outgoing_message())
 
     def test_set_input_sensor(self):
         self.fake_connection.setup_response('0')
-        sensor_parameters = Model336InputSensorSettings(Model336InputSensorType.NTC_RTD, False, True,
-                                                        Model336InputSensorUnits.KELVIN,
-                                                        Model336RTDRange.THREE_THOUSAND_OHM)
+        sensor_parameters = Model336InputSensorSettings(self.dut.InputSensorType.NTC_RTD, False, True,
+                                                        self.dut.InputSensorUnits.KELVIN,
+                                                        self.dut.RTDRange.THREE_THOUSAND_OHM)
         self.dut.set_input_sensor("C", sensor_parameters)
         self.assertIn("INTYPE C,3,0,5,1,1", self.fake_connection.get_outgoing_message())
 
@@ -601,7 +601,7 @@ class TestBasicCommands(TestWithFakeModel336):
 
     def test_set_remote_interface_mode(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_remote_interface_mode(Model336InterfaceMode.REMOTE)
+        self.dut.set_remote_interface_mode(self.dut.InterfaceMode.REMOTE)
         self.assertIn('MODE 1', self.fake_connection.get_outgoing_message())
 
     def test_set_manual_output(self):
@@ -611,8 +611,8 @@ class TestBasicCommands(TestWithFakeModel336):
 
     def test_set_heater_output_mode(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_heater_output_mode(1, Model336HeaterOutputMode.MONITOR_OUT,
-                                        Model336InputChannel.CHANNEL_B, True)
+        self.dut.set_heater_output_mode(1, self.dut.HeaterOutputMode.MONITOR_OUT,
+                                        self.dut.InputChannel.CHANNEL_B, True)
         self.assertIn("OUTMODE 1,4,2,1", self.fake_connection.get_outgoing_message())
 
     def test_set_heater_pid(self):
@@ -622,7 +622,7 @@ class TestBasicCommands(TestWithFakeModel336):
 
     def test_set_heater_range(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_heater_range(3, Model336HeaterVoltageRange.VOLTAGE_ON)
+        self.dut.set_heater_range(3, self.dut.HeaterVoltageRange.VOLTAGE_ON)
         self.assertIn("RANGE 3,1", self.fake_connection.get_outgoing_message())
 
     def test_set_setpoint_ramp_parameter(self):
@@ -642,7 +642,7 @@ class TestBasicCommands(TestWithFakeModel336):
 
     def test_set_relay_alarms(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_relay_alarms(1, "A", Model336RelayControlAlarm.HIGH_ALARM)
+        self.dut.set_relay_alarms(1, "A", self.dut.RelayControlAlarm.HIGH_ALARM)
         self.assertIn("RELAY 1,2,A,1", self.fake_connection.get_outgoing_message())
 
     def test_set_soft_cal_curve_dt_470(self):
@@ -675,7 +675,7 @@ class TestBasicCommands(TestWithFakeModel336):
 
     def test_set_warmup_supply_parameter(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_warmup_supply_parameter(3, Model336ControlTypes.CONTINUOUS, 50.5)
+        self.dut.set_warmup_supply_parameter(3, self.dut.ControlTypes.CONTINUOUS, 50.5)
         self.assertIn("WARMUP 3,1,50.5", self.fake_connection.get_outgoing_message())
 
     def test_set_website_login(self):
@@ -686,7 +686,7 @@ class TestBasicCommands(TestWithFakeModel336):
     def test_set_control_loop_zone_table(self):
         self.fake_connection.setup_response('0')
         control_loop_zone_parameters = Model336ControlLoopZoneSettings(215.36, 10, 15, 3.2, 65,
-                                                                       Model336HeaterRange.HIGH,
-                                                                       Model336InputChannel.CHANNEL_A, 25.36)
+                                                                       self.dut.HeaterRange.HIGH,
+                                                                       self.dut.InputChannel.CHANNEL_A, 25.36)
         self.dut.set_control_loop_zone_table(1, 5, control_loop_zone_parameters)
         self.assertEqual("ZONE 1,5,215.36,10,15,3.2,65,3,1,25.36;*ESR?", self.fake_connection.get_outgoing_message())

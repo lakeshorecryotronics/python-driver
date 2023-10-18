@@ -1,75 +1,10 @@
 """Implements functionality unique to the Lake Shore Model 335 cryogenic temperature controller."""
-from enum import IntEnum
-
-from .temperature_controllers import TemperatureController, InstrumentException
-from .temperature_controllers import RelayControlMode, RelayControlAlarm, InterfaceMode, HeaterError, \
-    CurveFormat, CurveTemperatureCoefficient, BrightnessLevel, AutotuneMode, HeaterResistance, Polarity, \
-    DiodeCurrent, HeaterOutputUnits, InputSensorUnits, ControlTypes, StandardEventRegister, OperationEvent, RegisterBase
-
-Model335RelayControlMode = RelayControlMode
-Model335RelayControlAlarm = RelayControlAlarm
-Model335InterfaceMode = InterfaceMode
-Model335HeaterError = HeaterError
-Model335CurveFormat = CurveFormat
-Model335CurveTemperatureCoefficient = CurveTemperatureCoefficient
-Model335BrightnessLevel = BrightnessLevel
-Model335AutoTuneMode = AutotuneMode
-Model335HeaterResistance = HeaterResistance
-Model335Polarity = Polarity
-Model335DiodeCurrent = DiodeCurrent
-Model335HeaterOutputUnits = HeaterOutputUnits
-Model335InputSensorUnits = InputSensorUnits
-Model335ControlTypes = ControlTypes
+from .model_335_enums import Model335Enums
+from .temperature_controllers import TemperatureController, InstrumentException, StandardEventRegister, \
+    OperationEvent, RegisterBase
 
 Model335StandardEventRegister = StandardEventRegister
 Model335OperationEvent = OperationEvent
-
-
-class Model335InputSensor(IntEnum):
-    """Enumeration when "NONE" is an option for sensor input."""
-    NONE = 0
-    CHANNEL_A = 1
-    CHANNEL_B = 2
-
-
-class Model335MonitorOutUnits(IntEnum):
-    """Units associated with a sensor channel."""
-    KELVIN = 1
-    CELSIUS = 2
-    SENSOR = 3
-
-
-class Model335InputSensorType(IntEnum):
-    """Sensor type enumeration."""
-    DISABLED = 0
-    DIODE = 1
-    PLATINUM_RTD = 2
-    NTC_RTD = 3
-    THERMOCOUPLE = 4
-
-
-class Model335DiodeRange(IntEnum):
-    """Diode voltage range enumeration."""
-    TWO_POINT_FIVE_VOLTS = 0
-    TEN_VOLTS = 1
-
-
-class Model335RTDRange(IntEnum):
-    """RTD resistance range enumeration."""
-    TEN_OHM = 0
-    THIRTY_OHM = 1
-    HUNDRED_OHM = 2
-    THREE_HUNDRED_OHM = 3
-    ONE_THOUSAND_OHM = 4
-    THREE_THOUSAND_OHM = 5
-    TEN_THOUSAND_OHM = 6
-    THIRTY_THOUSAND_OHM = 7
-    ONE_HUNDRED_THOUSAND_OHM = 8
-
-
-class Model335ThermocoupleRange(IntEnum):
-    """Thermocouple range enumeration."""
-    FIFTY_MILLIVOLT = 0
 
 
 class Model335InputSensorSettings:
@@ -98,42 +33,6 @@ class Model335InputSensorSettings:
         self.compensation = compensation
         self.units = units
         self.input_range = input_range
-
-
-class Model335HeaterOutType(IntEnum):
-    """Heater output 2 enumeration."""
-    CURRENT = 0
-    VOLTAGE = 1
-
-
-class Model335HeaterOutputDisplay(IntEnum):
-    """Heater output display units enumeration."""
-    CURRENT = 1
-    POWER = 2
-
-
-class Model335HeaterOutputMode(IntEnum):
-    """Control loop enumeration."""
-    OFF = 0
-    CLOSED_LOOP = 1
-    ZONE = 2
-    OPEN_LOOP = 3
-    MONITOR_OUT = 4
-    WARMUP_SUPPLY = 5
-
-
-class Model335WarmupControl(IntEnum):
-    """Heater output 2 voltage mode warmup enumerations."""
-    AUTO_OFF = 0
-    CONTINUOUS = 1
-
-
-class Model335HeaterRange(IntEnum):
-    """Control loop heater range enumeration."""
-    OFF = 0
-    LOW = 1
-    MEDIUM = 2
-    HIGH = 3
 
 
 class Model335ControlLoopZoneSettings:
@@ -172,45 +71,6 @@ class Model335ControlLoopZoneSettings:
         self.heater_range = heater_range
         self.channel = channel
         self.ramp_rate = ramp_rate
-
-
-class Model335DisplaySetup(IntEnum):
-    """Panel display setup enumeration."""
-    INPUT_A = 0
-    INPUT_A_MAX_MIN = 1
-    TWO_INPUT_A = 2
-    INPUT_B = 3
-    INPUT_B_MAX_MIN = 4
-    TWO_INPUT_B = 5
-    CUSTOM = 6
-    TWO_LOOP = 7
-
-
-class Model335HeaterVoltageRange(IntEnum):
-    """Voltage mode heater enumerations."""
-    VOLTAGE_OFF = 0
-    VOLTAGE_ON = 1
-
-
-class Model335DisplayInputChannel(IntEnum):
-    """Panel display information enumeration."""
-    NONE = 0
-    INPUT_A = 1
-    INPUT_B = 2
-    SETPOINT_1 = 3
-    SETPOINT_2 = 4
-    OUTPUT_1 = 5
-    OUTPUT_2 = 6
-
-
-class Model335DisplayFieldUnits(IntEnum):
-    """Panel display units enumeration."""
-    KELVIN = 1
-    CELSIUS = 2
-    SENSOR_UNITS = 3
-    MINIMUM_DATA = 4
-    MAXIMUM_DATA = 5
-    SENSOR_NAME = 6
 
 
 class Model335StatusByteRegister(RegisterBase):
@@ -283,12 +143,8 @@ class Model335InputReadingStatus(RegisterBase):
         self.sensor_units_overrange = sensor_units_overrange
 
 
-class Model335(TemperatureController):
+class Model335(Model335Enums, TemperatureController):
     """A class object representing the Lake Shore Model 335 cryogenic temperature controller."""
-
-    # Initiate enum types for temperature controllers
-    _input_channel_enum = Model335DisplayInputChannel
-    _display_units_enum = Model335DisplayFieldUnits
 
     # Initiate instrument specific registers
     _status_byte_register = Model335StatusByteRegister
@@ -330,8 +186,8 @@ class Model335(TemperatureController):
     set_filter = TemperatureController._set_filter
     get_filter = TemperatureController._get_filter
 
-    def set_monitor_output_heater(self, channel, high_value, low_value, units=Model335MonitorOutUnits.KELVIN,
-                                  polarity=Model335Polarity.UNIPOLAR):
+    def set_monitor_output_heater(self, channel, high_value, low_value, units=Model335Enums.MonitorOutUnits.KELVIN,
+                                  polarity=TemperatureController.Polarity.UNIPOLAR):
         """Configures output 2. Use the set_heater_output_mode command to set the output mode to Monitor Out.
 
             Args:
@@ -366,11 +222,11 @@ class Model335(TemperatureController):
 
         """
         parameters = self.query("ANALOG? 2").split(",")
-        return {"channel": Model335InputSensor(int(parameters[0])),
-                "units": Model335MonitorOutUnits(int(parameters[1])),
+        return {"channel": self.InputSensor(int(parameters[0])),
+                "units": self.MonitorOutUnits(int(parameters[1])),
                 "high_value": float(parameters[2]),
                 "low_value": float(parameters[3]),
-                "polarity": Model335Polarity(int(parameters[4]))}
+                "polarity": self.Polarity(int(parameters[4]))}
 
     def get_celsius_reading(self, channel):
         """Returns the temperature value in Celsius of either channel.
@@ -402,7 +258,7 @@ class Model335(TemperatureController):
                     See Model335DisplaySetup IntEnum class.
 
         """
-        return Model335DisplaySetup(int(self.query("DISPLAY?")))
+        return self.DisplaySetup(int(self.query("DISPLAY?")))
 
     def set_heater_setup_one(self, heater_resistance, max_current, output_display_mode):
         """Method to configure heater output one.
@@ -460,10 +316,10 @@ class Model335(TemperatureController):
             current_index = int(heater_setup[2])
             max_current = preset_currents[current_index]
 
-        return {"output_type": Model335HeaterOutType(int(heater_setup[0])),
-                "heater_resistnace": Model335HeaterResistance(int(heater_setup[1])),
+        return {"output_type": self.HeaterOutType(int(heater_setup[0])),
+                "heater_resistnace": self.HeaterResistance(int(heater_setup[1])),
                 "max_current": max_current,
-                "output_display_mode": Model335HeaterOutputDisplay(int(heater_setup[4]))}
+                "output_display_mode": self.HeaterOutputDisplay(int(heater_setup[4]))}
 
     def set_input_sensor(self, channel, sensor_parameters):
         """Sets the sensor type and associated parameters.
@@ -499,23 +355,23 @@ class Model335(TemperatureController):
 
         """
         sensor_configuration = self.query(f"INTYPE? {channel}").split(",")
-        input_sensor_type = Model335InputSensorType(int(sensor_configuration[0]))
+        input_sensor_type = self.InputSensorType(int(sensor_configuration[0]))
 
         sensor_range = None
         if bool(int(sensor_configuration[1])):
             sensor_range = 0
-        elif input_sensor_type == Model335InputSensorType.DISABLED:
+        elif input_sensor_type == self.InputSensorType.DISABLED:
             sensor_range = 0
-        elif input_sensor_type == Model335InputSensorType.DIODE:
-            sensor_range = Model335DiodeRange(int(sensor_configuration[2]))
-        elif input_sensor_type in (Model335InputSensorType.PLATINUM_RTD or Model335InputSensorType.NTC_RTD):
-            sensor_range = Model335RTDRange(int(sensor_configuration[2]))
-        elif input_sensor_type == Model335InputSensorType.THERMOCOUPLE:
-            sensor_range = Model335ThermocoupleRange(int(sensor_configuration[2]))
+        elif input_sensor_type == self.InputSensorType.DIODE:
+            sensor_range = self.DiodeRange(int(sensor_configuration[2]))
+        elif input_sensor_type in (self.InputSensorType.PLATINUM_RTD or self.InputSensorType.NTC_RTD):
+            sensor_range = self.RTDRange(int(sensor_configuration[2]))
+        elif input_sensor_type == self.InputSensorType.THERMOCOUPLE:
+            sensor_range = self.ThermocoupleRange(int(sensor_configuration[2]))
 
         return Model335InputSensorSettings(input_sensor_type, bool(int(sensor_configuration[1])),
                                            bool(int(sensor_configuration[3])),
-                                           Model335InputSensorUnits(int(sensor_configuration[4])),
+                                           self.InputSensorUnits(int(sensor_configuration[4])),
                                            sensor_range)
 
     def get_all_kelvin_reading(self):
@@ -561,8 +417,8 @@ class Model335(TemperatureController):
         """
         outmode = self.query(f"OUTMODE? {output}").split(",")
 
-        return {"mode": Model335HeaterOutputMode(int(outmode[0])),
-                "channel": Model335InputSensor(int(outmode[1])),
+        return {"mode": self.HeaterOutputMode(int(outmode[0])),
+                "channel": self.InputSensor(int(outmode[1])),
                 "powerup_enable": bool(int(outmode[2]))}
 
     def set_output_two_polarity(self, output_polarity):
@@ -585,7 +441,7 @@ class Model335(TemperatureController):
                     Specifies whether output is UNIPOLAR or BIPOLAR.
 
         """
-        return Model335Polarity(int(self.query("POLARITY?")))
+        return self.Polarity(int(self.query("POLARITY?")))
 
     def set_heater_range(self, output, heater_range):
         """Sets the heater range for a particular output.
@@ -622,11 +478,11 @@ class Model335(TemperatureController):
             output_2_heater_setup = self.query("HTRSET? 2").split(",")
             output_2_voltage_enable = bool(int(output_2_heater_setup[0]))
             if output_2_voltage_enable:
-                heater_range = Model335HeaterVoltageRange(heater_range)
+                heater_range = self.HeaterVoltageRange(heater_range)
             else:
-                heater_range = Model335HeaterRange(heater_range)
+                heater_range = self.HeaterRange(heater_range)
         else:
-            heater_range = Model335HeaterRange(heater_range)
+            heater_range = self.HeaterRange(heater_range)
         return heater_range
 
     def all_heaters_off(self):
@@ -680,7 +536,7 @@ class Model335(TemperatureController):
 
         """
         warmup_supply = self.query("WARMUP? 2").split(",")
-        return {"control": Model335WarmupControl(int(warmup_supply[0])),
+        return {"control": self.WarmupControl(int(warmup_supply[0])),
                 "percentage": float(warmup_supply[1])}
 
     def set_control_loop_zone_table(self, output, zone, control_loop_zone):
@@ -720,8 +576,8 @@ class Model335(TemperatureController):
                                                                        float(zone_parameters[2]),
                                                                        float(zone_parameters[3]),
                                                                        float(zone_parameters[4]),
-                                                                       Model335HeaterRange(int(zone_parameters[5])),
-                                                                       Model335InputSensor(int(zone_parameters[6])),
+                                                                       self.HeaterRange(int(zone_parameters[5])),
+                                                                       self.InputSensor(int(zone_parameters[6])),
                                                                        float(zone_parameters[7]))
         return control_loop_zone_parameters
 
@@ -730,14 +586,6 @@ class Model335(TemperatureController):
         self.command("EMUL 0", check_errors=False)
 
 
-__all__ = ['Model335', 'Model335AutoTuneMode', 'Model335BrightnessLevel', 'Model335ControlLoopZoneSettings',
-           'Model335ControlTypes', 'Model335CurveFormat', 'Model335CurveFormat', 'Model335CurveTemperatureCoefficient',
-           'Model335DiodeCurrent', 'Model335DiodeRange', 'Model335DisplayFieldUnits', 'Model335DisplayInputChannel',
-           'Model335DisplaySetup', 'Model335HeaterError', 'Model335HeaterOutputDisplay', 'Model335HeaterOutputMode',
-           'Model335HeaterOutputUnits', 'Model335HeaterOutType', 'Model335HeaterRange', 'Model335HeaterResistance',
-           'Model335HeaterVoltageRange', 'Model335InputReadingStatus', 'Model335InputSensor',
-           'Model335InputSensorSettings', 'Model335InputSensorType', 'Model335InputSensorUnits',
-           'Model335InterfaceMode', 'Model335MonitorOutUnits', 'Model335OperationEvent', 'Model335Polarity',
-           'Model335RelayControlAlarm', 'Model335RelayControlMode', 'Model335RTDRange', 'Model335ServiceRequestEnable',
-           'Model335StandardEventRegister', 'Model335StatusByteRegister', 'Model335ThermocoupleRange',
-           'Model335WarmupControl']
+__all__ = ['Model335', 'Model335ControlLoopZoneSettings', 'Model335InputReadingStatus', 'Model335InputSensorSettings',
+           'Model335OperationEvent',  'Model335ServiceRequestEnable', 'Model335StandardEventRegister',
+           'Model335StatusByteRegister']

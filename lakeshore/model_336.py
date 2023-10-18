@@ -1,102 +1,13 @@
 """Implements functionality unique to the Lake Shore Model 336 cryogenic temperature controller."""
-from enum import IntEnum
-
 from .generic_instrument import RegisterBase
-from .temperature_controllers import TemperatureController, InstrumentException
-from .temperature_controllers import RelayControlMode, RelayControlAlarm, InterfaceMode, HeaterError, \
-    CurveFormat, CurveTemperatureCoefficient, AutotuneMode, HeaterResistance, Polarity, DiodeCurrent, \
-    HeaterOutputUnits, InputSensorUnits, ControlTypes, StandardEventRegister, OperationEvent, \
-    LanStatus, Interface, CurveHeader, AlarmSettings, DisplayFields, DisplayFieldsSize
+from .model_336_enums import Model336Enums
+from .temperature_controllers import TemperatureController, InstrumentException, StandardEventRegister, OperationEvent, \
+    CurveHeader, AlarmSettings
 
-Model336RelayControlMode = RelayControlMode
-Model336RelayControlAlarm = RelayControlAlarm
-Model336InterfaceMode = InterfaceMode
-Model336HeaterError = HeaterError
-Model336CurveFormat = CurveFormat
-Model336CurveTemperatureCoefficients = CurveTemperatureCoefficient
-Model336AutoTuneMode = AutotuneMode
-Model336HeaterResistance = HeaterResistance
-Model336Polarity = Polarity
-Model336DiodeCurrent = DiodeCurrent
-Model336HeaterOutputUnits = HeaterOutputUnits
-Model336InputSensorUnits = InputSensorUnits
-Model336ControlTypes = ControlTypes
-Model336LanStatus = LanStatus
-Model336Interface = Interface
 Model336CurveHeader = CurveHeader
 Model336AlarmSettings = AlarmSettings
-Model336DisplayFields = DisplayFields
-Model336DisplayFieldsSize = DisplayFieldsSize
 Model336StandardEventRegister = StandardEventRegister
 Model336OperationEvent = OperationEvent
-
-
-class Model336InputChannel(IntEnum):
-    """Enumeration where "NONE" is an option for sensor input."""
-    NONE = 0
-    CHANNEL_A = 1
-    CHANNEL_B = 2
-    CHANNEL_C = 3
-    CHANNEL_D = 4
-    CHANNEL_D2 = 5
-    CHANNEL_D3 = 6
-    CHANNEL_D4 = 7
-    CHANNEL_D5 = 8
-
-
-class Model336DisplaySetupMode(IntEnum):
-    """Front panel display setup enum."""
-    INPUT_A = 0
-    INPUT_B = 1
-    INPUT_C = 2
-    INPUT_D = 3
-    CUSTOM = 4
-    FOUR_LOOP = 5
-    ALL_INPUTS = 6
-    INPUT_D2 = 7
-    INPUT_D3 = 8
-    INPUT_D4 = 9
-    INPUT_D5 = 10
-
-
-class Model336InputSensorType(IntEnum):
-    """Sensor type enumeration.
-
-        THERMOCOUPLE is only valid with the 3060 option, CAPACITANCE is only valid with the 3061 option.
-    """
-    DISABLED = 0
-    DIODE = 1
-    PLATINUM_RTD = 2
-    NTC_RTD = 3
-    THERMOCOUPLE = 4
-    CAPACITANCE = 5
-
-
-class Model336DiodeRange(IntEnum):
-    """Diode voltage range enumeration"""
-    TWO_POINT_FIVE_VOLTS = 0
-    TEN_VOLTS = 1
-
-
-class Model336RTDRange(IntEnum):
-    """RTD resistance range enumeration.
-
-        THIRTY_THOUSAND_OHM and ONE_HUNDRED_THOUSAND_OHM are only valid for NTC RTDs.
-    """
-    TEN_OHM = 0
-    THIRTY_OHM = 1
-    HUNDRED_OHM = 2
-    THREE_HUNDRED_OHM = 3
-    ONE_THOUSAND_OHM = 4
-    THREE_THOUSAND_OHM = 5
-    TEN_THOUSAND_OHM = 6
-    THIRTY_THOUSAND_OHM = 7
-    ONE_HUNDRED_THOUSAND_OHM = 8
-
-
-class Model336ThermocoupleRange(IntEnum):
-    """Thermocouple range enumeration."""
-    FIFTY_MILLIVOLT = 0
 
 
 class Model336InputSensorSettings:
@@ -106,17 +17,17 @@ class Model336InputSensorSettings:
         """Constructor for the InputSensorSettings class.
 
             Args:
-                sensor_type (Model336InputSensorType):
+                sensor_type (self.InputSensorType):
                     Specifies input sensor type
                 autorange_enable (bool):
                     Specifies auto-ranging (False = off, True = on)
                 compensation (bool):
                     Specifies input compensation (False = off, True = on)
-                units (Model336InputSensorUnits):
+                units (self.InputSensorUnits):
                     Specifies the preferred units parameter for sensor readings and for the control set-point.
                 input_range (IntEnum)
                     Specifies input range if autorange_enable is false.
-                    See IntEnum classes: Model336DiodeRange, Model336RTDRange, andModel336ThermocoupleRange.
+                    See IntEnum classes: self.DiodeRange, self.RTDRange, andself.ThermocoupleRange.
 
         """
         self.sensor_type = sensor_type
@@ -124,40 +35,6 @@ class Model336InputSensorSettings:
         self.compensation = compensation
         self.units = units
         self.input_range = input_range
-
-
-class Model336HeaterOutputMode(IntEnum):
-    """Control loop enumeration."""
-    OFF = 0
-    CLOSED_LOOP = 1
-    ZONE = 2
-    OPEN_LOOP = 3
-    MONITOR_OUT = 4
-    WARMUP_SUPPLY = 5
-
-
-class Model336HeaterRange(IntEnum):
-    """Current mode heater enumerations."""
-    OFF = 0
-    LOW = 1
-    MEDIUM = 2
-    HIGH = 3
-
-
-class Model336HeaterVoltageRange(IntEnum):
-    """Voltage mode heater enumerations."""
-    VOLTAGE_OFF = 0
-    VOLTAGE_ON = 1
-
-
-class Model336DisplayUnits(IntEnum):
-    """Panel display units enumeration."""
-    KELVIN = 1
-    CELSIUS = 2
-    SENSOR_UNITS = 3
-    MINIMUM_DATA = 4
-    MAXIMUM_DATA = 5
-    SENSOR_NAME = 6
 
 
 class Model336ControlLoopZoneSettings:
@@ -177,11 +54,11 @@ class Model336ControlLoopZoneSettings:
                     Specifies the derivative gain for this zone (0 to 200 %).
                 manual_out_value (float):
                     Specifies the manual output for this zone (0 to 100 %).
-                heater_range (Model336HeaterRange):
+                heater_range (self.HeaterRange):
                     Specifies the heater range for this zone.
-                    See Model336HeaterRange IntEnum class.
-                channel (Model336InputChannel):
-                    See Model336InputChannel IntEnum class.
+                    See self.HeaterRange IntEnum class.
+                channel (InputChannel):
+                    See InputChannel IntEnum class.
                     Passing the NONE member will use the previously assigned sensor.
                 rate (float):
                     Specifies the ramp rate for this zone ( 0 - 100 K/min).
@@ -268,14 +145,10 @@ class Model336InputReadingStatus(RegisterBase):
         self.sensor_units_overrange = sensor_units_overrange
 
 
-class Model336(TemperatureController):
+class Model336(Model336Enums, TemperatureController):
     """A class object representing the Lake Shore Model 336 cryogenic temperature controller."""
 
     vid_pid = [(0x1FB9, 0x0301)]
-
-    # Initiate enum types for temperature controllers class
-    _input_channel_enum = Model336InputChannel
-    _display_units_enum = Model336DisplayUnits
 
     # Initiate instrument specific registers
     status_byte_register = Model336StatusByteRegister
@@ -328,21 +201,21 @@ class Model336(TemperatureController):
             Args:
                 output (int):
                     Voltage-controlled output to configure (3 or 4)
-                channel (Model336InputChannel):
+                channel (InputChannel):
                     Specifies which sensor input to monitor.
-                    A member of the Model336InputChannel IntEnum class.
-                units (Model336InputSensorUnits):
+                    A member of the InputChannel IntEnum class.
+                units (self.InputSensorUnits):
                     Specifies the units on which to base the output voltage.
-                    A member of the Model336InputSensorUnits IntEnum class.
+                    A member of the self.InputSensorUnits IntEnum class.
                 high_value (float):
                     Represents the data at which the Monitor Out reaches +100% output.
                     Entered in the units designated by the <units> argument.
                 low_value (float):
                     Represents the data at which the analog output reaches -100% output if bipolar,
                     or 0% output if unipolar. Entered in the units designated by the <units> argument.
-                polarity (Model336Polarity):
+                polarity (self.Polarity):
                     Specifies whether the output voltage is unipolar or bipolar.
-                    Member of the Model336Polarity IntEnum class.
+                    Member of the self.Polarity IntEnum class.
 
         """
         command_string = f"ANALOG {output},{channel},{units},{high_value},{low_value},{polarity}"
@@ -361,33 +234,33 @@ class Model336(TemperatureController):
 
         """
         response = self.query(f"ANALOG? {output}").split(",")
-        return {"channel": Model336InputChannel(int(response[0])),
-                "units": Model336InputSensorUnits(int(response[1])),
+        return {"channel": self.InputChannel(int(response[0])),
+                "units": self.InputSensorUnits(int(response[1])),
                 "high_value": float(response[2]),
                 "low_value": float(response[3]),
-                "polarity": Model336Polarity(int(response[4]))}
+                "polarity": self.Polarity(int(response[4]))}
 
     def set_display_setup(self, mode, num_fields="", displayed_output=""):
         """Sets the display mode.
 
             Args:
-                mode (Model336DisplaySetupMode):
-                    Member of Model336DisplaySetupMode IntEnum class
+                mode (self.DisplaySetupMode):
+                    Member of self.DisplaySetupMode IntEnum class
                     Specifies display mode for default and 3062 options
                 num_fields (IntEnum)
-                    When mode is set to custom, specifies the number of fields (Member of Model336DisplayFields).
-                    When mode is set to all inputs, specifies size of readings (Member of Model336DisplayFieldsSize).
+                    When mode is set to custom, specifies the number of fields (Member of self.DisplayFields).
+                    When mode is set to all inputs, specifies size of readings (Member of self.DisplayFieldsSize).
                 displayed_output (int):
                     Configures the bottom half of the custom display screen.
                     Only required if mode is set to CUSTOM.
                     Output: (1 - 4)
 
         """
-        if mode == Model336DisplaySetupMode.CUSTOM:
-            if not isinstance(num_fields, Model336DisplayFields):
+        if mode == self.DisplaySetupMode.CUSTOM:
+            if not isinstance(num_fields, self.DisplayFields):
                 raise InstrumentException("num_fields argument must be of type \"Model336DisplaySetupCustom\"")
-        elif mode == Model336DisplaySetupMode.ALL_INPUTS:
-            if not isinstance(num_fields, Model336DisplayFieldsSize):
+        elif mode == self.DisplaySetupMode.ALL_INPUTS:
+            if not isinstance(num_fields, self.DisplayFieldsSize):
                 raise InstrumentException("num_fields argument must be of type \"Model336DisplaySetupAllInputs\"")
 
         command_string = f"DISPLAY {mode},{num_fields},{displayed_output}"
@@ -403,12 +276,12 @@ class Model336(TemperatureController):
 
         """
         display_setup_response = self.query("DISPLAY?").split(",")
-        mode = Model336DisplaySetupMode(int(display_setup_response[0]))
-        if mode == Model336DisplaySetupMode.CUSTOM:
-            num_fields = Model336DisplayFields(int(display_setup_response[1]))
+        mode = self.DisplaySetupMode(int(display_setup_response[0]))
+        if mode == self.DisplaySetupMode.CUSTOM:
+            num_fields = self.DisplayFields(int(display_setup_response[1]))
             displayed_output = int(display_setup_response[2])
-        elif mode == Model336DisplaySetupMode.ALL_INPUTS:
-            num_fields = Model336DisplayFieldsSize(int(display_setup_response[1]))
+        elif mode == self.DisplaySetupMode.ALL_INPUTS:
+            num_fields = self.DisplayFieldsSize(int(display_setup_response[1]))
             displayed_output = None
         else:
             num_fields = None
@@ -424,13 +297,13 @@ class Model336(TemperatureController):
             Args:
                 output (int):
                     Specifies which heater output to configure (1 or 2).
-                heater_resistance (Model336HeaterResistance):
-                    Member of Model336HeaterResistance IntEnum class.
+                heater_resistance (self.HeaterResistance):
+                    Member of self.HeaterResistance IntEnum class.
                 max_current (float):
                     User defined maximum output current (see table 4-11 for max current and resistance relationships).
-                heater_output (Model336HeaterOutputUnits):
+                heater_output (self.HeaterOutputUnits):
                     Specifies whether the heater output displays in current or power.
-                    Member of Model336HeaterOutputUnits IntEnum class.
+                    Member of self.HeaterOutputUnits IntEnum class.
 
         """
         self.command(f"HTRSET {output},{heater_resistance},0,{max_current},{heater_output}")
@@ -456,9 +329,9 @@ class Model336(TemperatureController):
             current_index = int(heater_setup[1])
             max_current = preset_currents[current_index]
 
-        return {"heater_resistance": Model336HeaterResistance(int(heater_setup[0])),
+        return {"heater_resistance": self.HeaterResistance(int(heater_setup[0])),
                 "max_current": max_current,
-                "output_display_mode": Model336HeaterOutputUnits(int(heater_setup[3]))}
+                "output_display_mode": self.HeaterOutputUnits(int(heater_setup[3]))}
 
     def set_input_sensor(self, channel, sensor_parameters):
         """Sets the sensor type and associated parameters.
@@ -494,24 +367,24 @@ class Model336(TemperatureController):
 
         """
         sensor_config = self.query(f"INTYPE? {channel}").split(",")
-        sensor_type = Model336InputSensorType(int(sensor_config[0]))
+        sensor_type = self.InputSensorType(int(sensor_config[0]))
         autorange_enable = bool(int(sensor_config[1]))
         if autorange_enable:
             input_range = 0
         else:
-            if sensor_type == Model336InputSensorType.DIODE:
-                input_range = Model336DiodeRange(int(sensor_config[2]))
-            elif sensor_type in (Model336InputSensorType.PLATINUM_RTD, Model336InputSensorType.NTC_RTD):
-                input_range = Model336RTDRange(int(sensor_config[2]))
-            elif sensor_type == Model336InputSensorType.THERMOCOUPLE:
-                input_range = Model336ThermocoupleRange(int(sensor_config[2]))
+            if sensor_type == self.InputSensorType.DIODE:
+                input_range = self.DiodeRange(int(sensor_config[2]))
+            elif sensor_type in (self.InputSensorType.PLATINUM_RTD, self.InputSensorType.NTC_RTD):
+                input_range = self.RTDRange(int(sensor_config[2]))
+            elif sensor_type == self.InputSensorType.THERMOCOUPLE:
+                input_range = self.ThermocoupleRange(int(sensor_config[2]))
             else:
                 input_range = int(sensor_config[2])
 
         return Model336InputSensorSettings(sensor_type,
                                            bool(int(sensor_config[1])),
                                            bool(int(sensor_config[3])),
-                                           Model336InputSensorUnits(int(sensor_config[4])),
+                                           self.InputSensorUnits(int(sensor_config[4])),
                                            input_range)
 
     def get_all_kelvin_reading(self):
@@ -531,11 +404,11 @@ class Model336(TemperatureController):
             Args:
                 output (int):
                     Specifies which output to configure (1 - 4)
-                mode (Model336HeaterOutputMode):
-                    Member of Model336HeaterOutputMode IntEnum class.
+                mode (self.HeaterOutputMode):
+                    Member of self.HeaterOutputMode IntEnum class.
                     Specifies the control mode.
-                channel (Model336InputChannel):
-                    Model336InputChannel IntEnum class.
+                channel (InputChannel):
+                    InputChannel IntEnum class.
                     Specifies which input to use for control.
                 powerup_enable (bool):
                     Specifies whether the output remains on (True)
@@ -559,8 +432,8 @@ class Model336(TemperatureController):
 
         """
         outmode = self.query(f"OUTMODE? {output}").split(",")
-        return {"mode": Model336HeaterOutputMode(int(outmode[0])),
-                "channel": Model336InputChannel(int(outmode[1])),
+        return {"mode": self.HeaterOutputMode(int(outmode[0])),
+                "channel": self.InputChannel(int(outmode[1])),
                 "powerup_enable": bool(int(outmode[2]))}
 
     def set_heater_range(self, output, heater_range):
@@ -574,8 +447,8 @@ class Model336(TemperatureController):
                 output (int):
                     Specifies which output to configure (1 - 4).
                 heater_range (IntEnum):
-                    For Outputs 1 and 2: Member of Model336HeaterRange IntEnum class.
-                    For Outputs 3 and 4: Model336HeaterVoltageRange IntEnum class.
+                    For Outputs 1 and 2: Member of self.HeaterRange IntEnum class.
+                    For Outputs 3 and 4: self.HeaterVoltageRange IntEnum class.
 
         """
         self.command(f"RANGE {output},{heater_range}")
@@ -589,16 +462,16 @@ class Model336(TemperatureController):
 
             Returns:
                 (IntEnum):
-                    For Outputs 1 and 2: Member of Model336HeaterRange IntEnum class.
-                    For Outputs 3 and 4: Member of Model336HeaterVoltageRange IntEnum class.
+                    For Outputs 1 and 2: Member of self.HeaterRange IntEnum class.
+                    For Outputs 3 and 4: Member of self.HeaterVoltageRange IntEnum class.
 
         """
         heater_range = int(self.query(f"RANGE? {output}"))
 
         if output in (3, 4):
-            heater_range = Model336HeaterVoltageRange(heater_range)
+            heater_range = self.HeaterVoltageRange(heater_range)
         else:
-            heater_range = Model336HeaterRange(heater_range)
+            heater_range = self.HeaterRange(heater_range)
 
         return heater_range
 
@@ -642,8 +515,8 @@ class Model336(TemperatureController):
             Args:
                 output (int):
                     Specifies which output to configure (3 or 4).
-                control (Model336ControlTypes):
-                    Member of the Model336ControlTypes IntEnum class.
+                control (self.ControlTypes):
+                    Member of the self.ControlTypes IntEnum class.
                 percentage (float):
                     Specifies the percentage of full scale (10 V) Monitor Out voltage to apply to turn on the external
                     power supply. (A value of 50.5 translates to a 50.5 percent output voltage).
@@ -665,7 +538,7 @@ class Model336(TemperatureController):
 
         """
         warmup_supply = self.query(f"WARMUP? {output}").split(",")
-        return {"control": Model336ControlTypes(int(warmup_supply[0])),
+        return {"control": self.ControlTypes(int(warmup_supply[0])),
                 "percentage": float(warmup_supply[1])}
 
     def set_control_loop_zone_table(self, output, zone, control_loop_zone):
@@ -706,8 +579,8 @@ class Model336(TemperatureController):
                                                float(zone_parameters[2]),
                                                float(zone_parameters[3]),
                                                float(zone_parameters[4]),
-                                               Model336HeaterRange(int(zone_parameters[5])),
-                                               Model336InputChannel(int(zone_parameters[6])),
+                                               self.HeaterRange(int(zone_parameters[5])),
+                                               self.InputChannel(int(zone_parameters[6])),
                                                float(zone_parameters[7]))
 
     def _autotune_error(self):
@@ -719,14 +592,6 @@ class Model336(TemperatureController):
             raise InstrumentException("An autotune error is present")
 
 
-__all__ = ['Model336RelayControlMode', 'Model336RelayControlAlarm', 'Model336InterfaceMode', 'Model336HeaterError',
-           'Model336CurveFormat', 'Model336CurveTemperatureCoefficients', 'Model336AutoTuneMode',
-           'Model336HeaterResistance', 'Model336Polarity', 'Model336DiodeCurrent', 'Model336HeaterOutputUnits',
-           'Model336InputSensorUnits', 'Model336ControlTypes', 'Model336LanStatus', 'Model336Interface',
-           'Model336CurveHeader', 'Model336AlarmSettings', 'Model336StandardEventRegister', 'Model336OperationEvent',
-           'Model336InputChannel', 'Model336DisplaySetupMode', 'Model336DisplayFields',
-           'Model336DisplayFieldsSize', 'Model336InputSensorType', 'Model336DiodeRange', 'Model336RTDRange',
-           'Model336ThermocoupleRange', 'Model336InputSensorSettings', 'Model336HeaterOutputMode',
-           'Model336HeaterRange', 'Model336HeaterVoltageRange', 'Model336DisplayUnits',
-           'Model336ControlLoopZoneSettings', 'Model336StatusByteRegister', 'Model336ServiceRequestEnable',
-           'Model336InputReadingStatus', 'AlarmSettings', 'Model336']
+__all__ = ['Model336CurveHeader', 'Model336AlarmSettings', 'Model336StandardEventRegister', 'Model336OperationEvent',
+           'Model336InputSensorSettings', 'Model336ControlLoopZoneSettings', 'Model336StatusByteRegister',
+           'Model336ServiceRequestEnable', 'Model336InputReadingStatus', 'AlarmSettings', 'Model336']

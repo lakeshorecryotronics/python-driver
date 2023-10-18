@@ -1,258 +1,15 @@
 """Implements functionality unique to the Lake Shore Model 372 AC bridge and temperature controller."""
-from enum import Enum, IntEnum
-
-from .temperature_controllers import TemperatureController, CurveTemperatureCoefficient, InterfaceMode, \
-    BrightnessLevel, HeaterError, CurveHeader, StandardEventRegister, DisplayFields, Polarity, HeaterOutputUnits, \
-    HeaterResistance, Interface, OperationEvent
+from .model_372_enums import Model372Enums
+from .temperature_controllers import TemperatureController, CurveHeader, StandardEventRegister, OperationEvent
 from .generic_instrument import RegisterBase
 
-Model372CurveTemperatureCoefficient = CurveTemperatureCoefficient
-Model372InterfaceMode = InterfaceMode
-Model372DisplayFields = DisplayFields
-Model372Polarity = Polarity
-Model372HeaterOutputUnits = HeaterOutputUnits
-Model372BrightnessLevel = BrightnessLevel
-Model372HeaterError = HeaterError
-Model372HeaterResistance = HeaterResistance
-Model372Interface = Interface
 Model372CurveHeader = CurveHeader
 Model372OperationEventRegister = OperationEvent
 Model372StandardEventRegister = StandardEventRegister
 
 
-class Model372OutputMode(IntEnum):
-    """Enumeration of the different modes for heater output setup."""
-
-    OFF = 0
-    MONITOR_OUT = 1
-    OPEN_LOOP = 2
-    ZONE = 3
-    STILL = 4
-    CLOSED_LOOP = 5
-    WARMUP = 6
-
-
-class Model372InputChannel(Enum):
-    """Enumeration of the input channels of the Model 372."""
-
-    NONE = 0
-    ONE = 1
-    TWO = 2
-    THREE = 3
-    FOUR = 4
-    FIVE = 5
-    SIX = 6
-    SEVEN = 7
-    EIGHT = 8
-    NINE = 9
-    TEN = 10
-    ELEVEN = 11
-    TWELVE = 12
-    THIRTEEN = 13
-    FOURTEEN = 14
-    FIFTEEN = 15
-    SIXTEEN = 16
-    CONTROL = "A"
-
-
-class Model372SensorExcitationMode(IntEnum):
-    """Enumeration of the possible excitation modes for an input sensor."""
-
-    VOLTAGE = 0
-    CURRENT = 1
-
-
-class Model372AutoRangeMode(IntEnum):
-    """Enumeration for the possible modes of the auto ranging feature.
-
-        ROX102B mode is a special auto-ranging mode that applies only to Lake Shore ROX-102B sensor.
-    """
-
-    OFF = 0
-    CURRENT = 1
-    ROX102B = 2
-
-
-class Model372InputSensorUnits(IntEnum):
-    """Enumeration of the units to handle input readings and display in."""
-
-    KELVIN = 1
-    OHMS = 2
-
-
-class Model372MonitorOutputSource(IntEnum):
-    """Enumeration of the source for an output to monitor."""
-
-    OFF = 0
-    CS_NEG = 1
-    CS_POS = 2
-    VCM_NEG = 3
-    VCM_POS = 4
-    VDIF = 5
-    VAD_MEASUREMENT = 6
-    VAD_CONTROL = 7
-
-
-class Model372RelayControlMode(IntEnum):
-    """Enumeration of the control modes of the configurable relays of the 372."""
-
-    RELAY_OFF = 0
-    RELAY_ON = 1
-    ALARMS = 2
-    SAMPLE_HEATER_ZONE = 3
-    WARMUP_HEATER_ZONE = 4
-
-
-class Model372DisplayMode(IntEnum):
-    """Enumeration of the possible information to display."""
-
-    MEASUREMENT_INPUT = 0
-    CONTROL_INPUT = 1
-    CUSTOM = 2
-
-
-class Model372DisplayInfo(IntEnum):
-    """Enumeration of the information to a display in the bottom left of the custom display mode."""
-
-    NONE = 0
-    SAMPLE_HEATER = 1
-    WARMUP_HEATER = 2
-    ACTIVE_SCAN_CHANNEL = 3
-
-
-class Model372CurveFormat(IntEnum):
-    """Enumeration of the units to use in a calibration curve."""
-
-    OHM_PER_KELVIN = 3
-    LOGOHM_PER_KELVIN = 4
-    OHM_PER_KELVIN_CUBIC_SPLINE = 7
-
-
-class Model372DisplayFieldUnits(IntEnum):
-    """Enumeration for the possible units to display in a single display field."""
-
-    KELVIN = 1
-    OHMS = 2
-    QUADRATURE = 3
-    MINIMUM_DATA = 4
-    MAXIMUM_DATA = 5
-    SENSOR_NAME = 6
-
-
-class Model372SampleHeaterOutputRange(IntEnum):
-    """Enumeration of the output range of the sample heater (output 0)."""
-    OFF = 0
-    RANGE_31_POINT_6_MICRO_AMPS = 1
-    RANGE_100_MICRO_AMPS = 2
-    RANGE_316_MICRO_AMPS = 3
-    RANGE_1_MILLI_AMP = 4
-    RANGE_3_POINT_16_MILLI_AMPS = 5
-    RANGE_10_MILLI_AMPS = 6
-    RANGE_31_POINT_6_MILLI_AMPS = 7
-    RANGE_100_MILLI_AMPS = 8
-
-
-class Model372InputFrequency(IntEnum):
-    """Defines the enumeration of the excitation frequency of an input."""
-
-    FREQUENCY_9_POINT_8_HZ = 1
-    FREQUENCY_13_POINT_7_HZ = 2
-    FREQUENCY_16_POINT_2_HZ = 3
-    FREQUENCY_11_POINT_6_HZ = 4
-    FREQUENCY_18_POINT_2_HZ = 5
-
-
-class Model372MeasurementInputVoltageRange(IntEnum):
-    """Enumerates the possible voltage ranges for a measurement input."""
-
-    RANGE_2_MICRO_VOLTS = 1
-    RANGE_6_POINT_32_MICRO_VOLTS = 2
-    RANGE_20_MICRO_VOLTS = 3
-    RANGE_63_POINT_2_MICRO_VOLTS = 4
-    RANGE_200_MICRO_VOLTS = 5
-    RANGE_632_MICRO_VOLTS = 6
-    RANGE_2_MILLI_VOLTS = 7
-    RANGE_6_POINT_32_MILLI_VOLTS = 8
-    RANGE_20_MILLI_VOLTS = 9
-    RANGE_63_POINT_2_MILLI_VOLTS = 10
-    RANGE_200_MILLI_VOLTS = 11
-    RANGE_632_MILLI_VOLTS = 12
-
-
-class Model372MeasurementInputCurrentRange(IntEnum):
-    """Enumeration of the current range of a measurement input."""
-
-    RANGE_1_PICO_AMP = 1
-    RANGE_3_POINT_16_PICO_AMPS = 2
-    RANGE_10_PICO_AMPS = 3
-    RANGE_31_POINT_6_PICO_AMPS = 4
-    RANGE_100_PICO_AMPS = 5
-    RANGE_316_PICO_AMPS = 6
-    RANGE_1_NANO_AMP = 7
-    RANGE_3_POINT_16_NANO_AMPS = 8
-    RANGE_10_NANO_AMPS = 9
-    RANGE_31_POINT_6_NANO_AMPS = 10
-    RANGE_100_NANO_AMPS = 11
-    RANGE_316_NANO_AMPS = 12
-    RANGE_1_MICRO_AMP = 13
-    RANGE_3_POINT_16_MICRO_AMPS = 14
-    RANGE_10_MICRO_AMPS = 15
-    RANGE_31_POINT_6_MICRO_AMPS = 16
-    RANGE_100_MICRO_AMPS = 17
-    RANGE_316_MICRO_AMPS = 18
-    RANGE_1_MILLI_AMP = 19
-    RANGE_3_POINT_16_MILLI_AMPS = 20
-    RANGE_10_MILLI_AMPS = 21
-    RANGE_31_POINT_6_MILLI_AMPS = 22
-
-
-class Model372ControlInputCurrentRange(IntEnum):
-    """Enumeration of the current range of the control input. """
-
-    RANGE_316_PICO_AMPS = 1
-    RANGE_1_NANO_AMP = 2
-    RANGE_3_POINT_16_NANO_AMPS = 3
-    RANGE_10_NANO_AMPS = 4
-    RANGE_31_POINT_6_NANO_AMPS = 5
-    RANGE_100_NANO_AMPS = 6
-
-
-class Model372MeasurementInputResistance(IntEnum):
-    """Enumeration of the resistance range of a measurement input."""
-
-    RANGE_2_MILLI_OHMS = 1
-    RANGE_6_POINT_32_MILLI_OHMS = 2
-    RANGE_20_MILLI_OHMS = 3
-    RANGE_63_POINT_2_MILLI_OHMS = 4
-    RANGE_200_MILLI_OHMS = 5
-    RANGE_632_MILLI_OHMS = 6
-    RANGE_2_OHMS = 7
-    RANGE_6_POINT_32_OHMS = 8
-    RANGE_20_OHMS = 9
-    RANGE_63_POINT_2_OHMS = 10
-    RANGE_200_OHMS = 11
-    RANGE_632_OHMS = 12
-    RANGE_2_KIL_OHMS = 13
-    RANGE_6_POINT_32_KIL_OHMS = 14
-    RANGE_20_KIL_OHMS = 15
-    RANGE_63_POINT_2_KIL_OHMS = 16
-    RANGE_200_KIL_OHMS = 17
-    RANGE_632_KIL_OHMS = 18
-    RANGE_2_MEGA_OHMS = 19
-    RANGE_6_POINT_32_MEGA_OHMS = 20
-    RANGE_20_MEGA_OHMS = 21
-    RANGE_63_POINT_2_MEGA_OHMS = 22
-
-
-class Model372HeaterOutput(IntEnum):
-    """Enumeration of model372 heater output."""
-
-    WARM_UP_HEATER = 1
-    STILL_HEATER = 2
-
-
 class Model372InputChannelSettings:
-    """Class object representing parameters for the channel settings of an Model372InputChannel."""
+    """Class object representing parameters for the channel settings of an self.InputChannel."""
 
     def __init__(self,
                  enable,
@@ -274,7 +31,7 @@ class Model372InputChannelSettings:
                 curve_number (int):
                     Specifies which calibration curve to use on input sensor. Options are:
                     0 (none), or 1 - 59.
-                temperature_coefficient (Model372CurveTemperatureCoefficient):
+                temperature_coefficient (self.CurveTemperatureCoefficient):
                     Sets coefficient for temperature control if no curve is selected.
 
         """
@@ -286,7 +43,7 @@ class Model372InputChannelSettings:
 
 
 class Model372InputSetupSettings:
-    """Class object representing parameters for the sensor and measurement settings of an Model372InputChannel."""
+    """Class object representing parameters for the sensor and measurement settings of an self.InputChannel."""
 
     def __init__(self,
                  mode,
@@ -298,7 +55,7 @@ class Model372InputSetupSettings:
         """The constructor for Model372InputSetupSettings class.
 
             Args:
-                mode (Model372SensorExcitationMode):
+                mode (self.SensorExcitationMode):
                     Determines whether to use current or voltage for sensor excitation.
                 excitation_range (IntEnum):
                     The voltage or current (depending on mode) excitation range.
@@ -307,7 +64,7 @@ class Model372InputSetupSettings:
                 current_source_shunted (bool):
                     Specifies whether the current source is shunted. If current source is shunted,
                     excitation is off. If current source is not shunted, excitation is on.
-                units (Model372InputSensorUnits):
+                units (self.InputSensorUnits):
                     Specifies the preferred units, Kelvin or Ohms, for the sensor.
                 resistance_range (Model372MeasurementInputResistance):
                     For measurement inputs only, specifies the measurement input resistance range.
@@ -334,9 +91,9 @@ class Model372HeaterOutputSettings:
         """The constructor for Model372HeaterOutputSettings class.
 
             Args:
-                output_mode (Model372OutputMode):
+                output_mode (self.OutputMode):
                     The control or output mode to configure the heater for. Defines how the output is controlled.
-                input_channel (Model372InputChannel):
+                input_channel (self.InputChannel):
                     Which input to control output from in a control loop.
                 powerup_enable (bool):
                     Specifies whether output stays on after powerup cycle.
@@ -347,7 +104,7 @@ class Model372HeaterOutputSettings:
                 delay (int):
                     Specifies delay in seconds for set-point during AutoScanning. Options are:
                     1 - 255.
-                polarity (Model372Polarity):
+                polarity (self.Polarity):
                     Specifies output polarity. Not applicable to warmup heater.
 
         """
@@ -567,16 +324,10 @@ class Model372DigitalOutputRegister(RegisterBase):
         self.d_5 = d_5
 
 
-class Model372(TemperatureController):
+class Model372(Model372Enums, TemperatureController):
     """A class object representing the Lake Shore Model 372 AC bridge and temperature controller."""
 
     vid_pid = [(0x1FB9, 0x0305)]
-
-    # Override enums in base class
-    _curve_format_enums = Model372CurveFormat
-    _input_channel_enum = Model372InputChannel
-    _display_units_enum = Model372DisplayFieldUnits
-    _relay_control_mode_enum = Model372RelayControlMode
 
     # Initialize registers
     _status_byte_register = Model372StatusByteRegister
@@ -617,11 +368,11 @@ class Model372(TemperatureController):
         """Sets which parameters to display and how to display them.
 
             Args:
-                mode (Model372DisplayMode):
+                mode (self.DisplayMode):
                     Sets the input to monitor on the display, or configures display for custom.
-                number_of_fields (Model372DisplayFields):
+                number_of_fields (self.DisplayFields):
                     Configures the number of display fields to include in a custom display.
-                displayed_info (Model372DisplayInfo):
+                displayed_info (self.DisplayInfo):
                     Determines whether to display information about the loop of the active scan channel or
                     a specific heater in the bottom left of the display in custom mode.
 
@@ -632,29 +383,29 @@ class Model372(TemperatureController):
         """Returns the current mode of the display.
 
             Returns:
-                (Model372DisplayMode):
+                (self.DisplayMode):
                     Enumerated object representing the current mode of the display.
 
         """
         settings_string = self.query("DISPLAY?")
         separated_settings = settings_string.split(",")
-        return Model372DisplayMode(int(separated_settings[0]))
+        return self.DisplayMode(int(separated_settings[0]))
 
     def get_custom_display_settings(self):
         """Returns the settings of the display in custom mode.
 
             Returns:
                 (dict):
-                    mode: Model372DisplayMode,
-                    number_of_fields: Model372DisplayFields,
-                    displayed_info: Model372DisplayInfo
+                    mode: self.DisplayMode,
+                    number_of_fields: self.DisplayFields,
+                    displayed_info: self.DisplayInfo
 
         """
         settings_string = self.query("DISPLAY?")
         separated_settings = settings_string.split(",")
-        return {'mode': Model372DisplayMode(int(separated_settings[0])),
-                'number_of_fields': Model372DisplayFields(int(separated_settings[1])),
-                'displayed_info': Model372DisplayInfo(int(separated_settings[2]))}
+        return {'mode': self.DisplayMode(int(separated_settings[0])),
+                'number_of_fields': self.DisplayFields(int(separated_settings[1])),
+                'displayed_info': self.DisplayInfo(int(separated_settings[2]))}
 
     def get_resistance_reading(self, input_channel):
         """Returns the input reading in Ohms.
@@ -731,21 +482,21 @@ class Model372(TemperatureController):
         separated_settings = sensor_settings.split(",")
         # Determine which enum to use to interpret excitation value:
         if input_channel == "A":
-            excitation_range = Model372ControlInputCurrentRange(int(separated_settings[1]))
+            excitation_range = self.ControlInputCurrentRange(int(separated_settings[1]))
             resistance_range = None
         # Check if excitation mode is voltage or current
-        elif int(separated_settings[0]) == Model372SensorExcitationMode.VOLTAGE:
-            excitation_range = Model372MeasurementInputVoltageRange(int(separated_settings[1]))
-            resistance_range = Model372MeasurementInputResistance(int(separated_settings[3]))
+        elif int(separated_settings[0]) == self.SensorExcitationMode.VOLTAGE:
+            excitation_range = self.MeasurementInputVoltageRange(int(separated_settings[1]))
+            resistance_range = self.MeasurementInputResistance(int(separated_settings[3]))
         else:
-            excitation_range = Model372MeasurementInputCurrentRange(int(separated_settings[1]))
-            resistance_range = Model372MeasurementInputResistance(int(separated_settings[3]))
+            excitation_range = self.MeasurementInputCurrentRange(int(separated_settings[1]))
+            resistance_range = self.MeasurementInputResistance(int(separated_settings[3]))
 
-        input_sensor_settings = Model372InputSetupSettings(Model372SensorExcitationMode(int(separated_settings[0])),
+        input_sensor_settings = Model372InputSetupSettings(self.SensorExcitationMode(int(separated_settings[0])),
                                                            excitation_range,
-                                                           Model372AutoRangeMode(int(separated_settings[2])),
+                                                           self.AutoRangeMode(int(separated_settings[2])),
                                                            bool(int(separated_settings[4])),
-                                                           Model372InputSensorUnits(int(separated_settings[5])),
+                                                           self.InputSensorUnits(int(separated_settings[5])),
                                                            resistance_range)
         return input_sensor_settings
 
@@ -799,7 +550,7 @@ class Model372(TemperatureController):
         """
         input_parameters = self.query(f"INSET? {str(input_channel)}")
         separated_parameters = input_parameters.split(",")
-        temperature_coefficient = Model372CurveTemperatureCoefficient(int(separated_parameters[4]))
+        temperature_coefficient = self.CurveTemperatureCoefficient(int(separated_parameters[4]))
         input_channel_settings = Model372InputChannelSettings(bool(int(separated_parameters[0])),
                                                               int(separated_parameters[1]),
                                                               int(separated_parameters[2]),
@@ -861,7 +612,7 @@ class Model372(TemperatureController):
                     2: output 2 (analog heater).
                 heater_range (Enum or bool):
                     Specifies the range of the output. Options:
-                    Sample Heater (Enum) - Object of type Model372SampleHeaterOutputRange.
+                    Sample Heater (Enum) - Object of type self.SampleHeaterOutputRange.
                     Warmup Heater/Still Heater (bool) - False: output off, True: output on.
 
         """
@@ -885,12 +636,12 @@ class Model372(TemperatureController):
             Returns:
                 heater_range (bool or Enum):
                     If channel 1 or 2, returns bool for if output is on or off.
-                    If channel 0, an object of enum type Model372SampleHeaterOutputRange.
+                    If channel 0, an object of enum type SampleHeaterOutputRange.
 
         """
         key = int(self.query(f"RANGE? {str(output_channel)}"))
         if output_channel == 0:
-            output_range = Model372SampleHeaterOutputRange(key)
+            output_range = self.SampleHeaterOutputRange(key)
         else:
             output_range = bool(key)
 
@@ -1001,16 +752,16 @@ class Model372(TemperatureController):
         separated_response = output_mode.split(",")
         # Handle special case of control input not being an int
         if separated_response[1] == "A":
-            input_channel = Model372InputChannel('A')
+            input_channel = self.InputChannel('A')
         else:
-            input_channel = Model372InputChannel(int(separated_response[1]))
+            input_channel = self.InputChannel(int(separated_response[1]))
 
-        return Model372HeaterOutputSettings(Model372OutputMode(int(separated_response[0])),
+        return Model372HeaterOutputSettings(self.OutputMode(int(separated_response[0])),
                                             input_channel,
                                             bool(int(separated_response[2])),
                                             bool(int(separated_response[4])),
                                             int(separated_response[5]),
-                                            Model372Polarity(int(separated_response[3])))
+                                            self.Polarity(int(separated_response[3])))
 
     def configure_heater(self, output_channel, settings):
         """Sets up a heater output.
@@ -1033,7 +784,7 @@ class Model372(TemperatureController):
             polarity = format(settings.polarity)
 
         # Format input_channel since it does not use IntEnum
-        if isinstance(settings.input_channel, Model372InputChannel):
+        if isinstance(settings.input_channel, self.InputChannel):
             input_channel = settings.input_channel.value
         else:
             input_channel = settings.input_channel
@@ -1135,7 +886,7 @@ class Model372(TemperatureController):
 
         """
         settings = self.get_heater_output_settings(2)
-        settings.output_mode = Model372OutputMode.STILL
+        settings.output_mode = self.OutputMode.STILL
         self.configure_heater(2, settings)
         self.command(f"STILL {str(power)}")
 
@@ -1166,7 +917,7 @@ class Model372(TemperatureController):
 
         """
         settings = self.get_heater_output_settings(1)
-        settings.output_mode = Model372OutputMode.WARMUP
+        settings.output_mode = self.OutputMode.WARMUP
         self.configure_heater(1, settings)
         self.command(f"WARMUP {str(int(auto_control))},{str(current)}")
 
@@ -1205,7 +956,7 @@ class Model372(TemperatureController):
         outmode_settings = self.get_heater_output_settings(output_channel)
         control_input = outmode_settings.input_channel.value
         settings = self.get_input_setup_parameters(control_input)
-        settings.units = Model372InputSensorUnits.KELVIN
+        settings.units = self.InputSensorUnits.KELVIN
         self.configure_input(control_input, settings)
         # Set setpoint now that units are configured properly
         self.command(f"SETP {str(output_channel)},{str(setpoint)}")
@@ -1229,7 +980,7 @@ class Model372(TemperatureController):
         control_input = outmode_settings.input_channel.value
         # Change settings to change preferred units to Ohms
         settings = self.get_input_setup_parameters(control_input)
-        settings.units = Model372InputSensorUnits.OHMS
+        settings.units = self.InputSensorUnits.OHMS
         self.configure_input(control_input, settings)
         # Set setpoint
         self.command(f"SETP {str(output_channel)},{str(setpoint)}")
@@ -1253,7 +1004,7 @@ class Model372(TemperatureController):
         outmode_settings = self.get_heater_output_settings(output_channel)
         control_input = outmode_settings.input_channel.value
         settings = self.get_input_setup_parameters(control_input)
-        settings.units = Model372InputSensorUnits.KELVIN
+        settings.units = self.InputSensorUnits.KELVIN
         self.configure_input(control_input, settings)
         return float(self.query(f"SETP? {str(output_channel)}"))
 
@@ -1276,7 +1027,7 @@ class Model372(TemperatureController):
         outmode_settings = self.get_heater_output_settings(output_channel)
         control_input = outmode_settings.input_channel.value
         settings = self.get_input_setup_parameters(control_input)
-        settings.units = Model372InputSensorUnits.OHMS
+        settings.units = self.InputSensorUnits.OHMS
         self.configure_input(control_input, settings)
         return float(self.query(f"SETP? {str(output_channel)}"))
 
@@ -1291,11 +1042,11 @@ class Model372(TemperatureController):
 
             Returns:
                 frequency (Enum):
-                    The excitation frequency in Hz, returned as an object of Model372InputFrequency Enum type.
+                    The excitation frequency in Hz, returned as an object of self.InputFrequency Enum type.
 
         """
         key = int(self.query(f"FREQ? {str(input_channel)}"))
-        return Model372InputFrequency(key)
+        return self.InputFrequency(key)
 
     def set_excitation_frequency(self, input_channel, frequency):
         """Sets the excitation frequency (in Hz) for either the measurement or control inputs.
@@ -1307,7 +1058,7 @@ class Model372(TemperatureController):
                     "A" : control input.
 
                 frequency (Enum):
-                    The excitation frequency in Hz (if float), represented as an object of type Model372InputFrequency.
+                    The excitation frequency in Hz (if float), represented as an object of type self.InputFrequency.
 
         """
         self.command(f"FREQ {input_channel},{frequency}")
@@ -1338,8 +1089,8 @@ class Model372(TemperatureController):
         """Sets the interface for the instrument to communicate over.
 
             Args:
-                interface (Model372Interface):
-                    Selects the interface based on the values as defined in the Model372Interface enum class.
+                interface (self.Interface):
+                    Selects the interface based on the values as defined in the self.Interface enum class.
 
         """
         self.command(f"INTSEL {interface}")
@@ -1348,12 +1099,12 @@ class Model372(TemperatureController):
         """Returns the interface connected to the instrument.
 
             Returns:
-                interface (Model372Interface):
-                    Returns the interface as an object of the Model372Interface enum class.
+                interface (self.Interface):
+                    Returns the interface as an object of the self.Interface enum class.
 
         """
         value = int(self.query("INTSEL?"))
-        return Model372Interface(value)
+        return self.Interface(value)
 
     def set_alarm_parameters(self, input_channel, alarm_enable, alarm_settings=None):
         """Sets an alarm on the specified channel as defined by parameters.
@@ -1440,18 +1191,18 @@ class Model372(TemperatureController):
         """Returns the IEEE interface mode of the instrument.
 
             Returns:
-                mode (Model372InterfaceMode):
-                    Returns the mode as an enum type of class Model372InterfaceMode.
+                mode (self.InterfaceMode):
+                    Returns the mode as an enum type of class self.InterfaceMode.
 
         """
         value = int(self.query("MODE?"))
-        return Model372InterfaceMode(value)
+        return self.InterfaceMode(value)
 
     def set_ieee_interface_mode(self, mode):
         """Sets the IEEE interface mode of the instrument.
 
             Args:
-                mode (Model372InterfaceMode):
+                mode (self.InterfaceMode):
                     Defines the mode of the instrument as an object of the enum type Model372IEEEInterfaceMode.
 
         """
@@ -1462,7 +1213,7 @@ class Model372(TemperatureController):
         """Sets the source of the monitor output. Also affects the reference output.
 
             Args:
-                source (Model372MonitorOutputSource):
+                source (self.MonitorOutputSource):
                     Defines the source to run the monitor output off of.
 
         """
@@ -1473,19 +1224,19 @@ class Model372(TemperatureController):
         """Returns the source for the monitor output.
 
             Returns:
-                source (Model372MonitorOutputSource):
-                    Returns the source as an object of the Model372MonitorOutputSource class.
+                source (MonitorOutputSource):
+                    Returns the source as an object of the MonitorOutputSource class.
 
         """
         value = int(self.query("MONITOR?"))
-        return Model372MonitorOutputSource(value)
+        return self.MonitorOutputSource(value)
 
     def get_warmup_heater_setup(self):
         """Returns the settings regarding the resistance, current and units of the warmup heater (output channel 1).
 
             Returns:
                 (dict):
-                    {"resistance": float, "max_current": float, "units": Model372HeaterOutputUnits}
+                    {"resistance": float, "max_current": float, "units": self.HeaterOutputUnits}
         """
         settings_string = self.query("HTRSET? 1")
         separated_settings = settings_string.split(",")
@@ -1497,21 +1248,21 @@ class Model372(TemperatureController):
         else:
             max_current = float(separated_settings[2])
 
-        return {'resistance': Model372HeaterResistance(int(separated_settings[0])),
+        return {'resistance': self.HeaterResistance(int(separated_settings[0])),
                 'max_current': max_current,
-                'units': Model372HeaterOutputUnits(int(separated_settings[3]))}
+                'units': self.HeaterOutputUnits(int(separated_settings[3]))}
 
     def get_sample_heater_setup(self):
         """Returns the setup of the sample heater (channel 0).
 
             Returns:
                 (dict):
-                    {"resistance": float, "units": Model372HeaterOutputUnits}
+                    {"resistance": float, "units": self.HeaterOutputUnits}
         """
         settings_string = self.query("HTRSET? 0")
         separated_settings = settings_string.split(",")
         return {'resistance': float(separated_settings[0]),
-                'units': Model372HeaterOutputUnits(int(separated_settings[3]))}
+                'units': self.HeaterOutputUnits(int(separated_settings[3]))}
 
     def setup_warmup_heater(self, resistance, max_current, units):
         """Configures the current and power of the warmup heater (output channel 1).
@@ -1521,11 +1272,11 @@ class Model372(TemperatureController):
             use the lower current produced from the two calculations.
 
             Args:
-                resistance (Model372HeaterResistance):
-                    Heater load in ohms, as an object of the enum type Model372HeaterResistance.
+                resistance (self.HeaterResistance):
+                    Heater load in ohms, as an object of the enum type self.HeaterResistance.
                 max_current (float):
                     User specified max current in A.
-                units (Model372HeaterOutputUnits):
+                units (self.HeaterOutputUnits):
                     Defines which units the output is displayed in (Current (A) or Power (W)).
 
         """
@@ -1539,7 +1290,7 @@ class Model372(TemperatureController):
                 resistance (float):
                     Heater load in ohms. Options are: 1 - 2000.
 
-                units (Model372HeaterOutputUnits):
+                units (self.HeaterOutputUnits):
                     Defines which units the output is displayed in (Current (A) or Power (W)).
 
         """
@@ -1553,7 +1304,7 @@ class Model372(TemperatureController):
             non-analog properties of the heater through the configure_heater method.
 
             Args:
-                source (Model372InputSensorUnits):
+                source (self.InputSensorUnits):
                     The units to use for channel data.
                 high_value (float):
                     The data at which the output reaches +100% output.
@@ -1569,7 +1320,7 @@ class Model372(TemperatureController):
             # Use the settings already configured to avoid changing any settings
             settings = self.get_heater_output_settings(2)
         # Retrieve value from input_channel enum
-        if isinstance(settings.input_channel, Model372InputChannel):
+        if isinstance(settings.input_channel, self.InputChannel):
             input_channel = settings.input_channel.value
         else:
             input_channel = settings.input_channel
@@ -1581,12 +1332,12 @@ class Model372(TemperatureController):
 
             Returns:
                 (dict):
-                    {"source": Model372InputSensorUnits, "high_value": float, "low_value": float}
+                    {"source": self.InputSensorUnits, "high_value": float, "low_value": float}
 
         """
         settings_string = self.query("ANALOG? 2")
         separated_settings = settings_string.split(",")
-        return {'source': Model372InputSensorUnits(int(separated_settings[3])),
+        return {'source': self.InputSensorUnits(int(separated_settings[3])),
                 'high_value': float(separated_settings[4]),
                 'low_value': float(separated_settings[5])}
 
@@ -1609,7 +1360,7 @@ class Model372(TemperatureController):
         """
         if settings is None:
             settings = self.get_heater_output_settings(output_channel)
-        if isinstance(settings.input_channel, Model372InputChannel):
+        if isinstance(settings.input_channel, self.InputChannel):
             input_channel = settings.input_channel.value
         else:
             input_channel = settings.input_channel
@@ -1688,7 +1439,7 @@ class Model372(TemperatureController):
         separated_settings = settings_string.split(",")
         # Use if statement to use correct dictionary to convert range to bool or float
         if output_channel == 0:
-            heater_range = Model372SampleHeaterOutputRange(int(separated_settings[5]))
+            heater_range = self.SampleHeaterOutputRange(int(separated_settings[5]))
         else:
             heater_range = bool(int(separated_settings[5]))
         settings = Model372ControlLoopZoneSettings(float(separated_settings[0]), float(separated_settings[1]),
@@ -1741,16 +1492,8 @@ class Model372(TemperatureController):
         return bit_states
 
 
-__all__ = ['Model372', 'Model372AlarmParameters', 'Model372AutoRangeMode', 'Model372BrightnessLevel',
-           'Model372ControlInputCurrentRange', 'Model372ControlLoopZoneSettings', 'Model372CurveHeader',
-           'Model372CurveFormat', 'Model372CurveTemperatureCoefficient', 'Model372DisplayFields',
-           'Model372DisplayFieldUnits', 'Model372DisplayInfo', 'Model372DisplayMode', 'Model372HeaterError',
-           'Model372HeaterOutputSettings', 'Model372InputChannel', 'Model372InputChannelSettings',
-           'Model372InputFrequency', 'Model372InputSetupSettings', 'Model372InputSensorUnits', 'Model372InterfaceMode',
-           'Model372MeasurementInputCurrentRange', 'Model372MeasurementInputResistance',
-           'Model372MeasurementInputVoltageRange', 'Model372MonitorOutputSource', 'Model372OutputMode',
-           'Model372Polarity', 'Model372HeaterOutputUnits', 'Model372ReadingStatusRegister',
-           'Model372RelayControlMode', 'Model372Interface', 'Model372SampleHeaterOutputRange',
-           'Model372SensorExcitationMode', 'Model372ServiceRequestEnable', 'Model372ServiceRequestEnable',
-           'Model372StandardEventRegister', 'Model372StatusByteRegister', 'Model372HeaterResistance',
-           'Model372OperationEventRegister', 'Model372DigitalOutputRegister', 'Model372HeaterOutput']
+__all__ = ['Model372', 'Model372AlarmParameters', 'Model372ControlLoopZoneSettings', 'Model372CurveHeader',
+           'Model372HeaterOutputSettings', 'Model372InputChannelSettings', 'Model372InputSetupSettings',
+           'Model372ReadingStatusRegister', 'Model372ServiceRequestEnable', 'Model372ServiceRequestEnable',
+           'Model372StandardEventRegister', 'Model372StatusByteRegister', 'Model372OperationEventRegister',
+           'Model372DigitalOutputRegister']

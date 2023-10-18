@@ -1,6 +1,4 @@
 from lakeshore import Model335
-from lakeshore.model_335 import Model335DisplaySetup, Model335HeaterResistance, \
-    Model335HeaterOutputDisplay, Model335HeaterRange, Model335AutoTuneMode, Model335HeaterError
 from time import sleep
 
 # Connect to the first available Model 335 temperature controller over USB using a baud rate of 57600
@@ -10,21 +8,21 @@ my_model_335 = Model335(57600)
 # and heater output, capable of closed loop control
 
 # Configure the display mode
-my_model_335.set_display_setup(Model335DisplaySetup.TWO_INPUT_A)
+my_model_335.set_display_setup(my_model_335.DisplaySetup.TWO_INPUT_A)
 
 # Configure heater output 1 using the HeaterSetup class and set_heater_setup method
-my_model_335.set_heater_setup_one(Model335HeaterResistance.HEATER_50_OHM, 1.0, Model335HeaterOutputDisplay.POWER)
+my_model_335.set_heater_setup_one(my_model_335.HeaterResistance.HEATER_50_OHM, 1.0, my_model_335.HeaterOutputDisplay.POWER)
 
 # Configure heater output 1 to a setpoint of 310 kelvin (units correspond to the configured output units)
 set_point = 325
 my_model_335.set_control_setpoint(1, set_point)
 
 # Turn on the heater by setting the range
-my_model_335.set_heater_range(1, Model335HeaterRange.HIGH)
+my_model_335.set_heater_range(1, my_model_335.HeaterRange.HIGH)
 
 # Check to see if there are any heater related errors
 heater_error = my_model_335.get_heater_status(1)
-if heater_error is not Model335HeaterError.NO_ERROR:
+if heater_error is not my_model_335.HeaterError.NO_ERROR:
     raise Exception(heater_error.name)
 
 # Allow the heater some time to turn on and start maintaining a setpoint
@@ -37,7 +35,7 @@ if (kelvin_reading < (set_point - 5)) or (kelvin_reading > (set_point + 5)):
 
 # Initiate autotune in PI mode, initial conditions will not be met if the system is not
 # maintaining a temperature within 5 K of the setpoint
-my_model_335.set_autotune(1, Model335AutoTuneMode.P_I)
+my_model_335.set_autotune(1, my_model_335.AutotuneMode.P_I)
 
 # Poll the instrument until the autotune process completes
 autotune_status = my_model_335.get_tuning_control_status()

@@ -1,7 +1,7 @@
 from tests.utils import TestWithFakeModel372
-from lakeshore import temperature_controllers, InstrumentException
-from lakeshore.model_372 import Model372CurveFormat, Model372CurveTemperatureCoefficient, Model372CurveHeader, \
-    Model372StandardEventRegister, Model372OperationEventRegister
+from lakeshore import InstrumentException
+from lakeshore.temperature_controllers import TemperatureController
+from lakeshore.model_372 import  Model372CurveHeader, Model372StandardEventRegister, Model372OperationEventRegister
 
 
 class TestBasicMethods(TestWithFakeModel372):
@@ -35,8 +35,8 @@ class TestBasicMethods(TestWithFakeModel372):
     def test_set_curve_header(self):
         self.fake_connection.setup_response('0;0')
         curve_header = Model372CurveHeader('Curve1', '1234',
-                                            Model372CurveFormat.OHM_PER_KELVIN,
-                                            12.3, Model372CurveTemperatureCoefficient.NEGATIVE)
+                                            self.dut.CurveFormat.OHM_PER_KELVIN,
+                                            12.3, self.dut.CurveTemperatureCoefficient.NEGATIVE)
         self.dut.set_curve_header(2, curve_header)
         self.assertIn('CRVHDR 2,"Curve1","1234",3,12.3,1;*ESR?', self.fake_connection.get_outgoing_message())
 
@@ -180,8 +180,8 @@ class TestBasicMethods(TestWithFakeModel372):
         self.assertIn("CRVPT? 1,2", self.fake_connection.get_outgoing_message())
 
     def test_get_curve_header(self):
-        curve_header = Model372CurveHeader('Curve1', '1234', Model372CurveFormat.OHM_PER_KELVIN, 12.3,
-                                            Model372CurveTemperatureCoefficient.NEGATIVE)
+        curve_header = Model372CurveHeader('Curve1', '1234', self.dut.CurveFormat.OHM_PER_KELVIN, 12.3,
+                                            self.dut.CurveTemperatureCoefficient.NEGATIVE)
         self.fake_connection.setup_response('Curve1,1234,3,12.3,1;0')
         response = self.dut.get_curve_header(2)
         self.assertEqual(response.curve_name, curve_header.curve_name)
@@ -257,14 +257,14 @@ class TestDictionaryMethods(TestWithFakeModel372):
 class TestObjectMethods(TestWithFakeModel372):
 
     def test_get_heater_status(self):
-        heater_status = temperature_controllers.HeaterError(2)
+        heater_status = TemperatureController.HeaterError(2)
         self.fake_connection.setup_response('2;0')
         response = self.dut.get_heater_status(2)
         self.assertEqual(response, heater_status)
         self.assertIn('HTRST? 2', self.fake_connection.get_outgoing_message())
 
     def test_set_remote_interface_mode(self):
-        interface_mode = temperature_controllers.InterfaceMode(2)
+        interface_mode = TemperatureController.InterfaceMode(2)
         self.fake_connection.setup_response('0')
         self.dut.set_remote_interface_mode(interface_mode)
         self.assertIn('MODE 2', self.fake_connection.get_outgoing_message())
@@ -276,7 +276,7 @@ class TestObjectMethods(TestWithFakeModel372):
         self.assertIn('MODE 1', self.fake_connection.get_outgoing_message())
 
     def test_get_remote_interface_mode(self):
-        interface_mode = temperature_controllers.InterfaceMode(2)
+        interface_mode = TemperatureController.InterfaceMode(2)
         self.fake_connection.setup_response('2;0')
         response = self.dut.get_remote_interface_mode()
         self.assertEqual(response, interface_mode)
@@ -284,7 +284,7 @@ class TestObjectMethods(TestWithFakeModel372):
 
     def test_set_relay_control_parameter_alarms(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_relay_alarms(1, "B", temperature_controllers.RelayControlAlarm.BOTH_ALARMS)
+        self.dut.set_relay_alarms(1, "B", TemperatureController.RelayControlAlarm.BOTH_ALARMS)
         self.assertIn("RELAY 1,2,B,2", self.fake_connection.get_outgoing_message())
 
     def test_set_relay_control_parameter_no_alarms(self):
@@ -295,7 +295,7 @@ class TestObjectMethods(TestWithFakeModel372):
     def test_get_relay_alarm_control_parameters(self):
         self.fake_connection.setup_response("2,D1,0;0")
         expected_response = {'activating_input_channel': "D1",
-                             'alarm_relay_trigger_type': temperature_controllers.RelayControlAlarm.LOW_ALARM}
+                             'alarm_relay_trigger_type': TemperatureController.RelayControlAlarm.LOW_ALARM}
         response = self.dut.get_relay_alarm_control_parameters(2)
         self.assertDictEqual(response, expected_response)
         self.assertIn("RELAY? 2", self.fake_connection.get_outgoing_message())
@@ -303,7 +303,7 @@ class TestObjectMethods(TestWithFakeModel372):
     def test_get_relay_control_mode(self):
         self.fake_connection.setup_response('1,0,0;0')
         response = self.dut.get_relay_control_mode(1)
-        self.assertEqual(response, temperature_controllers.RelayControlMode.RELAY_ON)
+        self.assertEqual(response, TemperatureController.RelayControlMode.RELAY_ON)
         self.assertIn("RELAY? 1", self.fake_connection.get_outgoing_message())
 
 

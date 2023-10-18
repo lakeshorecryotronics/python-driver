@@ -1,5 +1,5 @@
+from lakeshore import Model224AlarmParameters, Model224CurveHeader, Model224InputSensorSettings
 from tests.utils import TestWithFakeModel224
-from lakeshore import model_224
 
 
 class TestBasicReadings(TestWithFakeModel224):
@@ -42,7 +42,7 @@ class TestBasicReadings(TestWithFakeModel224):
     def test_get_input_diode_excitation_current(self):
         self.fake_connection.setup_response('0;0')
         response = self.dut.get_input_diode_excitation_current("B")
-        self.assertAlmostEqual(response, model_224.Model224DiodeExcitationCurrent.TEN_MICRO_AMPS)
+        self.assertAlmostEqual(response, self.dut.DiodeExcitationCurrent.TEN_MICRO_AMPS)
         self.assertIn("DIOCUR? B", self.fake_connection.get_outgoing_message())
 
     def test_get_min_max_data(self):
@@ -57,7 +57,7 @@ class TestBasicReadings(TestWithFakeModel224):
 class TestGetAndSetBasicSettings(TestWithFakeModel224):
     def test_set_input_diode_excitation_current(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_input_diode_excitation_current("C1", model_224.Model224DiodeExcitationCurrent.ONE_MILLI_AMP)
+        self.dut.set_input_diode_excitation_current("C1", self.dut.DiodeExcitationCurrent.ONE_MILLI_AMP)
         self.assertIn("DIOCUR C1,1", self.fake_connection.get_outgoing_message())
 
     def test_set_ieee_488(self):
@@ -172,14 +172,14 @@ class TestCurveMethods(TestWithFakeModel224):
 
     def test_generate_soft_cal_curve(self):
         self.fake_connection.setup_response('0')
-        self.dut.generate_and_apply_soft_cal_curve(model_224.Model224SoftCalSensorTypes.DT_400, 50, "ABC123",
+        self.dut.generate_and_apply_soft_cal_curve(self.dut.SoftCalSensorTypes.DT_400, 50, "ABC123",
                                                    (276, 100.0), (345, 125.0))
         self.assertIn("SCAL 1,50,ABC123,276,100.0,345,125.0,0,0", self.fake_connection.get_outgoing_message())
 
     def test_set_curve_header(self):
         self.fake_connection.setup_response('0')
-        curve_header = model_224.Model224CurveHeader("My_Curve", "ABC123", model_224.Model224CurveFormat.VOLTS_PER_KELVIN,
-                                                     300.0, model_224.Model224CurveTemperatureCoefficients.POSITIVE)
+        curve_header = Model224CurveHeader("My_Curve", "ABC123", self.dut.CurveFormat.VOLTS_PER_KELVIN,
+                                                     300.0, self.dut.CurveTemperatureCoefficients.POSITIVE)
         self.dut.set_curve_header(22, curve_header)
         self.assertIn('CRVHDR 22,My_Curve,ABC123,2,300.0,2', self.fake_connection.get_outgoing_message())
 
@@ -188,9 +188,9 @@ class TestCurveMethods(TestWithFakeModel224):
         response = self.dut.get_curve_header(23)
         self.assertEqual(response.curve_name, "DT-123")
         self.assertEqual(response.serial_number, "001122")
-        self.assertEqual(response.curve_data_format, model_224.Model224CurveFormat(3))
+        self.assertEqual(response.curve_data_format, self.dut.CurveFormat(3))
         self.assertAlmostEqual(response.temperature_limit, 222.2)
-        self.assertEqual(response.coefficient, model_224.Model224CurveTemperatureCoefficients.NEGATIVE)
+        self.assertEqual(response.coefficient, self.dut.CurveTemperatureCoefficients.NEGATIVE)
         self.assertIn('CRVHDR? 23', self.fake_connection.get_outgoing_message())
 
     def test_get_curve_data_point(self):
@@ -213,7 +213,7 @@ class TestCurveMethods(TestWithFakeModel224):
 
 class TestObjectSettingsMethods(TestWithFakeModel224):
     def test_get_alarm_parameters(self):
-        expected_settings = model_224.Model224AlarmParameters(200.0, 10.0, 50.0, True, True, True)
+        expected_settings = Model224AlarmParameters(200.0, 10.0, 50.0, True, True, True)
         self.fake_connection.setup_response("1,200.0,10.0,50.0,1,1,1;0")
         response = self.dut.get_alarm_parameters("A")
         # Assert equals variable by variable
@@ -228,13 +228,13 @@ class TestObjectSettingsMethods(TestWithFakeModel224):
 
     def test_set_alarm_parameters_no_optional_parameters(self):
         self.fake_connection.setup_response('0')
-        alarm_settings = model_224.Model224AlarmParameters(200.0, 10.0, 50.0, True)
+        alarm_settings = Model224AlarmParameters(200.0, 10.0, 50.0, True)
         self.dut.set_alarm_parameters("A", True, alarm_settings)
         self.assertIn("ALARM A,1,200.0,10.0,50.0,1,0,0", self.fake_connection.get_outgoing_message())
 
     def test_set_alarm_parameters_with_optional_parameters(self):
         self.fake_connection.setup_response('0')
-        alarm_settings = model_224.Model224AlarmParameters(200.0, 10.0, 50.0, True, False, True)
+        alarm_settings = Model224AlarmParameters(200.0, 10.0, 50.0, True, False, True)
         self.dut.set_alarm_parameters("A", True, alarm_settings)
         self.assertIn("ALARM A,1,200.0,10.0,50.0,1,0,1", self.fake_connection.get_outgoing_message())
 
@@ -245,9 +245,9 @@ class TestObjectSettingsMethods(TestWithFakeModel224):
 
     def test_configure_input(self):
         self.fake_connection.setup_response('0')
-        settings = model_224.Model224InputSensorSettings(model_224.Model224InputSensorType.NTC_RTD,
-                                                         model_224.Model224InputSensorUnits.CELSIUS,
-                                                         model_224.Model224NTCRTDSensorResistanceRange.ONE_KILOHM)
+        settings = Model224InputSensorSettings(self.dut.InputSensorType.NTC_RTD,
+                                                         self.dut.InputSensorUnits.CELSIUS,
+                                                         self.dut.NTCRTDSensorResistanceRange.ONE_KILOHM)
         self.dut.configure_input("B", settings)
         self.assertIn("INTYPE B,3,0,4,0,2", self.fake_connection.get_outgoing_message())
 
@@ -259,38 +259,38 @@ class TestObjectSettingsMethods(TestWithFakeModel224):
     def test_get_input_configuration(self):
         self.fake_connection.setup_response("2,0,5,0,1;0")
         response = self.dut.get_input_configuration("A")
-        self.assertEqual(response.sensor_type, model_224.Model224InputSensorType(2))
+        self.assertEqual(response.sensor_type, self.dut.InputSensorType(2))
         self.assertEqual(response.autorange_enabled, False)
-        self.assertEqual(response.sensor_range, model_224.Model224PlatinumRTDSensorResistanceRange(5))
+        self.assertEqual(response.sensor_range, self.dut.PlatinumRTDSensorResistanceRange(5))
         self.assertEqual(response.compensation, False)
-        self.assertEqual(response.preferred_units, model_224.Model224InputSensorUnits(1))
+        self.assertEqual(response.preferred_units, self.dut.InputSensorUnits(1))
         self.assertIn("INTYPE? A", self.fake_connection.get_outgoing_message())
 
     def test_select_remote_interface(self):
         self.fake_connection.setup_response('0')
-        self.dut.select_remote_interface(model_224.Model224RemoteInterface.USB)
+        self.dut.select_remote_interface(self.dut.RemoteInterface.USB)
         self.assertIn("INTSEL 0", self.fake_connection.get_outgoing_message())
 
     def test_get_remote_interface(self):
         self.fake_connection.setup_response("2;0")
         response = self.dut.get_remote_interface()
-        self.assertEqual(response, model_224.Model224RemoteInterface.IEEE_488)
+        self.assertEqual(response, self.dut.RemoteInterface.IEEE_488)
         self.assertIn("INTSEL?", self.fake_connection.get_outgoing_message())
 
     def test_select_interface_mode(self):
         self.fake_connection.setup_response('0')
-        self.dut.select_interface_mode(model_224.Model224InterfaceMode.REMOTE)
+        self.dut.select_interface_mode(self.dut.InterfaceMode.REMOTE)
         self.assertIn("MODE 1", self.fake_connection.get_outgoing_message())
 
     def test_get_interface_mode(self):
         self.fake_connection.setup_response("0;0")
         response = self.dut.get_interface_mode()
-        self.assertEqual(response, model_224.Model224InterfaceMode(0))
+        self.assertEqual(response, self.dut.InterfaceMode(0))
         self.assertIn("MODE?", self.fake_connection.get_outgoing_message())
 
     def test_set_relay_control_parameter_alarms(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_relay_alarms(1, "B", model_224.Model224RelayControlAlarm.BOTH_ALARMS)
+        self.dut.set_relay_alarms(1, "B", self.dut.RelayControlAlarm.BOTH_ALARMS)
         self.assertIn("RELAY 1,2,B,2", self.fake_connection.get_outgoing_message())
 
     def test_set_relay_control_parameter_no_alarms(self):
@@ -301,7 +301,7 @@ class TestObjectSettingsMethods(TestWithFakeModel224):
     def test_get_relay_alarm_control_parameters(self):
         self.fake_connection.setup_response("2,D1,0;0")
         expected_response = {'activating_input_channel': "D1",
-                             'alarm_relay_trigger_type': model_224.Model224RelayControlAlarm.LOW_ALARM}
+                             'alarm_relay_trigger_type': self.dut.RelayControlAlarm.LOW_ALARM}
         response = self.dut.get_relay_alarm_control_parameters(2)
         self.assertDictEqual(response, expected_response)
         self.assertIn("RELAY? 2", self.fake_connection.get_outgoing_message())
@@ -309,20 +309,20 @@ class TestObjectSettingsMethods(TestWithFakeModel224):
     def test_get_relay_control_mode(self):
         self.fake_connection.setup_response('1,0,0;0')
         response = self.dut.get_relay_control_mode(1)
-        self.assertEqual(response, model_224.Model224RelayControlMode.RELAY_ON)
+        self.assertEqual(response, self.dut.RelayControlMode.RELAY_ON)
         self.assertIn("RELAY? 1", self.fake_connection.get_outgoing_message())
 
 
 class TestDisplayMethods(TestWithFakeModel224):
     def test_set_display_field(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_display_field_settings(4, model_224.Model224InputChannel.INPUT_C2,
-                                            model_224.Model224DisplayFieldUnits.SENSOR)
+        self.dut.set_display_field_settings(4, self.dut.InputChannel.INPUT_C2,
+                                            self.dut.DisplayFieldUnits.SENSOR)
         self.assertIn("DISPFLD 4,9,3", self.fake_connection.get_outgoing_message())
 
     def test_get_display_field(self):
-        expected_response = {'input_channel': model_224.Model224InputChannel(1),
-                             'display_units': model_224.Model224DisplayFieldUnits(5)}
+        expected_response = {'input_channel': self.dut.InputChannel(1),
+                             'display_units': self.dut.DisplayFieldUnits(5)}
         self.fake_connection.setup_response("1,5;0")
         response = self.dut.get_display_field_settings(2)
         self.assertDictEqual(response, expected_response)
@@ -330,25 +330,25 @@ class TestDisplayMethods(TestWithFakeModel224):
 
     def test_configure_display_custom(self):
         self.fake_connection.setup_response('0')
-        self.dut.configure_display(model_224.Model224DisplayMode.CUSTOM,
-                                   model_224.Model224NumberOfFields.LARGE_4)
+        self.dut.configure_display(self.dut.DisplayMode.CUSTOM,
+                                   self.dut.NumberOfFields.LARGE_4)
         self.assertIn("DISPLAY 4,0", self.fake_connection.get_outgoing_message())
 
     def test_configure_display_without_number_of_fields(self):
         self.fake_connection.setup_response('0')
-        self.dut.configure_display(model_224.Model224DisplayMode.ALL_INPUTS)
+        self.dut.configure_display(self.dut.DisplayMode.ALL_INPUTS)
         self.assertIn("DISPLAY 5,", self.fake_connection.get_outgoing_message())
 
     def test_get_display_configuration_custom(self):
-        expected_response = {'display_mode': model_224.Model224DisplayMode.CUSTOM,
-                             'number_of_fields': model_224.Model224NumberOfFields(2)}
+        expected_response = {'display_mode': self.dut.DisplayMode.CUSTOM,
+                             'number_of_fields': self.dut.NumberOfFields(2)}
         self.fake_connection.setup_response("4,2;0")
         response = self.dut.get_display_configuration()
         self.assertDictEqual(response, expected_response)
         self.assertIn("DISPLAY?", self.fake_connection.get_outgoing_message())
 
     def test_get_display_configuration_without_number_of_fields(self):
-        expected_response = {'display_mode': model_224.Model224DisplayMode(1),
+        expected_response = {'display_mode': self.dut.DisplayMode(1),
                              'number_of_fields': None}
         self.fake_connection.setup_response("1,0;0")
         response = self.dut.get_display_configuration()
