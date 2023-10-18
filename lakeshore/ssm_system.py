@@ -103,7 +103,7 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
                  com_port=None,
                  baud_rate=921600,
                  flow_control=True,
-                 timeout=2.0,
+                 timeout=5.0,
                  ip_address=None,
                  tcp_port=7777,
                  **kwargs):
