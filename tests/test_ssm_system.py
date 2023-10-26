@@ -1831,6 +1831,39 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         response = self.dut_module.get_self_cal_temperature()
         self.assertEqual(response, 232.778)
 
+    def test_set_resistance_observation_time_state(self):
+        self.fake_connection.setup_response("No error")
+        self.dut_module.set_resistance_observation_time_state(True)
+        self.assertIn('CALCulate:SENSe1:RESistance:OTIME:STATe 1', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_observation_time_state(self):
+        self.fake_connection.setup_response("1;No error")
+        response = self.dut_module.get_resistance_observation_time_state()
+        self.assertEqual(response, True)
+        self.assertIn('CALCulate:SENSe1:RESistance:OTIMe:STATe?', self.fake_connection.get_outgoing_message())
+
+    def test_set_resistance_observation_time_requested(self):
+        self.fake_connection.setup_response("No error")
+        self.dut_module.set_resistance_observation_time_requested(123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:OTIMe:REQuested 123.45', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_observation_time_requested(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_observation_time_requested()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:OTIMe:REQuested?', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_observation_time_actual(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_observation_time_actual()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:OTIMe:ACTual?', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_observation_time_enbw(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_observation_time_enbw()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:OTIMe:ENBandwidth?', self.fake_connection.get_outgoing_message())
 
 class TestSettingsProfiles(TestWithFakeSSMS):
     def test_get_summary(self):

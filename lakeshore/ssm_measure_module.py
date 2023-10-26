@@ -1062,6 +1062,61 @@ class MeasureModule(BaseModule):
 
         return bool(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OPTimize?"))
 
+    def set_resistance_observation_time_state(self, state):
+        """Sets the state of the observation time on the specified module.
+
+        Args:
+            state (bool): The state of resistance observation time.
+        """
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:OTIME:STATe {int(state)}")
+
+    def get_resistance_observation_time_state(self):
+        """Gets the present state of the observation time on the specified module.
+
+        Returns:
+            bool: The state of resistance observation time.
+        """
+
+        return bool(int(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OTIMe:STATe?")))
+
+    def set_resistance_observation_time_requested(self, requested_time):
+        """Sets the requested observation time on the specified module.
+
+        Args:
+            requested_time (float): The requested observation time.
+        """
+
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:OTIMe:REQuested {requested_time}")
+
+    def get_resistance_observation_time_requested(self):
+        """Gets the present requested observation time on the specified module.
+
+        Returns:
+            float: The requested observation time.
+        """
+
+        return float(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OTIMe:REQuested?"))
+
+    def get_resistance_observation_time_actual(self):
+        """Gets the present actual observation time for the resistance calculation.
+
+            This is a best-fit calculation based on the requested observation time and reference frequency.
+
+        Returns:
+            float: The actual observation time.
+        """
+
+        return float(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OTIMe:ACTual?"))
+
+    def get_resistance_observation_time_enbw(self):
+        """Gets the present equivalent noise bandwidth (ENBW) for the actual resistance observation time.
+
+        Returns:
+            float: The calculated equivalent noise bandwidth.
+        """
+
+        return float(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OTIMe:ENBandwidth?"))
+
     def reset_settings(self):
         """Resets the settings for the specified module to their power on defaults."""
 
