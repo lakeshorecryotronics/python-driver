@@ -30,8 +30,9 @@ class FakeDutConnection:
         self.outgoing.append(message)
         fake_dut_comms_log.info('Write to dut: {}'.format(message))
 
-    def read_until(self, terminator):
-        return self.incoming.popleft().encode('ascii') + terminator
+    def read(self, num_bytes):
+        # this function takes an argument but it is not used for testing
+        return self.incoming.popleft().encode('ascii') + b'\r\n'
 
     def __getattr__(self, item):
         return lambda: None  # Ignore unimplemented methods
