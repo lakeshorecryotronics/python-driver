@@ -314,13 +314,26 @@ class GenericInstrument:
         """Query over the serial USB connection."""
 
         self._usb_command(query)
-        response = self.device_serial.read_until(b'\r\n').decode('ascii')
+        response = self._custom_eol_readline().decode('ascii')
 
         # If nothing is returned, raise a timeout error.
         if not response:
             raise InstrumentException("Communication timed out")
 
         return response.rstrip()
+
+    def _custom_eol_readline(self):
+        line = bytearray()
+        while True:
+            new_character = self.device_serial.read(1)
+            if new_character:
+                line += new_character
+                # Check to see if the last two characters are the terminator characters \r\n
+                if line[-2:] == b'\r\n':
+                    break
+            else:
+                break
+        return bytes(line)
 
     def _user_connection_command(self, command):
         """Send a command over the user provided connection."""
