@@ -33,7 +33,7 @@ steps:
   displayName: 'Run PyLint'
 
 - script: |
-   pip install sphinx sphinx_rtd_theme
+   pip install -r docs-requirements.txt
    pip install -e .
    sphinx-build -W -b html ./docs ./docs/_build/html
 
