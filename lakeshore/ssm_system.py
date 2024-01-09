@@ -13,7 +13,7 @@ from lakeshore.ssm_settings_profiles import SettingsProfiles
 from lakeshore.requires_firmware_version import requires_firmware_version
 
 try:
-    from wakepy import keepawake
+    from wakepy import keep
 except NotImplementedError:
     pass  # Proceed without wakepy on linux without systemd
 except KeyError:
@@ -277,7 +277,7 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         """
 
         with self.stream_lock:
-            with keepawake(keep_screen_awake=True):
+            with keep.running():
                 self.command('TRACe:RESEt')
                 self._configure_stream_elements(data_sources)
                 self.command('TRACe:FORMat:ENCOding B64')
