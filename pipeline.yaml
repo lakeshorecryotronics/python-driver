@@ -1,0 +1,91 @@
+# It's highly recommended to edit this in Visual Studio Code and install the azure-pipelines extension,
+# then change the Language Mode (bottom right of VS Code) to Azure Pipelines instead of YAML.
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - release/*
+    exclude:
+    - sandbox/*
+    - test/*
+  paths:
+    include:
+    - '*' # Must quote as * is valid yaml, and we want a string
+
+pr: none # Not supported in Azure, see: https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/azure-repos-git?view=azure-devops&tabs=yaml#pr-triggers
+
+pool:
+  name: Azure Pipelines
+
+steps:
+- task: UsePythonVersion@0
+  displayName: 'Use Python 3.11'
+  inputs:
+    versionSpec: 3.11
+
+- script: |
+   pip install pylint
+   pip install -e .
+   pylint ./lakeshore
+  displayName: 'Run PyLint'
+
+- script: |
+   pip install sphinx sphinx_rtd_theme
+   pip install -e .
+   sphinx-build -W -b html ./docs ./docs/_build/html
+
+  displayName: 'Generate Docs'
+
+- script: 'sphinx-build -W -b linkcheck ./docs ./docs/_build/linkcheck'
+  displayName: 'Check Links in Docs'
+
+- script: |
+   pip install tox
+   tox
+  displayName: 'Run Tests'
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results'
+  inputs:
+    testResultsFiles: '*_test_results.xml'
+  condition: succeededOrFailed()
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to Artifact Staging Directory for package'
+  inputs:
+    SourceFolder: .
+    Contents: |
+     lakeshore/**
+     setup.py
+     README.md
+     VERSION
+     MANIFEST.in
+     LICENSE
+     CHANGELOG.md
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/package'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: package'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/package'
+    ArtifactName: package
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to Artifact Staging Directory for repo'
+  inputs:
+    SourceFolder: ./.git
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/repo/.git'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: repo'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/repo'
+    ArtifactName: repo
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: manual'
+  inputs:
+    PathtoPublish: './docs/_build/html'
+    ArtifactName: manual
+  continueOnError: true
