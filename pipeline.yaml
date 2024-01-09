@@ -24,9 +24,9 @@ pool:
 
 steps:
 - task: UsePythonVersion@0
-  displayName: 'Use Python 3.11'
+  displayName: 'Use Python 3.12'
   inputs:
-    versionSpec: 3.11
+    versionSpec: 3.12
 
 - script: |
    pip install pylint
