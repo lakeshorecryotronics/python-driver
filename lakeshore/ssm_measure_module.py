@@ -1174,4 +1174,3 @@ class MeasureModule(BaseModule):
         """Returns the self calibration temperature for the specified module."""
 
         return float(self.device.query(f'SENSe{self.module_number}:SCALibration:TEMP?'))
-        
