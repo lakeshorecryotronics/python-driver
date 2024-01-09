@@ -1,6 +1,8 @@
 # It's highly recommended to edit this in Visual Studio Code and install the azure-pipelines extension,
 # then change the Language Mode (bottom right of VS Code) to Azure Pipelines instead of YAML.
 
+name: $(Date:yyyyMMdd)$(Rev:rr)-$(Build.SourceBranchName)
+
 trigger:
   batch: true
   branches:
