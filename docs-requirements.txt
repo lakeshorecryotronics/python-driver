@@ -1,4 +1,7 @@
 sphinx
-jinja2
-m2r2
 sphinx_rtd_theme
+pyserial>=3.0
+iso8601
+packaging
+enum34
+wakepy
