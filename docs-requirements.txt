@@ -4,4 +4,4 @@ pyserial>=3.0
 iso8601
 packaging
 enum34
-wakepy
+wakepy>=0.7.1
