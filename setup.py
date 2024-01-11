@@ -23,6 +23,6 @@ setup(
                       'iso8601',
                       'packaging',
                       "enum34;python_version<'3.4'",
-                      'wakepy'],
+                      'wakepy>=0.7.1'],
     classifiers=['Programming Language :: Python :: 3']
 )
