@@ -19,6 +19,7 @@ setup(
     long_description_content_type='text/markdown',
     packages=[r'lakeshore'],
     url='https://github.com/lakeshorecryotronics/python-driver',
+    python_requires='>=3.7',
     install_requires=['pyserial>=3.0',
                       'iso8601',
                       'packaging',
