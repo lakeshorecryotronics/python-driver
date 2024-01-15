@@ -4,7 +4,7 @@
 [![Documentation Status](https://readthedocs.org/projects/lake-shore-python-driver/badge/?version=latest)](https://lake-shore-python-driver.readthedocs.io/en/latest/?badge=latest)
 [![PyPI Version](https://img.shields.io/pypi/v/lakeshore.svg)](https://pypi.org/project/lakeshore/)
 
-The [Lake Shore](https://www.lakeshore.com) python driver allows users to quickly and easily communicate with Lake Shore instruments. It automatically establishes a connection and provides a variety of functions specific to the product that configure settings and acquire measurements. 
+The [Lake Shore](https://www.lakeshore.com) python driver allows users to quickly and easily communicate with Lake Shore instruments. It automatically establishes a connection and provides a variety of functions specific to the product that configure settings and acquire measurements.
 
 ## Documentation
 [Click here to read the documentation and some example scripts](https://lake-shore-python-driver.readthedocs.io/en/latest/)
@@ -14,8 +14,8 @@ The [Lake Shore](https://www.lakeshore.com) python driver allows users to quickl
 Advanced support
 * [F41 and F71 Teslameters](https://www.lakeshore.com/products/Gaussmeters/F71-F41-teslameters/Pages/Overview.aspx)
 * [Model 121 Programmable DC Current Source](https://www.lakeshore.com/products/categories/overview/temperature-products/ac-and-dc-current-sources/model-121-programmable-dc-current-source)
-* [155 Precision I/V Source](https://www.lakeshore.com/products/measureready/model-155/Pages/Overview.aspx) 
-* [M91 FastHall Controller](https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-instruments/measureready-m91-fasthall-measurement-controller) 
+* [155 Precision I/V Source](https://www.lakeshore.com/products/measureready/model-155/Pages/Overview.aspx)
+* [M91 FastHall Controller](https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-instruments/measureready-m91-fasthall-measurement-controller)
 * [M81 Synchronous Source Measure System](https://www.lakeshore.com/products/categories/overview/material-characterization-products/measureready-m81-synchronous-source-measure-system/measureready-m81-synchronous-source-measure-system)
 * [Model 224 Temperature Monitor](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-monitors/model-224-temperature-monitor)
 * [Model 240 Input Modules](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-modules/240-series-input-modules)
@@ -33,6 +33,8 @@ Install the driver using [pip](https://pip.pypa.io/en/stable/quickstart/):
 
     pip install lakeshore
 
+It should be noted that the lakeshore driver requires a minimum python version of 3.7.
+
 ## A Simple Example
 The following code will connect to a 155 Precision Source over USB and print what is returned by an identification query.
 
@@ -46,7 +48,7 @@ We want your feedback!
 
 Please request changes, features, and additional instruments through the GitHub issues page.
 
-Don't hesitate to create pull requests. They make the driver better for everyone! 
+Don't hesitate to create pull requests. They make the driver better for everyone!
 
 ## Resources
 * [Lake Shore website](https://www.lakeshore.com)
