@@ -1,6 +1,32 @@
 Change Log
 ==========
 
+Release 1.8.0
+-------------
+Added:
+- Support for SSMSystem resistance observation time
+- SSMSystem resistance calculation scpi commands
+- SSMSystem offset sweep to available sweep types
+- Conditional operation register abstractions
+- Support for Model 643 and 648
+- Support for Model 121 current source
+
+Changed:
+- Unpinned python dependencies
+- Support latest wakepy version
+- Increased SSMSystem timeout to 10 seconds
+- Refactord enums
+- Show firmware version for RequiredVersionException
+- Users can disable autorange
+- Require Python version 3.7 or later
+
+Fixed:
+- SSMSystem data streaming issues
+- Off-by-one error when phyiscally interrupting communication
+
+Removed:
+- Typehinting
+
 Release 1.7.0
 -------------
 Added:
