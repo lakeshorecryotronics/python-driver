@@ -23,6 +23,11 @@ pool:
   name: Azure Pipelines
 
 steps:
+- checkout: self
+  clean: true
+  fetchDepth: 0
+  fetchTags: true
+
 - task: UsePythonVersion@0
   displayName: 'Use Python 3.12'
   inputs:
