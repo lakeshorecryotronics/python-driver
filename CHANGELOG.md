@@ -14,7 +14,7 @@ Release 1.8.0
 -------------
 Added:
 - Support for SSMSystem resistance observation time
-- SSMSystem resistance calculation scpi commands
+- SSMSystem resistance calculation SCPI commands
 - SSMSystem offset sweep to available sweep types
 - Conditional operation register abstractions
 - Support for Model 643 and 648
@@ -24,17 +24,17 @@ Changed:
 - Unpinned python dependencies
 - Support latest wakepy version
 - Increased SSMSystem timeout to 10 seconds
-- Refactord enums
+- Refactored enums
 - Show firmware version for RequiredVersionException
-- Users can disable autorange
+- Users can disable auto-range
 - Require Python version 3.7 or later
 
 Fixed:
 - SSMSystem data streaming issues
-- Off-by-one error when phyiscally interrupting communication
+- Off-by-one error when physically interrupting communication
 
 Removed:
-- Typehinting
+- Type-hinting
 
 Release 1.7.0
 -------------
@@ -152,7 +152,6 @@ Added:
 - Basic support for the Model 121 Programmable DC Current Source
 - Official product name aliases for instrument classes
 
- 
 Release 1.2.0
 -------------
 Added:
