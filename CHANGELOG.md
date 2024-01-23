@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+Release 1.8.1
+-------------
+Added:
+- ReadTheDocs build configuration file
+
+Fixed:
+- GitHub badges now reflect new build pipeline
+- Miscellaneous build pipeline corrections
+
 Release 1.8.0
 -------------
 Added:
