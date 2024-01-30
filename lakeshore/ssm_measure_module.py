@@ -939,13 +939,101 @@ class MeasureModule(BaseModule):
         self.device.command(f'SENSe{self.module_number}:DIGital:FILTer:HPASs:STATE {int(state)}')
 
     def get_resistance(self):
-        """Returns the present resistance measurement in Ohms. A valid source must be configured.
+        """Returns the present resistance measurement in Ohms. 
+        
+            A valid source must be configured.
+            When resistance excitation type is DC, the returned value is the DC resistance.
+            When resistance excitation type is AC, the returned value is the in-phase resistance.
 
         Returns:
             float: Present resistance measurement in Ohms.
         """
 
         return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance?'))
+
+    def get_resistance_dc(self):
+        """Returns the present DC resistance measurement in Ohms.
+
+            A valid source must be configured.
+            The resistance excitation type must be DC.
+
+        Returns:
+            float: Present DC resistance measurement in Ohms.
+        """
+
+        return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:DC?'))
+
+    def get_resistance_inphase(self):
+        """Returns the present in-phase component of the AC resistance measurement in Ohms.
+
+            A valid source must be configured.
+            The resistance excitation type must be AC.
+
+        Returns:
+            float: Present in-phase component of the AC resistance measurement in Ohms.
+        """
+
+        return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:INPhase?'))
+
+    def get_resistance_quadrature(self):
+        """Returns the present quadrature component of the AC resistance measurement in Ohms.
+
+            A valid source must be configured.
+            The resistance excitation type must be AC.
+
+        Returns:
+            float: Present quadrature component of the AC resistance measurement in Ohms.
+        """
+
+        return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:QUADrature?'))
+
+    def get_resistance_magnitude(self):
+        """Returns the present magnitude of the AC resistance measurement in Ohms.
+
+            A valid source must be configured.
+            The resistance excitation type must be AC.
+
+        Returns:
+            float: Present magnitude of the AC resistance measurement in Ohms.
+        """
+
+        return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:MAGNitude?'))
+
+    def get_resistance_phase(self):
+        """Returns the present phase of the AC resistance measurement in degrees.
+
+            A valid source must be configured.
+            The resistance excitation type must be AC.
+
+        Returns:
+            float: Present phase of the AC resistance measurement in degrees.
+        """
+
+        return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:PHASe?'))
+
+    def get_resistance_compensated(self):
+        """Returns the present compensated resistance of the resistance measurement in Ohms.
+
+            A valid source must be configured.
+            The resistance excitation type must be AC.
+
+        Returns:
+            float: Present compensated resistance measurement in Ohms.
+        """
+
+        return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:COMPensated?'))
+
+    def get_resistance_capacitance(self):
+        """Returns the present capacitance of the resistance measurement in Farads.
+
+            A valid source must be configured.
+            The resistance excitation type must be AC.
+
+        Returns:
+            float: Present capacitance measurement in Farads.
+        """
+
+        return float(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:CAPacitance?'))
 
     def set_resistance_source(self, source_module):
         """Configures the resistance feature to use a specified source module to calculate resistance.

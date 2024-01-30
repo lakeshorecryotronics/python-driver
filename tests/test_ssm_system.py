@@ -1763,6 +1763,54 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.assertEqual(response, 123.45)
         self.assertIn('CALCulate:SENSe1:RESistance?', self.fake_connection.get_outgoing_message())
 
+    def test_get_resistance_dc(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_dc()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:DC?', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_inphase(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_inphase()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:INPhase?', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_quadrature(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_quadrature()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:QUADrature?', self.fake_connection.get_outgoing_message())
+    
+    def test_get_resistance_magnitude(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_magnitude()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:MAGNitude?', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_phase(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_phase()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:PHASe?', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_compensated(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_compensated()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:COMPensated?', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_compensated(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_compensated()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:COMPensated?', self.fake_connection.get_outgoing_message())
+
+    def test_get_resistance_capacitance(self):
+        self.fake_connection.setup_response("123.45;No error")
+        response = self.dut_module.get_resistance_capacitance()
+        self.assertEqual(response, 123.45)
+        self.assertIn('CALCulate:SENSe1:RESistance:CAPacitance?', self.fake_connection.get_outgoing_message())
+
     def test_set_resistance_source(self):
         self.fake_connection.setup_response("No error")
         self.dut_module.set_resistance_source(SSMSystemEnums.ReferenceModule.S1)
