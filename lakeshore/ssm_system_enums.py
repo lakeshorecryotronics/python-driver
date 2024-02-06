@@ -128,11 +128,14 @@ class SSMSystemEnums:
             self.round_trip = round_trip
 
     class ReferenceModule(str, Enum):
-        """Class object representing the available source modules
+        """Class object representing the available resistance source modules
         """
         S1 = 'S1'
         S2 = 'S2'
         S3 = 'S3'
+        M1 = 'M1'
+        M2 = 'M2'
+        M3 = 'M3'
 
         # Gets around having to use .value to access the string
         def __str__(self) -> str:
