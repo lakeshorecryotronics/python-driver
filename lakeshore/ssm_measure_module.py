@@ -1205,6 +1205,48 @@ class MeasureModule(BaseModule):
 
         return float(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OTIMe:ENBandwidth?"))
 
+    def get_resistance_relative_dc(self):
+        """Gets the present relative dc resistance calculation. This is calculated by subtracting the baseline
+            resistance value from the present dc resistance calculation.
+
+        Returns:
+            float: The calculated relative dc resistance.
+        """
+
+        return float(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:DC:RELative?"))
+
+    def set_resistance_relative_baseline(self, baseline):
+        """Sets the present relative baseline value to be subtracted from the dc resistance calculation in order to
+            calculate the relative dc resistance.
+
+        Args:
+            baseline (float): The requested baseline.
+        """
+
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:DC:BASeline {baseline}")
+
+    def get_resistance_relative_baseline(self):
+        """Gets the present relative resistance baseline that is used to calculate relative dc resistance.
+
+        Returns:
+            float: The resistance baseline.
+        """
+
+        return float(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:DC:RELative:BASeline?"))
+
+    def zero_dc_resistance(self):
+        """Sets the baseline value for calculating relative resistance to the present DC resistance value.
+            This sets the relative resistance calculation to zero in an ideal configuration.
+        """
+
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:DC:RELative:ZERO")
+
+    def clear_relative_resistance_baseline(self):
+        """Sets the baseline value for calculating relative resistance to 0.
+            The resistance calculation and relative resistance calculation are equivalent when the baseline is zero."""
+
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:DC:RELative:CLEar")
+
     def reset_settings(self):
         """Resets the settings for the specified module to their power on defaults."""
 
