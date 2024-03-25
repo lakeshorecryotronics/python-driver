@@ -940,7 +940,7 @@ class MeasureModule(BaseModule):
 
     def get_resistance(self):
         """Returns the present resistance measurement in Ohms. 
-        
+
             A valid source must be configured.
             When resistance excitation type is DC, the returned value is the DC resistance.
             When resistance excitation type is AC, the returned value is the in-phase resistance.
@@ -1121,7 +1121,7 @@ class MeasureModule(BaseModule):
 
     def get_resistance_range(self):
         """Returns the present resistance range of the specified module.
-        
+
         Returns:
             float: The resistance range in Ohms.
         """
@@ -1304,3 +1304,34 @@ class MeasureModule(BaseModule):
         """Returns the self calibration temperature for the specified module."""
 
         return float(self.device.query(f'SENSe{self.module_number}:SCALibration:TEMP?'))
+
+    def get_measure_function(self):
+        """Returns the measure function in current or voltage"""
+
+        return self.device.query(f'SENSe{self.module_number}:FUNCtion?')
+
+    def set_measure_function(self, value):
+        """Sets the measure function of the module.
+
+            Args:
+                value (str):
+                    The new measure function ('CURRent' or 'VOLTage').
+        """
+
+        self.device.command(f'SENSe{self.module_number}:FUNCtion {value}')
+
+    def get_voltage_sense_mode(self):
+        """Returns the voltage sense mode of the specified module"""
+
+        return self.device.query(f'SENSe{self.module_number}SMODe?')
+
+    def set_voltage_sense_mode(self, value):
+        """Sets the voltage sense mode of the specified module
+
+            Args:
+                value (str):
+                    TWIRe for 2-wire local
+                    FWIRe for 4-wire remote
+        """
+
+        self.device.commad(f'SENSe{self.module_number}:VOLTage:SMODe {value}')

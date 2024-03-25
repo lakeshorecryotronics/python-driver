@@ -1181,3 +1181,34 @@ class SourceModule(BaseModule):
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
                                                        round_trip=False)
         self.set_sweep_configuration(sweep_config)
+
+    def get_voltage_sense_mode(self):
+        """Returns the source voltage sense mode for the specified module as either LOCal or REMote"""
+
+        return self.device.query(f"SOURce{self.module_number}:VOLTage:SMODe?")
+
+    def set_voltage_sense_mode(self, state):
+        """Sets the source voltage sense mode for the specified module
+
+        Args:
+            state (str):
+                Voltage sense mode ('LOCal' or 'REMote')
+        """
+
+        self.device.command(f"SOURce{self.module_number}:VOLTage:SMODe {state}")
+
+    def get_readback_nplcycles(self):
+        """Returns the averaging time in number of power line cycles (NPLC) of the specified module"""
+
+        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles?"))
+        return response
+
+    def set_readback_nplcycles(self, value):
+        """Sets the averaging time in number of power line cycles (NPLC) of the specified module. The NPLC value must be between 0.01 and 600.00.
+
+        Args:
+            value (float):
+                The averaging time in number of power line cycles (NPLC)
+        """
+
+        self.device.command(f"SOURce{self.module_number}:READback:NPLCycles {value}")
