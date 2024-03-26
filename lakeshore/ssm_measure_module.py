@@ -1306,7 +1306,7 @@ class MeasureModule(BaseModule):
         return float(self.device.query(f'SENSe{self.module_number}:SCALibration:TEMP?'))
 
     def get_measure_function(self):
-        """Returns the measure function in current or voltage"""
+        """Returns whether the measure function is current or voltage"""
 
         return self.device.query(f'SENSe{self.module_number}:FUNCtion?')
 
@@ -1323,15 +1323,15 @@ class MeasureModule(BaseModule):
     def get_voltage_sense_mode(self):
         """Returns the voltage sense mode of the specified module"""
 
-        return self.device.query(f'SENSe{self.module_number}SMODe?')
+        return self.device.query(f'SENSe{self.module_number}:VOLTage:SMODe?')
 
     def set_voltage_sense_mode(self, value):
         """Sets the voltage sense mode of the specified module
 
             Args:
                 value (str):
-                    TWIRe for 2-wire local
-                    FWIRe for 4-wire remote
+                    LOCal for 2-wire local
+                    REMote for 4-wire remote
         """
 
-        self.device.commad(f'SENSe{self.module_number}:VOLTage:SMODe {value}')
+        self.device.command(f'SENSe{self.module_number}:VOLTage:SMODe {value}')
