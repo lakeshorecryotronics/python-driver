@@ -968,6 +968,27 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         response = self.dut_module.get_self_cal_temperature()
         self.assertEqual(response, 232.778)
 
+    def test_get_voltage_sense_mode(self):
+        self.fake_connection.setup_response('LOCal;No error')
+        response = self.dut_module.get_voltage_sense_mode()
+        self.assertEqual(response, 'LOCal')
+        self.assertIn('SOURce1:VOLTage:SMODe?', self.fake_connection.get_outgoing_message())
+
+    def test_set_voltage_sense_mode(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.set_voltage_sense_mode('LOCal')
+        self.assertIn('SOURce1:VOLTage:SMODe LOCal', self.fake_connection.get_outgoing_message())
+
+    def test_get_readback_nplcycles(self):
+        self.fake_connection.setup_response('2.00;No error')
+        response = self.dut_module.get_readback_nplcycles()
+        self.assertEqual(response, 2.00)
+        self.assertIn('SOURce1:READback:NPLCycles?', self.fake_connection.get_outgoing_message())
+
+    def test_set_readback_nplcycles(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.set_readback_nplcycles(2.0)
+        self.assertIn('SOURce1:READback:NPLCycles 2.0', self.fake_connection.get_outgoing_message())
 
 class TestSweepMethods(TestWithFakeSSMSSourceModule):
     def test_set_sweep_configuration(self):
@@ -1912,6 +1933,28 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         response = self.dut_module.get_resistance_observation_time_enbw()
         self.assertEqual(response, 123.45)
         self.assertIn('CALCulate:SENSe1:RESistance:OTIMe:ENBandwidth?', self.fake_connection.get_outgoing_message())
+
+    def test_get_measure_function(self):
+        self.fake_connection.setup_response('CURRent;No error')
+        response = self.dut_module.get_measure_function()
+        self.assertEqual(response, 'CURRent')
+        self.assertIn('SENSe1:FUNCtion?', self.fake_connection.get_outgoing_message())
+
+    def test_set_measure_function(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.set_measure_function('CURRent')
+        self.assertIn('SENSe1:FUNCtion CURRent', self.fake_connection.get_outgoing_message())
+
+    def test_get_voltage_sense_mode(self):
+        self.fake_connection.setup_response('LOCal;No error')
+        response = self.dut_module.get_voltage_sense_mode()
+        self.assertEqual(response, 'LOCal')
+        self.assertIn('SENSe1:VOLTage:SMODe?', self.fake_connection.get_outgoing_message())
+
+    def test_set_voltage_sense_mode(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.set_voltage_sense_mode('LOCal')
+        self.assertIn('SENSe1:VOLTage:SMODe LOCal', self.fake_connection.get_outgoing_message())
 
 class TestSettingsProfiles(TestWithFakeSSMS):
     def test_get_summary(self):
