@@ -1128,6 +1128,24 @@ class MeasureModule(BaseModule):
 
         return float(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe?"))
 
+    def set_resistance_auto_range(self, state):
+        """Sets the resistance auto-range state of the specified module.
+
+        Args:
+            state (bool): The desired state of resistance auto-range. True to enable; else false.
+        """
+
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe:AUTO {int(state)}")
+
+    def get_resistance_auto_range(self):
+        """Gets the state of resistance auto-range on the specified module.
+
+        Returns:
+            bool: The state of resistance auto-range on the specified module.
+        """
+
+        return bool(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe:AUTO?"))
+
     def set_resistance_optimization_state(self, optimization_state):
         """Sets the state of resistance optimization on the specified module
 
