@@ -1203,7 +1203,7 @@ class SourceModule(BaseModule):
 
         self.device.command(f'SOURce{self.module_number}:{sweep_type}:MODE FIXED')
 
-    def set_voltage_ramp_configuration(self, stop_amplitude, start_amplitude=None, slew_rate=1.0):
+    def set_voltage_ramp_configuration(self, stop_amplitude, start_amplitude=None, slew_rate=1.0, round_trip=False):
         """Sets up a parameter sweep that ramps the voltage output to the desired amplitude.
 
             Uses the smallest possible step size.
@@ -1215,12 +1215,18 @@ class SourceModule(BaseModule):
                 The voltage amplitude of the output when the ramp starts. Default is the present amplitude setting.
             slew_rate (float):
                 The rate in volts per second to ramp the output. Default is 1 volt per second.
+            round_trip (bool):
+                Ramps to the stop amplitude then ramps back to the start amplitude when true
         """
         # Use the present voltage amplitude as the starting point if no start is specified
         if start_amplitude is None:
             start_amplitude = self.get_voltage_amplitude()
 
         ramp_total_time = abs(stop_amplitude - start_amplitude) / abs(slew_rate)
+
+        # The ramp time is doubled if it is round trip
+        if round_trip:
+            ramp_total_time *= 2
 
         # Determine the shortest dwell time that can be used without exceeding the maximum number of points
         dwell_time = math.ceil(ramp_total_time / (self.device.min_sweep_dwell * self.device.max_sweep_points)) * self.device.min_sweep_dwell
@@ -1232,10 +1238,10 @@ class SourceModule(BaseModule):
                                                        points=num_points,
                                                        dwell=dwell_time,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
-                                                       round_trip=False)
+                                                       round_trip=round_trip)
         self.set_sweep_configuration(sweep_config)
 
-    def set_current_ramp_configuration(self, stop_amplitude, start_amplitude=None, slew_rate=0.001):
+    def set_current_ramp_configuration(self, stop_amplitude, start_amplitude=None, slew_rate=0.001, round_trip=False):
         """Sets up a parameter sweep that ramps the current output to the desired amplitude.
 
             Uses the smallest possible step size.
@@ -1247,12 +1253,18 @@ class SourceModule(BaseModule):
                 The current amplitude of the output when the ramp starts. Default is the present amplitude setting.
             slew_rate (float):
                 The rate in amps per second to ramp the output. Default is 1 mA per second.
+            round_trip (bool):
+                Ramps to the stop amplitude then ramps back to the start amplitude when true
         """
         # Use the present voltage amplitude as the starting point if no start is specified
         if start_amplitude is None:
             start_amplitude = self.get_current_amplitude()
 
         ramp_total_time = abs(stop_amplitude - start_amplitude) / abs(slew_rate)
+
+        # The ramp time is doubled if it is round trip
+        if round_trip:
+            ramp_total_time *= 2
 
         # Determine the shortest dwell time that can be used without exceeding the maximum number of points
         dwell_time = math.ceil(ramp_total_time / (self.device.min_sweep_dwell * self.device.max_sweep_points)) * self.device.min_sweep_dwell
@@ -1264,8 +1276,84 @@ class SourceModule(BaseModule):
                                                        points=num_points,
                                                        dwell=dwell_time,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
-                                                       round_trip=False)
+                                                       round_trip=round_trip)
         self.set_sweep_configuration(sweep_config)
+
+    @requires_firmware_version('1.7.0')
+    def do_dc_sweep_step_and_measure(self, start_amplitude, stop_amplitude, dwell_time, number_of_points,
+                                     *optional_custom_data_sources,
+                                     settle_time=0.0, sweep_spacing='LINEAR', round_trip=False,
+                                     include_source_amplitude=True, include_relative_time=False):
+        """Immediately runs a DC source sweep and returns data for each point in the sweep.
+
+        Args:
+            start_amplitude (float):
+                The starting source value of the sweep in volts or amps
+            stop_amplitude (float):
+                The ending source value of the sweep in volts or amps
+            dwell_time (float):
+                Time duration of each step in seconds
+            number_of_points (int):
+                How many steps to take going from the start to the stop amplitude
+            optional_custom_data_sources (SSMSystemDataSourceMnemonic or str, int):
+                Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
+                Defaults to DC on the source's matching measure channel if unspecified.
+                If specified only the specified custom data sources will be collected.
+            settle_time (float):
+                How long to wait before taking a measurement after a step change.
+                Defaults to zero. Must be shorter than the dwell time.
+            sweep_spacing (str or SweepSpacing enum):
+                LINEAR or LOGARITHMIC sweep
+            round_trip (bool):
+                Sweeps to the stop amplitude then sweeps back to the start amplitude when true. This doubles the sweep number of points.
+            include_source_amplitude (bool):
+                The source amplitude is included in the returned data when true
+            include_relative_time (bool):
+                The time since the start of the sweep is returned in the data when true
+        """
+        self.set_shape('DC')
+
+        # round dwell time to the nearest valid value
+        dwell_time = round(dwell_time / self.device.min_sweep_dwell, 0) * self.device.min_sweep_dwell
+
+        # if custom data sources are not specified, automatically configure the corresponding measure module
+        if not optional_custom_data_sources:
+            measure_module = self.device.get_measure_module(self.module_number)
+            averaging_nplcs = (dwell_time - settle_time) * self.device.get_line_frequency()
+            measure_module.setup_dc_measurement(averaging_nplcs)
+
+        # determine if the source will provide current or voltage
+        if self.get_excitation_mode() == 'VOLTAGE':
+            sweep_type = self.device.SourceSweepType.VOLTAGE_AMPLITUDE
+        else:
+            sweep_type = self.device.SourceSweepType.CURRENT_AMPLITUDE
+
+        # configure the sweep
+        sweep_config = self.device.SourceSweepSettings(sweep_type=sweep_type,
+                                                       start=start_amplitude,
+                                                       stop=stop_amplitude,
+                                                       points=number_of_points,
+                                                       dwell=dwell_time,
+                                                       spacing=sweep_spacing,
+                                                       direction=self.device.SourceSweepSettings.Direction.UP,
+                                                       round_trip=round_trip)
+        self.set_sweep_configuration(sweep_config)
+
+        # double the number of points to stream if doing a round trip sweep
+        if round_trip:
+            number_of_points *= 2
+
+        # Configure data streaming which initiates the configured sweep
+        if optional_custom_data_sources:
+            return self.device.stream_data(1 / dwell_time, number_of_points, *optional_custom_data_sources)
+        else:
+            data_sources = []
+            if include_relative_time:
+                data_sources.append(('RTIME', self.module_number))
+            if include_source_amplitude:
+                data_sources.append(('SAMP', self.module_number))
+            data_sources.append(('MDC', self.module_number))
+            return self.device.stream_data(1 / dwell_time, number_of_points, *data_sources)
 
     def get_voltage_sense_mode(self):
         """Returns the source voltage sense mode for the specified module as either LOCal or REMote"""
