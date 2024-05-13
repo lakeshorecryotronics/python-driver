@@ -1345,7 +1345,7 @@ class SourceModule(BaseModule):
 
         # Configure data streaming which initiates the configured sweep
         if optional_custom_data_sources:
-            return self.device.stream_data(1 / dwell_time, number_of_points, *optional_custom_data_sources)
+            data_stream = self.device.stream_data(1 / dwell_time, number_of_points, *optional_custom_data_sources)
         else:
             data_sources = []
             if include_relative_time:
@@ -1353,7 +1353,9 @@ class SourceModule(BaseModule):
             if include_source_amplitude:
                 data_sources.append(('SAMP', self.module_number))
             data_sources.append(('MDC', self.module_number))
-            return self.device.stream_data(1 / dwell_time, number_of_points, *data_sources)
+            data_stream = self.device.stream_data(1 / dwell_time, number_of_points, *data_sources)
+
+        return data_stream
 
     def get_voltage_sense_mode(self):
         """Returns the source voltage sense mode for the specified module as either LOCal or REMote"""
