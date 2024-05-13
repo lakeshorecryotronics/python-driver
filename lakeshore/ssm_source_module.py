@@ -1299,17 +1299,19 @@ class SourceModule(BaseModule):
                 Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
                 Defaults to DC on the source's matching measure channel if unspecified.
                 If specified only the specified custom data sources will be collected.
+                If specified the corresponding measure channel will not be configured automatically.
             settle_time (float):
                 How long to wait before taking a measurement after a step change.
                 Defaults to zero. Must be shorter than the dwell time.
             sweep_spacing (str or SweepSpacing enum):
                 LINEAR or LOGARITHMIC sweep
             round_trip (bool):
-                Sweeps to the stop amplitude then sweeps back to the start amplitude when true. This doubles the sweep number of points.
+                Sweeps to the stop amplitude then sweeps back to the start amplitude when true.
+                Returns double the sweep number of points when true.
             include_source_amplitude (bool):
                 The source amplitude is included in the returned data when true
             include_relative_time (bool):
-                The time since the start of the sweep is returned in the data when true
+                The time since the start of the sweep is in the returned data when true
         """
         self.set_shape('DC')
 
