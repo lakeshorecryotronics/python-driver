@@ -1,4 +1,6 @@
 """Implements functionality unique to the Lake Shore Model 335 cryogenic temperature controller."""
+import serial
+
 from .model_335_enums import Model335Enums
 from .temperature_controllers import TemperatureController, InstrumentException, StandardEventRegister, \
     OperationEvent, RegisterBase
@@ -161,8 +163,8 @@ class Model335(Model335Enums, TemperatureController):
                  tcp_port=None,
                  **kwargs):
         # Call the parent init, then fill in values specific to the 335
-        TemperatureController.__init__(self, serial_number, com_port, baud_rate, timeout, ip_address,
-                                       tcp_port, **kwargs)
+        TemperatureController.__init__(self, serial_number, com_port, baud_rate, 7, 1, serial.PARITY_ODD, False, False,
+                                       timeout, ip_address, tcp_port, **kwargs)
 
         # Disable emulation mode
         self._disable_emulation()

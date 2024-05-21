@@ -79,9 +79,22 @@ class XIPInstrument(GenericInstrument):
                  tcp_port,
                  clear_errors_on_init=True,
                  **kwargs):
+        
         # Initialize values common to all XIP instruments
-        GenericInstrument.__init__(self, serial_number, com_port, baud_rate, 8, 1, serial.PARITY_NONE, flow_control,
-                                   False, timeout, ip_address, tcp_port, **kwargs)
+        super().__init__(
+                         serial_number,
+                         com_port,
+                         baud_rate,
+                         8,
+                         1,
+                         serial.PARITY_NONE,
+                         flow_control,
+                         False,
+                         timeout,
+                         ip_address,
+                         tcp_port,
+                         **kwargs)
+
         self.status_byte_register = StatusByteRegister
         self.standard_event_register = StandardEventRegister
         self.operation_register = None

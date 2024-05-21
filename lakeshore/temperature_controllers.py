@@ -133,11 +133,34 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
     status_byte_register = None
     service_request_enable = None
 
-    def __init__(self, serial_number, com_port, baud_rate, timeout, ip_address, tcp_port=None, **kwargs):
+    def __init__(self,
+                 serial_number,
+                 com_port,
+                 baud_rate,
+                 data_bits,
+                 stop_bits,
+                 parity,
+                 flow_control,
+                 handshake,
+                 timeout,
+                 ip_address,
+                 tcp_port,
+                 **kwargs):
 
         # Call the parent init, then fill in values specific to temperature controllers
-        GenericInstrument.__init__(self, serial_number, com_port, baud_rate, 7, 1, serial.PARITY_ODD,
-                                   False, False, timeout, ip_address, tcp_port, **kwargs)
+        super().__init__(
+            serial_number,
+            com_port,
+            baud_rate,
+            data_bits,
+            stop_bits,
+            parity,
+            flow_control,
+            handshake,
+            timeout,
+            ip_address,
+            tcp_port,
+            **kwargs)
 
     @staticmethod
     def _error_check(error_code):

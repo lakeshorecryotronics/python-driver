@@ -1,4 +1,6 @@
 """Implements functionality unique to the Lake Shore Model 336 cryogenic temperature controller."""
+import serial
+
 from .generic_instrument import RegisterBase
 from .model_336_enums import Model336Enums
 from .temperature_controllers import TemperatureController, InstrumentException, StandardEventRegister, OperationEvent, \
@@ -163,8 +165,8 @@ class Model336(Model336Enums, TemperatureController):
                  **kwargs):
 
         # Call the parent init, then fill in values specific to the 336
-        TemperatureController.__init__(self, serial_number, com_port, 57600, timeout, ip_address,
-                                       tcp_port, **kwargs)
+        TemperatureController.__init__(self, serial_number, com_port, 57600, 7, 1, serial.PARITY_ODD, False, False,
+                                       timeout, ip_address, tcp_port, **kwargs)
 
     # Alias specific temperature controller methods
     get_analog_output_percentage = TemperatureController._get_analog_output_percentage
