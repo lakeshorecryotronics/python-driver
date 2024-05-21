@@ -1,6 +1,5 @@
 """Implements a parent class for temperature controllers that contains shared methods between similar instruments."""
 
-import serial
 from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase
 from .temperature_controllers_enums import TemperatureControllerEnums
 
@@ -178,10 +177,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
             Args:
                 commands (str):
                     A serial command.
-
-            Kwargs:
                 check_errors (bool):
-                    Chooses whether to check for and raise errors after sending a command. True by default.
+                    Chooses whether to query the SCPI error queue and raise errors as exceptions. True by default.
+                    Optional Parameter.
 
         """
 
@@ -200,6 +198,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
             Args:
                 queries (str):
                     A serial query ending in a question mark.
+                check_errors (bool):
+                    Chooses whether to query the SCPI error queue and raise errors as exceptions. True by default.
+                    Optional Parameter.
 
             Returns:
                 The instrument query response as a string.
@@ -349,7 +350,8 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
         """
         command_string = (f"CRVHDR {curve_number},\"{curve_header.curve_name}\",\"{curve_header.serial_number}\"," +
-                        f"{curve_header.curve_data_format},{curve_header.temperature_limit},{curve_header.coefficient}")
+                          f"{curve_header.curve_data_format},{curve_header.temperature_limit}," +
+                          f"{curve_header.coefficient}")
         self.command(command_string)
 
     def get_curve_header(self, curve_number):
@@ -480,8 +482,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """
         if alarm_enable:
             command_string = (f"ALARM {input_channel},{int(alarm_enable)},{alarm_settings.high_value}," +
-                            f"{alarm_settings.low_value},{alarm_settings.deadband}," +
-                            f"{int(alarm_settings.latch_enable)},{int(alarm_settings.audible)},{int(alarm_settings.visible)}")
+                              f"{alarm_settings.low_value},{alarm_settings.deadband}," +
+                              f"{int(alarm_settings.latch_enable)},{int(alarm_settings.audible)}," +
+                              f"{int(alarm_settings.visible)}")
             self.command(command_string)
         else:
             self.command(f"ALARM {input_channel},{int(alarm_enable)},,,,,,")
@@ -702,9 +705,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     {"filter_enable": bool, "data_points": int, "reset_threshold": int}
                         filter_enable: Specified whether the filtering function is enabled or not.
                         data_points: Specifies how many points the filter function uses.
-                        reset_threshold: Specifies what percent of full scale reading limits the filtering function. When a
-                        raw reading differs from a filtered value by more than this threshold, the filter averaging
-                        resets (1% - 10%).
+                        reset_threshold: Specifies what percent of full scale reading limits the filtering function.
+                        When a raw reading differs from a filtered value by more than this threshold, the filter
+                        averaging resets (1% - 10%).
 
         """
         filter_settings = self.query(f"FILTER? {input_channel}").split(",")
@@ -959,8 +962,8 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
         """
         command_string = (f"NET {int(dhcp_enable)},{int(auto_ip_enable)},{ip_address}," +
-                        f"{sub_mask},{gateway},{primary_dns},{secondary_dns},\"{pref_host}\"," +
-                        f"\"{pref_domain}\",\"{description}\"")
+                          f"{sub_mask},{gateway},{primary_dns},{secondary_dns},\"{pref_host}\"," +
+                          f"\"{pref_domain}\",\"{description}\"")
         self.command(command_string)
 
     def _get_network_settings(self):
@@ -1253,8 +1256,8 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
         """
         command_string = (f"SCAL {1},{curve_number},{serial_number},{calibration_point_1[0]}," +
-                        f"{calibration_point_1[1]},{calibration_point_2[0]},{calibration_point_2[1]}," +
-                        f"{calibration_point_3[0]},{calibration_point_3[1]}")
+                          f"{calibration_point_1[1]},{calibration_point_2[0]},{calibration_point_2[1]}," +
+                          f"{calibration_point_3[0]},{calibration_point_3[1]}")
         self.command(command_string)
 
     def _set_soft_cal_curve_pt_100(self, curve_number, serial_number, calibration_point_1=(77.35, 20.234),
@@ -1281,9 +1284,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
         """
         command_string = (f"SCAL {6},{curve_number},{serial_number}," +
-                        f"{calibration_point_1[0]},{calibration_point_1[1]}," +
-                        f"{calibration_point_2[0]},{calibration_point_2[1]}," +
-                        f"{calibration_point_3[0]},{calibration_point_3[1]}")
+                          f"{calibration_point_1[0]},{calibration_point_1[1]}," +
+                          f"{calibration_point_2[0]},{calibration_point_2[1]}," +
+                          f"{calibration_point_3[0]},{calibration_point_3[1]}")
         self.command(command_string)
 
     def _set_soft_cal_curve_pt_1000(self, curve_number, serial_number, calibration_point_1=(77.35, 202.34),
@@ -1310,9 +1313,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
         """
         command_string = (f"SCAL {7},{curve_number},{serial_number}," +
-                        f"{calibration_point_1[0]},{calibration_point_1[1]}," +
-                        f"{calibration_point_2[0]},{calibration_point_2[1]}," +
-                        f"{calibration_point_3[0]},{calibration_point_3[1]}")
+                          f"{calibration_point_1[0]},{calibration_point_1[1]}," +
+                          f"{calibration_point_2[0]},{calibration_point_2[1]}," +
+                          f"{calibration_point_3[0]},{calibration_point_3[1]}")
         self.command(command_string)
 
     def set_control_setpoint(self, output, value):

@@ -79,7 +79,7 @@ class XIPInstrument(GenericInstrument):
                  tcp_port,
                  clear_errors_on_init=True,
                  **kwargs):
-        
+
         # Initialize values common to all XIP instruments
         super().__init__(
                          serial_number,

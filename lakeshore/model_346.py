@@ -1,4 +1,4 @@
-import serial
+"""Implements functionality unique to the Lake Shore Model 346."""
 
 from lakeshore.temperature_controllers import TemperatureController
 from lakeshore.xip_instrument import XIPInstrument
