@@ -5,24 +5,6 @@ from enum import IntEnum
 class TemperatureControllerEnums:
     """Class containing the enums relevant to temperature controllers."""
 
-    class InputChannel(IntEnum):
-        """Placeholder Enumeration of the display field input source."""
-
-    class DisplayFieldUnits(IntEnum):
-        """Placeholder Enumeration of the display field units."""
-
-    class RelayControlMode(IntEnum):
-        """Relay operating mode enumeration."""
-        RELAY_OFF = 0
-        RELAY_ON = 1
-        ALARMS = 2
-
-    class RelayControlAlarm(IntEnum):
-        """Enumeration of the setting determining which alarm(s) cause a relay to close in alarm mode."""
-        LOW_ALARM = 0
-        HIGH_ALARM = 1
-        BOTH_ALARMS = 2
-
     class InterfaceMode(IntEnum):
         """Enumeration for the mode of the remote interface."""
         LOCAL = 0
@@ -59,16 +41,6 @@ class TemperatureControllerEnums:
         P_ONLY = 0
         P_I = 1
         P_I_D = 2
-
-    class HeaterResistance(IntEnum):
-        """Enumerator used to represent the different heater resistances."""
-        HEATER_25_OHM = 1
-        HEATER_50_OHM = 2
-
-    class Polarity(IntEnum):
-        """Enumerator for unipolar or bipolar output operation."""
-        UNIPOLAR = 0
-        BIPOLAR = 1
 
     class DiodeCurrent(IntEnum):
         """Enumerator used to represent diode current ranges."""
@@ -120,3 +92,35 @@ class TemperatureControllerEnums:
         """Enumeration of the display fields when mode is set to all inputs."""
         SMALL = 0
         LARGE = 1
+
+
+class LegacyTemperatureControllerEnums(TemperatureControllerEnums):
+    """Class containing the enums relevant to legacy temperature controllers."""
+
+    class InputChannel(IntEnum):
+        """Placeholder Enumeration of the display field input source."""
+
+    class DisplayFieldUnits(IntEnum):
+        """Placeholder Enumeration of the display field units."""
+
+    class RelayControlMode(IntEnum):
+        """Relay operating mode enumeration."""
+        RELAY_OFF = 0
+        RELAY_ON = 1
+        ALARMS = 2
+
+    class RelayControlAlarm(IntEnum):
+        """Enumeration of the setting determining which alarm(s) cause a relay to close in alarm mode."""
+        LOW_ALARM = 0
+        HIGH_ALARM = 1
+        BOTH_ALARMS = 2
+
+    class HeaterResistance(IntEnum):
+        """Enumerator used to represent the different heater resistances."""
+        HEATER_25_OHM = 1
+        HEATER_50_OHM = 2
+
+    class Polarity(IntEnum):
+        """Enumerator for unipolar or bipolar output operation."""
+        UNIPOLAR = 0
+        BIPOLAR = 1

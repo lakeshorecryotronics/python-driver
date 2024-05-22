@@ -1,8 +1,7 @@
 """Implements functionality unique to the Lake Shore Model 335 cryogenic temperature controller."""
-import serial
 
 from .model_335_enums import Model335Enums
-from .temperature_controllers import TemperatureController, InstrumentException, StandardEventRegister, \
+from .temperature_controllers import LegacyTemperatureController, InstrumentException, StandardEventRegister, \
     OperationEvent, RegisterBase
 
 Model335StandardEventRegister = StandardEventRegister
@@ -145,7 +144,7 @@ class Model335InputReadingStatus(RegisterBase):
         self.sensor_units_overrange = sensor_units_overrange
 
 
-class Model335(Model335Enums, TemperatureController):
+class Model335(Model335Enums, LegacyTemperatureController):
     """A class object representing the Lake Shore Model 335 cryogenic temperature controller."""
 
     # Initiate instrument specific registers
@@ -163,33 +162,33 @@ class Model335(Model335Enums, TemperatureController):
                  tcp_port=None,
                  **kwargs):
         # Call the parent init, then fill in values specific to the 335
-        TemperatureController.__init__(self, serial_number, com_port, baud_rate, 7, 1, serial.PARITY_ODD, False, False,
-                                       timeout, ip_address, tcp_port, **kwargs)
+        LegacyTemperatureController.__init__(self, serial_number, com_port, baud_rate, timeout, ip_address, tcp_port,
+                                             **kwargs)
 
         # Disable emulation mode
         self._disable_emulation()
 
     # Alias specific temperature controller methods
-    get_analog_output_percentage = TemperatureController._get_analog_output_percentage
-    set_autotune = TemperatureController._set_autotune
-    set_brightness = TemperatureController._set_brightness
-    get_brightness = TemperatureController._get_brightness
-    get_operation_condition = TemperatureController._get_operation_condition
-    get_operation_event_enable = TemperatureController._get_operation_event_enable
-    set_operation_event_enable = TemperatureController._set_operation_event_enable
-    get_operation_event = TemperatureController._get_operation_event
-    get_thermocouple_junction_temp = TemperatureController._get_thermocouple_junction_temp
-    set_soft_cal_curve_dt_470 = TemperatureController._set_soft_cal_curve_dt_470
-    set_soft_cal_curve_pt_100 = TemperatureController._set_soft_cal_curve_pt_100
-    set_soft_cal_curve_pt_1000 = TemperatureController._set_soft_cal_curve_pt_1000
-    set_diode_excitation_current = TemperatureController._set_diode_excitation_current
-    get_diode_excitation_current = TemperatureController._get_diode_excitation_current
-    get_tuning_control_status = TemperatureController._get_tuning_control_status
-    set_filter = TemperatureController._set_filter
-    get_filter = TemperatureController._get_filter
+    get_analog_output_percentage = LegacyTemperatureController._get_analog_output_percentage
+    set_autotune = LegacyTemperatureController._set_autotune
+    set_brightness = LegacyTemperatureController._set_brightness
+    get_brightness = LegacyTemperatureController._get_brightness
+    get_operation_condition = LegacyTemperatureController._get_operation_condition
+    get_operation_event_enable = LegacyTemperatureController._get_operation_event_enable
+    set_operation_event_enable = LegacyTemperatureController._set_operation_event_enable
+    get_operation_event = LegacyTemperatureController._get_operation_event
+    get_thermocouple_junction_temp = LegacyTemperatureController._get_thermocouple_junction_temp
+    set_soft_cal_curve_dt_470 = LegacyTemperatureController._set_soft_cal_curve_dt_470
+    set_soft_cal_curve_pt_100 = LegacyTemperatureController._set_soft_cal_curve_pt_100
+    set_soft_cal_curve_pt_1000 = LegacyTemperatureController._set_soft_cal_curve_pt_1000
+    set_diode_excitation_current = LegacyTemperatureController._set_diode_excitation_current
+    get_diode_excitation_current = LegacyTemperatureController._get_diode_excitation_current
+    get_tuning_control_status = LegacyTemperatureController._get_tuning_control_status
+    set_filter = LegacyTemperatureController._set_filter
+    get_filter = LegacyTemperatureController._get_filter
 
     def set_monitor_output_heater(self, channel, high_value, low_value, units=Model335Enums.MonitorOutUnits.KELVIN,
-                                  polarity=TemperatureController.Polarity.UNIPOLAR):
+                                  polarity=LegacyTemperatureController.Polarity.UNIPOLAR):
         """Configures output 2. Use the set_heater_output_mode command to set the output mode to Monitor Out.
 
             Args:

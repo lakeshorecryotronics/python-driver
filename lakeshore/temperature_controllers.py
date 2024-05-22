@@ -1,7 +1,8 @@
 """Implements a parent class for temperature controllers that contains shared methods between similar instruments."""
 
+import serial
 from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase
-from .temperature_controllers_enums import TemperatureControllerEnums
+from .temperature_controllers_enums import TemperatureControllerEnums, LegacyTemperatureControllerEnums
 
 
 class AlarmSettings:
@@ -1438,3 +1439,30 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
         if bool(int(tuning_status[2])):
             raise InstrumentException("An autotune error is present")
+
+
+class LegacyTemperatureController(TemperatureController, LegacyTemperatureControllerEnums):
+    """Base class for all legacy temperature controller instruments."""
+
+    def __init__(self,
+                 serial_number,
+                 com_port,
+                 baud_rate,
+                 timeout,
+                 ip_address,
+                 tcp_port,
+                 **kwargs):
+
+        super().__init__(
+            serial_number,
+            com_port,
+            baud_rate,
+            7,
+            1,
+            serial.PARITY_ODD,
+            False,
+            False,
+            timeout,
+            ip_address,
+            tcp_port,
+            **kwargs)

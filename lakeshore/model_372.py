@@ -1,8 +1,7 @@
 """Implements functionality unique to the Lake Shore Model 372 AC bridge and temperature controller."""
-import serial
 
 from .model_372_enums import Model372Enums
-from .temperature_controllers import TemperatureController, CurveHeader, StandardEventRegister, OperationEvent
+from .temperature_controllers import LegacyTemperatureController, CurveHeader, StandardEventRegister, OperationEvent
 from .generic_instrument import RegisterBase
 
 Model372CurveHeader = CurveHeader
@@ -326,7 +325,7 @@ class Model372DigitalOutputRegister(RegisterBase):
         self.d_5 = d_5
 
 
-class Model372(Model372Enums, TemperatureController):
+class Model372(Model372Enums, LegacyTemperatureController):
     """A class object representing the Lake Shore Model 372 AC bridge and temperature controller."""
 
     vid_pid = [(0x1FB9, 0x0305)]
@@ -345,8 +344,8 @@ class Model372(Model372Enums, TemperatureController):
                  **kwargs):
 
         # Call the parent init, then fill in values specific to the 372
-        TemperatureController.__init__(self, serial_number, com_port, baud_rate, 7, 1, serial.PARITY_ODD, False, False,
-                                       timeout, ip_address, tcp_port, **kwargs)
+        LegacyTemperatureController.__init__(self, serial_number, com_port, baud_rate, timeout, ip_address, tcp_port,
+                                             **kwargs)
         # Disable emulation upon initialization
         self._disable_emulation_mode()
 
