@@ -30,3 +30,14 @@ class Model346(XIPInstrument, TemperatureController):
             ip_address,
             tcp_port,
             **kwargs)
+
+    def get_digit_input_status(self):
+        """Returns the status of the digital inputs.
+
+            Returns:
+                dict[str, int]:
+                    {"input_one": int, "input_two": int}
+
+        """
+        input_status = self.query("DIGIN?").split(",")
+        return {"input_one": int(input_status[0]), "input_two": int(input_status[1])}
