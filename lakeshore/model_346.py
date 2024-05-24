@@ -109,3 +109,41 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         self.command(f"ALARM {alarm_id},,,,{self.AlarmType.NONE},")
+
+    def turn_relay_on(self, relay_number):
+        """Turns the specified relay on.
+
+            Args:
+                relay_number (int):
+                    The relay to turn on.
+                    Options are:
+                    1 or 2.
+
+        """
+        self.command(f"RELAY {relay_number},1")
+
+    def turn_relay_off(self, relay_number):
+        """Turns the specified relay off.
+
+            Args:
+                relay_number (int):
+                    The relay to turn off.
+                    Options are:
+                    1 or 2.
+
+        """
+        self.command(f"RELAY {relay_number},0")
+
+    def get_relay_status(self, relay_channel):
+        """Returns whether the relay at the specified channel is on or off.
+
+            Args:
+                relay_channel (int):
+                    The relay channel to query.
+
+            Returns:
+                bool:
+                    True if relay is on, False if relay is off.
+
+        """
+        return bool(int(self.query(f"RELAY? {relay_channel}")))
