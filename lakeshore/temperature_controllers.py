@@ -469,45 +469,6 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """
         self.command(f"CRVDEL {curve}")
 
-    def set_alarm_parameters(self, input_channel, alarm_enable, alarm_settings=None):
-        """Configures the alarm parameters for an input.
-
-            Args:
-                input_channel (str):
-                    Specifies which input to configure.
-                alarm_enable (bool):
-                    Specifies whether to turn on the alarm for the input, or turn the alarm off.
-                alarm_settings (AlarmSettings):
-                    See AlarmSettings class. Required only if alarm_enable is set to True.
-
-        """
-        if alarm_enable:
-            command_string = (f"ALARM {input_channel},{int(alarm_enable)},{alarm_settings.high_value}," +
-                              f"{alarm_settings.low_value},{alarm_settings.deadband}," +
-                              f"{int(alarm_settings.latch_enable)},{int(alarm_settings.audible)}," +
-                              f"{int(alarm_settings.visible)}")
-            self.command(command_string)
-        else:
-            self.command(f"ALARM {input_channel},{int(alarm_enable)},,,,,,")
-
-    def get_alarm_parameters(self, input_channel):
-        """Returns the present state of all alarm parameters.
-
-            Args:
-                input_channel (str):
-                    Specifies which input to configure.
-
-            Returns:
-                alarm_settings (AlarmSettings):
-                    See AlarmSettings class.
-
-        """
-        parameters = self.query(f"ALARM? {input_channel}").split(",")
-        return AlarmSettings(float(parameters[1]), float(parameters[2]),
-                             float(parameters[3]), bool(int((parameters[4]))),
-                             audible=bool(int(parameters[5])), visible=bool(int(parameters[6])),
-                             alarm_enable=bool(int(parameters[0])))
-
     def get_alarm_status(self, channel):
         """Returns the high state and low state of the alarm for the specified channel.
 
@@ -1466,3 +1427,42 @@ class LegacyTemperatureController(TemperatureController, LegacyTemperatureContro
             ip_address,
             tcp_port,
             **kwargs)
+
+    def set_alarm_parameters(self, input_channel, alarm_enable, alarm_settings=None):
+        """Configures the alarm parameters for an input.
+
+            Args:
+                input_channel (str):
+                    Specifies which input to configure.
+                alarm_enable (bool):
+                    Specifies whether to turn on the alarm for the input, or turn the alarm off.
+                alarm_settings (AlarmSettings):
+                    See AlarmSettings class. Required only if alarm_enable is set to True.
+
+        """
+        if alarm_enable:
+            command_string = (f"ALARM {input_channel},{int(alarm_enable)},{alarm_settings.high_value}," +
+                              f"{alarm_settings.low_value},{alarm_settings.deadband}," +
+                              f"{int(alarm_settings.latch_enable)},{int(alarm_settings.audible)}," +
+                              f"{int(alarm_settings.visible)}")
+            self.command(command_string)
+        else:
+            self.command(f"ALARM {input_channel},{int(alarm_enable)},,,,,,")
+
+    def get_alarm_parameters(self, input_channel):
+        """Returns the present state of all alarm parameters.
+
+            Args:
+                input_channel (str):
+                    Specifies which input to configure.
+
+            Returns:
+                alarm_settings (AlarmSettings):
+                    See AlarmSettings class.
+
+        """
+        parameters = self.query(f"ALARM? {input_channel}").split(",")
+        return AlarmSettings(float(parameters[1]), float(parameters[2]),
+                             float(parameters[3]), bool(int((parameters[4]))),
+                             audible=bool(int(parameters[5])), visible=bool(int(parameters[6])),
+                             alarm_enable=bool(int(parameters[0])))
