@@ -41,6 +41,12 @@ class Model346Enums:
         THIRTY_THOUSAND_OHM = 5
         HUNDRED_THOUSAND_OHM = 6
 
+    class HeaterRange(IntEnum):
+        """Heater range enumerations."""
+        OFF = 0
+        LOW = 1
+        HIGH = 2
+
     class AlarmType(IntEnum):
         """Enumeration for possible alarm output types"""
         NONE = 0

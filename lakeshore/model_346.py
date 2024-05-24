@@ -230,3 +230,38 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                                            self.InputSensorUnits(int(sensor_params[4])),
                                            bool(int(sensor_params[5])),
                                            input_range)
+
+    def set_heater_range(self, output, heater_range):
+        """Sets the heater range for a particular output.
+
+            The range setting has no effect if an output is in
+            the Off mode, and does not apply to an output in Monitor
+            Out mode. An output in Monitor Out mode is always on.
+
+            Args:
+                output (int):
+                    Specifies which output to configure (1 - 4).
+                heater_range (Model346Enums.HeaterRange):
+                    The heater range to apply to a particular output.
+
+        """
+        self.command(f"RANGE {output},{heater_range}")
+
+    def get_heater_range(self, output):
+        """Returns the heater range for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to query (1 - 4).
+
+            Returns:
+                (Model346Enums.HeaterRange):
+                    The heater range being applied to a particular output.
+
+        """
+        heater_range = int(self.query(f"RANGE? {output}"))
+        return Model346Enums.HeaterRange(heater_range)
+
+    def all_heaters_off(self):
+        """Recreates the front panel safety feature of shutting off all heaters."""
+        self.command("RANGE 1,0;RANGE 2,0;RANGE 3,0;RANGE 4,0")
