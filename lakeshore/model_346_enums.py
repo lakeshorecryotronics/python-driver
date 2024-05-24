@@ -58,3 +58,13 @@ class Model346Enums:
         RELAY = 1
         FRONT_DISPLAY = 2
         FRONT_AUDIO = 3
+
+    class OutputMode(IntEnum):
+        """Output control enumeration."""
+        OFF = 0
+        PID = 1
+        ZONE = 2
+        OPEN_LOOP = 3
+        MONITOR_OUT = 4
+        WARMUP_SUPPLY = 5
+        MIRRORING = 6

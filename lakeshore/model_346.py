@@ -302,3 +302,41 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             "max_current": float(heater_setup[1]), 
             "output_units": self.HeaterOutputUnits(int(heater_setup[2]))
         }
+
+    def set_output_mode(self, output, mode, input_channel, powerup_enable=False):
+        """Configures the output mode of a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to configure (1 - 8)
+                mode (Model346Enums.OutputMode):
+                    Specifies the control mode.
+                input_channel (str):
+                    Specifies which input to use for control (A - H4). 
+                    Unused if not in PID mode.
+                powerup_enable (bool):
+                    Specifies whether the output remains on (True)
+                    or shuts off after power cycle (False).
+
+        """
+        command_string = f"OUTMODE {output},{mode},{input_channel},{int(powerup_enable)}"
+        self.command(command_string)
+
+    def get_output_mode(self, output):
+        """Returns the output mode for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to retrieve (1 - 8).
+
+            Returns:
+                dict[str, Model346Enums.OutputMode | str | bool]:
+                    {"mode": OutputMode, "input_channel": str, "powerup_enable": bool}
+
+        """
+        outmode = self.query(f"OUTMODE? {output}").split(",")
+        return {
+            "mode": self.OutputMode(int(outmode[0])),
+            "input_channel": outmode[1],
+            "powerup_enable": bool(int(outmode[2]))
+        }
