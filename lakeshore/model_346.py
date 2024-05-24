@@ -340,3 +340,35 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             "input_channel": outmode[1],
             "powerup_enable": bool(int(outmode[2]))
         }
+
+    def set_analog_output_settings(self, output, high_value, low_value):
+        """Configures a voltage-controlled output.
+
+            Use the set_output_mode command to set the output mode to Monitor Out.
+
+            Args:
+                output (int):
+                    Analog output channel to configure (5 - 8)
+                high_value (float):
+                    Represents the data at which the Monitor Out reaches +100% output.
+                low_value (float):
+                    Represents the data at which the analog output reaches 0% output.
+
+        """
+        command_string = f"ANALOG {output},{high_value},{low_value}"
+        self.command(command_string)
+
+    def get_analog_output_settings(self, output):
+        """Used to obtain the monitor out parameters for a specific output.
+
+            Args:
+                output (int):
+                    Analog output of interest (5 - 8).
+
+            Returns:
+                dict[str, float]:
+                    {"high_value": float, "low_value": float}
+
+        """
+        response = self.query(f"ANALOG? {output}").split(",")
+        return {"high_value": float(response[0]), "low_value": float(response[1])}
