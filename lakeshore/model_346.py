@@ -3,6 +3,39 @@
 from lakeshore.temperature_controllers import TemperatureController
 from lakeshore.xip_instrument import XIPInstrument
 from lakeshore.model_346_enums import Model346Enums
+from enum import IntEnum
+
+
+class Model346InputSensorSettings:
+    """Class object used in the get/set_input_sensor methods."""
+
+    def __init__(self, sensor_type, autorange_enable, compensation, units, vi_swapped, input_range=None):
+        """Constructor for the InputSensor class.
+
+            Args:
+                sensor_type (Model346Enums.InputSensorType):
+                    Specifies input sensor type.
+                autorange_enable (bool):
+                    Specifies autoranging (False = off, True = on).
+                compensation (bool):
+                    Specifies input compensation. (False = off, True = on).
+                units (Model346Enums.InputSensorUnits):
+                    Specifies the preferred units parameter for sensor readings and for the control set-point.
+                vi_swapped (bool):
+                    Specifies whether readings have swapped vi leads. (False = off, True = on).
+                input_range (IntEnum):
+                    Specifies input range if autorange_enable is False.
+                    See IntEnum classes: Model346Enums.DiodeRange, Model346Enums.PTCRTDRange,
+                    and Model346Enums.NTCRTDRange.
+
+        """
+
+        self.sensor_type = sensor_type
+        self.autorange_enable = autorange_enable
+        self.compensation = compensation
+        self.units = units
+        self.vi_swapped = vi_swapped
+        self.input_range = input_range
 
 
 class Model346AlarmSettings:
@@ -147,3 +180,53 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         return bool(int(self.query(f"RELAY? {relay_channel}")))
+
+    def set_input_sensor(self, input_channel, sensor_params):
+        """Sets the sensor type and associated parameters.
+
+            Args:
+                input_channel (str):
+                    Specifies input to configure (A - H4).
+                sensor_params (Model346InputSensorSettings):
+                    See Model346InputSensorSettings class.
+
+        """
+        autorange_enable = sensor_params.autorange_enable
+        if autorange_enable:
+            input_range = 0
+        else:
+            input_range = sensor_params.input_range
+
+        self.command(f"INTYPE {input_channel},{sensor_params.sensor_type},{int(autorange_enable)},"
+                     f"{input_range},{int(sensor_params.compensation)},{sensor_params.units},"
+                     f"{int(sensor_params.vi_swapped)}")
+
+    def get_input_sensor(self, input_channel):
+        """Sets the sensor type and associated parameters.
+
+            Args:
+                input_channel (str):
+                    Specifies input to configure (A - H4).
+
+            Returns:
+                Model346InputSensorSettings:
+                    The configured sensor settings for a particular input sensor.
+
+        """
+        sensor_params = self.query(f"INTYPE? {input_channel}").split(",")
+        sensor_type = Model346Enums.InputSensorType(int(sensor_params[0]))
+
+        input_range = -1
+        if sensor_type == Model346Enums.InputSensorType.DIODE:
+            input_range = Model346Enums.DiodeRange(int(sensor_params[2]))
+        elif sensor_type == Model346Enums.InputSensorType.NTC_RTD:
+            input_range = Model346Enums.NTCRTDRange(int(sensor_params[2]))
+        elif sensor_type == Model346Enums.InputSensorType.PLATINUM_RTD:
+            input_range = Model346Enums.PTCRTDRange(int(sensor_params[2]))
+
+        return Model346InputSensorSettings(sensor_type,
+                                           bool(int(sensor_params[1])),
+                                           bool(int(sensor_params[3])),
+                                           self.InputSensorUnits(int(sensor_params[4])),
+                                           bool(int(sensor_params[5])),
+                                           input_range)
