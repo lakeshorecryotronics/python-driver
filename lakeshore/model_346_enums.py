@@ -47,6 +47,11 @@ class Model346Enums:
         LOW = 1
         HIGH = 2
 
+    class HeaterOutputUnits(IntEnum):
+        """Enumerator used to represent heater output unit settings."""
+        POWER = 0
+        CURRENT = 1
+
     class AlarmType(IntEnum):
         """Enumeration for possible alarm output types"""
         NONE = 0
