@@ -623,39 +623,6 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         response = int(self.query(f"DIOCUR? {channel}"))
         return self.DiodeCurrent(response)
 
-    def set_display_field_settings(self, field, input_channel, display_units):
-        """Configures a display field when the display is in custom mode.
-
-            Args:
-                field (int):
-                    Defines which field of the display is being configured.
-                input_channel (TemperatureControllerEnums.InputChannel):
-                    Defines which input to display.
-                    A member of the instrument's InputChannel IntEnum class.
-                display_units (TemperatureControllerEnums.DisplayFieldUnits):
-                    Defines which units to display reading in.
-                    A member of the instrument's DisplayFieldUnits IntEnum class.
-
-        """
-        self.command(f"DISPFLD {field},{input_channel},{display_units}")
-
-    def get_display_field_settings(self, field):
-        """Returns the settings of the specified display field when display is in Custom mode.
-
-            Args:
-                field (int)
-                    Defines which field of the display to retrieve settings from.
-
-            Returns:
-                (dict[str, TemperatureControllerEnums.InputChannel | TemperatureControllerEnums.DisplayFieldUnits]):
-                    See set_display_field_settings method.
-                    {"input_channel": InputChannel, "display_units": DisplayFieldUnits}
-
-        """
-        separated_settings = self.query(f"DISPFLD? {field}").split(",")
-        return {'input_channel': self.InputChannel(int(separated_settings[0])),
-                'display_units': self.DisplayFieldUnits(int(separated_settings[1]))}
-
     def _set_filter(self, input_channel, filter_enable, data_points, reset_threshold):
         """Configures the input_channel filter parameter.
 
@@ -801,28 +768,6 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """
         interface_response = self.query("INTSEL?")
         return self.Interface(int(interface_response))
-
-    def set_led_state(self, state):
-        """Sets the front panel LEDs to on or off.
-
-            Args:
-                state (bool):
-                    Sets the LEDs to functional or nonfunctional.
-                    False if disabled, True enabled.
-
-        """
-        self.command(f"LEDS {int(state)}")
-
-    def get_led_state(self):
-        """Returns whether front panel LEDs are enabled.
-
-            Returns:
-                (bool):
-                    Specifies whether front panel LEDs are functional.
-                    False if disabled, True enabled.
-
-        """
-        return bool(int(self.query("LEDS?")))
 
     def set_keypad_lock(self, state, code):
         """Locks or unlocks front panel keypad (except for alarms and disabling heaters).
@@ -1507,3 +1452,58 @@ class LegacyTemperatureController(TemperatureController, LegacyTemperatureContro
         alarm_relay_trigger_type = self.RelayControlAlarm(int(relay_config[2]))
         return {'activating_input_channel': activating_input_channel,
                 'alarm_relay_trigger_type': alarm_relay_trigger_type}
+
+    def set_display_field_settings(self, field, input_channel, display_units):
+        """Configures a display field when the display is in custom mode.
+
+            Args:
+                field (int):
+                    Defines which field of the display is being configured.
+                input_channel (LegacyTemperatureControllerEnums.InputChannel):
+                    Defines which input to display.
+                    A member of the instrument's InputChannel IntEnum class.
+                display_units (LegacyTemperatureControllerEnums.DisplayFieldUnits):
+                    Defines which units to display reading in.
+                    A member of the instrument's DisplayFieldUnits IntEnum class.
+
+        """
+        self.command(f"DISPFLD {field},{input_channel},{display_units}")
+
+    def get_display_field_settings(self, field):
+        """Returns the settings of the specified display field when display is in Custom mode.
+
+            Args:
+                field (int)
+                    Defines which field of the display to retrieve settings from.
+
+            Returns:
+                (dict[str, LegacyTemperatureControllerEnums.InputChannel | LegacyTemperatureControllerEnums.DisplayFieldUnits]):
+                    See set_display_field_settings method.
+                    {"input_channel": InputChannel, "display_units": DisplayFieldUnits}
+
+        """
+        separated_settings = self.query(f"DISPFLD? {field}").split(",")
+        return {'input_channel': self.InputChannel(int(separated_settings[0])),
+                'display_units': self.DisplayFieldUnits(int(separated_settings[1]))}
+
+    def set_led_state(self, state):
+        """Sets the front panel LEDs to on or off.
+
+            Args:
+                state (bool):
+                    Sets the LEDs to functional or nonfunctional.
+                    False if disabled, True enabled.
+
+        """
+        self.command(f"LEDS {int(state)}")
+
+    def get_led_state(self):
+        """Returns whether front panel LEDs are enabled.
+
+            Returns:
+                (bool):
+                    Specifies whether front panel LEDs are functional.
+                    False if disabled, True enabled.
+
+        """
+        return bool(int(self.query("LEDS?")))
