@@ -49,12 +49,12 @@ class CurveHeader:
                     Specifies curve name (limit of 15 characters).
                 serial_number (str):
                     Specifies curve serial number (limit of 10 characters).
-                curve_data_format (IntEnum):
+                curve_data_format (TemperatureControllerEnums.CurveFormat):
                     Member of the instrument's CurveFormat IntEnum class.
                     Specifies the curve data format.
                 temperature_limit (float):
                     Specifies the curve temperature limit in Kelvin.
-                coefficient (IntEnum):
+                coefficient (TemperatureControllerEnums.CurveTemperatureCoefficient):
                     Member of instrument's CurveTemperatureCoefficient IntEnum class.
                     Specifies the curve temperature coefficient.
 
@@ -204,7 +204,8 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Optional Parameter.
 
             Returns:
-                The instrument query response as a string.
+                str:
+                    The instrument query response as a string.
 
         """
 
@@ -229,6 +230,10 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Returns the names of the standard event enable register bits and their values.
 
             These values determine which bits propagate to the standard event register.
+
+            Returns:
+                StandardEventRegister:
+                    The object with the names of the standard event enable register bits and their values.
         """
 
         response = self.query("*ESE?", check_errors=False)
@@ -298,8 +303,12 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Returns the temperature value in kelvin of the given channel.
 
             Args:
-                input_channel:
-                    Selects the channel to retrieve measurement.
+                input_channel (str | int):
+                    Selects the channel to retrieve reading.
+
+            Returns:
+                float:
+                    The temperature value.
 
         """
         return float(self.query(f"KRDG? {input_channel}"))
@@ -307,8 +316,12 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
     def get_sensor_reading(self, input_channel):
         """Returns the sensor reading in the sensor's units.
 
+            Args:
+                input_channel (str | int):
+                    Selects the channel to retrieve reading.
+
             Returns:
-                reading (float):
+                (float):
                     The raw sensor reading in the units of the connected sensor.
 
         """
@@ -320,7 +333,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
             Args:
                 input_channel (str or int):
                     Specifies which input_channel channel to read from.
-                sensor_name(str):
+                sensor_name (str):
                     Name user wants to give to the sensor on the specified channel.
 
         """
@@ -344,7 +357,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Configures the user curve header.
 
             Args:
-                curve_number:
+                curve_number (int):
                     Specifies which curve to configure.
                 curve_header (CurveHeader):
                     Instrument's CurveHeader class object containing the desired curve information.
@@ -408,7 +421,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Specifies the points index in the curve.
 
             Returns:
-                curve_point (tuple):
+                tuple[float, float] | tuple[float, float, float]:
                     (sensor_units: float, temp_value: float, curvature_value: float (optional)).
 
         """
@@ -424,7 +437,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Specifies which curve to set.
 
             Returns:
-                data_points (list: tuple):
+                list[tuple[float, float] | tuple[float, float, float]]:
                     A list containing every point in the curve represented as a tuple.
                     (sensor_units: float, temp_value: float, curvature_value: float (optional)).
 
@@ -446,7 +459,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
             Args:
                 curve (int):
                     Specifies which curve to set.
-                data_points (list):
+                data_points (list[tuple[float, float] | tuple[float, float, float]]):
                     A list containing every point in the curve represented as a tuple.
                     (sensor_units: float, temp_value: float, curvature_value: float (optional)).
 
@@ -476,9 +489,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     channel (str or int)
                         Specifies which input channel to read from.
 
-                Return:
-                    (dict):
-                        {"high_state": bool, "low_state" bool}
+                Returns:
+                    (dict[str, bool]):
+                        {"high_state_enabled": bool, "low_state_enabled" bool}
 
         """
         response = self.query(f"ALARMST? {channel}")
@@ -510,9 +523,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
             Args:
                 output (int):
                     Specifies the output associated with the loop to be Auto-tuned.
-                mode (IntEnum):
+                mode (TemperatureControllerEnums.AutotuneMode):
                     Specifies the Autotune mode.
-                    Member of instrument's AutoTuneMode IntEnum class.
+                    Member of instrument's AutotuneMode IntEnum class.
 
         """
         self.command(f"ATUNE {output},{mode}")
@@ -532,7 +545,12 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         self.command(f"BRIGT {contrast_level}")
 
     def _get_contrast_level(self):
-        """Returns the contrast level of front display."""
+        """Returns the contrast level of front display.
+
+            Returns:
+                int:
+                    The contrast level of front display.
+        """
 
         return int(self.query("BRIGT?"))
 
@@ -540,7 +558,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Method to set the front display brightness.
 
             Args:
-                brightness (IntEnum):
+                brightness (TemperatureControllerEnums.BrightnessLevel):
                     A member of the instrument's BrightnessLevel IntEnum class.
 
         """
@@ -550,7 +568,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Method to query the front display brightness.
 
             Returns:
-                (IntEnum):
+                (TemperatureControllerEnums.BrightnessLevel):
                     A member of the instrument's BrightnessLevel IntEnum class.
 
         """
@@ -562,6 +580,10 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
             Args:
                 channel (str):
                     "A" - "D" (in addition, "D1" - "D5" for 3062 option).
+
+            Returns:
+                float:
+                    The temperature in Celsius.
 
         """
         return float(self.query(f"CRDG? {channel}"))
@@ -578,7 +600,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Specifies which sensor input to configure:
                     "A" - "D".
 
-                excitation_current (IntEnum):
+                excitation_current (TemperatureControllerEnums.DiodeCurrent):
                     A member of the instrument's DiodeCurrent IntEnum class.
 
         """
@@ -593,7 +615,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     "A" - "D".
 
             Returns:
-                (IntEnum):
+                (TemperatureControllerEnums.DiodeCurrent):
                     A member of the instrument's DiodeCurrent IntEnum class.
                     Diode excitation current.
 
@@ -607,12 +629,12 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
             Args:
                 field (int):
                     Defines which field of the display is being configured.
-                input_channel (IntEnum):
+                input_channel (TemperatureControllerEnums.InputChannel):
                     Defines which input to display.
                     A member of the instrument's InputChannel IntEnum class.
-                display_units (IntEnum):
+                display_units (TemperatureControllerEnums.DisplayFieldUnits):
                     Defines which units to display reading in.
-                    A member of the instrument's DisplayUnits IntEnum class.
+                    A member of the instrument's DisplayFieldUnits IntEnum class.
 
         """
         self.command(f"DISPFLD {field},{input_channel},{display_units}")
@@ -625,9 +647,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Defines which field of the display to retrieve settings from.
 
             Returns:
-                (dict):
+                (dict[str, TemperatureControllerEnums.InputChannel | TemperatureControllerEnums.DisplayFieldUnits]):
                     See set_display_field_settings method.
-                    {"input_channel": IntEnum, "display_units": IntEnum}
+                    {"input_channel": InputChannel, "display_units": DisplayFieldUnits}
 
         """
         separated_settings = self.query(f"DISPFLD? {field}").split(",")
@@ -663,7 +685,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Specifies which input channel to configure.
 
             Returns:
-                (dict)
+                (dict[str, bool | int])
                     {"filter_enable": bool, "data_points": int, "reset_threshold": int}
                         filter_enable: Specified whether the filtering function is enabled or not.
                         data_points: Specifies how many points the filter function uses.
@@ -699,7 +721,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Specifies which heater output to query (1 or 2).
 
             Returns:
-                (IntEnum):
+                (TemperatureControllerEnums.HeaterError):
                     Object of instrument's HeaterError type.
 
         """
@@ -720,8 +742,8 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Returns the IEEE address set.
 
             Returns:
-                address (int):
-                    1-30 (0 and 31 reserved).
+                (int):
+                    Address 1-30 (0 and 31 reserved).
 
         """
         return int(self.query("IEEE?"))
@@ -753,8 +775,8 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Specifies which input to query.
 
             Returns:
-                curve_number (int):
-                    0-59.
+                (int):
+                    Curve number (0-59).
 
         """
         return int(self.query(f"INCRV? {input_channel}"))
@@ -763,7 +785,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Selects the remote interface for the instrument,
 
             Args:
-                interface (IntEnum):
+                interface (TemperatureControllerEnums.Interface):
                     Member of instrument's Interface IntEnum class,
 
         """
@@ -773,7 +795,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Returns the remote interface for the instrument.
 
             Returns:
-                (IntEnum):
+                (TemperatureControllerEnums.Interface):
                     Member of instrument's Interface IntEnum class.
 
         """
@@ -820,7 +842,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Returns the state of the keypad lock and the lock-out code.
 
             Returns:
-                (dict):
+                (dict[str, bool | int]):
                     {"state": bool, "code": int}
 
         """
@@ -837,7 +859,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Specifies which input to query.
 
             Returns:
-                (dict):
+                (dict[str, float]):
                     {"minimum": float, "maximum": float}
 
         """
@@ -853,7 +875,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Places the instrument in one of three interface modes.
 
             Args:
-                mode (IntEnum):
+                mode (TemperatureControllerEnums.InterfaceMode):
                     A member of the instrument's InterfaceMode IntEnum class.
 
         """
@@ -863,7 +885,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Returns the state of the interface mode.
 
             Returns:
-                (IntEnum):
+                (TemperatureControllerEnums.InterfaceMode):
                     A member of the instrument's InterfaceMode IntEnum class.
 
         """
@@ -932,7 +954,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Method to retrieve the IP settings.
 
             Returns:
-                (dict):
+                (dict[str, bool | str]):
                     See set_network_settings arguments.
 
         """
@@ -952,7 +974,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Method to return the configured ethernet parameters.
 
             Return:
-                (dict):
+                (dict[str, TemperatureControllerEnums.LanStatus | str]):
                     {"lan_status": LanStatus, "ip_address": str, "sub_mask": str, "gateway": str, "primary_dns": str,
                         "secondary_dns": str, "hostname" str, "domain": str, "mac_address": str}
                         lan_status: Current status of the ethernet connection. Member of the instrument's LanStatus
@@ -979,7 +1001,13 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                 "mac_address": ethernet[6]}
 
     def _get_operation_condition(self):
-        """Returns the names of the operation condition register bits and their values."""
+        """Returns the names of the operation condition register bits and their values.
+
+            Returns:
+                OperationEvent:
+                    The object with the names of the operation condition register bits and their values.
+
+        """
 
         response = self.query("OPST?")
         return OperationEvent.from_integer(response)
@@ -988,6 +1016,10 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Returns the names of the operation event enable register and their values.
 
             These values determine which bits propagate to the operation condition register.
+
+            Returns:
+                OperationEvent:
+                    The object with the names of the operation event enable register and their values.
         """
 
         response = self.query("OPSTE?")
@@ -1007,7 +1039,12 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         self.command(f"OPSTE {integer_representation}")
 
     def _get_operation_event(self):
-        """Returns the names of the operation event register bits and their values."""
+        """Returns the names of the operation event register bits and their values.
+
+            Returns:
+                OperationEvent:
+                    The object with the names of the operation event register bits and their values.
+        """
 
         response = self.query("OPSTR?")
         status_register = OperationEvent.from_integer(response)
@@ -1077,7 +1114,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Specifies which output's control loop to return.
 
             Returns:
-                (dict):
+                (dict[str, bool | float]):
                     {"ramp_enable": bool, "rate_value": float}
 
         """
@@ -1152,11 +1189,11 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                 serial_number (str):
                     Specifies the curve serial number.
                     Limited to 10 characters.
-                calibration_point_1 (tuple):
+                calibration_point_1 (tuple[float, float]):
                     Tuple of two floats in the form (temperature_value, sensor_value). Optional parameter.
-                calibration_point_2 (tuple):
+                calibration_point_2 (tuple[float, float]):
                     Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
-                calibration_point_3 (tuple):
+                calibration_point_3 (tuple[float, float]):
                     Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
 
         """
@@ -1180,11 +1217,11 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                 serial_number (str):
                     Specifies the curve serial number.
                     Limited to 10 characters.
-                calibration_point_1 (tuple):
+                calibration_point_1 (tuple[float, float]):
                     Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
-                calibration_point_2 (tuple):
+                calibration_point_2 (tuple[float, float]):
                     Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
-                calibration_point_3 (tuple):
+                calibration_point_3 (tuple[float, float]):
                     Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
 
         """
@@ -1209,11 +1246,11 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                 serial_number (str):
                     Specifies the curve serial number.
                     Limited to 10 characters.
-                calibration_point_1 (tuple):
+                calibration_point_1 (tuple[float, float]):
                     Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
-                calibration_point_2 (tuple):
+                calibration_point_2 (tuple[float, float]):
                     Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
-                calibration_point_3 (tuple):
+                calibration_point_3 (tuple[float, float]):
                     Tuple of two floats in the form (temperature_value, sensor_value). Optional Parameter.
 
         """
@@ -1247,7 +1284,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     Specifies which output's control loop to query (1 or 2).
 
             Returns:
-                value (float):
+                (float):
                     The value for the set-point (in the preferred units of the control loop sensor).
 
         """
@@ -1283,6 +1320,10 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                 input_channel (str or int):
                     Specifies which input to query.
 
+            Returns:
+                float:
+                    The value of the temperature limit.
+
         """
         return float(self.query(f"TLIMIT? {input_channel}"))
 
@@ -1294,7 +1335,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
             the stage status will be stage 00.
 
             Returns:
-                (dict):
+                (dict[str, bool | int]):
                     {"active_tuning_enable": bool, "output": int, "tuning_error": bool, "stage_status": int}
                         active_tuning_enable: False = no active tuning, True = active tuning.
                         output: Heater output of the control loop being tuned.
@@ -1325,7 +1366,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """Method to return the username and password for the web interface.
 
             Returns:
-                website_login (dict): A dictionary containing 15 character string type items.
+                (dict[str, str]): A dictionary containing 15 character string type items.
                     {"username": str, "password": str}
 
         """
@@ -1420,7 +1461,7 @@ class LegacyTemperatureController(TemperatureController, LegacyTemperatureContro
                     1 or 2.
 
             Returns:
-                (IntEnum):
+                (LegacyTemperatureControllerEnums.RelayControlMode):
                     The configured mode of the relay.
                     Represented as a member of the instrument's RelayControlMode IntEnum class.
 
@@ -1439,7 +1480,7 @@ class LegacyTemperatureController(TemperatureController, LegacyTemperatureContro
                     1 or 2.
                 activating_input_channel (str or int):
                     Specifies which input alarm activates the relay.
-                alarm_relay_trigger_type (RelayControlAlarm):
+                alarm_relay_trigger_type (LegacyTemperatureControllerEnums.RelayControlAlarm):
                     Specifies the type of alarm that triggers the relay.
 
         """
@@ -1457,7 +1498,7 @@ class LegacyTemperatureController(TemperatureController, LegacyTemperatureContro
                     1 or 2.
 
             Returns:
-                (dict):
+                (dict[str, str | LegacyTemperatureControllerEnums.RelayControlAlarm]):
                     {"activating_input_channel": str, "alarm_relay_trigger_type": RelayControlAlarm}
 
         """
