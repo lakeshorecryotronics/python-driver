@@ -34,6 +34,7 @@ Temperature Controllers
 
     model_335
     model_336
+    model_346
     model_350
     model_372
 

@@ -1,9 +1,27 @@
 """Implements functionality unique to the Lake Shore Model 346."""
 
-from lakeshore.temperature_controllers import TemperatureController
-from lakeshore.xip_instrument import XIPInstrument
+from lakeshore.temperature_controllers import TemperatureController, CurveHeader
+from lakeshore.xip_instrument import XIPInstrument, StandardEventRegister, StatusByteRegister, RegisterBase
 from lakeshore.model_346_enums import Model346Enums
 from enum import IntEnum
+
+Model346CurveHeader = CurveHeader
+Model346StandardEventRegister = StandardEventRegister
+Model346StatusByteRegister = StatusByteRegister
+
+
+class Model346OperationRegister(RegisterBase):
+    """Class object representing the operation status register.
+
+        (Not yet implemented)
+    """
+
+
+class Model346QuestionableRegister(RegisterBase):
+    """Class object representing the questionable status register.
+
+        (Not yet implemented)
+    """
 
 
 class Model346InputSensorSettings:
@@ -372,3 +390,8 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """
         response = self.query(f"ANALOG? {output}").split(",")
         return {"high_value": float(response[0]), "low_value": float(response[1])}
+
+
+__all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
+           'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
+           'Model346StatusByteRegister']
