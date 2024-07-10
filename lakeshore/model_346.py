@@ -1,9 +1,9 @@
 """Implements functionality unique to the Lake Shore Model 346."""
 
+from enum import IntEnum  # pylint: disable=unused-import
 from lakeshore.temperature_controllers import TemperatureController, CurveHeader
 from lakeshore.xip_instrument import XIPInstrument, StandardEventRegister, StatusByteRegister, RegisterBase
 from lakeshore.model_346_enums import Model346Enums
-from enum import IntEnum
 
 Model346CurveHeader = CurveHeader
 Model346StandardEventRegister = StandardEventRegister
