@@ -459,14 +459,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """Implementation does not exist yet (LOCK?). Overrides from base."""
         raise NotImplementedError("Implementation does not exist yet")
 
-    def get_min_max_data(self, input_channel):
-        """Implementation does not exist yet (MDAT?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
-    def reset_min_max_data(self):
-        """Implementation does not exist yet (MNMXRST). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
     def set_remote_interface_mode(self, mode):
         """Implementation does not exist yet (MODE). Overrides from base."""
         raise NotImplementedError("Implementation does not exist yet")
