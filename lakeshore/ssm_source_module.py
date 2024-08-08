@@ -1280,10 +1280,17 @@ class SourceModule(BaseModule):
         self.set_sweep_configuration(sweep_config)
 
     @requires_firmware_version('1.7.0')
-    def do_dc_sweep_step_and_measure(self, start_amplitude, stop_amplitude, dwell_time, number_of_points,
+    def do_dc_sweep_step_and_measure(self,
+                                     start_amplitude,
+                                     stop_amplitude,
                                      *optional_custom_data_sources,
-                                     settle_time=0.0, sweep_spacing='LINEAR', round_trip=False,
-                                     include_source_amplitude=True, include_relative_time=False):
+                                     dwell_time='AUTO',
+                                     number_of_points='AUTO',
+                                     settle_time=0.0,
+                                     sweep_spacing='LINEAR',
+                                     round_trip=False,
+                                     include_source_amplitude=True,
+                                     include_relative_time=False):
         """Immediately runs a DC source sweep and returns data for each point in the sweep.
 
         Args:
@@ -1314,6 +1321,20 @@ class SourceModule(BaseModule):
                 The time since the start of the sweep is in the returned data when true
         """
         self.set_shape('DC')
+
+        if dwell_time == 'AUTO':
+            # default of 3 power line cycles
+            dwell_time = 3 / self.device.get_line_frequency()
+
+        if number_of_points == 'AUTO':
+            if sweep_spacing == 'LINEAR':
+                # determine a decade step size that results in between 100 and 1000 points for linear sweep
+                step_size = 10 ** (math.floor(math.log10(abs(stop_amplitude - start_amplitude))) - 2)
+                number_of_points = round(abs(stop_amplitude - start_amplitude) / step_size + 1)
+            else:
+                # determine a decade step size that results in between 100 and 1000 points for logarithmic sweep
+                step_size = 10 ** (math.floor(math.log10(abs(stop_amplitude/start_amplitude))) - 2)
+                number_of_points = round(abs(stop_amplitude/start_amplitude) / step_size + 1)
 
         # round dwell time to the nearest valid value
         dwell_time = round(dwell_time / self.device.min_sweep_dwell, 0) * self.device.min_sweep_dwell
