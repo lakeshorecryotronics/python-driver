@@ -1290,7 +1290,7 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
         self.fake_connection.setup_response('0;No error')
 
         # Call the function
-        response = self.dut_module.do_dc_sweep_step_and_measure(0, 2, 0.1, 3)
+        response = self.dut_module.do_dc_sweep_step_and_measure(0, 2, dwell_time=0.1, number_of_points=3)
 
         self.assertIn('SOURce1:FUNCtion:SHAPe DC', self.fake_connection.get_outgoing_message())
         self.assertIn('SYSTem:LFRequency?', self.fake_connection.get_outgoing_message())

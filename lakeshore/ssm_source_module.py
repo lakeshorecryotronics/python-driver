@@ -1299,9 +1299,10 @@ class SourceModule(BaseModule):
             stop_amplitude (float):
                 The ending source value of the sweep in volts or amps
             dwell_time (float):
-                Time duration of each step in seconds
+                Time duration of each step in seconds, defaults to AUTO
             number_of_points (int):
-                How many steps to take going from the start to the stop amplitude
+                How many steps to take going from the start to the stop amplitude.
+                AUTO chooses a decade step size that results in between 100 and 1,000 points
             optional_custom_data_sources (SSMSystemDataSourceMnemonic or str, int):
                 Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
                 Defaults to DC on the source's matching measure channel if unspecified.
