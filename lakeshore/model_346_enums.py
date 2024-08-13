@@ -68,3 +68,8 @@ class Model346Enums:
         MONITOR_OUT = 4
         WARMUP_SUPPLY = 5
         MIRRORING = 6
+
+    class AnalogOutputRange(IntEnum):
+        """Analog Output range enums"""
+        OFF = 0
+        ON = 1

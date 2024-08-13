@@ -280,6 +280,33 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         heater_range = int(self.query(f"RANGE? {output}"))
         return Model346Enums.HeaterRange(heater_range)
 
+    def set_analog_out_range(self, output, analog_out_range):
+        """Sets the analog out range to enable or disable
+
+            Args:
+                output (int):
+                    Specifies which output to configure (1 - 4).
+                analog_out_range (Model346Enums.AnalogOutputRange):
+                    OFF = 0 , ON = 1
+
+        """
+        self.command(f"RANGE {output},{analog_out_range}")
+
+    def get_analog_out_range(self, output):
+        """Returns the analog range for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to query (1 - 4).
+
+            Returns:
+                (Model346Enums.AnalogOutputRange):
+                    The analog ouput range being applied to a particular output.
+
+        """
+        analog_out_range = int(self.query(f"RANGE? {output}"))
+        return Model346Enums.AnalogOutputRange(analog_out_range)
+
     def all_heaters_off(self):
         """Recreates the front panel safety feature of shutting off all heaters."""
         self.command("RANGE 1,0;RANGE 2,0;RANGE 3,0;RANGE 4,0")
