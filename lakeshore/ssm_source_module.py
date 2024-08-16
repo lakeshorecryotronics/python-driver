@@ -287,55 +287,140 @@ class SourceModule(BaseModule):
 
         self.set_guard_state(False)
 
-    def get_cmr_source(self):
-        """Returns the Common Mode Reduction (CMR) source. 'INTernal', or 'EXTernal'."""
+    def get_cmf_source(self):
+        """Returns the Common Mode Feedback (CMF) source. 'INTernal', or 'EXTernal'."""
 
-        return self.device.query(f'SOURce{self.module_number}:CMR:SOURce?')
+        return self.device.query(f'SOURce{self.module_number}:CMF:SOURce?')
 
     def set_cmr_source(self, cmr_source):
-        """Sets the Common Mode Reduction (CMR) source.
-
-            Args:
-                cmr_source (str):
-                    The new CMR source ('INTernal', or 'EXTernal').
         """
+        This function is deprecated. Use set_cmf_source() instead.
+
+        .. deprecated:: 1.8.2
+            Use set_cmf_source instead.
+        """
+
+        warn("The set_cmr_source method is deprecated, use set_cmf_source instead", DeprecationWarning)
 
         self.device.command(f'SOURce{self.module_number}:CMR:SOURce {cmr_source}')
 
+    def get_cmr_source(self):
+        """
+        This function is deprecated. Use get_cmf_source() instead.
+
+        .. deprecated:: 1.8.2
+            Use get_cmf_source instead.
+        """
+
+        warn("The get_cmr_source method is deprecated, use get_cmf_source instead", DeprecationWarning)
+
+        return self.device.query(f'SOURce{self.module_number}:CMR:SOURce?')
+
+    def set_cmf_source(self, cmf_source):
+        """Sets the Common Mode Feedback (CMF) source.
+
+            Args:
+                cmf_source (str):
+                    The new CMF source ('INTernal', or 'EXTernal').
+        """
+
+        self.device.command(f'SOURce{self.module_number}:CMF:SOURce {cmf_source}')
+
+    def get_cmf_state(self):
+        """Returns the Common Mode Feedback (CMF) state of the module."""
+
+        return bool(int(self.device.query(f'SOURce{self.module_number}:CMF:STATe?')))
+
     def get_cmr_state(self):
-        """Returns the Common Mode Reduction (CMR) state of the module."""
+        """
+        This function is deprecated. Use get_cmf_state() instead.
+
+        .. deprecated:: 1.8.2
+            Use get_cmf_state instead.
+        """
+
+        warn("The get_cmr_state method is deprecated, use get_cmf_state instead", DeprecationWarning)
 
         return bool(int(self.device.query(f'SOURce{self.module_number}:CMR:STATe?')))
 
-    def set_cmr_state(self, cmr_state):
-        """Sets the Common Mode Reduction (CMR) state of the module.
+    def set_cmf_state(self, cmf_state):
+        """Sets the Common Mode Feedback (CMF) state of the module.
 
             Args:
-                cmr_state (bool):
-                    The new CMR state (True to enable CMR, False to disable CMR).
+                cmf_state (bool):
+                    The new CMF state (True to enable CMF, False to disable CMF).
         """
+
+        self.device.command(f'SOURce{self.module_number}:CMF:STATe {str(int(cmf_state))}')
+
+    def set_cmr_state(self, cmr_state):
+        """
+        This function is deprecated. Use set_cmf_state() instead.
+
+        .. deprecated:: 1.8.2
+            Use set_cmf_state instead.
+        """
+
+        warn("The set_cmr_state method is deprecated, use set_cmf_state instead", DeprecationWarning)
 
         self.device.command(f'SOURce{self.module_number}:CMR:STATe {str(int(cmr_state))}')
 
+    def enable_cmf(self):
+        """Sets the CMF state of the module to True."""
+
+        self.set_cmf_state(True)
+
     def enable_cmr(self):
-        """Sets the CMR state of the module to True."""
+        """
+        This function is deprecated. Use enable_cmf() instead.
+
+        .. deprecated:: 1.8.2
+            Use enable_cmf instead.
+        """
+
+        warn("The enable_cmr method is deprecated, use enable_cmf instead", DeprecationWarning)
 
         self.set_cmr_state(True)
 
+    def disable_cmf(self):
+        """Sets the CMF state of the module to False."""
+
+        self.set_cmf_state(False)
+
     def disable_cmr(self):
-        """Sets the CMR state of the module to False."""
+        """
+        This function is deprecated. Use disable_cmf() instead.
+
+        .. deprecated:: 1.8.2
+            Use disable_cmf instead.
+        """
+
+        warn("The disable_cmr method is deprecated, use disable_cmf instead", DeprecationWarning)
 
         self.set_cmr_state(False)
 
-    def configure_cmr(self, cmr_source, cmr_state=True):
-        """Configure Common Mode Reduction (CMR).
+    def configure_cmf(self, cmf_source, cmf_state=True):
+        """Configure Common Mode Feedback (CMF).
 
             Args:
-                cmr_source (str):
-                    The new CMR source ('INTernal', or 'EXTernal').
-                cmr_state (bool):
-                    The new CMR state (True to enable CMR, False to disable CMR).
+                cmf_source (str):
+                    The new CMF source ('INTernal', or 'EXTernal').
+                cmf_state (bool):
+                    The new CMF state (True to enable CMF, False to disable CMF).
         """
+
+        self.set_cmf_source(cmf_source)
+        self.set_cmf_state(cmf_state)
+
+    def configure_cmr(self, cmr_source, cmr_state=True):
+        """
+        This function is deprecated. Use configure_cmf() instead.
+
+        .. deprecated:: 1.8.2
+            Use configure_cmf instead.
+        """
+
+        warn("The configure_cmr method is deprecated, use configure_cmf instead", DeprecationWarning)
 
         self.set_cmr_source(cmr_source)
         self.set_cmr_state(cmr_state)

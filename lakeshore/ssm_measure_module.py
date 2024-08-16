@@ -451,82 +451,202 @@ class MeasureModule(BaseModule):
         return float(self.device.query(f'SENSe{self.module_number}:LIA:ENBW?'))
 
     def get_lock_in_rolloff(self):
-        """Returns the lock-in PSD output filter roll-off for the present module. 'R6', 'R12', 'R18' or 'R24'."""
+        """Returns the lock-in (PSD) output filter roll-off for the present module. 'R6', 'R12', 'R18' or 'R24'."""
 
         return self.device.query(f'SENSe{self.module_number}:LIA:ROLLoff?')
 
     def set_lock_in_rolloff(self, rolloff):
-        """Sets the lock-in PSD output filter roll-off.
+        """Sets the lock-in (PSD) output filter roll-off.
 
             Args:
                 rolloff (str):
-                    The new PSD output filter roll-off ('R6', 'R12', 'R18' or 'R24').
+                    The new (PSD) output filter roll-off ('R6', 'R12', 'R18' or 'R24').
         """
 
         self.device.command(f'SENSe{self.module_number}:LIA:ROLLoff {rolloff}')
 
+    def get_lock_in_lowpass_state(self):
+        """Returns the state of the lock-in (PSD) output IIR filter."""
+
+        return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:LPASs:STATe?')))
+
     def get_lock_in_iir_state(self):
-        """Returns the state of the lock-in PSD output IIR filter."""
+        """
+        This function is deprecated. Use get_lock_in_lowpass_state() instead.
+
+        .. deprecated:: 1.8.2
+            Use get_lock_in_lowpass_state instead.
+        """
+
+        warn("The get_lock_in_iir_state method is deprecated, use get_lock_in_lowpass_state instead", DeprecationWarning)
 
         return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:IIR:STATe?')))
 
-    def set_lock_in_iir_state(self, state):
-        """Sets the state of the lock-in PSD output IIR filter.
+    def set_lock_in_lowpass_state(self, state):
+        """Sets the state of the lock-in (PSD) output IIR filter.
 
             Args:
                 state (bool):
-                    The new state of the PSD output IIR filter.
+                    The new state of the (PSD) output IIR filter.
         """
+
+        self.device.command(f'SENSe{self.module_number}:LIA:LPASs:STATe {str(int(state))}')
+
+    def set_lock_in_iir_state(self, state):
+        """
+        This function is deprecated. Use set_lock_in_lowpass_state() instead.
+
+        .. deprecated:: 1.8.2
+            Use set_lock_in_lowpass_state instead.
+        """
+
+        warn("The set_lock_in_iir_state method is deprecated, use set_lock_in_lowpass_state instead", DeprecationWarning)
 
         self.device.command(f'SENSe{self.module_number}:LIA:IIR:STATe {str(int(state))}')
 
+    def enable_lock_in_lowpass(self):
+        """Sets the state of the lock-in (PSD) output IIR filter to True."""
+
+        self.set_lock_in_lowpass_state(True)
+
     def enable_lock_in_iir(self):
-        """Sets the state of the lock-in PSD output IIR filter to True."""
+        """
+        This function is deprecated. Use enable_lock_in_lowpass() instead.
+
+        .. deprecated:: 1.8.2
+            Use enable_lock_in_lowpass instead.
+        """
+
+        warn("The enable_lock_in_iir method is deprecated, use enable_lock_in_lowpass instead", DeprecationWarning)
 
         self.set_lock_in_iir_state(True)
 
+    def disable_lock_in_lowpass(self):
+        """Sets the state of the lock-in (PSD) output IIR filter to False."""
+
+        self.set_lock_in_lowpass_state(False)
+
     def disable_lock_in_iir(self):
-        """Sets the state of the lock-in PSD output IIR filter to False."""
+        """
+        This function is deprecated. Use disable_lock_in_lowpass() instead.
+
+        .. deprecated:: 1.8.2
+            Use disable_lock_in_lowpass instead.
+        """
+
+        warn("The disable_lock_in_iir method is deprecated, use disable_lock_in_lowpass instead", DeprecationWarning)
 
         self.set_lock_in_iir_state(False)
 
+    def get_lock_in_averaging_state(self):
+        """Returns the state of the lock-in (PSD) output averaging (FIR) filter."""
+
+        return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:AVERage:STATe?')))
+
     def get_lock_in_fir_state(self):
-        """Returns the state of the lock-in PSD output FIR filter."""
+        """
+        This function is deprecated. Use get_lock_in_averaging_state() instead.
+
+        .. deprecated:: 1.8.2
+            Use get_lock_in_averaging_state instead.
+        """
+
+        warn("The get_lock_in_fir_state method is deprecated, use get_lock_in_averaging_state instead", DeprecationWarning)
 
         return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:FIR:STATe?')))
 
-    def set_lock_in_fir_state(self, state):
-        """Sets the state of the lock-in PSD output FIR filter.
+    def set_lock_in_averaging_state(self, state):
+        """Sets the state of the lock-in (PSD) output averaging (FIR) filter.
 
             Args:
                 state (bool):
-                    The new state of the PSD output FIR filter.
+                    The new state of the (PSD) output averaging (FIR) filter.
         """
+
+        self.device.command(f'SENSe{self.module_number}:LIA:AVERage:STATe {str(int(state))}')
+
+    def set_lock_in_fir_state(self, state):
+        """
+        This function is deprecated. Use set_lock_in_averaging_state() instead.
+
+        .. deprecated:: 1.8.2
+            Use set_lock_in_averaging_state instead.
+        """
+
+        warn("The set_lock_in_fir_state method is deprecated, use set_lock_in_averaging_state instead", DeprecationWarning)
 
         self.device.command(f'SENSe{self.module_number}:LIA:FIR:STATe {str(int(state))}')
 
+    def enable_lock_in_averaging(self):
+        """Sets the state of the lock-in (PSD) output averaging (FIR) filter to True."""
+
+        self.set_lock_in_averaging_state(True)
+
     def enable_lock_in_fir(self):
-        """Sets the state of the lock-in PSD output FIR filter to True."""
+        """
+        This function is deprecated. Use enable_lock_in_averaging() instead.
+
+        .. deprecated:: 1.8.2
+            Use enable_lock_in_averaging instead.
+        """
+
+        warn("The enable_lock_in_averaging (FIR) method is deprecated, use enable_lock_in_averaging instead", DeprecationWarning)
 
         self.set_lock_in_fir_state(True)
 
+    def disable_lock_in_averaging(self):
+        """Sets the state of the lock-in (PSD) output averaging (FIR) filter to False."""
+
+        self.set_lock_in_averaging_state(False)
+
     def disable_lock_in_fir(self):
-        """Sets the state of the lock-in PSD output FIR filter to False."""
+        """
+        This function is deprecated. Use disable_lock_in_averaging() instead.
+
+        .. deprecated:: 1.8.2
+            Use disable_lock_in_averaging instead.
+        """
+
+        warn("The disable_lock_in_averaging (FIR) method is deprecated, use disable_lock_in_averaging instead", DeprecationWarning)
 
         self.set_lock_in_fir_state(False)
 
+    def get_lock_in_reference_cycles(self):
+        """Returns the number of averaging (FIR) cycles."""
+
+        return int(self.device.query(f'SENSe{self.module_number}:LIA:REFerence:CYCLes?'))
+
     def get_lock_in_fir_cycles(self):
-        """Returns the number of FIR cycles."""
+        """
+        This function is deprecated. Use get_lock_in_reference_cycles() instead.
+
+        .. deprecated:: 1.8.2
+            Use get_lock_in_reference_cycles instead.
+        """
+
+        warn("The get_lock_in_fir_cycles method is deprecated, use get_lock_in_reference_cycles instead", DeprecationWarning)
 
         return int(self.device.query(f'SENSe{self.module_number}:LIA:FIR:CYCLes?'))
 
-    def set_lock_in_fir_cycles(self, cycles):
-        """Sets the number of FIR cycles.
+    def set_lock_in_reference_cycles(self, cycles):
+        """Sets the number of averaging (FIR) cycles.
 
             Args:
                 cycles (int):
-                    The desired number of FIR cycles, between 1 and 100.
+                    The desired number of averaging (FIR) cycles, between 1 and 100.
         """
+
+        self.device.command(f'SENSe{self.module_number}:LIA:REFerence:CYCLes {str(int(cycles))}')
+
+    def set_lock_in_fir_cycles(self, cycles):
+        """
+        This function is deprecated. Use set_lock_in_reference_cycles() instead.
+
+        .. deprecated:: 1.8.2
+            Use set_lock_in_reference_cycles instead.
+        """
+
+        warn("The set_lock_in_fir_cycles method is deprecated, use set_lock_in_reference_cycles instead", DeprecationWarning)
 
         self.device.command(f'SENSe{self.module_number}:LIA:FIR:CYCLes {str(int(cycles))}')
 
@@ -567,14 +687,14 @@ class MeasureModule(BaseModule):
                 time_constant (float):
                     Time constant in seconds.
                 rolloff (str):
-                    Lock-in PSD output filter roll-off ('R6', 'R12', 'R18' or 'R12').
+                    Lock-in (PSD) output filter roll-off ('R6', 'R12', 'R18' or 'R12').
                 reference_phase_shift (float):
                     Lock-in reference phase shift in degrees.
                 reference_harmonic (int):
                     Lock-in reference harmonic. 1 is the fundamental frequency, 2 is twice the fundamental frequency,
                     etc.
-                use_fir (bool):
-                    Enable or disable the PSD output FIR filter.
+                use_averaging (FIR) (bool):
+                    Enable or disable the (PSD) output averaging (FIR) filter.
         """
 
         self.set_mode('LIA')
@@ -583,7 +703,7 @@ class MeasureModule(BaseModule):
         self.set_lock_in_rolloff(rolloff)
         self.set_reference_phase_shift(reference_phase_shift)
         self.set_reference_harmonic(reference_harmonic)
-        self.set_lock_in_fir_state(use_fir)
+        self.set_lock_in_averaging_state(use_fir)
 
     def zero_relative_baseline(self):
         """Sets the present measurement as the baseline value for calculating relative readings."""
