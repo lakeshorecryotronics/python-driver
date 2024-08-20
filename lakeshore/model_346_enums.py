@@ -14,7 +14,6 @@ class Model346Enums:
 
     class InputSensorUnits(IntEnum):
         """Enumerator used to represent temperature sensor unit options."""
-        SENSOR = 0
         KELVIN = 1
         CELSIUS = 2
         FAHRENHEIT = 3
