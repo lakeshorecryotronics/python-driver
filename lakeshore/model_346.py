@@ -27,7 +27,7 @@ class Model346QuestionableRegister(RegisterBase):
 class Model346InputSensorSettings:
     """Class object used in the get/set_input_sensor methods."""
 
-    def __init__(self, sensor_type, autorange_enable, compensation, units, vi_swapped, input_range=None):
+    def __init__(self, sensor_type, autorange_enable, compensation, units, input_range=None):
         """Constructor for the InputSensor class.
 
             Args:
@@ -39,8 +39,6 @@ class Model346InputSensorSettings:
                     Specifies input compensation. (False = off, True = on).
                 units (Model346Enums.InputSensorUnits):
                     Specifies the preferred units parameter for sensor readings and for the control set-point.
-                vi_swapped (bool):
-                    Specifies whether readings have swapped vi leads. (False = off, True = on).
                 input_range (IntEnum):
                     Specifies input range if autorange_enable is False.
                     See IntEnum classes: Model346Enums.DiodeRange, Model346Enums.PTCRTDRange,
@@ -52,7 +50,6 @@ class Model346InputSensorSettings:
         self.autorange_enable = autorange_enable
         self.compensation = compensation
         self.units = units
-        self.vi_swapped = vi_swapped
         self.input_range = input_range
 
 
@@ -216,8 +213,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             input_range = sensor_params.input_range
 
         self.command(f"INTYPE {input_channel},{sensor_params.sensor_type},{int(autorange_enable)},"
-                     f"{input_range},{int(sensor_params.compensation)},{sensor_params.units},"
-                     f"{int(sensor_params.vi_swapped)}")
+                     f"{input_range},{int(sensor_params.compensation)},{sensor_params.units}")
 
     def get_input_sensor(self, input_channel):
         """Sets the sensor type and associated parameters.
@@ -246,7 +242,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                                            bool(int(sensor_params[1])),
                                            bool(int(sensor_params[3])),
                                            self.InputSensorUnits(int(sensor_params[4])),
-                                           bool(int(sensor_params[5])),
                                            input_range)
 
     def set_heater_range(self, output, heater_range):
