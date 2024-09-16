@@ -344,6 +344,26 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             "output_units": self.HeaterOutputUnits(int(heater_setup[2]))
         }
 
+    def get_heater_output_measurements(self, output):
+        """Returns the heater output measurements.
+
+            Args:
+                output (int):
+                    Specifies which heater output to query (1 - 4)
+
+            Returns:
+                dict[str, float ]:
+                    {"heater_voltage": float, "heater_current": float, "heater_resistance": float, "heater_power": float}
+
+        """
+        heater_measurements = self.query(f"HTRDIAG? {output}").split(",")
+        return {
+            "heater_voltage": float(heater_measurements[0]),
+            "heater_current": float(heater_measurements[1]),
+            "heater_resistance": float(heater_measurements[2]),
+            "heater_power": float(heater_measurements[3])
+        }
+
     def set_output_mode(self, output, mode, input_channel, powerup_enable=False):
         """Configures the output mode of a particular output.
 
