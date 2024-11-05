@@ -1270,9 +1270,13 @@ class SourceModule(BaseModule):
         if round_trip:
             ramp_total_time *= 2
 
-        # Determine the shortest dwell time that can be used without exceeding the maximum number of points
-        dwell_time = math.ceil(ramp_total_time / (self.device.min_sweep_dwell * self.device.max_sweep_points)) * self.device.min_sweep_dwell
-        num_points = round(ramp_total_time / dwell_time)
+        if ramp_total_time != 0:
+            # Determine the shortest dwell time that can be used without exceeding the maximum number of points
+            dwell_time = math.ceil(ramp_total_time / (self.device.min_sweep_dwell * self.device.max_sweep_points)) * self.device.min_sweep_dwell
+            num_points = round(ramp_total_time / dwell_time)
+        else:
+            dwell_time = self.device.min_sweep_dwell
+            num_points = 2
 
         sweep_config = self.device.SourceSweepSettings(sweep_type=self.device.SourceSweepType.CURRENT_AMPLITUDE,
                                                        start=start_amplitude,
