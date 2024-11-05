@@ -1157,6 +1157,12 @@ class SourceModule(BaseModule):
                 The configuration for a specific sweep on the specified module.
         """
 
+        # Reset all sweep parameters to fixed
+        self.device.command(f'SOURce{self.module_number}:VOLTage:MODE FIXed')
+        self.device.command(f'SOURce{self.module_number}:CURRent:MODE FIXed')
+        self.device.command(f'SOURce{self.module_number}:OFFSet:MODE FIXed')
+        self.device.command(f'SOURce{self.module_number}:FREQuency:MODE FIXed')
+
         self.device.command(f'SOURce{self.module_number}:SWEep:DWELl {sweep_settings.dwell}')
         self.device.command(f'SOURce{self.module_number}:SWEep:POINts {sweep_settings.points}')
         self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {sweep_settings.spacing}')
