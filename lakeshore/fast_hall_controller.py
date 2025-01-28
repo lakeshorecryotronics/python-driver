@@ -1057,6 +1057,9 @@ class FastHall(XIPInstrument):
             self.start_contact_check_vdp(settings)
         elif sample_type == "HBAR":
             self.start_contact_check_hbar(settings)
+        else:
+            raise ValueError('Invalid value for sample_type argument. '
+                             'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR for a Hall bar."')
 
         #  Loop until measurement has stopped running
         while self.get_contact_check_running_status():
@@ -1148,6 +1151,9 @@ class FastHall(XIPInstrument):
             self.start_dc_hall_vdp(settings)
         elif sample_type == "HBAR":
             self.start_dc_hall_hbar(settings)
+        else:
+            raise ValueError('Invalid value for sample_type argument. '
+                             'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR for a Hall bar."')
 
         # Loop until measurement has stopped running or waiting
         while self.get_dc_hall_running_status() or self.get_dc_hall_waiting_status():
@@ -1197,6 +1203,9 @@ class FastHall(XIPInstrument):
             self.start_resistivity_vdp(settings)
         elif sample_type == "HBAR":
             self.start_resistivity_hbar(settings)
+        else:
+            raise ValueError('Invalid value for sample_type argument. '
+                             'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR for a Hall bar."')
 
         # Loop until measurement has stopped running
         while self.get_resistivity_running_status():
