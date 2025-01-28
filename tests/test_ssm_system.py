@@ -1028,6 +1028,7 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.dut_module.set_readback_nplcycles(2.0)
         self.assertIn('SOURce1:READback:NPLCycles 2.0', self.fake_connection.get_outgoing_message())
 
+
 class TestSweepMethods(TestWithFakeSSMSSourceModule):
     def test_set_sweep_configuration(self):
         # Create a sweep config object using the sweep settings class
@@ -1041,10 +1042,18 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
             spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LOGARITHMIC,
             round_trip=False)
         # Queue up an error queue response for every command that will be sent
-        self.queue_up_many_no_error_responses(8)
+        self.queue_up_many_no_error_responses(12)
         # Call the method
         self.dut_module.set_sweep_configuration(sweep_configuration)
         # Do an assert for every command
+        self.assertIn(f'SOURce{self.dut_module.module_number}:VOLTage:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:CURRent:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:OFFSet:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:FREQuency:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
         self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DWELl {sweep_configuration.dwell}',
                       self.fake_connection.get_outgoing_message())
         self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:POINts {sweep_configuration.points}',
@@ -1177,11 +1186,19 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
         # Queue up a response for every command that will be sent
         # No start value is passed, so we query the present amplitude from the instrument
         self.fake_connection.setup_response('1.0;No error')
-        self.queue_up_many_no_error_responses(8)
+        self.queue_up_many_no_error_responses(12)
         # Call the function
         self.dut_module.set_voltage_ramp_configuration(2.0)
         # Assert every command sent matches expectations
         self.assertIn(f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:LEVel:AMPLitude?',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:VOLTage:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:CURRent:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:OFFSet:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:FREQuency:MODE FIXed',
                       self.fake_connection.get_outgoing_message())
         self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DWELl {sweep_configuration.dwell}',
                       self.fake_connection.get_outgoing_message())
@@ -1215,10 +1232,18 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
             spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
             round_trip=False)
         # Queue up a response for every command that will be sent
-        self.queue_up_many_no_error_responses(8)
+        self.queue_up_many_no_error_responses(12)
         # Call the function
         self.dut_module.set_current_ramp_configuration(-0.456, start_amplitude=0.123, slew_rate=100E-6)
         # Assert every command sent matches expectations
+        self.assertIn(f'SOURce{self.dut_module.module_number}:VOLTage:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:CURRent:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:OFFSet:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:FREQuency:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
         self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DWELl {sweep_configuration.dwell}',
                       self.fake_connection.get_outgoing_message())
         self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:POINts {sweep_configuration.points}',
@@ -1238,6 +1263,118 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
         self.assertIn(
             f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STOP {sweep_configuration.stop}',
             self.fake_connection.get_outgoing_message())
+
+    def test_do_dc_sweep_step_and_measure(self):
+        # Response for setting source shape to DC
+        self.fake_connection.setup_response('No error')
+        # Response for line frequency query
+        self.fake_connection.setup_response('60;No error')
+        # Response for setting the measure mode to DC
+        self.fake_connection.setup_response('No error')
+        # Response for setting the measure power line cycles
+        self.fake_connection.setup_response('No error')
+        # Response for querying the source mode
+        self.fake_connection.setup_response('VOLTAGE;No error')
+
+        # Queue up responses for stream configuration
+        self.queue_up_many_no_error_responses(12)
+
+        # Create the encoded data that will be streamed
+        list_data = [(0, 0.0001), (1, 1.0011), (2, 2.0021)]
+
+        my_data = []
+        for data in list_data:
+            for value in data:
+                my_data.append(value)
+
+        list_format = '<dddddd'
+        pack_data = pack(list_format, *my_data)
+        if sys.version_info[0] < 3:
+            encoded_data = str(b64encode(pack_data))
+        else:
+            encoded_data = str(b64encode(pack_data))[2:-1]
+
+        # Response for trace reset command
+        self.fake_connection.setup_response('No error')
+        # Response for configure_stream_elements
+        self.fake_connection.setup_response('No error')
+        # Response for format encoding command
+        self.fake_connection.setup_response('No error')
+        # Response for rate command
+        self.fake_connection.setup_response('No error')
+        # Response for bytes per row query
+        self.fake_connection.setup_response('16;No error')
+        # Response for binary format
+        self.fake_connection.setup_response('\"dd\";No error')
+        # Response for trace start
+        self.fake_connection.setup_response('No error')
+        # Response for trace data, check errors set to false
+        self.fake_connection.setup_response(encoded_data)
+        # Response for overflow
+        self.fake_connection.setup_response('0;No error')
+
+        # Call the function
+        response = self.dut_module.do_dc_sweep_step_and_measure(0, 2, dwell_time=0.1, number_of_points=3)
+
+        self.assertIn('SOURce1:FUNCtion:SHAPe DC', self.fake_connection.get_outgoing_message())
+        self.assertIn('SYSTem:LFRequency?', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENSe1:MODE DC', self.fake_connection.get_outgoing_message())
+        # 6 PLCs is 0.1 seconds if the line is 60 Hz
+        self.assertIn('SENSe1:NPLCycles 6', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURce1:FUNCtion:MODE?', self.fake_connection.get_outgoing_message())
+
+        # Create a sweep config object using the sweep settings class that matches the expected settings
+        sweep_configuration = self.dut_system.SourceSweepSettings(
+            sweep_type=self.dut_system.SourceSweepType.VOLTAGE_AMPLITUDE,
+            start=0,
+            stop=2,
+            points=3,
+            dwell=0.1,
+            direction=self.dut_system.SourceSweepSettings.Direction.UP,
+            spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
+            round_trip=False)
+
+        # Assert every command sent matches expectations
+        self.assertIn(f'SOURce{self.dut_module.module_number}:VOLTage:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:CURRent:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:OFFSet:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:FREQuency:MODE FIXed',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DWELl {sweep_configuration.dwell}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:POINts {sweep_configuration.points}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:SPACing {sweep_configuration.spacing}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:SWEep:DIRection {sweep_configuration.direction}',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(
+            f'SOURce{self.dut_module.module_number}:SWEep:DIRection:RTRip {int(sweep_configuration.round_trip)}',
+            self.fake_connection.get_outgoing_message())
+        self.assertIn(f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:MODE SWEep',
+                      self.fake_connection.get_outgoing_message())
+        self.assertIn(
+            f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STARt {sweep_configuration.start}',
+            self.fake_connection.get_outgoing_message())
+        self.assertIn(
+            f'SOURce{self.dut_module.module_number}:{sweep_configuration.sweep_type}:STOP {sweep_configuration.stop}',
+            self.fake_connection.get_outgoing_message())
+
+        response_list = []
+        for data in response:
+            response_list.append(data)
+
+        self.assertEqual(response_list, list_data)
+        self.assertIn('TRACe:RESEt', self.fake_connection.get_outgoing_message())
+        self.assertIn('TRACe:FORMat:ELEMents SAMP,1,MDC,1', self.fake_connection.get_outgoing_message())
+        self.assertIn('TRACe:FORMat:ENCOding B64', self.fake_connection.get_outgoing_message())
+        self.assertIn('TRACe:RATE 10', self.fake_connection.get_outgoing_message())
+        self.assertIn('TRACe:FORMat:ENCOding:B64:BCOunt?', self.fake_connection.get_outgoing_message())
+        self.assertIn('TRACe:FORMat:ENCOding:B64:BFORmat?', self.fake_connection.get_outgoing_message())
+        self.assertIn('TRACe:STARt 3', self.fake_connection.get_outgoing_message())
 
 
 class TestMeasureModule(TestWithFakeSSMSMeasureModule):

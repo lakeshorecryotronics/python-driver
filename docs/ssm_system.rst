@@ -25,6 +25,10 @@ Sweep a BCS-10 from 0 mA to 100 mA
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/ssm_sweep_and_stream_example.py
 
+Ramp, Sweep, and collect data with a VS-10
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: examples/ssm_simple_sweep_example.py
+
 SSMS instrument methods
 _______________________
 
