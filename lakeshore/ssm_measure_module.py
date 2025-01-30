@@ -1366,7 +1366,7 @@ class MeasureModule(BaseModule):
             baseline (float): The requested baseline.
         """
 
-        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:DC:BASeline {baseline}")
+        self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:DC:RELative:BASeline {baseline}")
 
     def get_resistance_relative_baseline(self):
         """Gets the present relative resistance baseline that is used to calculate relative dc resistance.
