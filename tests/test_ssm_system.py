@@ -2085,12 +2085,12 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
     def test_set_resistance_mode(self):
         self.fake_connection.setup_response("No error")
         self.dut_module.set_resistance_mode(SSMSystemEnums.ResistanceMode.POWER)
-        self.assertIn('CALCulate:SENSe1:RESistance:MODE POWer', self.fake_connection.get_outgoing_message())
+        self.assertIn('CALCulate:SENSe1:RESistance:MODE POWER', self.fake_connection.get_outgoing_message())
 
     def test_get_resistance_mode(self):
-        self.fake_connection.setup_response("POWer;No error")
+        self.fake_connection.setup_response("POWER;No error")
         response = self.dut_module.get_resistance_mode()
-        self.assertEqual(response, "POWer")
+        self.assertEqual(response, "POWER")
         self.assertEqual(response, SSMSystemEnums.ResistanceMode.POWER)
         self.assertIn('CALCulate:SENSe1:RESistance:MODE?', self.fake_connection.get_outgoing_message())
 
