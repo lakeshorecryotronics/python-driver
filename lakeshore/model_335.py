@@ -583,7 +583,7 @@ class Model335(Model335Enums, TemperatureController):
 
     def _disable_emulation(self):
         """Disables emulation mode so that instrument is compatible with Python Driver."""
-        self.command("EMUL 0", check_errors=False)
+        self.command("EMUL 0,0", check_errors=False)
 
 
 __all__ = ['Model335', 'Model335ControlLoopZoneSettings', 'Model335InputReadingStatus', 'Model335InputSensorSettings',
