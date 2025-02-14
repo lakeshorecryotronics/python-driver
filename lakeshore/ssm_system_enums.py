@@ -145,7 +145,7 @@ class SSMSystemEnums:
         """Class object representing the possible excitation types that create a valid resistance configuration."""
         AC = 'AC'
         DC = 'DC'
-        INVALID = 'INVAlid'
+        INVALID = 'INVALID'
 
         # Gets around having to use .value to access the string
         def __str__(self) -> str:
@@ -153,8 +153,8 @@ class SSMSystemEnums:
 
     class ResistanceMode(str, Enum):
         """Class object representing the possible resistance modes."""
-        NOISE = 'NOISe'
-        POWER = 'POWer'
+        NOISE = 'NOISE'
+        POWER = 'POWER'
 
         # Gets around having to use .value to access the string
         def __str__(self) -> str:
