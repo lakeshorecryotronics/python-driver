@@ -30,8 +30,9 @@ ________________________
 
 .. autoclass:: Model372
     :member-order: bysource
+    :inherited-members: Model372Enums, TemperatureControllerEnums
     :members:
-    :inherited-members: Model372Enums
+    :no-index:
 
 Instrument settings classes and registers
 _________________________________________
@@ -93,6 +94,11 @@ various settings of the model 372 that are represented as an int or single chara
 to the instrument. The purpose of these objects is to make the settings more
 descriptive and obvious to the user rather than interpreting the ints taken by
 the instrument.
+
+.. autoclass:: lakeshore.temperature_controllers_enums.TemperatureControllerEnums
+    :members:
+    :undoc-members:
+    :no-index:
 
 .. autoclass:: Model372Enums
     :members:
