@@ -65,5 +65,3 @@ class Model346Enums:
         ZONE = 2
         OPEN_LOOP = 3
         MONITOR_OUT = 4
-        WARMUP_SUPPLY = 5
-        MIRRORING = 6
