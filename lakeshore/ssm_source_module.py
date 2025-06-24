@@ -1163,6 +1163,8 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:OFFSet:MODE FIXed')
         self.device.command(f'SOURce{self.module_number}:FREQuency:MODE FIXed')
 
+        self.device.command(f'SOURce{self.module_number}:SWEep:INITialdelay {sweep_settings.initial_delay}')
+        self.device.command(f'SOURce{self.module_number}:SWEep:BLANKing {sweep_settings.blanking}')
         self.device.command(f'SOURce{self.module_number}:SWEep:DWELl {sweep_settings.dwell}')
         self.device.command(f'SOURce{self.module_number}:SWEep:POINts {sweep_settings.points}')
         self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {sweep_settings.spacing}')
@@ -1171,6 +1173,7 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:MODE SWEep')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STARt {sweep_settings.start}')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STOP {sweep_settings.stop}')
+    
 
     @requires_firmware_version('1.7.0')
     def get_sweep_configuration(self, sweep_type):
@@ -1189,7 +1192,9 @@ class SourceModule(BaseModule):
             float(self.device.query(f'SOURce{self.module_number}:SWEep:DWELl?')),
             self.device.query(f'SOURce{self.module_number}:SWEep:DIRection?'),
             bool(int(self.device.query(f'SOURce{self.module_number}:SWEep:DIRection:RTRip?'))),
-            self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?'))
+            self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?'),
+            float(self.device.query(f'SOURce{self.module_number}:SWEep:INItialdelay?')),
+            float(self.device.query(f'SOURce{self.module_number}:SWEep:BLANKing?')))
 
     @requires_firmware_version('1.7.0')
     def disable_all_sweeping(self):
