@@ -662,7 +662,7 @@ class MeasureModule(BaseModule):
         self.set_averaging_time(nplc)
 
     def setup_ac_measurement(self, nplc=1):
-        """Set up the module for DC measurement.
+        """Set up the module for AC measurement.
 
             Args:
                 nplc (float):
