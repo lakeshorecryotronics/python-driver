@@ -1430,3 +1430,121 @@ class SourceModule(BaseModule):
         """
 
         self.device.command(f"SOURce{self.module_number}:READback:NPLCycles {value}")
+
+    def do_ac_offset_sweep_step_and_measure(self,
+                                            ac_shape,
+                                            ac_frequency,
+                                            ac_amplitude,
+                                            start_amplitude,
+                                            stop_amplitude,
+                                            *optional_custom_data_sources,
+                                            ac_duty_cycle= 0.5,
+                                            dwell_time='AUTO',
+                                            number_of_points='AUTO',
+                                            settle_time=0.0,
+                                            sweep_spacing='LINEAR',
+                                            round_trip=False,
+                                            include_source_amplitude=True,
+                                            include_relative_time=False):
+        """Immediately runs an AC offset source sweep and returns data for each point in the sweep.
+
+        Args:
+            ac_shape (str):
+                The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
+            ac_frequency (float):
+                The AC frequency in Hz.
+            ac_amplitude (float):
+                The AC voltage amplitude in volts or amps.
+            start_amplitude (float):
+                The starting source value of the sweep in volts or amps.
+            stop_amplitude (float):
+                The ending source value of the sweep in volts or amps.
+            ac_duty_cycle (float):
+                The duty cycle of the AC waveform, between 0.0 and 1.0, defaults to 0.5.
+            dwell_time (float):
+                Time duration of each step in seconds, defaults to AUTO
+            number_of_points (int):
+                How many steps to take going from the start to the stop amplitude.
+                AUTO chooses a decade step size that results in between 100 and 1,000 points
+            optional_custom_data_sources (SSMSystemDataSourceMnemonic or str, int):
+                Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
+                Defaults to AC on the source's matching measure channel if unspecified.
+                If specified only the specified custom data sources will be collected.
+                If specified the corresponding measure channel will not be configured automatically.
+            settle_time (float):
+                How long to wait before taking a measurement after a step change.
+                Defaults to zero. Must be shorter than the dwell time.
+            sweep_spacing (str or SweepSpacing enum):
+                LINEAR or LOGARITHMIC sweep
+            round_trip (bool):
+                Sweeps to the stop amplitude then sweeps back to the start amplitude when true.
+                Returns double the sweep number of points when true.
+            include_source_amplitude (bool):
+                The source amplitude is included in the returned data when true
+            include_relative_time (bool):
+                The time since the start of the sweep is in the returned data when true
+        """
+        self.set_shape(ac_shape)
+
+        self.set_frequency(ac_frequency)
+        
+        # Get the excitation mode to determine if the source will provide current or voltage
+        if self.get_excitation_mode() == 'VOLTAGE':
+            sweep_type = self.device.SourceSweepType.VOLTAGE_AMPLITUDE
+            self.set_voltage_amplitude(ac_amplitude)
+        else:
+            sweep_type = self.device.SourceSweepType.CURRENT_AMPLITUDE
+            self.set_current_amplitude(ac_amplitude)
+        self.set_duty(ac_duty_cycle)
+
+        if dwell_time == 'AUTO':
+            # default of 3 power line cycles
+            dwell_time = 3 / self.device.get_line_frequency()
+
+        self.device.min_sweep_dwell = self.device.source_shape_dwell_times[ac_shape]
+        # Round the dwell time to the nearest valid value
+        dwell_time = round(dwell_time / self.device.min_sweep_dwell, 0) * self.device.min_sweep_dwell
+
+        if number_of_points == 'AUTO':
+            if sweep_spacing == 'LINEAR':
+                # determine a decade step size that results in between 100 and 1000 points for linear sweep
+                step_size = 10 ** (math.floor(math.log10(abs(stop_amplitude - start_amplitude))) - 2)
+                number_of_points = round(abs(stop_amplitude - start_amplitude) / step_size + 1)
+            else:
+                # determine a decade step size that results in between 100 and 1000 points for logarithmic sweep
+                step_size = 10 ** (math.floor(math.log10(abs(stop_amplitude/start_amplitude))) - 2)
+                number_of_points = round(abs(stop_amplitude/start_amplitude) / step_size + 1)
+
+        # if custom data sources are not specified, automatically configure the corresponding measure module
+        if not optional_custom_data_sources:
+            measure_module = self.device.get_measure_module(self.module_number)
+            averaging_nplcs = (dwell_time - settle_time) * self.device.get_line_frequency()
+            measure_module.setup_ac_measurement(averaging_nplcs)
+
+        sweep_config = self.device.SourceSweepSettings(sweep_type=sweep_type,
+                                                       start=start_amplitude,
+                                                       stop=stop_amplitude,
+                                                       points=number_of_points,
+                                                       dwell=dwell_time,
+                                                       spacing=sweep_spacing,
+                                                       direction=self.device.SourceSweepSettings.Direction.UP,
+                                                       round_trip=round_trip)
+        self.set_sweep_configuration(sweep_config)
+
+        # double the number of points to stream if doing a round trip sweep
+        if round_trip:
+            number_of_points *= 2
+
+        # Configure data streaming which initiates the configured sweep
+        if optional_custom_data_sources:
+            sweep_data = self.device.get_data(1 / dwell_time, number_of_points, *optional_custom_data_sources)
+        else:
+            data_sources = []
+            if include_relative_time:
+                data_sources.append(('RTIME', self.module_number))
+            if include_source_amplitude:
+                data_sources.append(('SAMP', self.module_number))
+            data_sources.append(('MAC', self.module_number))
+            sweep_data = self.device.get_data(1 / dwell_time, number_of_points, *data_sources)
+
+        return sweep_data
