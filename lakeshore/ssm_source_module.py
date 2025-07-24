@@ -1444,13 +1444,27 @@ class SourceModule(BaseModule):
         """
         if sweep_spacing == 'LINEAR':
             step_size = 10 ** (math.floor(math.log10(abs(stop_value - start_value))) - 2)
-            return round(abs(stop_value - start_value) / step_size + 1)
+            number_of_points = round(abs(stop_value - start_value) / step_size + 1)
         else:
             step_size = 10 ** (math.floor(math.log10(abs(stop_value / start_value))) - 2)
-            return round(abs(stop_value / start_value) / step_size + 1)
+            number_of_points = round(abs(stop_value / start_value) / step_size + 1)
+        return number_of_points
 
-    def configure_ac_sweep(self, ac_sweep_parameter, source_frequency, source_amplitude, source_offset, excitation_mode):
-        """Configures the AC sweep parameter and returns the data source mnemonics and sweep type.
+    def calculate_dwell_time_for_shape(self, source_shape, power_line_cycles=3):
+        """Calculates the dwell time based on the source shape and power line cycles.
+
+        Args:
+            source_shape (str): The shape of the source signal ('DC', 'SINUSOID', 'SQUARE', 'TRIANGLE').
+            power_line_cycles (int): The number of power line cycles to use for the calculation.
+
+        Returns:
+            float: The calculated dwell time in seconds.
+        """
+        min_dwell_for_shape = self.device.source_shape_dwell_times[source_shape]
+        return round(power_line_cycles / self.device.get_line_frequency() / min_dwell_for_shape, 0) * min_dwell_for_shape
+
+    def get_ac_sweep_parameter_and_data_source(self, ac_sweep_parameter, source_frequency, source_amplitude, source_offset):
+        """Configures the AC source sweep based on the specified parameter and returns the corresponding data source mnemonic and sweep type.
 
         Args:
             ac_sweep_parameter (str): The AC parameter to sweep ('OFFSET', 'FREQUENCY', 'AMPLITUDE').
@@ -1462,6 +1476,10 @@ class SourceModule(BaseModule):
         Returns:
             tuple: A tuple containing the data source mnemonics and sweep type.
         """
+
+        # Determine if the source will provide current or voltage
+        excitation_mode = self.get_excitation_mode()
+
         if ac_sweep_parameter == "OFFSET":
             if source_frequency is None or source_amplitude is None:
                 raise ValueError("source_frequency and source_amplitude are required when sweeping 'OFFSET'.")
@@ -1470,7 +1488,7 @@ class SourceModule(BaseModule):
                 self.set_voltage_amplitude(source_amplitude)
             else:
                 self.set_current_amplitude(source_amplitude)
-            return SSMSystemEnums.DataSourceMnemonic.SOURCE_OFFSET, self.device.SourceSweepType.OFFSET
+            return self.device.SourceSweepType.OFFSET, SSMSystemEnums.DataSourceMnemonic.SOURCE_OFFSET
 
         if ac_sweep_parameter == "FREQUENCY":
             if source_amplitude is None or source_offset is None:
@@ -1481,7 +1499,7 @@ class SourceModule(BaseModule):
             else:
                 self.set_current_amplitude(source_amplitude)
                 self.set_current_offset(source_offset)
-            return SSMSystemEnums.DataSourceMnemonic.SOURCE_FREQUENCY, self.device.SourceSweepType.FREQUENCY
+            return self.device.SourceSweepType.FREQUENCY, SSMSystemEnums.DataSourceMnemonic.SOURCE_FREQUENCY
 
         if ac_sweep_parameter == "AMPLITUDE":
             if source_frequency is None or source_offset is None:
@@ -1492,10 +1510,10 @@ class SourceModule(BaseModule):
             else:
                 self.set_current_offset(source_offset)
             return (
-                SSMSystemEnums.DataSourceMnemonic.SOURCE_AMPLITUDE,
                 self.device.SourceSweepType.VOLTAGE_AMPLITUDE
                 if excitation_mode == "VOLTAGE"
                 else self.device.SourceSweepType.CURRENT_AMPLITUDE,
+                SSMSystemEnums.DataSourceMnemonic.SOURCE_AMPLITUDE,
             )
 
         raise ValueError("ac_sweep_parameter must be 'OFFSET', 'FREQUENCY', or 'AMPLITUDE'.")
@@ -1558,20 +1576,14 @@ class SourceModule(BaseModule):
         """
         self.set_shape(ac_shape)
 
-        # Determine if the source will provide current or voltage
-        excitation_mode = self.get_excitation_mode()
-
-        data_source_mnemonics, sweep_type = self.configure_ac_sweep(
-                        ac_sweep_parameter, source_frequency, source_amplitude, source_offset, excitation_mode
-        )
+        sweep_type, data_source_mnemonics = self.get_ac_sweep_parameter_and_data_source(ac_sweep_parameter, 
+                                                                                        source_frequency, 
+                                                                                        source_amplitude,
+                                                                                         source_offset)
 
         if dwell_time == 'AUTO':
             # default of 3 power line cycles
-            dwell_time = 3 / self.device.get_line_frequency()
-
-        self.device.min_sweep_dwell = self.device.source_shape_dwell_times[ac_shape]
-        # Round the dwell time to the nearest valid value
-        dwell_time = round(dwell_time / self.device.min_sweep_dwell, 0) * self.device.min_sweep_dwell
+            dwell_time = self.calculate_dwell_time_for_shape(ac_shape, 3)
 
         if number_of_points == 'AUTO':
             number_of_points = self.calculate_number_of_sweep_points(start_value, stop_value, sweep_spacing)
