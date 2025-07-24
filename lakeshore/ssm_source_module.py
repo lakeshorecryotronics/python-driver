@@ -1576,10 +1576,10 @@ class SourceModule(BaseModule):
         """
         self.set_shape(ac_shape)
 
-        sweep_type, data_source_mnemonics = self.get_ac_sweep_parameter_and_data_source(ac_sweep_parameter, 
-                                                                                        source_frequency, 
+        sweep_type, data_source_mnemonics = self.get_ac_sweep_parameter_and_data_source(ac_sweep_parameter,
+                                                                                        source_frequency,
                                                                                         source_amplitude,
-                                                                                         source_offset)
+                                                                                        source_offset)
 
         if dwell_time == 'AUTO':
             # default of 3 power line cycles
