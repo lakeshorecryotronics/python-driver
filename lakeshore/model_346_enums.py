@@ -11,6 +11,7 @@ class Model346Enums:
         DIODE = 1
         PLATINUM_RTD = 2
         NTC_RTD = 3
+        THERMOCOUPLE = 4
 
     class InputSensorUnits(IntEnum):
         """Enumerator used to represent temperature sensor unit options."""
@@ -22,7 +23,6 @@ class Model346Enums:
     class DiodeRange(IntEnum):
         """Diode voltage range enumeration"""
         TWO_POINT_FIVE_VOLTS = 0
-        # TEN_VOLTS = 1
 
     class PTCRTDRange(IntEnum):
         """PTC RTD resistance range enumeration."""
