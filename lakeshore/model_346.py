@@ -434,28 +434,12 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         response = self.query(f"ANALOG? {output}").split(",")
         return {"high_value": float(response[0]), "low_value": float(response[1])}
 
-    def set_sensor_name(self, input_channel, sensor_name):
-        """Implementation does not exist yet (INNAME). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
-    def get_sensor_name(self, input_channel):
-        """Implementation does not exist yet (INNAME?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
     def get_alarm_status(self, channel):
         """Implementation does not exist yet (ALARMST?). Overrides from base."""
         raise NotImplementedError("Implementation does not exist yet")
 
     def reset_alarm_status(self):
         """Implementation does not exist yet (ALRMST?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
-    def get_heater_output(self, output):
-        """Implementation does not exist yet (HTR?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
-    def get_heater_status(self, output):
-        """Implementation does not exist yet (HTRST?). Overrides from base."""
         raise NotImplementedError("Implementation does not exist yet")
 
     def set_ieee_488(self, address):
@@ -481,27 +465,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
     def get_remote_interface_mode(self):
         """Implementation does not exist yet (MODE?). Overrides from base."""
         raise NotImplementedError("Implementation does not exist yet")
-
-    def set_setpoint_ramp_parameter(self, output, ramp_enable, rate_value):
-        """Implementation does not exist yet (RAMP). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
-    def get_setpoint_ramp_parameter(self, output):
-        """Implementation does not exist yet (RAMP?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
-    def get_setpoint_ramp_status(self, output):
-        """Implementation does not exist yet (RAMPST?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
-    def set_temperature_limit(self, input_channel, limit):
-        """Implementation does not exist yet (TLIMIT). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
-    def get_temperature_limit(self, input_channel):
-        """Implementation does not exist yet (TLIMIT?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
 
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
