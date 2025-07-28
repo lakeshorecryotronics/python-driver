@@ -466,6 +466,17 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """Implementation does not exist yet (MODE?). Overrides from base."""
         raise NotImplementedError("Implementation does not exist yet")
 
+    def reset_min_max_data(self, channel):
+        """Resets the minimum and maximum reading data for the give input, or all inputs if ALL is specified.
+
+            Args:
+                channel (str):
+                    Specifies the input channel to reset (A - H4) or ALL to reset all inputs.
+
+        """
+        command_string = f"MNMXRST {channel}"
+        self.command(command_string)
+
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister']
