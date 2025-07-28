@@ -78,6 +78,29 @@ class Model346AlarmSettings:
         self.high_value = high_value
 
 
+class Model346InputReadingStatus(RegisterBase):
+    """Class object representing the input status flag bits."""
+
+    bit_names = [
+        "Hardware_settling",
+        "",
+        "",
+        "Current_Source_in_Compliance",
+        "Temperature_Underrange",
+        "Temperature_Overrange",
+        "Sensor_Units_Readings_Under_Range",
+        "Sensor_Units_Readings_Over_Range"
+    ]
+
+    def __init__(self, Hardware_settling, Current_Source_in_Compliance, Temperature_Underrange, Temperature_Overrange, Sensor_Units_Readings_Under_Range, Sensor_Units_Readings_Over_Range):
+        self.Hardware_settling = Hardware_settling
+        self.Current_Source_in_Compliance = Current_Source_in_Compliance
+        self.Temperature_Underrange = Temperature_Underrange
+        self.Temperature_Overrange = Temperature_Overrange
+        self.Sensor_Units_Readings_Under_Range = Sensor_Units_Readings_Under_Range
+        self.Sensor_Units_Readings_Over_Range = Sensor_Units_Readings_Over_Range
+
+
 class Model346(Model346Enums, XIPInstrument, TemperatureController):
     """
     Class for interaction with the Lake Shore Model 346 cryogenic temperature controller.
@@ -477,6 +500,21 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         command_string = f"MNMXRST {channel}"
         self.command(command_string)
 
+    def get_input_reading_status(self, input_channel):
+        """Returns the status of the specified input channel.
+
+            Args:
+                input_channel (str):
+                    Specifies the input channel to query (A - H4).
+
+            Returns:
+                (InputReadingStatus):
+                    Boolean representation of each bit of the input status flag register.
+
+        """
+        response = int(self.query(f"RDGST? {input_channel}"))
+        return Model346InputReadingStatus.from_integer(response)
+
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
-           'Model346StatusByteRegister']
+           'Model346StatusByteRegister', 'Model346InputReadingStatus']
