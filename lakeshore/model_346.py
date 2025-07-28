@@ -515,6 +515,22 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         response = int(self.query(f"RDGST? {input_channel}"))
         return Model346InputReadingStatus.from_integer(response)
 
+    def _get_thermocouple_junction_temp(self, input_channel):
+        """Returns the thermocouple junction temperature for the specified input channel.
+
+            Args:
+                input_channel (str):
+                    Specifies the input channel to query (A - H4).
+
+            Returns:
+                float:
+                    The thermocouple junction temperature in degrees Kelvin.
+
+        """
+        response = float(self.query(f"TEMP? {input_channel}"))
+        return response
+
+
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus']
