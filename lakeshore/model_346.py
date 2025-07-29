@@ -564,6 +564,16 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             "short_circuit_resistance": float(response[1]),
             "open_circuit_resistance": float(response[2])
         }
+
+    def reset_control_setpoint(self, output):
+        """Resets the control setpoint for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to reset (1 - 8).
+
+        """
+        self.command(f"SETPRST {output}")
     
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
