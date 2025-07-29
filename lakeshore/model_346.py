@@ -530,7 +530,41 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         response = float(self.query(f"TEMP? {input_channel}"))
         return response
 
+    def set_heater_limit(self, output, enabled, short_circuit_resistance, open_circuit_resistance):
+        """Enables or disables the heater limit for a particular output and sets the bounds.
 
+            Args:
+                output (int):
+                    Specifies which output to configure (1 - 4).
+                enabled (int):
+                    Specifies whether the heater limit is enabled.
+                short_circuit_resistance (float):
+                    Specifies the short circuit limit in ohms.
+                open_circuit_resistance (float):
+                    Specifies the open circuit limit in ohms.
+
+        """
+        self.command(f"HTRLIM {output},{int(enabled)},{short_circuit_resistance},{open_circuit_resistance}")
+
+    def get_heater_limit(self, output):
+        """Returns the heater limit settings for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to query (1 - 4).
+
+            Returns:
+                dict[str, float | bool]:
+                    {"enabled": bool, "short_circuit_resistance": float, "open_circuit_resistance": float}
+
+        """
+        response = self.query(f"HTRLIM? {output}").split(",")
+        return {
+            "enabled": bool(int(response[0])),
+            "short_circuit_resistance": float(response[1]),
+            "open_circuit_resistance": float(response[2])
+        }
+    
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus']
