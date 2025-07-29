@@ -5,6 +5,36 @@ from enum import IntEnum
 class Model346Enums:
     """Class containing the enums relevant to the Model 346."""
 
+    class InputChannel(IntEnum):
+        """Enumeration for input channels."""
+        A = 1
+        B = 2
+        C1 = 3
+        C2 = 4
+        C3 = 5
+        C4 = 6
+        D1 = 7
+        D2 = 8
+        D3 = 9
+        D4 = 10
+        E1 = 11
+        E2 = 12
+        E3 = 13
+        E4 = 14
+        F1 = 15
+        F2 = 16
+        F3 = 17
+        F4 = 18
+        G1 = 19
+        G2 = 20
+        G3 = 21
+        G4 = 22
+        H1 = 23
+        H2 = 24
+        H3 = 25
+        H4 = 26
+        NONE = 0
+
     class InputSensorType(IntEnum):
         """Sensor type enumeration."""
         DISABLED = 0

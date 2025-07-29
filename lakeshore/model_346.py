@@ -77,6 +77,42 @@ class Model346AlarmSettings:
         self.low_value = low_value
         self.high_value = high_value
 
+class Model346ControlLoopZoneSettings:
+    """Control loop configuration for a particular heater output and zone."""
+
+    def __init__(self, upper_bound, proportional, integral, derivative, manual_out_value, heater_range, channel, rate):
+        """Constructor.
+
+            Args:
+                upper_bound (float):
+                    Specifies the upper set-point boundary of this zone in temperature units.
+                proportional (float):
+                    Specifies the proportional gain for this zone (0.1 to 100,000).
+                integral (float):
+                    Specifies the integral gain for this zone (0.1 to 100,000).
+                derivative (float):
+                    Specifies the derivative gain for this zone (0 to 20000).
+                manual_out_value (float):
+                    Specifies the manual output for this zone (0 to 100 %).
+                heater_range (self.HeaterRange):
+                    Specifies the heater range for this zone.
+                    See self.HeaterRange IntEnum class.
+                channel (InputChannel):
+                    See InputChannel IntEnum class.
+                    Passing the NONE member will use the previously assigned sensor.
+                rate (float):
+                    Specifies the ramp rate for this zone (0.1 - 100 K/min). 0 disables ramping.
+
+        """
+
+        self.upper_bound = upper_bound
+        self.proportional = proportional
+        self.integral = integral
+        self.derivative = derivative
+        self.manual_out_value = manual_out_value
+        self.heater_range = heater_range
+        self.channel = channel
+        self.rate = rate
 
 class Model346InputReadingStatus(RegisterBase):
     """Class object representing the input status flag bits."""
@@ -588,7 +624,49 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         return float(self.query(f"RAMPSETP? {output}"))
-    
+
+    def set_control_loop_zone_table(self, output, zone_number, zone_settings):
+        """Sets the control loop zone table for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to configure (1 - 8).
+                zone_number (int):
+                    Specifies which zone to configure (1 - 10).
+                zone_settings (Model346ControlLoopZeroSettings):
+                    The settings to apply to the specified zone.
+
+        """
+        command_string = (f"ZONE {output},{zone_number},{zone_settings.upper_bound},{zone_settings.proportional}," +
+                            f"{zone_settings.integral},{zone_settings.derivative},{zone_settings.manual_out_value}," +
+                            f"{zone_settings.heater_range},{zone_settings.channel},{zone_settings.rate}")
+        self.command(command_string)
+
+    def get_control_loop_zone_table(self, output, zone_number):
+        """Returns the control loop zone table for a particular output and zone.
+
+            Args:
+                output (int):
+                    Specifies which output to query (1 - 8).
+                zone_number (int):
+                    Specifies which zone to query (1 - 10).
+
+            Returns:
+                Model346ControlLoopZoneSettings:
+                    The settings for the specified control loop zone.
+
+        """
+        response = self.query(f"ZONE? {output},{zone_number}").split(",")
+        return Model346ControlLoopZoneSettings(
+            upper_bound=float(response[0]),
+            proportional=float(response[1]),
+            integral=float(response[2]),
+            derivative=float(response[3]),
+            manual_out_value=float(response[4]),
+            heater_range=self.HeaterRange(int(response[5])),
+            channel=self.InputChannel[response[6]],  # Fixed this line
+            rate=float(response[7])
+        )
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
-           'Model346StatusByteRegister', 'Model346InputReadingStatus']
+           'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346ControlLoopZoneSettings']
