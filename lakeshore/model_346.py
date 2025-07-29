@@ -574,6 +574,20 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         self.command(f"SETPRST {output}")
+
+    def get_ramp_setpoitnt(self, output):
+        """Returns the current setpoint for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to query (1 - 8).
+
+            Returns:
+                float:
+                    The current control setpoint for the specified output.
+
+        """
+        return float(self.query(f"RAMPSETP? {output}"))
     
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
