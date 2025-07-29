@@ -330,7 +330,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """Recreates the front panel safety feature of shutting off all heaters."""
         self.command("RANGE 1,0;RANGE 2,0;RANGE 3,0;RANGE 4,0")
 
-    def set_heater_setup(self, output, heater_resistance, max_current, output_units):
+    def set_heater_setup(self, output, heater_resistance, max_output, output_units):
         """Method to configure the heaters.
 
             Args:
@@ -338,15 +338,15 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                     Specifies which heater output to configure (1 - 4).
                 heater_resistance (float):
                     10 to 100 ohms.
-                max_current (float):
-                    User defined maximum output current.
-                    If HeaterRange.LOW (0.0 - 0.2).
-                    If HeaterRange.HIGH (0.0 - 2.0).
+                max_output (float):
+                    User defined maximum output.
+                    Represents 100% output as either power (watts) or current (amps)
+                    depending on the output_units parameter.
                 output_units (Model346Enums.HeaterOutputUnits):
                     Specifies whether the heater output displays in power or current.
 
         """
-        self.command(f"HTRSET {output},{heater_resistance},{max_current},{output_units}")
+        self.command(f"HTRSET {output},{heater_resistance},{max_output},{output_units}")
 
     def get_heater_setup(self, output):
         """Returns the heater configuration status.
