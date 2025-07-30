@@ -674,19 +674,27 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         return int(self.query(f"CRVNUMPTS? {curve_number}"))
 
     def get_digital_input_state(self, input_number):
-        """Returns the state of a digital input.
+        """Embedded needs to be updated to support this method."""
+        
+        raise NotImplementedError("Embedded needs to be updated to support this method")
+
+    def set_relay_alarms(self, relay_number, mode, input_channel, condition):
+        """Sets a relay to turn on and off automatically based on the state of the alarm of the specified input channel.
 
             Args:
-                input_number (int):
-                    Specifies which digital input to query (1 or 2).
-
-            Returns:
-                int:
-                    The state of the specified digital input (0 or 1).
+                relay_number (int):
+                    The relay to configure.
+                    Options are:
+                    1 or 2.
+                mode (Model346Enums.RelayControlMode):
+                input_channel (str or int):
+                    Specifies which input alarm activates the relay.
+                condition (int):
+                    Specifies the condition that triggers the relay.
 
         """
-        return int(self.query(f"DIGIN? {input_number}"))
-    
+        self.command(f"RELAY {relay_number},{mode},{input_channel},{condition}")
+
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346ControlLoopZoneSettings']
