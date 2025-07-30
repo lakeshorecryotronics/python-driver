@@ -106,3 +106,9 @@ class Model346Enums:
         THERMOCOUPLE_TYPE_K = 12
         THERMOCOUPLE_TYPE_E = 13
 
+    class RelayControlAlarm(IntEnum):
+        """Enumeration of the setting determining which alarm(s) cause a relay to close in alarm mode."""
+        LOW_ALARM = 0
+        HIGH_ALARM = 1
+        LOW_OR_HIGH_ALARM = 2
+        LOW_AND_HIGH_ALARM = 3  # Custom value for Model346
