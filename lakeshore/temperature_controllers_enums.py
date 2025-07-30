@@ -93,6 +93,11 @@ class TemperatureControllerEnums:
         SMALL = 0
         LARGE = 1
 
+    class RelayControlMode(IntEnum):
+        """Relay operating mode enumeration."""
+        RELAY_OFF = 0
+        RELAY_ON = 1
+        ALARMS = 2
 
 class LegacyTemperatureControllerEnums(TemperatureControllerEnums):
     """Class containing the enums relevant to legacy temperature controllers."""
@@ -102,12 +107,6 @@ class LegacyTemperatureControllerEnums(TemperatureControllerEnums):
 
     class DisplayFieldUnits(IntEnum):
         """Placeholder Enumeration of the display field units."""
-
-    class RelayControlMode(IntEnum):
-        """Relay operating mode enumeration."""
-        RELAY_OFF = 0
-        RELAY_ON = 1
-        ALARMS = 2
 
     class RelayControlAlarm(IntEnum):
         """Enumeration of the setting determining which alarm(s) cause a relay to close in alarm mode."""

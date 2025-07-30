@@ -1329,7 +1329,25 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
         if bool(int(tuning_status[2])):
             raise InstrumentException("An autotune error is present")
+        
+    def get_relay_control_mode(self, relay_number):
+        """Returns the configured mode of the specified relay.
 
+            Args:
+                relay_number (int):
+                    Specifies which relay to query.
+                    Options are:
+                    1 or 2.
+
+            Returns:
+                (LegacyTemperatureControllerEnums.RelayControlMode):
+                    The configured mode of the relay.
+                    Represented as a member of the instrument's RelayControlMode IntEnum class.
+
+        """
+        relay_settings = self.query(f"RELAY? {str(relay_number)}")
+        split_relay_settings = relay_settings.split(",")
+        return self.RelayControlMode(int(split_relay_settings[0]))
 
 class LegacyTemperatureController(TemperatureController, LegacyTemperatureControllerEnums):
     """Base class for all legacy temperature controller instruments."""
@@ -1395,25 +1413,6 @@ class LegacyTemperatureController(TemperatureController, LegacyTemperatureContro
                              float(parameters[3]), bool(int((parameters[4]))),
                              audible=bool(int(parameters[5])), visible=bool(int(parameters[6])),
                              alarm_enable=bool(int(parameters[0])))
-
-    def get_relay_control_mode(self, relay_number):
-        """Returns the configured mode of the specified relay.
-
-            Args:
-                relay_number (int):
-                    Specifies which relay to query.
-                    Options are:
-                    1 or 2.
-
-            Returns:
-                (LegacyTemperatureControllerEnums.RelayControlMode):
-                    The configured mode of the relay.
-                    Represented as a member of the instrument's RelayControlMode IntEnum class.
-
-        """
-        relay_settings = self.query(f"RELAY? {str(relay_number)}")
-        split_relay_settings = relay_settings.split(",")
-        return self.RelayControlMode(int(split_relay_settings[0]))
 
     def set_relay_alarms(self, relay_number, activating_input_channel, alarm_relay_trigger_type):
         """Sets a relay to turn on and off automatically based on the state of the alarm of the specified input channel.
