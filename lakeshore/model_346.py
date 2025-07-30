@@ -667,6 +667,22 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             channel=self.InputChannel[response[6]],  # Fixed this line
             rate=float(response[7])
         )
+
+    def get_curve_number_of_points(self, curve_number):
+        """Returns the number of data points in a curve.
+
+            Args:
+                curve_number (int):
+                    Specifies which curve to query (1 - 60).
+
+            Returns:
+                int:
+                    The number of points in the specified curve.
+                    Returns 0 if the curve is deleted/empty
+
+        """
+        return int(self.query(f"CRVNUMPTS? {curve_number}"))
+
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346ControlLoopZoneSettings']

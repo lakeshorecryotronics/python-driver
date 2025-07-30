@@ -95,3 +95,14 @@ class Model346Enums:
         ZONE = 2
         OPEN_LOOP = 3
         MONITOR_OUT = 4
+
+    class StandardCurveType(IntEnum):
+        """Enumeration for standard curve types."""
+        DIODE_DT670 = 2
+        PTC_PT100 = 6
+        NTC_RX102A_AA = 8
+        NTC_RX202A_AA = 9
+        NTC_RX103A_AA = 10
+        THERMOCOUPLE_TYPE_K = 12
+        THERMOCOUPLE_TYPE_E = 13
+
