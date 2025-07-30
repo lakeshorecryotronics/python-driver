@@ -683,6 +683,20 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """
         return int(self.query(f"CRVNUMPTS? {curve_number}"))
 
+    def get_digital_input_state(self, input_number):
+        """Returns the state of a digital input.
+
+            Args:
+                input_number (int):
+                    Specifies which digital input to query (1 or 2).
+
+            Returns:
+                int:
+                    The state of the specified digital input (0 or 1).
+
+        """
+        return int(self.query(f"DIGIN? {input_number}"))
+    
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346ControlLoopZoneSettings']
