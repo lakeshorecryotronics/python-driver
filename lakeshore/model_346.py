@@ -142,6 +142,14 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
     Class for interaction with the Lake Shore Model 346 cryogenic temperature controller.
     """
 
+    option_card_slots = ["E", "F", "G", "H"]
+
+    # Define the max number of channels for each option card
+    max_channels = {
+        Model346Enums.OptionCardType.SCANNER: 4,
+        Model346Enums.OptionCardType.THERMOCOUPLE: 2,
+    }
+
     vid_pid = [(0x1FB9, 0x0307)]
 
     def __init__(self,
@@ -163,6 +171,9 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             ip_address,
             tcp_port,
             **kwargs)
+
+    def get_option_card_slot(self):
+        return self.option_card_slots
 
     def get_digit_input_status(self):
         """Returns the status of the digital inputs.
@@ -286,6 +297,8 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             input_range = Model346Enums.NTCRTDRange(int(sensor_params[2]))
         elif sensor_type == Model346Enums.InputSensorType.PLATINUM_RTD:
             input_range = Model346Enums.PTCRTDRange(int(sensor_params[2]))
+        elif sensor_type == Model346Enums.InputSensorType.THERMOCOUPLE:
+            input_range = Model346Enums.ThermocoupleRange(int(sensor_params[2]))
 
         return Model346InputSensorSettings(sensor_type,
                                            bool(int(sensor_params[1])),
@@ -654,7 +667,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             derivative=float(response[3]),
             manual_out_value=float(response[4]),
             heater_range=self.HeaterRange(int(response[5])),
-            channel=self.InputChannel[response[6]],  # Fixed this line
+            channel=self.InputChannel[response[6]],
             rate=float(response[7])
         )
 
@@ -694,6 +707,79 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         self.command(f"RELAY {relay_number},{mode},{input_channel},{condition}")
+    
+    def get_installed_option_cards(self):
+        """Queries the option cards slots( E TO H) for connected devices.
+
+        Returns:
+            dict[str, str]:
+                A dictionary mapping option cards (E, F, G, H) to their statuses:
+                - "Nothing"
+                - "Scanner"
+                - "Motor" # Currently not supported by python driver
+                - "Level Sense" # Currently not supported by python driver
+                - "Thermocouple"
+        """
+        # Query the CARDS? command
+        response = self.query("CARDS?").split(",")
+
+        option_cards = self.option_card_slots
+        return {option_cards[i]: Model346Enums.OptionCardType(int(response[i])) for i in range(len(response))}
+
+    def get_option_card_type(self, slot):
+        """Returns the type of option card connected to the specified slot.
+
+        Args:
+            slot (str): Specifies the slot to query (E, F, G, H).
+
+        Returns:
+            str: The type of option card connected to the slot:
+                - "Nothing"
+                - "Scanner"
+                - "Motor" # Currently not supported by python driver
+                - "Level Sense" # Currently not supported by python driver
+                - "Thermocouple"
+
+        Raises:
+            ValueError: If the slot is invalid.
+        """
+        if slot not in self.option_card_slots:
+            raise ValueError(f"Invalid slot: {slot}. Valid slots are {', '.join(self.option_card_slots)}.")
+
+        # Query the CARDS? command
+        response = self.query("CARDS?").split(",")
+
+        slot_index = self.option_card_slots.index(slot)
+
+        # Return the type of the option card connected to the slot
+        return Model346Enums.OptionCardType(int(response[slot_index]))
+
+    def get_option_card_channels(self, slot):
+        """Returns the number of channels available on the specified option card slot.
+
+        Args:
+            slot (str): Specifies the slot to query (E, F, G, H).
+
+        Returns:
+            int: The number of channels available on the option card in the specified slot.
+
+        Raises:
+            ValueError: If the slot is invalid.
+        """
+        if slot not in self.option_card_slots:
+            raise ValueError(f"Invalid slot: {slot}. Valid slots are {', '.join(self.option_card_slots)}.")
+
+        # Get the type of the option card in the specified slot
+        option_card_type = self.get_option_card_type(slot)
+
+        # If option card is not a scanner or thermocouple, raise value error
+        if option_card_type not in [self.OptionCardType.SCANNER, self.OptionCardType.THERMOCOUPLE]:
+            raise ValueError(f"Unsupported option card type: {option_card_type.name}.")
+        # Get the max channel count for the option card type
+        max_channel_count = self.max_channels.get(option_card_type, 0)
+
+        # Generate the list of channels based on the max channel count
+        return [f"{slot}{i}" for i in range(1, max_channel_count + 1)]
 
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
