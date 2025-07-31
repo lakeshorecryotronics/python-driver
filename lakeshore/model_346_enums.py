@@ -109,4 +109,12 @@ class Model346Enums:
         LOW_ALARM = 0
         HIGH_ALARM = 1
         LOW_OR_HIGH_ALARM = 2
-        LOW_AND_HIGH_ALARM = 3  # Custom value for Model346
+        LOW_AND_HIGH_ALARM = 3
+
+    class OptionCardType(IntEnum):
+        """Enumeration for option card types."""
+        NONE = 0
+        SCANNER = 1
+        LEVEL_SENSE = 2
+        MOTOR_CONTROL = 3
+        THERMOCOUPLE = 4
