@@ -26,8 +26,9 @@ ________________________
 
 .. autoclass:: Model336
     :member-order: bysource
+    :inherited-members: Model336Enums, TemperatureControllerEnums
     :members:
-    :inherited-members: Model336Enums
+    :no-index:
 
 Settings classes
 ________________
@@ -64,20 +65,8 @@ accept an argument of a class object, specific to the Lake Shore model 336.
 
     .. automethod:: __init__
 
-Enumeration objects
-___________________
-This section describes the Enum type objects that have been created to name
-various settings of the Model 336 series that are represented as an int or single character
-to the instrument. The purpose of these enum types is to make the settings more
-descriptive and obvious to the user rather than interpreting the ints taken by
-the instrument.
-
-.. autoclass:: Model336Enums
-    :members:
-    :undoc-members:
-
-Register Classes
-________________
+Status Register Classes
+_______________________
 This page describes the register objects. Each bit in the register
 is represented as a member of the register's class
 
@@ -98,5 +87,22 @@ is represented as a member of the register's class
     :undoc-members:
 
 .. autoclass:: Model336InputReadingStatus
+    :members:
+    :undoc-members:
+
+Enumeration objects
+___________________
+This section describes the Enum type objects that have been created to name
+various settings of the Model 336 series that are represented as an int or single character
+to the instrument. The purpose of these enum types is to make the settings more
+descriptive and obvious to the user rather than interpreting the ints taken by
+the instrument.
+
+.. autoclass:: lakeshore.temperature_controllers_enums.TemperatureControllerEnums
+    :members:
+    :undoc-members:
+    :no-index:
+
+.. autoclass:: Model336Enums
     :members:
     :undoc-members:

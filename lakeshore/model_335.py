@@ -14,17 +14,17 @@ class Model335InputSensorSettings:
         """Constructor for the InputSensor class.
 
             Args:
-                sensor_type (Model335InputSensorType):
+                sensor_type (self.InputSensorType):
                     Specifies input sensor type.
                 autorange_enable (bool):
                     Specifies autoranging (False = off, True = on).
                 compensation (bool):
                     Specifies input compensation. (False = off, True = on).
-                units (Model335InputSensorUnits):
+                units (self.InputSensorUnits):
                     Specifies the preferred units parameter for sensor readings and for the control set-point.
                 input_range (IntEnum)
                     Specifies input range if autorange_enable is false.
-                    See IntEnum classes: Model335DiodeRange, Model335RTDRange, and Model335ThermocoupleRange.
+                    See IntEnum classes: self.DiodeRange, self.RTDRange, and self.ThermocoupleRange.
 
         """
 
@@ -53,11 +53,11 @@ class Model335ControlLoopZoneSettings:
                     Specifies the derivative gain for this zone (0 to 200 %).
                 manual_output_value (float):
                     Specifies the manual output for this zone (0 to 100 %).
-                heater_range (Model335HeaterRange):
+                heater_range (self.HeaterRange):
                     Specifies the heater range for this zone.
-                    See Model335HeaterRange IntEnum class.
-                channel (Model335InputSensor):
-                    See Model335InputSensor IntEnum class.
+                    See self.HeaterRange IntEnum class.
+                channel (self.InputSensor):
+                    See self.InputSensor IntEnum class.
                 ramp_rate (float):
                     Specifies the ramp rate for this zone (0 - 100 K/min).
 
@@ -191,7 +191,7 @@ class Model335(Model335Enums, TemperatureController):
         """Configures output 2. Use the set_heater_output_mode command to set the output mode to Monitor Out.
 
             Args:
-                channel (Model335InputSensor):
+                channel (self.InputSensor):
                     Specifies which sensor input to monitor.
                 high_value (float):
                     Represents the data at which the Monitor Out reaches +100% output.
@@ -199,9 +199,9 @@ class Model335(Model335Enums, TemperatureController):
                 low_value (float):
                     Represents the data at which the analog output reaches -100% output if bipolar,
                     or 0% output if unipolar. Entered in the units designated by the <units> argument.
-                units (Model335MonitorOutUnits):
+                units (self.MonitorOutUnits):
                     Specifies the units on which to base the output voltage.
-                polarity (Model335Polarity):
+                polarity (self.Polarity):
                     Specifies output voltage is unipolar or bipolar.
 
         """
@@ -212,11 +212,11 @@ class Model335(Model335Enums, TemperatureController):
 
             Returns:
                 (dict):
-                    {"channel": Model335InputSensor,
-                    "units": Model335MonitorOutUnits,
+                    {"channel": self.InputSensor,
+                    "units": self.MonitorOutUnits,
                     "high_value": float,
                     "low_value": float,
-                    "polarity": Model335Polarity}
+                    "polarity": self.Polarity}
 
                     See set_monitor_output_heater method arguments
 
@@ -242,9 +242,9 @@ class Model335(Model335Enums, TemperatureController):
         """Sets the display mode.
 
             Args:
-                mode (Model335DisplaySetup):
+                mode (self.DisplaySetup):
                     Specifies the front panel display mode.
-                    See Model335DisplaySetup IntEnum class.
+                    See self.DisplaySetup IntEnum class.
 
         """
         self.command(f"DISPLAY {mode}")
@@ -253,9 +253,9 @@ class Model335(Model335Enums, TemperatureController):
         """Returns the display mode.
 
             Return:
-                (Model335DisplaySetup):
+                (self.DisplaySetup):
                     Specifies the front panel display mode.
-                    See Model335DisplaySetup IntEnum class.
+                    See self.DisplaySetup IntEnum class.
 
         """
         return self.DisplaySetup(int(self.query("DISPLAY?")))
@@ -264,13 +264,13 @@ class Model335(Model335Enums, TemperatureController):
         """Method to configure heater output one.
 
             Args:
-                heater_resistance (Model335HeaterResistance):
-                    See Model335HeaterResistance IntEnum class.
+                heater_resistance (self.HeaterResistance):
+                    See self.HeaterResistance IntEnum class.
                 max_current (float):
                     Specifies the maximum current for the heater.
-                output_display_mode (Model335HeaterOutputDisplay):
+                output_display_mode (self.HeaterOutputDisplay):
                     Specifies how the heater output is displayed.
-                    See Model335HeaterOutType IntEnum class.
+                    See self.HeaterOutType IntEnum class.
 
         """
         self.command(f"HTRSET 1,0,{heater_resistance},0,{max_current},{output_display_mode}")
@@ -279,17 +279,17 @@ class Model335(Model335Enums, TemperatureController):
         """Method to configure the heater output 2.
 
             Args:
-                output_type (Model335HeaterOutType):
+                output_type (self.HeaterOutType):
                     Specifies whether the heater output is in constant current or voltage mode.
-                    See Model335HeaterOutType IntEnum class.
-                heater_resistance (Model335HeaterResistance):
-                    See Model335HeaterResistance IntEnum class.
+                    See self.HeaterOutType IntEnum class.
+                heater_resistance (self.HeaterResistance):
+                    See self.HeaterResistance IntEnum class.
                 max_current (float):
                     Specifies the maximum current for the heater.
-                display_mode (Model335HeaterOutType):
+                display_mode (self.HeaterOutType):
                     Specifies how the heater output is displayed.
                     Required only if output_type is set to CURRENT.
-                    See Model335HeaterOutType IntEnum class.
+                    See self.HeaterOutType IntEnum class.
 
         """
         self.command(f"HTRSET 2,{output_type},{heater_resistance},0,{max_current},{display_mode}")
@@ -304,8 +304,8 @@ class Model335(Model335Enums, TemperatureController):
             Return:
                 (dict):
                     See set_heater_setup_one/set_heater_setup_two method arguments.
-                    {"output_type": Model335HeaterOutType, "heater_resistance": Model335HeaterResistance,
-                    "max_current": float, "output_display_mode": Model335HeaterOutputDisplay}
+                    {"output_type": self.HeaterOutType, "heater_resistance": self.HeaterResistance,
+                    "max_current": float, "output_display_mode": self.HeaterOutputDisplay}
 
         """
         heater_setup = self.query(f"HTRSET? {heater_output}").split(",")
@@ -327,8 +327,8 @@ class Model335(Model335Enums, TemperatureController):
             Args:
                 channel (str):
                     Specifies input to configure ("A" or "B").
-                sensor_parameters (Model335InputSensorSettings):
-                    See Model335InputSensorSettings class.
+                sensor_parameters (self.InputSensorSettings):
+                    See self.InputSensorSettings class.
 
         """
         autorange_enable = bool(int(sensor_parameters.autorange_enable))
@@ -350,8 +350,8 @@ class Model335(Model335Enums, TemperatureController):
                     Specifies sensor input to configure ("A" or "B").
 
             Return:
-                (Model335InputSensorSettings):
-                    See Model335InputSensor IntEnum class.
+                (self.InputSensorSettings):
+                    See self.InputSensor IntEnum class.
 
         """
         sensor_configuration = self.query(f"INTYPE? {channel}").split(",")
@@ -390,10 +390,10 @@ class Model335(Model335Enums, TemperatureController):
             Args:
                 output (int):
                     Specifies which output to configure (1 or 2).
-                mode (Model335HeaterOutputMode):
-                    Member of Model335HeaterOutputMode IntEnum class.
+                mode (self.HeaterOutputMode):
+                    Member of self.HeaterOutputMode IntEnum class.
                     Specifies the control mode.
-                channel (Model335InputSensor):
+                channel (self.InputSensor):
                     Specifies which input to use for control.
                 powerup_enable (bool):
                     Specifies whether the output remains on (True)
@@ -412,7 +412,7 @@ class Model335(Model335Enums, TemperatureController):
 
             Return:
                 (dict):
-                {"mode": Model335HeaterOutputMode, "channel": Model335InputSensor, "powerup_enable": bool}
+                {"mode": self.HeaterOutputMode, "channel": self.InputSensor, "powerup_enable": bool}
 
         """
         outmode = self.query(f"OUTMODE? {output}").split(",")
@@ -427,7 +427,7 @@ class Model335(Model335Enums, TemperatureController):
             Only applicable when output 2 is in voltage mode.
 
             Args:
-                output_polarity (Model335Polarity):
+                output_polarity (self.Polarity):
                     Specifies whether output voltage is UNIPOLAR or BIPOLAR.
 
         """
@@ -437,7 +437,7 @@ class Model335(Model335Enums, TemperatureController):
         """Returns the polarity of output 2.
 
             Return:
-                (Model335Polarity):
+                (self.Polarity):
                     Specifies whether output is UNIPOLAR or BIPOLAR.
 
         """
@@ -453,8 +453,8 @@ class Model335(Model335Enums, TemperatureController):
                 output (int):
                     Specifies which output to configure (1 or 2).
                 heater_range (IntEnum):
-                    For Outputs 1 and 2 in Current mode: Model335HeaterRange IntEnum member.
-                    For Output 2 in Voltage mode: Model335HeaterVoltageRange IntEnum member.
+                    For Outputs 1 and 2 in Current mode: self.HeaterRange IntEnum member.
+                    For Output 2 in Voltage mode: self.HeaterVoltageRange IntEnum member.
 
         """
         self.command(f"RANGE {output},{heater_range}")
@@ -468,8 +468,8 @@ class Model335(Model335Enums, TemperatureController):
 
             Return:
                 heater_range (IntEnum):
-                    For Outputs 1 and 2 in Current mode: Model335HeaterRange IntEnum member.
-                    For Output 2 in Voltage mode: Model335HeaterVoltageRange IntEnum member.
+                    For Outputs 1 and 2 in Current mode: self.HeaterRange IntEnum member.
+                    For Output 2 in Voltage mode: self.HeaterVoltageRange IntEnum member.
 
         """
         heater_range = int(self.query(f"RANGE? {output}"))
@@ -512,7 +512,7 @@ class Model335(Model335Enums, TemperatureController):
             Control Input parameters must be configured using the set_monitor_out_parameters() method.
 
             Args:
-                control (Model335WarmupControl):
+                control (self.WarmupControl):
                     Specifies the type of control used.
                 percentage (float):
                     Specifies the percentage of full scale (10 V) Monitor Out voltage to apply.
@@ -532,7 +532,7 @@ class Model335(Model335Enums, TemperatureController):
 
             Return:
                 (dict):
-                    {"control": Model335WarmupControl, "percentage": float}
+                    {"control": self.WarmupControl, "percentage": float}
 
         """
         warmup_supply = self.query("WARMUP? 2").split(",")
@@ -566,8 +566,8 @@ class Model335(Model335Enums, TemperatureController):
                     Specifies which zone in the table to query (1 to 10).
 
             Return:
-                (Model335ControlLoopZone):
-                    See Model335ControlLoopZone class.
+                (self.ControlLoopZone):
+                    See self.ControlLoopZone class.
 
         """
         zone_parameters = self.query(f"ZONE? {output},{zone}").split(",")

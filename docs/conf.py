@@ -60,7 +60,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Lake Shore Python Driver'
-copyright = '2018, Lake Shore Cryotronics, Inc.'
+copyright = '2025, Lake Shore Cryotronics, Inc.'
 author = 'Lake Shore Cryotronics, Inc.'
 
 # The version info for the project you're documenting, acts as replacement for
