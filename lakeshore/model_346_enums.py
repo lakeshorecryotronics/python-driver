@@ -47,8 +47,6 @@ class Model346Enums:
         """Enumerator used to represent temperature sensor unit options."""
         KELVIN = 0
         CELSIUS = 1
-        FAHRENHEIT = 2
-        DUMMY = 255
 
     class DiodeRange(IntEnum):
         """Diode voltage range enumeration"""
