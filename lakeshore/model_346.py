@@ -136,6 +136,15 @@ class Model346InputReadingStatus(RegisterBase):
         self.Sensor_Units_Readings_Under_Range = Sensor_Units_Readings_Under_Range
         self.Sensor_Units_Readings_Over_Range = Sensor_Units_Readings_Over_Range
 
+class OptionCard:
+    """Represents an option card with additional information."""
+    def __init__(self, card_type, max_channels, channels):
+        self.card_type = card_type
+        self.max_channels = max_channels
+        self.channels = channels
+
+    def __repr__(self):
+        return f"OptionCard(type={self.card_type.name}, max_channels={self.max_channels}, channels={self.channels})"
 
 class Model346(Model346Enums, XIPInstrument, TemperatureController):
     """
@@ -144,7 +153,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
     option_card_slots = ["E", "F", "G", "H"]
 
-    # Define the max number of channels for each option card
+    # Define the max number of channels for each option card- Only supported types are listed
     max_channels = {
         Model346Enums.OptionCardType.SCANNER: 4,
         Model346Enums.OptionCardType.THERMOCOUPLE: 2,
@@ -709,23 +718,23 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         self.command(f"RELAY {relay_number},{mode},{input_channel},{condition}")
     
     def get_installed_option_cards(self):
-        """Queries the option cards slots( E TO H) for connected devices.
+        """Queries the installed option cards and returns detailed information.
 
         Returns:
-            dict[str, str]:
-                A dictionary mapping option cards (E, F, G, H) to their statuses:
-                - "Nothing"
-                - "Scanner"
-                - "Motor" # Currently not supported by python driver
-                - "Level Sense" # Currently not supported by python driver
-                - "Thermocouple"
+            dict[str, OptionCard]: A dictionary mapping slots (E, F, G, H) to OptionCard objects.
         """
-        # Query the CARDS? command
+        # Query the CARDS? command to get the option card types
         response = self.query("CARDS?").split(",")
 
-        option_cards = self.option_card_slots
-        return {option_cards[i]: Model346Enums.OptionCardType(int(response[i])) for i in range(len(response))}
-
+        # Map the response to OptionCard objects
+        return {
+            slot: OptionCard(
+                card_type=Model346Enums.OptionCardType(int(response[i])),
+                max_channels=self.max_channels.get(Model346Enums.OptionCardType(int(response[i])), 0),
+                channels=self.get_option_card_channels(slot) if Model346Enums.OptionCardType(int(response[i])) in self.max_channels else []
+            )
+            for i, slot in enumerate(self.option_card_slots)
+        }
     def get_option_card_type(self, slot):
         """Returns the type of option card connected to the specified slot.
 
