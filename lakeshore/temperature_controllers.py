@@ -311,7 +311,10 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The temperature value.
 
         """
-        return float(self.query(f"KRDG? {input_channel}"))
+        response = self.query(f"KRDG? {input_channel}")
+        if "," in response:  # Handle multi-channel responses
+            return [float(value) for value in response.split(",")]
+        return float(response)  # Handle single-channel responses
 
     def get_sensor_reading(self, input_channel):
         """Returns the sensor reading in the sensor's units.
@@ -325,7 +328,10 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The raw sensor reading in the units of the connected sensor.
 
         """
-        return float(self.query(f"SRDG? {input_channel}"))
+        response = self.query(f"SRDG? {input_channel}")
+        if "," in response:  # Handle multi-channel responses
+            return [float(value) for value in response.split(",")]
+        return float(response)  # Handle single-channel responses
 
     def set_sensor_name(self, input_channel, sensor_name):
         """Sets a given name to a sensor on the specified channel.
@@ -579,14 +585,18 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
             Args:
                 channel (str):
-                    "A" - "D" (in addition, "D1" - "D5" for 3062 option).
+                    Specifies which channel to read from:
+                    "A" - "H4".
 
             Returns:
                 float:
                     The temperature in Celsius.
 
         """
-        return float(self.query(f"CRDG? {channel}"))
+        response = self.query(f"CRDG? {channel}")
+        if "," in response:  # Handle multi-channel responses
+            return [float(value) for value in response.split(",")]
+        return float(response)  # Handle single-channel responses
 
     def _set_diode_excitation_current(self, channel, excitation_current):
         """Sets the excitation current of a specific channel.
