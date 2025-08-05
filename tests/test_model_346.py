@@ -300,7 +300,7 @@ class TestBasicQueries(TestWithFakeModel346):
         self.fake_connection.setup_response('4,1,1;No error')
         response = self.dut.get_output_mode(1)
         heater_output_settings = {"mode": self.dut.OutputMode.MONITOR_OUT,
-                                  "channel": self.dut.InputChannel.A,
+                                  "input_channel": '1',
                                   "powerup_enable": True}
         self.assertDictEqual(response, heater_output_settings)
 

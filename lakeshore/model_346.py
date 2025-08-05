@@ -1,13 +1,14 @@
 """Implements functionality unique to the Lake Shore Model 346."""
 
 from enum import IntEnum  # pylint: disable=unused-import
-from lakeshore.temperature_controllers import TemperatureController, CurveHeader
+from lakeshore.temperature_controllers import TemperatureController, CurveHeader, OperationEvent
 from lakeshore.xip_instrument import XIPInstrument, StandardEventRegister, StatusByteRegister, RegisterBase
 from lakeshore.model_346_enums import Model346Enums
 
 Model346CurveHeader = CurveHeader
 Model346StandardEventRegister = StandardEventRegister
 Model346StatusByteRegister = StatusByteRegister
+Model346OperationEvent = OperationEvent
 
 
 class Model346OperationRegister(RegisterBase):
@@ -56,26 +57,35 @@ class Model346InputSensorSettings:
 class Model346AlarmSettings:
     """Class used to configure an alarm in conjunction with the set/get_alarm_settings() method for the Model346."""
 
-    def __init__(self, alarm_type, output, input_channel, low_value, high_value):
+    def __init__(self, enabled, high_limit, low_limit, deadband, latch, audible, visible):
         """Constructor for AlarmSettings class.
 
             Args:
-                alarm_type (Model346Enums.AlarmType):
-                    Specifies the type of alarm to activate when an alarm condition occurs.
-                output (int):
-                    Specifies which output to activate when an alarm condition occurs (dependent on alarm_type).
-                input_channel (str):
-                    Specifies the input to monitor (A - H4).
-                low_value (float):
-                    Sets the value the source is checked against to activate low alarm.
-                high_value (float):
-                    Sets the value the source is checked against to activate the high alarm.
+                enabled (bool):
+                    Enables or Disables the alarm.
+                high_limit (float):
+                    Specifies the high limit for the alarm.
+                low_limit (float):
+                    Specifies the low limit for the alarm.
+                deadband (float):
+                    Specifies the deadband for the alarm.
+                latch (bool):
+                    Specifies whether the alarm latches when triggered.
+                audible (bool):
+                    Specifies whether the alarm is audible when triggered.
+                visible (bool):
+                    Specifies whether the alarm is visible when triggered.
+
         """
-        self.alarm_type = alarm_type
-        self.output = output
-        self.input_channel = input_channel
-        self.low_value = low_value
-        self.high_value = high_value
+        self.enabled = enabled
+        self.high_value = high_limit
+        self.low_value = low_limit
+        self.deadband = deadband
+        self.latch = latch
+        self.audible = audible
+        self.visible = visible
+
+
 
 class Model346ControlLoopZoneSettings:
     """Control loop configuration for a particular heater output and zone."""
@@ -195,18 +205,26 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         input_status = self.query("DIGIN?").split(",")
         return {"input_one": int(input_status[0]), "input_two": int(input_status[1])}
 
-    def set_alarm_settings(self, alarm_id, alarm_settings):
+    def set_alarm_settings(self, input_channel, alarm_settings):
         """Sets the configuration of a particular alarm.
 
             Args:
-                alarm_id (int):
-                    Specifies the alarm of interest.
+                input_channel (str):
+                    Specifies the input channel to configure (e.g., A, B, C1, C2, etc.).
                 alarm_settings (Model346AlarmSettings):
                     The configuration that should be applied to the alarm.
 
+            Command Format:
+                ALARM <input>, <enabled>, <high limit>, <low limit>, <deadband>,
+                <latch>, <audible>, <visible>
         """
-        self.command(f"ALARM {alarm_id},{alarm_settings.input_channel},{alarm_settings.low_value}"
-                     f",{alarm_settings.high_value},{alarm_settings.alarm_type},{alarm_settings.output}")
+        command_string = (
+            f"ALARM {input_channel},{int(alarm_settings.enabled)},"
+            f"{alarm_settings.high_value},{alarm_settings.low_value},"
+            f"{alarm_settings.deadband},{int(alarm_settings.latch)},"
+            f"{int(alarm_settings.audible)},{int(alarm_settings.visible)}"
+        )
+        self.command(command_string)
 
     def get_alarm_settings(self, alarm_id):
         """Returns present configuration of a particular alarm.
@@ -221,11 +239,15 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         alarm_params = self.query(f"ALARM? {alarm_id}").split(",")
-        return Model346AlarmSettings(self.AlarmType(int(alarm_params[3])),
-                                     int(alarm_params[4]),
-                                     alarm_params[0],
-                                     float(alarm_params[1]),
-                                     float(alarm_params[2]))
+        return Model346AlarmSettings(
+            enabled=bool(int(alarm_params[0])),
+            high_limit=float(alarm_params[1]),
+            low_limit=float(alarm_params[2]),
+            deadband=float(alarm_params[3]),
+            latch=bool(int(alarm_params[4])),
+            audible=bool(int(alarm_params[5])),
+            visible=bool(int(alarm_params[6]))
+        )
 
     def turn_alarm_off(self, alarm_id):
         """Sets the output type of a particular alarm to NONE (off).
@@ -405,16 +427,16 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Returns:
                 dict[str, float | Model346Enums.HeaterOutputUnits]:
-                    {"heater_resistance": float, "max_current": float, "output_units": HeaterOutputUnits}
+                    {"heater_resistance": float, "max_output": float, "output_units": HeaterOutputUnits}
 
         """
         heater_setup = self.query(f"HTRSET? {output}").split(",")
         return {
-            "heater_resistance": float(heater_setup[0]), 
-            "max_current": float(heater_setup[1]), 
-            "output_units": self.HeaterOutputUnits(int(heater_setup[2]))
+            "heater_resistance": (int(heater_setup[0])),  
+            "max_output": float(heater_setup[1]),       # Keep as float
+            "output_units": self.HeaterOutputUnits(int(heater_setup[2]))  # Rename key to match expected format
         }
-
+    
     def get_heater_output_measurements(self, output):
         """Returns the heater output measurements.
 
@@ -466,11 +488,11 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                     {"mode": OutputMode, "input_channel": str, "powerup_enable": bool}
 
         """
-        outmode = self.query(f"OUTMODE? {output}").split(",")
+        response = self.query(f"OUTMODE? {output}").split(",")
         return {
-            "mode": self.OutputMode(int(outmode[0])),
-            "input_channel": outmode[1],
-            "powerup_enable": bool(int(outmode[2]))
+            "mode": self.OutputMode(int(response[0])),
+            "input_channel": response[1],
+            "powerup_enable": bool(int(response[2]))
         }
 
     def set_analog_output_settings(self, output, high_value, low_value):
@@ -728,7 +750,29 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         self.command(f"RELAY {relay_number},{mode},{input_channel},{condition}")
-    
+
+
+    def get_relay_alarm_control_parameters(self, relay_number):
+        """Returns the relay control parameters for a specified relay.
+
+            Args:
+                relay_number (int):
+                    The relay to query.
+                    Options are:
+                    1 or 2.
+
+            Returns:
+                dict[str, Model346Enums.RelayControlMode | str | int]:
+                    {"mode": RelayControlMode, "input_channel": str, "condition": int}
+
+        """
+        response = self.query(f"RELAY? {relay_number}").split(",")
+        return {
+            "mode": self.RelayControlMode(int(response[0])),
+            "input_channel": self.InputChannel[response[1]],
+            "condition": self.RelayControlAlarm(int(response[2]))
+        }
+
     def get_installed_option_cards(self):
         """Queries the installed option cards and returns detailed information.
 
@@ -747,6 +791,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             )
             for i, slot in enumerate(self.option_card_slots)
         }
+    
     def get_option_card_type(self, slot):
         """Returns the type of option card connected to the specified slot.
 
@@ -802,6 +847,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         # Generate the list of channels based on the max channel count
         return [f"{slot}{i}" for i in range(1, max_channel_count + 1)]
 
-__all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
+__all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader', 'Model346OperationEvent',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346ControlLoopZoneSettings']
