@@ -521,13 +521,25 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """Implementation does not exist yet (IEEE?). Overrides from base."""
         raise NotImplementedError("Implementation does not exist yet")
 
-    def set_keypad_lock(self, state, code):
-        """Implementation does not exist yet (LOCK). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
+    def set_keypad_lock(self, state):
+        """Sets the state of the front panel keypad lock.
+
+            Args:
+                state (bool): The desired state of the keypad lock (True for locked, False for unlocked).
+
+        """
+        command_string = f"SYSTem:KLOCk {int(state)}"
+        self.command(command_string)
 
     def get_keypad_lock(self):
-        """Implementation does not exist yet (LOCK?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
+        """Returns the current state of the front panel keypad lock.
+
+            Returns:
+                bool: True if the keypad is locked, False if it is unlocked.
+
+        """
+        response = self.query("SYSTem:KLOCk?")
+        return bool(int(response.strip()))
 
     def set_remote_interface_mode(self, mode):
         """Implementation does not exist yet (MODE). Overrides from base."""
