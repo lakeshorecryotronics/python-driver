@@ -1621,3 +1621,8 @@ class SourceModule(BaseModule):
             sweep_data = self.device.get_data(1 / dwell_time, number_of_points, *data_sources)
 
         return sweep_data
+
+    def reset_sweep(self):
+        """Resets the source sweep settings for the specified module to their power on defaults."""
+
+        self.device.command(f'SWEep:RESet')
