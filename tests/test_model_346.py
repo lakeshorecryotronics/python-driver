@@ -353,20 +353,20 @@ class TestBasicQueries(TestWithFakeModel346):
     def test_get_input_reading_status(self):
         self.fake_connection.setup_response('33;No error')
         response = self.dut.get_input_reading_status("A")
-        input_reading_status = Model346InputReadingStatus(Hardware_settling=True,  # Bit 0 (1)
-                                                            Current_Source_in_Compliance=False,  # Bit 3 (8) not set
-                                                             Temperature_Underrange=False,  # Bit 4 (16) not set
-                                                              Temperature_Overrange=True,  # Bit 5 (32)
-                                                                Sensor_Units_Readings_Under_Range=False,  # Bit 6 (64) not set
-                                                                 Sensor_Units_Readings_Over_Range=False  # Bit 7 (128) not set
+        input_reading_status = Model346InputReadingStatus(hardware_settling=True,  # Bit 0 (1)
+                                                            current_source_in_compliance=False,  # Bit 3 (8) not set
+                                                             temperature_underrange=False,  # Bit 4 (16) not set
+                                                              temperature_overrange=True,  # Bit 5 (32)
+                                                                sensor_units_readings_under_range=False,  # Bit 6 (64) not set
+                                                                 sensor_units_readings_over_range=False  # Bit 7 (128) not set
         )
 
-        self.assertEqual(response.Hardware_settling, input_reading_status.Hardware_settling)
-        self.assertEqual(response.Current_Source_in_Compliance, input_reading_status.Current_Source_in_Compliance)
-        self.assertEqual(response.Temperature_Overrange, input_reading_status.Temperature_Overrange)
-        self.assertEqual(response.Temperature_Underrange, input_reading_status.Temperature_Underrange)
-        self.assertEqual(response.Sensor_Units_Readings_Under_Range, input_reading_status.Sensor_Units_Readings_Under_Range)
-        self.assertEqual(response.Sensor_Units_Readings_Over_Range, input_reading_status.Sensor_Units_Readings_Over_Range)
+        self.assertEqual(response.hardware_settling, input_reading_status.hardware_settling)
+        self.assertEqual(response.current_source_in_compliance, input_reading_status.current_source_in_compliance)
+        self.assertEqual(response.temperature_overrange, input_reading_status.temperature_overrange)
+        self.assertEqual(response.temperature_underrange, input_reading_status.temperature_underrange)
+        self.assertEqual(response.sensor_units_readings_under_range, input_reading_status.sensor_units_readings_under_range)
+        self.assertEqual(response.sensor_units_readings_over_range, input_reading_status.sensor_units_readings_over_range)
 
         self.assertIn("RDGST? A", self.fake_connection.get_outgoing_message())
 

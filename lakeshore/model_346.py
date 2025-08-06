@@ -128,23 +128,24 @@ class Model346InputReadingStatus(RegisterBase):
     """Class object representing the input status flag bits."""
 
     bit_names = [
-        "Hardware_settling",
+        "hardware_settling",
         "",
         "",
-        "Current_Source_in_Compliance",
-        "Temperature_Underrange",
-        "Temperature_Overrange",
-        "Sensor_Units_Readings_Under_Range",
-        "Sensor_Units_Readings_Over_Range"
+        "current_source_in_compliance",
+        "temperature_underrange",
+        "temperature_overrange",
+        "sensor_units_readings_under_range",
+        "sensor_units_readings_over_range"
     ]
 
-    def __init__(self, Hardware_settling, Current_Source_in_Compliance, Temperature_Underrange, Temperature_Overrange, Sensor_Units_Readings_Under_Range, Sensor_Units_Readings_Over_Range):
-        self.Hardware_settling = Hardware_settling
-        self.Current_Source_in_Compliance = Current_Source_in_Compliance
-        self.Temperature_Underrange = Temperature_Underrange
-        self.Temperature_Overrange = Temperature_Overrange
-        self.Sensor_Units_Readings_Under_Range = Sensor_Units_Readings_Under_Range
-        self.Sensor_Units_Readings_Over_Range = Sensor_Units_Readings_Over_Range
+    def __init__(self, hardware_settling, current_source_in_compliance, temperature_underrange, temperature_overrange,
+                 sensor_units_readings_under_range, sensor_units_readings_over_range):
+        self.hardware_settling = hardware_settling
+        self.current_source_in_compliance = current_source_in_compliance
+        self.temperature_underrange = temperature_underrange
+        self.temperature_overrange = temperature_overrange
+        self.sensor_units_readings_under_range = sensor_units_readings_under_range
+        self.sensor_units_readings_over_range = sensor_units_readings_over_range
 
 class OptionCard:
     """Represents an option card with additional information."""
@@ -192,6 +193,9 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             **kwargs)
 
     def get_option_card_slot(self):
+        """
+        Returns the available option card slots.
+        """
         return self.option_card_slots
 
     def get_digit_input_status(self):
@@ -377,7 +381,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                 analog_out_state (int):
                     OFF = 0 , ON = 1.
         """
-        
+
         self.command(f"RANGE {output},{analog_out_state}")
 
     def get_analog_out_state(self, output):
@@ -436,7 +440,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             "max_output": float(heater_setup[1]),       # Keep as float
             "output_units": self.HeaterOutputUnits(int(heater_setup[2]))  # Rename key to match expected format
         }
-    
+
     def get_heater_output_measurements(self, output):
         """Returns the heater output measurements.
 
@@ -731,7 +735,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
     def get_digital_input_state(self, input_number):
         """Embedded needs to be updated to support this method."""
-        
+
         raise NotImplementedError("Embedded needs to be updated to support this method")
 
     def set_relay_alarms(self, relay_number, mode, input_channel, condition):
@@ -791,7 +795,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             )
             for i, slot in enumerate(self.option_card_slots)
         }
-    
+
     def get_option_card_type(self, slot):
         """Returns the type of option card connected to the specified slot.
 

@@ -67,7 +67,7 @@ class Model346Enums:
         TEN_THOUSAND_OHM = 4
         THIRTY_THOUSAND_OHM = 5
         HUNDRED_THOUSAND_OHM = 6
-    
+
     class ThermocoupleRange(IntEnum):
         """Thermocouple voltage range enumeration."""
         FIFTY_MILLIVOLTS = 0

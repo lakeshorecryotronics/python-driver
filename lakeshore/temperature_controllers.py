@@ -1339,7 +1339,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
         if bool(int(tuning_status[2])):
             raise InstrumentException("An autotune error is present")
-        
+
     def get_relay_control_mode(self, relay_number):
         """Returns the configured mode of the specified relay.
 
