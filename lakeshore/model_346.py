@@ -64,11 +64,11 @@ class Model346AlarmSettings:
                 enabled (bool):
                     Enables or Disables the alarm.
                 high_limit (float):
-                    Specifies the high limit for the alarm.
+                    Specifies the high limit for the alarm in Kelvin.
                 low_limit (float):
-                    Specifies the low limit for the alarm.
+                    Specifies the low limit for the alarm in Kelvin.
                 deadband (float):
-                    Specifies the deadband for the alarm.
+                    Specifies the deadband for the alarm in Kelvin.
                 latch (bool):
                     Specifies whether the alarm latches when triggered.
                 audible (bool):
@@ -107,8 +107,7 @@ class Model346ControlLoopZoneSettings:
                 heater_range (self.HeaterRange):
                     Specifies the heater range for this zone.
                     See self.HeaterRange IntEnum class.
-                channel (InputChannel):
-                    See InputChannel IntEnum class.
+                channel (alphanumeric):
                     Passing the NONE member will use the previously assigned sensor.
                 rate (float):
                     Specifies the ramp rate for this zone (0.1 - 100 K/min). 0 disables ramping.
