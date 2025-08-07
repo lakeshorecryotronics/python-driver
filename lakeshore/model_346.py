@@ -714,7 +714,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             derivative=float(response[3]),
             manual_out_value=float(response[4]),
             heater_range=self.HeaterRange(int(response[5])),
-            channel=self.InputChannel[response[6]],
+            channel=response[6],
             rate=float(response[7])
         )
 
@@ -773,7 +773,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         response = self.query(f"RELAY? {relay_number}").split(",")
         return {
             "mode": self.RelayControlMode(int(response[0])),
-            "input_channel": self.InputChannel[response[1]],
+            "input_channel": response[1],
             "condition": self.RelayControlAlarm(int(response[2]))
         }
 

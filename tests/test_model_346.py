@@ -333,7 +333,7 @@ class TestBasicQueries(TestWithFakeModel346):
         self.fake_connection.setup_response('0,A,2;No error')
         response = self.dut.get_relay_alarm_control_parameters(1)
         relay_alarm = {"mode": False,
-                        "input_channel": self.dut.InputChannel.A,
+                        "input_channel": "A",
                         "condition": self.dut.RelayControlAlarm.LOW_OR_HIGH_ALARM}
         self.assertDictEqual(response, relay_alarm)
         self.assertIn("RELAY? 1", self.fake_connection.get_outgoing_message())
@@ -411,7 +411,7 @@ class TestBasicQueries(TestWithFakeModel346):
         self.assertEqual(response.derivative, 1.6)
         self.assertEqual(response.manual_out_value, 54)
         self.assertEqual(response.heater_range, self.dut.HeaterRange.LOW)
-        self.assertEqual(response.channel, self.dut.InputChannel.A)
+        self.assertEqual(response.channel, "A")
         self.assertEqual(response.rate, 55.68)
 
         self.assertIn("ZONE? 2,9", self.fake_connection.get_outgoing_message())
@@ -568,6 +568,6 @@ class TestBasicCommands(TestWithFakeModel346):
         self.fake_connection.setup_response('No error')
         control_loop_zone_parameters = Model346ControlLoopZoneSettings(215.36, 10, 15, 3.2, 65,
                                                                        self.dut.HeaterRange.HIGH,
-                                                                       self.dut.InputChannel.A, 25.36)
+                                                                       "A", 25.36)
         self.dut.set_control_loop_zone_table(1, 5, control_loop_zone_parameters)
-        self.assertEqual("ZONE 1,5,215.36,10,15,3.2,65,2,1,25.36;:SYSTem:ERRor:ALL?", self.fake_connection.get_outgoing_message())
+        self.assertEqual("ZONE 1,5,215.36,10,15,3.2,65,2,A,25.36;:SYSTem:ERRor:ALL?", self.fake_connection.get_outgoing_message())
