@@ -614,3 +614,10 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         """Aborts in progress sweeps across all channels."""
 
         self.command('SWEep:ABORt')
+    
+    @requires_firmware_version('1.7.0')
+    def reset_sweeps(self):
+        """Resets the source sweep settings for the specified module to their power on defaults."""
+
+        self.command(f'SWEep:RESet')
+
