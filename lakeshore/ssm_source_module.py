@@ -1306,6 +1306,7 @@ class SourceModule(BaseModule):
                                      dwell_time='AUTO',
                                      number_of_points='AUTO',
                                      settle_time=0.0,
+                                     initial_delay=0.0,
                                      sweep_spacing='LINEAR',
                                      round_trip=False,
                                      include_source_amplitude=True,
@@ -1330,6 +1331,8 @@ class SourceModule(BaseModule):
             settle_time (float):
                 How long to wait before taking a measurement after a step change.
                 Defaults to zero. Must be shorter than the dwell time.
+            initial_delay (float):
+                Time to wait before starting the sweep, defaults to zero.
             sweep_spacing (str or SweepSpacing enum):
                 LINEAR or LOGARITHMIC sweep
             round_trip (bool):
@@ -1376,6 +1379,7 @@ class SourceModule(BaseModule):
                                                        start=start_amplitude,
                                                        stop=stop_amplitude,
                                                        points=number_of_points,
+                                                       initial_delay=initial_delay,
                                                        dwell=dwell_time,
                                                        spacing=sweep_spacing,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
@@ -1598,6 +1602,7 @@ class SourceModule(BaseModule):
                                                        start=start_value,
                                                        stop=stop_value,
                                                        points=number_of_points,
+                                                       initial_delay=initial_delay,
                                                        dwell=dwell_time,
                                                        spacing=sweep_spacing,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
