@@ -1347,20 +1347,10 @@ class SourceModule(BaseModule):
 
         if dwell_time == 'AUTO':
             # default of 3 power line cycles
-            dwell_time = 3 / self.device.get_line_frequency()
+            dwell_time = self._calculate_dwell_time_for_shape('DC', 3)
 
         if number_of_points == 'AUTO':
-            if sweep_spacing == 'LINEAR':
-                # determine a decade step size that results in between 100 and 1000 points for linear sweep
-                step_size = 10 ** (math.floor(math.log10(abs(stop_amplitude - start_amplitude))) - 2)
-                number_of_points = round(abs(stop_amplitude - start_amplitude) / step_size + 1)
-            else:
-                # determine a decade step size that results in between 100 and 1000 points for logarithmic sweep
-                step_size = 10 ** (math.floor(math.log10(abs(stop_amplitude/start_amplitude))) - 2)
-                number_of_points = round(abs(stop_amplitude/start_amplitude) / step_size + 1)
-
-        # round dwell time to the nearest valid value
-        dwell_time = round(dwell_time / self.device.min_sweep_dwell, 0) * self.device.min_sweep_dwell
+            number_of_points = self._calculate_number_of_sweep_points(start_amplitude, stop_amplitude, sweep_spacing)
 
         # if custom data sources are not specified, automatically configure the corresponding measure module
         if not optional_custom_data_sources:
@@ -1435,7 +1425,7 @@ class SourceModule(BaseModule):
 
         self.device.command(f"SOURce{self.module_number}:READback:NPLCycles {value}")
 
-    def calculate_number_of_sweep_points(self, start_value, stop_value, sweep_spacing):
+    def _calculate_number_of_sweep_points(self, start_value, stop_value, sweep_spacing):
         """Calculates the number of sweep points based on the start and stop values and the sweep spacing.
 
         Args:
@@ -1454,7 +1444,7 @@ class SourceModule(BaseModule):
             number_of_points = round(abs(stop_value / start_value) / step_size + 1)
         return number_of_points
 
-    def calculate_dwell_time_for_shape(self, source_shape, power_line_cycles=3):
+    def _calculate_dwell_time_for_shape(self, source_shape, power_line_cycles=3):
         """Calculates the dwell time based on the source shape and power line cycles.
 
         Args:
@@ -1467,7 +1457,7 @@ class SourceModule(BaseModule):
         min_dwell_for_shape = self.device.source_shape_dwell_times[source_shape]
         return round(power_line_cycles / self.device.get_line_frequency() / min_dwell_for_shape, 0) * min_dwell_for_shape
 
-    def get_ac_sweep_parameter_and_data_source(self, ac_sweep_parameter, source_frequency, source_amplitude, source_offset):
+    def _get_ac_sweep_parameter_and_data_source(self, ac_sweep_parameter, source_frequency, source_amplitude, source_offset):
         """Configures the AC source sweep based on the specified parameter and returns the corresponding data source mnemonic and sweep type.
 
         Args:
@@ -1524,9 +1514,9 @@ class SourceModule(BaseModule):
 
     def do_ac_parameter_sweep_step_and_measure(self,
                                                 ac_sweep_parameter,
-                                                ac_shape,
                                                 start_value,
                                                 stop_value,
+                                                ac_shape = 'SINUSOID',
                                                 *optional_custom_data_sources,
                                                 source_amplitude=None,
                                                 source_frequency=None,
@@ -1534,6 +1524,7 @@ class SourceModule(BaseModule):
                                                 dwell_time='AUTO',
                                                 number_of_points='AUTO',
                                                 settle_time=0.0,
+                                                initial_delay=0.0,
                                                 sweep_spacing='LINEAR',
                                                 round_trip=False,
                                                 include_source_sweep_parameter=True,
@@ -1568,29 +1559,31 @@ class SourceModule(BaseModule):
             settle_time (float):
                 How long to wait before taking a measurement after a step change.
                 Defaults to zero. Must be shorter than the dwell time.
+            initial_delay (float):
+                Time to wait before starting the sweep, defaults to zero.
             sweep_spacing (str or SweepSpacing enum):
                 LINEAR or LOGARITHMIC sweep.
             round_trip (bool):
                 Sweeps to the stop amplitude then sweeps back to the start amplitude when true.
                 Returns double the sweep number of points when true.
-            include_source_amplitude (bool):
-                The source amplitude is included in the returned data when true
+            include_source_sweep_parameter (bool):
+                The source sweep parameter is included in the returned data when true
             include_relative_time (bool):
                 The time since the start of the sweep is in the returned data when true
         """
         self.set_shape(ac_shape)
 
-        sweep_type, data_source_mnemonics = self.get_ac_sweep_parameter_and_data_source(ac_sweep_parameter,
+        sweep_type, data_source_mnemonics = self._get_ac_sweep_parameter_and_data_source(ac_sweep_parameter,
                                                                                         source_frequency,
                                                                                         source_amplitude,
                                                                                         source_offset)
 
         if dwell_time == 'AUTO':
             # default of 3 power line cycles
-            dwell_time = self.calculate_dwell_time_for_shape(ac_shape, 3)
+            dwell_time = self._calculate_dwell_time_for_shape(ac_shape, 3)
 
         if number_of_points == 'AUTO':
-            number_of_points = self.calculate_number_of_sweep_points(start_value, stop_value, sweep_spacing)
+            number_of_points = self._calculate_number_of_sweep_points(start_value, stop_value, sweep_spacing)
 
         # if custom data sources are not specified, automatically configure the corresponding measure module
         if not optional_custom_data_sources:
@@ -1622,7 +1615,8 @@ class SourceModule(BaseModule):
                 data_sources.append((SSMSystemEnums.DataSourceMnemonic.RELATIVE_TIME, self.module_number))
             if include_source_sweep_parameter:
                 data_sources.append((data_source_mnemonics, self.module_number))
-            data_sources.append((SSMSystemEnums.DataSourceMnemonic.MEASURE_DC, self.module_number))
+            data_sources.append((SSMSystemEnums.DataSourceMnemonic.MEASURE_THETA, self.module_number))
+            data_sources.append((SSMSystemEnums.DataSourceMnemonic.MEASURE_R, self.module_number))
             sweep_data = self.device.get_data(1 / dwell_time, number_of_points, *data_sources)
 
         return sweep_data
