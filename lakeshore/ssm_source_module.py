@@ -126,13 +126,13 @@ class SourceModule(BaseModule):
 
         self.set_enable_state(False)
 
-    def get_excitation_mode(self):
-        """Returns the excitation mode of the module. 'CURRENT' or 'VOLTAGE'."""
+    def get_source_function(self):
+        """Returns the excitation function of the module. 'CURRENT' or 'VOLTAGE'."""
 
         return self.device.ExcitationType(self.device.query(f'SOURce{self.module_number}:FUNCtion:MODE?'))
 
-    def set_excitation_mode(self, excitation_mode):
-        """Sets the excitation mode of the module.
+    def set_source_function(self, excitation_mode):
+        """Sets the excitation function of the module.
 
             Args:
                 excitation_mode (SSMSystem.ExcitationType):
@@ -149,12 +149,12 @@ class SourceModule(BaseModule):
     def go_to_current_mode(self):
         """Sets the excitation mode of the module to 'CURRENT'."""
 
-        self.set_excitation_mode(self.device.ExcitationType.CURRENT)
+        self.set_source_function(self.device.ExcitationType.CURRENT)
 
     def go_to_voltage_mode(self):
         """Sets the excitation mode of the module to 'VOLTAGE'."""
 
-        self.set_excitation_mode(self.device.ExcitationType.VOLTAGE)
+        self.set_source_function(self.device.ExcitationType.VOLTAGE)
 
     def get_shape(self):
         """Returns the signal shape of the module. 'DC' or 'SINUSOID'."""
@@ -211,7 +211,7 @@ class SourceModule(BaseModule):
             Args:
                 source (str):
                     The channel used for synchronization ('S1', 'S2', 'S3', or 'RIN').
-                    This channel will follow the frequency set for the specified channel.
+                    This module will follow the frequency set for the specified channel if sync is enabled.
                 phase_shift (float):
                     The phase shift applied between the synchronization source and this channel in degrees.
                 enable_sync (bool):
@@ -637,7 +637,7 @@ class SourceModule(BaseModule):
         if not output_enable:
             self.disable()
 
-        self.set_excitation_mode('CURRent')
+        self.set_source_function('CURRent')
         self.set_shape('DC')
         self.set_current_amplitude(level)
 
@@ -661,7 +661,7 @@ class SourceModule(BaseModule):
         if not output_enable:
             self.disable()
 
-        self.set_excitation_mode('CURRent')
+        self.set_source_function('CURRent')
         self.set_frequency(frequency)
         self.set_shape('SINusoid')
         self.set_current_amplitude(amplitude)
@@ -825,7 +825,7 @@ class SourceModule(BaseModule):
         if not output_enable:
             self.disable()
 
-        self.set_excitation_mode('VOLTage')
+        self.set_source_function('VOLTage')
         self.set_shape('DC')
         self.set_voltage_amplitude(level)
 
@@ -849,7 +849,7 @@ class SourceModule(BaseModule):
         if not output_enable:
             self.disable()
 
-        self.set_excitation_mode(self.device.ExcitationType.VOLTAGE)
+        self.set_source_function(self.device.ExcitationType.VOLTAGE)
         self.set_frequency(frequency)
         self.set_shape('SINusoid')
         self.set_voltage_amplitude(amplitude)
@@ -1090,36 +1090,36 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:CURRent:LIMit:LOW {str(limit)}', check_errors=False)
 
     def reset_settings(self):
-        """Resets the settings for the specified module to their power on defaults."""
+        """Resets the settings for the module to their power on defaults."""
 
         self.device.command(f'SOURce{self.module_number}:PRESet')
 
     def unload(self):
-        """Unloads the specified module."""
+        """Unloads the module."""
 
         self.device.command(f'SOURce{self.module_number}:UNLoad')
 
     def get_load_state(self):
-        """Returns the loaded state for the specified module."""
+        """Returns the loaded state for the module."""
 
         response = bool(int(self.device.query(f'SOURce{self.module_number}:LOAD?')))
         return response
 
     def get_self_cal_datetime(self):
-        """Returns the self calibration date and time for the specified module."""
+        """Returns the self calibration date and time for the module."""
 
         response = self.device.query(f'SOURce{self.module_number}:SCALibration:DATE?').split(',')
         return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]), int(response[4]), int(response[5]))
 
     def get_self_cal_temperature(self):
-        """Returns the self calibration temperature for the specified module."""
+        """Returns the self calibration temperature for the module."""
 
         response = float(self.device.query(f'SOURce{self.module_number}:SCALibration:TEMP?'))
         return response
 
     @requires_firmware_version('1.7.0')
     def get_source_sweep_step_size(self, sweep_type):
-        """Returns the step size of the source sweep for the specified module.
+        """Returns the step size of the source sweep for the module.
 
             Step size is a calculated parameter derived from the relevant sweep type's span and points.
 
@@ -1133,7 +1133,7 @@ class SourceModule(BaseModule):
 
     @requires_firmware_version('1.7.0')
     def get_source_sweep_time(self):
-        """Returns the overall runtime of the source sweep for the specified module in seconds.
+        """Returns the overall runtime of the source sweep for the module in seconds.
 
             Sweep time is a calculated parameter derived from the dwell time and number of points.
         """
@@ -1143,18 +1143,18 @@ class SourceModule(BaseModule):
 
     @requires_firmware_version('1.7.0')
     def get_source_sweep_state(self):
-        """Returns the state of the source sweep on the specified module."""
+        """Returns the state of the source sweep on the module."""
 
         response = bool(int(self.device.query(f'SOURce{self.module_number}:SWEep:STATus?')))
         return response
 
     @requires_firmware_version('1.7.0')
     def set_sweep_configuration(self, sweep_settings):
-        """Configures a source sweep for the specified module.
+        """Configures a source sweep for the module.
 
         Args:
             sweep_settings (SourceSweepSettings):
-                The configuration for a specific sweep on the specified module.
+                The configuration for a specific sweep on the module.
         """
 
         # Reset all sweep parameters to fixed
@@ -1174,7 +1174,7 @@ class SourceModule(BaseModule):
 
     @requires_firmware_version('1.7.0')
     def get_sweep_configuration(self, sweep_type):
-        """Returns a SourceSweepSettings of the present sweep configuration for the specified module.
+        """Returns a SourceSweepSettings of the present sweep configuration for the module.
 
         Args:
             sweep_type (SourceSweepType):
@@ -1193,14 +1193,14 @@ class SourceModule(BaseModule):
 
     @requires_firmware_version('1.7.0')
     def disable_all_sweeping(self):
-        """Disables all source signals that support sweeping on the specified module."""
+        """Disables all source signals that support sweeping on the module."""
 
         for sweep_type in self.device.SourceSweepType:
             self.device.command(f'SOURce{self.module_number}:{sweep_type}:MODE FIXED')
 
     @requires_firmware_version('1.7.0')
     def disable_sweeping(self, sweep_type):
-        """Disables the sweeping of the specified sweep type on the specified module.
+        """Disables the sweeping of the specified sweep type on the module.
 
         Args:
             sweep_type (SourceSweepType):
@@ -1361,7 +1361,7 @@ class SourceModule(BaseModule):
             measure_module.setup_dc_measurement(averaging_nplcs)
 
         # determine if the source will provide current or voltage
-        if self.get_excitation_mode() == 'VOLTAGE':
+        if self.get_source_function() == 'VOLTAGE':
             sweep_type = self.device.SourceSweepType.VOLTAGE_AMPLITUDE
         else:
             sweep_type = self.device.SourceSweepType.CURRENT_AMPLITUDE
@@ -1395,13 +1395,13 @@ class SourceModule(BaseModule):
 
         return sweep_data
 
-    def get_voltage_sense_mode(self):
-        """Returns the source voltage sense mode for the specified module as either LOCal or REMote"""
+    def get_voltage_source_sense(self):
+        """Returns the location controlled by the voltage source as either LOCal or REMote"""
 
         return self.device.query(f"SOURce{self.module_number}:VOLTage:SMODe?")
 
-    def set_voltage_sense_mode(self, state):
-        """Sets the source voltage sense mode for the specified module
+    def set_voltage_source_sense(self, state):
+        """Sets the location controlled by the voltage source
 
         Args:
             state (str):
@@ -1411,13 +1411,13 @@ class SourceModule(BaseModule):
         self.device.command(f"SOURce{self.module_number}:VOLTage:SMODe {state}")
 
     def get_readback_nplcycles(self):
-        """Returns the averaging time in number of power line cycles (NPLC) of the specified module"""
+        """Returns the averaging time in number of power line cycles (NPLC) of the module"""
 
         response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles?"))
         return response
 
     def set_readback_nplcycles(self, value):
-        """Sets the averaging time in number of power line cycles (NPLC) of the specified module. The NPLC value must be between 0.01 and 600.00.
+        """Sets the averaging time in number of power line cycles (NPLC) of the module. The NPLC value must be between 0.01 and 600.00.
 
         Args:
             value (float):

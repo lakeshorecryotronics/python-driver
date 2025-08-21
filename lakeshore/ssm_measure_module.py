@@ -1037,7 +1037,7 @@ class MeasureModule(BaseModule):
         return float(self.device.query(f'SENSe{self.module_number}:FRTHreshold?'))
 
     def set_frequency_range_threshold(self, threshold):
-        """Sets the frequency range threshold for the specified module.
+        """Sets the frequency range threshold for the module.
 
             When the modules range is set to Auto, a range such that the frequency of the signal does not exceed the
             given percentage of the bandwidth of the range will be chosen.
@@ -1183,7 +1183,7 @@ class MeasureModule(BaseModule):
         return SSMSystemEnums.ReferenceModule(self.device.query(f'CALCulate:SENSe{self.module_number}:RESistance:SOURce?'))
 
     def set_resistance_excitation_type(self, excitation_type):
-        """Sets the present resistance excitation type of the specified module.
+        """Sets the present resistance excitation type of the module.
 
             For "DC", the measure mode is DC and source shape is DC.
             For "AC", the measure mode is Lock-in and source shape is Sine.
@@ -1200,9 +1200,9 @@ class MeasureModule(BaseModule):
         self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:ETYPe {excitation}")
 
     def get_resistance_excitation_type(self):
-        """Returns the present resistance excitation type of the specified module.
+        """Returns the present resistance excitation type of the module.
 
-            This represents the combination of the specified measure module mode and the selected source module shape.
+            This represents the combination of the measure module mode and the selected source module shape.
             For "DC", the measure mode is DC and source shape is DC.
             For "AC", the measure mode is Lock-in and source shape is Sine.
 
@@ -1214,7 +1214,7 @@ class MeasureModule(BaseModule):
             f"CALCulate:SENSe{self.module_number}:RESistance:ETYPe?"))
 
     def set_resistance_mode(self, resistance_mode):
-        """Sets the resistance optimization mode of the specified module.
+        """Sets the resistance optimization mode of the module.
 
         Args:
             resistance_mode (ResistanceMode): The desired resistance optimization mode.
@@ -1227,7 +1227,7 @@ class MeasureModule(BaseModule):
         self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:MODE {mode}")
 
     def get_resistance_mode(self):
-        """Returns the preset resistance optimization mode of the specified module.
+        """Returns the preset resistance optimization mode of the module.
 
         Returns:
             ResistanceMode: The present resistance optimization mode. "NOISe" or "POWer".
@@ -1236,7 +1236,7 @@ class MeasureModule(BaseModule):
         return SSMSystemEnums.ResistanceMode(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:MODE?"))
 
     def set_resistance_range(self, resistance_range):
-        """Sets the resistance range of the specified module.
+        """Sets the resistance range of the module.
 
         Args:
             resistance_range (float): The desired resistance range in Ohms.
@@ -1245,7 +1245,7 @@ class MeasureModule(BaseModule):
         self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe {resistance_range}")
 
     def get_resistance_range(self):
-        """Returns the present resistance range of the specified module.
+        """Returns the present resistance range of the module.
 
         Returns:
             float: The resistance range in Ohms.
@@ -1254,7 +1254,7 @@ class MeasureModule(BaseModule):
         return float(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe?"))
 
     def set_resistance_auto_range(self, state):
-        """Sets the resistance auto-range state of the specified module.
+        """Sets the resistance auto-range state of the module.
 
         Args:
             state (bool): The desired state of resistance auto-range. True to enable; else false.
@@ -1263,16 +1263,16 @@ class MeasureModule(BaseModule):
         self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe:AUTO {int(state)}")
 
     def get_resistance_auto_range(self):
-        """Gets the state of resistance auto-range on the specified module.
+        """Gets the state of resistance auto-range on the module.
 
         Returns:
-            bool: The state of resistance auto-range on the specified module.
+            bool: The state of resistance auto-range on the module.
         """
 
         return bool(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe:AUTO?"))
 
     def set_resistance_optimization_state(self, optimization_state):
-        """Sets the state of resistance optimization on the specified module
+        """Sets the state of resistance optimization on the module
 
         Args:
             optimization_state (bool): The desired state of resistance optimization. True if optimizing for resistance,
@@ -1282,7 +1282,7 @@ class MeasureModule(BaseModule):
         self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:OPTimize {int(optimization_state)}")
 
     def get_resistance_optimization_state(self):
-        """Returns the present state of optimization on the specified module.
+        """Returns the present state of optimization on the module.
 
             When optimization is enabled, the instrument will set other settings based on the selected resistance
             range and mode settings.
@@ -1294,7 +1294,7 @@ class MeasureModule(BaseModule):
         return bool(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OPTimize?"))
 
     def set_resistance_observation_time_state(self, state):
-        """Sets the state of the observation time on the specified module.
+        """Sets the state of the observation time on the module.
 
         Args:
             state (bool): The state of resistance observation time.
@@ -1302,7 +1302,7 @@ class MeasureModule(BaseModule):
         self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:OTIME:STATe {int(state)}")
 
     def get_resistance_observation_time_state(self):
-        """Gets the present state of the observation time on the specified module.
+        """Gets the present state of the observation time on the module.
 
         Returns:
             bool: The state of resistance observation time.
@@ -1311,7 +1311,7 @@ class MeasureModule(BaseModule):
         return bool(int(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OTIMe:STATe?")))
 
     def set_resistance_observation_time_requested(self, requested_time):
-        """Sets the requested observation time on the specified module.
+        """Sets the requested observation time on the module.
 
         Args:
             requested_time (float): The requested observation time.
@@ -1320,7 +1320,7 @@ class MeasureModule(BaseModule):
         self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:OTIMe:REQuested {requested_time}")
 
     def get_resistance_observation_time_requested(self):
-        """Gets the present requested observation time on the specified module.
+        """Gets the present requested observation time on the module.
 
         Returns:
             float: The requested observation time.
@@ -1391,17 +1391,17 @@ class MeasureModule(BaseModule):
         self.device.command(f"CALCulate:SENSe{self.module_number}:RESistance:DC:RELative:CLEar")
 
     def reset_settings(self):
-        """Resets the settings for the specified module to their power on defaults."""
+        """Resets the settings for the module to their power on defaults."""
 
         self.device.command(f'SENSe{self.module_number}:PRESet')
 
     def unload(self):
-        """Unloads the specified module."""
+        """Unloads the module."""
 
         self.device.command(f'SENSe{self.module_number}:UNLoad')
 
     def get_load_state(self):
-        """Returns the loaded state for the specified module."""
+        """Returns the loaded state for the module."""
 
         response = bool(int(self.device.query(f'SENSe{self.module_number}:LOAD?')))
         return response
@@ -1438,13 +1438,13 @@ class MeasureModule(BaseModule):
         return self.device.read_multiple(*elements)
 
     def get_self_cal_datetime(self):
-        """Returns the self calibration date and time for the specified module."""
+        """Returns the self calibration date and time for the module."""
 
         response = self.device.query(f'SENSe{self.module_number}:SCALibration:DATE?').split(',')
         return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]),int(response[4]), int(response[5]))
 
     def get_self_cal_temperature(self):
-        """Returns the self calibration temperature for the specified module."""
+        """Returns the self calibration temperature for the module."""
 
         return float(self.device.query(f'SENSe{self.module_number}:SCALibration:TEMP?'))
 
@@ -1463,13 +1463,13 @@ class MeasureModule(BaseModule):
 
         self.device.command(f'SENSe{self.module_number}:FUNCtion {value}')
 
-    def get_voltage_sense_mode(self):
-        """Returns the voltage sense mode of the specified module"""
+    def get_voltage_measure_sense(self):
+        """Returns the location of voltage sensing for the measure module"""
 
         return self.device.query(f'SENSe{self.module_number}:VOLTage:SMODe?')
 
-    def set_voltage_sense_mode(self, value):
-        """Sets the voltage sense mode of the specified module
+    def set_voltage_measure_sense(self, value):
+        """Sets the location of voltage sensing for the measure module
 
             Args:
                 value (str):
