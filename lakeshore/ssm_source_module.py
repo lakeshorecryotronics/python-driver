@@ -1512,12 +1512,13 @@ class SourceModule(BaseModule):
 
         raise ValueError("ac_sweep_parameter must be 'OFFSET', 'FREQUENCY', or 'AMPLITUDE'.")
 
-    def sweep_ac_amplitude(self, start_amplitude, stop_amplitude, *, source_frequency, source_offset=0, **kwargs):
+    def sweep_ac_amplitude(self, start_amplitude, stop_amplitude, *, ac_shape, source_frequency, source_offset=0, **kwargs):
         """Sweep AC amplitude at fixed frequency and offset.
 
         Args:
             start_amplitude (float): The starting amplitude of the sweep in volts or amps.
             stop_amplitude (float): The ending amplitude of the sweep in volts or amps.
+            ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
             source_frequency (float): The AC frequency in Hz.
             source_offset (float): The AC offset in volts or amps. Default is 0.
             **kwargs: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
@@ -1530,15 +1531,17 @@ class SourceModule(BaseModule):
                                                             stop_value=stop_amplitude,
                                                             source_frequency=source_frequency,
                                                             source_offset=source_offset,
+                                                            ac_shape=ac_shape,
                                                             **kwargs)
 
-    def sweep_ac_frequency(self, start_frequency, stop_frequency, *, source_amplitude, source_offset=0, **kwargs):
+    def sweep_ac_frequency(self, start_frequency, stop_frequency, *, ac_shape, source_amplitude, source_offset=0, **kwargs):
         """Sweep AC frequency at fixed amplitude and offset.
 
         Args:
             start_frequency (float): The starting frequency of the sweep in Hz.
             stop_frequency (float): The ending frequency of the sweep in Hz.
             source_amplitude (float): The AC amplitude in volts or amps.
+            ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
             source_offset (float): The AC offset in volts or amps. Default is 0.
             **kwargs: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
 
@@ -1550,9 +1553,10 @@ class SourceModule(BaseModule):
                                                             stop_value=stop_frequency,
                                                             source_amplitude=source_amplitude,
                                                             source_offset=source_offset,
+                                                            ac_shape=ac_shape,
                                                             **kwargs)
 
-    def sweep_ac_offset(self, start_offset, stop_offset, *, source_amplitude, source_frequency, **kwargs):
+    def sweep_ac_offset(self, start_offset, stop_offset, *, ac_shape, source_amplitude, source_frequency, **kwargs):
         """Sweep AC offset at fixed amplitude and frequency.
 
         Args:
@@ -1560,6 +1564,7 @@ class SourceModule(BaseModule):
             stop_offset (float): The ending offset of the sweep in volts or amps.
             source_amplitude (float): The AC amplitude in volts or amps.
             source_frequency (float): The AC frequency in Hz.
+            ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
             **kwargs: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
 
         Returns:
@@ -1570,16 +1575,17 @@ class SourceModule(BaseModule):
                                                             stop_value=stop_offset,
                                                             source_amplitude=source_amplitude,
                                                             source_frequency=source_frequency,
+                                                            ac_shape=ac_shape,
                                                             **kwargs)
     def _do_ac_parameter_sweep_step_and_measure(self,
                                                 ac_sweep_parameter,
                                                 start_value,
                                                 stop_value,
-                                                ac_shape = 'SINUSOID',
+                                                ac_shape='SINUSOID',
                                                 *optional_custom_data_sources,
-                                                source_amplitude,
-                                                source_frequency,
-                                                source_offset,
+                                                source_amplitude=None,
+                                                source_frequency=None,
+                                                source_offset=None,
                                                 dwell_time='AUTO',
                                                 number_of_points='AUTO',
                                                 settle_time=0.0,
