@@ -475,18 +475,6 @@ class MeasureModule(BaseModule):
 
         return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:LPASs:STATe?')))
 
-    def get_lock_in_iir_state(self):
-        """
-        This function is deprecated. Use get_lock_in_lowpass_state() instead.
-
-        .. deprecated:: 1.8.2
-            Use get_lock_in_lowpass_state instead.
-        """
-
-        warn("The get_lock_in_iir_state method is deprecated, use get_lock_in_lowpass_state instead", DeprecationWarning)
-
-        return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:IIR:STATe?')))
-
     def set_lock_in_lowpass_state(self, state):
         """Sets the state of the lock-in (PSD) output IIR filter.
 
@@ -496,18 +484,6 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command(f'SENSe{self.module_number}:LIA:LPASs:STATe {str(int(state))}')
-
-    def set_lock_in_iir_state(self, state):
-        """
-        This function is deprecated. Use set_lock_in_lowpass_state() instead.
-
-        .. deprecated:: 1.8.2
-            Use set_lock_in_lowpass_state instead.
-        """
-
-        warn("The set_lock_in_iir_state method is deprecated, use set_lock_in_lowpass_state instead", DeprecationWarning)
-
-        self.device.command(f'SENSe{self.module_number}:LIA:IIR:STATe {str(int(state))}')
 
     def enable_lock_in_lowpass(self):
         """Sets the state of the lock-in (PSD) output IIR filter to True."""
@@ -548,18 +524,6 @@ class MeasureModule(BaseModule):
 
         return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:AVERage:STATe?')))
 
-    def get_lock_in_fir_state(self):
-        """
-        This function is deprecated. Use get_lock_in_averaging_state() instead.
-
-        .. deprecated:: 1.8.2
-            Use get_lock_in_averaging_state instead.
-        """
-
-        warn("The get_lock_in_fir_state method is deprecated, use get_lock_in_averaging_state instead", DeprecationWarning)
-
-        return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:FIR:STATe?')))
-
     def set_lock_in_averaging_state(self, state):
         """Sets the state of the lock-in (PSD) output averaging (FIR) filter.
 
@@ -569,18 +533,6 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command(f'SENSe{self.module_number}:LIA:AVERage:STATe {str(int(state))}')
-
-    def set_lock_in_fir_state(self, state):
-        """
-        This function is deprecated. Use set_lock_in_averaging_state() instead.
-
-        .. deprecated:: 1.8.2
-            Use set_lock_in_averaging_state instead.
-        """
-
-        warn("The set_lock_in_fir_state method is deprecated, use set_lock_in_averaging_state instead", DeprecationWarning)
-
-        self.device.command(f'SENSe{self.module_number}:LIA:FIR:STATe {str(int(state))}')
 
     def enable_lock_in_averaging(self):
         """Sets the state of the lock-in (PSD) output averaging (FIR) filter to True."""
@@ -621,18 +573,6 @@ class MeasureModule(BaseModule):
 
         return int(self.device.query(f'SENSe{self.module_number}:LIA:REFerence:CYCLes?'))
 
-    def get_lock_in_fir_cycles(self):
-        """
-        This function is deprecated. Use get_lock_in_reference_cycles() instead.
-
-        .. deprecated:: 1.8.2
-            Use get_lock_in_reference_cycles instead.
-        """
-
-        warn("The get_lock_in_fir_cycles method is deprecated, use get_lock_in_reference_cycles instead", DeprecationWarning)
-
-        return int(self.device.query(f'SENSe{self.module_number}:LIA:FIR:CYCLes?'))
-
     def set_lock_in_reference_cycles(self, cycles):
         """Sets the number of averaging (FIR) cycles.
 
@@ -642,18 +582,6 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command(f'SENSe{self.module_number}:LIA:REFerence:CYCLes {str(int(cycles))}')
-
-    def set_lock_in_fir_cycles(self, cycles):
-        """
-        This function is deprecated. Use set_lock_in_reference_cycles() instead.
-
-        .. deprecated:: 1.8.2
-            Use set_lock_in_reference_cycles instead.
-        """
-
-        warn("The set_lock_in_fir_cycles method is deprecated, use set_lock_in_reference_cycles instead", DeprecationWarning)
-
-        self.device.command(f'SENSe{self.module_number}:LIA:FIR:CYCLes {str(int(cycles))}')
 
     def setup_dc_measurement(self, nplc=1):
         """Set up the module for DC measurement.
