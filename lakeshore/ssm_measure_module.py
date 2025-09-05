@@ -190,7 +190,7 @@ class MeasureModule(BaseModule):
         return bool(int(self.device.query(f'SENSe{self.module_number}:FILTer:STATe?')))
 
     def get_lowpass_corner_frequency(self):
-        """Returns the low pass filter cutoff frequency.
+        """Returns the analog low pass filter cutoff frequency.
 
             'NONE', 'F10', 'F30', 'F100', 'F300', 'F1000', 'F3000', or 'F10000'.
         """
@@ -198,7 +198,7 @@ class MeasureModule(BaseModule):
         return self.device.query(f'SENSe{self.module_number}:FILTer:LPASs:FREQuency?')
 
     def get_lowpass_rolloff(self):
-        """Returns the low pass filter roll-off.
+        """Returns the analog low pass filter roll-off.
 
             'R6' or 'R12'.
         """
@@ -240,7 +240,7 @@ class MeasureModule(BaseModule):
         self.device.command(f'SENSe{self.module_number}:FILTer:OPTimization {optimization_type}')
 
     def configure_input_lowpass_filter(self, corner_frequency, rolloff='R12'):
-        """Configure the input low pass filter.
+        """Configure the analog input low pass filter.
 
             Args:
                 corner_frequency (str):
@@ -256,7 +256,7 @@ class MeasureModule(BaseModule):
         self.device.command(f'SENSe{self.module_number}:FILTer:STATe 1')
 
     def configure_input_highpass_filter(self, corner_frequency, rolloff='R12'):
-        """Configure the input high pass filter.
+        """Configure the analog input high pass filter.
 
             Args:
                 corner_frequency (str):
@@ -1396,13 +1396,13 @@ class MeasureModule(BaseModule):
 
         self.device.command(f'SENSe{self.module_number}:FUNCtion {value}')
 
-    def get_voltage_measure_sense(self):
-        """Returns the location of voltage sensing for the measure module"""
+    def get_voltage_sense_mode(self):
+        """Returns the voltage measure sense of the specified module"""
 
         return self.device.query(f'SENSe{self.module_number}:VOLTage:SMODe?')
 
-    def set_voltage_measure_sense(self, value):
-        """Sets the location of voltage sensing for the measure module
+    def set_voltage_sense_mode(self, value):
+        """Sets the voltage measure sense of the specified module
 
             Args:
                 value (str):

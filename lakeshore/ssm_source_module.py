@@ -1394,6 +1394,7 @@ class SourceModule(BaseModule):
 
         return sweep_data
 
+<<<<<<< HEAD
     def get_voltage_source_sense(self):
         """Returns the location controlled by the voltage source as either LOCal or REMote"""
 
@@ -1401,10 +1402,19 @@ class SourceModule(BaseModule):
 
     def set_voltage_source_sense(self, state):
         """Sets the location controlled by the voltage source
+=======
+    def get_voltage_sense_mode(self):
+        """Returns the source voltage source sense for the specified module as either LOCal or REMote"""
+
+        return self.device.query(f"SOURce{self.module_number}:VOLTage:SMODe?")
+
+    def set_voltage_sense_mode(self, state):
+        """Sets the source voltage source sense for the specified module
+>>>>>>> c117b67 (feat : Update method docstrings)
 
         Args:
             state (str):
-                Voltage sense mode ('LOCal' or 'REMote')
+                Voltage source sense ('LOCal' or 'REMote')
         """
 
         self.device.command(f"SOURce{self.module_number}:VOLTage:SMODe {state}")
