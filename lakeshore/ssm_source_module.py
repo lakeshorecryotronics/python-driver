@@ -1409,10 +1409,21 @@ class SourceModule(BaseModule):
 
         self.device.command(f"SOURce{self.module_number}:VOLTage:SMODe {state}")
 
+<<<<<<< HEAD
     def get_readback_nplcycles(self):
         """Returns the averaging time in number of power line cycles (NPLC) of the module"""
+=======
+    def get_actual_readback_nplcycles(self):
+        """Returns the averaging time in number of power line cycles (NPLC) of the specified module"""
+>>>>>>> ad569af (feat : Update NPLCycles? to include actual & requested for sources and measures)
 
-        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles?"))
+        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles:ACTual?"))
+        return response
+
+    def get_requested_readback_nplcycles(self):
+        """Returns the requested averaging time in number of power line cycles (NPLC) of the specified module"""
+
+        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles:[:REQuested]?"))
         return response
 
     def set_readback_nplcycles(self, value):
@@ -1472,7 +1483,7 @@ class SourceModule(BaseModule):
         """
 
         # Determine if the source will provide current or voltage
-        excitation_mode = self.get_excitation_mode()
+        excitation_mode = self.get_excitation_mode() # pylint: disable=no-member
 
         if ac_sweep_parameter == "OFFSET":
             if source_frequency is None or source_amplitude is None:
