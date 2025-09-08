@@ -500,7 +500,7 @@ class MeasureModule(BaseModule):
 
         warn("The enable_lock_in_iir method is deprecated, use enable_lock_in_lowpass instead", DeprecationWarning)
 
-        self.set_lock_in_iir_state(True)
+        self.set_lock_in_lowpass_state(True)
 
     def disable_lock_in_lowpass(self):
         """Sets the state of the lock-in (PSD) output IIR filter to False."""
@@ -517,7 +517,7 @@ class MeasureModule(BaseModule):
 
         warn("The disable_lock_in_iir method is deprecated, use disable_lock_in_lowpass instead", DeprecationWarning)
 
-        self.set_lock_in_iir_state(False)
+        self.set_lock_in_lowpass_state(False)
 
     def get_lock_in_averaging_state(self):
         """Returns the state of the lock-in (PSD) output averaging (FIR) filter."""
@@ -549,7 +549,7 @@ class MeasureModule(BaseModule):
 
         warn("The enable_lock_in_averaging (FIR) method is deprecated, use enable_lock_in_averaging instead", DeprecationWarning)
 
-        self.set_lock_in_fir_state(True)
+        self.set_lock_in_lowpass_state(True)
 
     def disable_lock_in_averaging(self):
         """Sets the state of the lock-in (PSD) output averaging (FIR) filter to False."""
@@ -566,7 +566,7 @@ class MeasureModule(BaseModule):
 
         warn("The disable_lock_in_averaging (FIR) method is deprecated, use disable_lock_in_averaging instead", DeprecationWarning)
 
-        self.set_lock_in_fir_state(False)
+        self.set_lock_in_lowpass_state(False)
 
     def get_lock_in_reference_cycles(self):
         """Returns the number of averaging (FIR) cycles."""
