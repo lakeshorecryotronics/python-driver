@@ -1394,15 +1394,6 @@ class SourceModule(BaseModule):
 
         return sweep_data
 
-<<<<<<< HEAD
-    def get_voltage_source_sense(self):
-        """Returns the location controlled by the voltage source as either LOCal or REMote"""
-
-        return self.device.query(f"SOURce{self.module_number}:VOLTage:SMODe?")
-
-    def set_voltage_source_sense(self, state):
-        """Sets the location controlled by the voltage source
-=======
     def get_voltage_sense_mode(self):
         """Returns the source voltage source sense for the specified module as either LOCal or REMote"""
 
@@ -1410,7 +1401,6 @@ class SourceModule(BaseModule):
 
     def set_voltage_sense_mode(self, state):
         """Sets the source voltage source sense for the specified module
->>>>>>> c117b67 (feat : Update method docstrings)
 
         Args:
             state (str):
@@ -1419,13 +1409,8 @@ class SourceModule(BaseModule):
 
         self.device.command(f"SOURce{self.module_number}:VOLTage:SMODe {state}")
 
-<<<<<<< HEAD
-    def get_readback_nplcycles(self):
-        """Returns the averaging time in number of power line cycles (NPLC) of the module"""
-=======
     def get_actual_readback_nplcycles(self):
         """Returns the averaging time in number of power line cycles (NPLC) of the specified module"""
->>>>>>> ad569af (feat : Update NPLCycles? to include actual & requested for sources and measures)
 
         response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles:ACTual?"))
         return response
