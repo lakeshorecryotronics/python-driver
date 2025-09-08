@@ -93,7 +93,7 @@ class SSMSystemEnums:
 
         def __init__(self, sweep_type, start, stop, points, dwell,
                      direction=Direction.UP, round_trip=False, spacing=SweepSpacing.LINEAR,
-                     initial_delay=0, blanking=0):
+                     initial_delay=0.0, blanking=0.0):
             """Constructor for SourceModuleSweepSettings class.
 
             Args:

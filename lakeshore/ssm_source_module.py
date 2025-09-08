@@ -1164,13 +1164,13 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:OFFSet:MODE FIXed')
         self.device.command(f'SOURce{self.module_number}:FREQuency:MODE FIXed')
 
-        self.device.command(f'SOURce{self.module_number}:SWEep:INITialdelay {sweep_settings.initial_delay}')
-        self.device.command(f'SOURce{self.module_number}:SWEep:BLANKing {sweep_settings.blanking}')
         self.device.command(f'SOURce{self.module_number}:SWEep:DWELl {sweep_settings.dwell}')
         self.device.command(f'SOURce{self.module_number}:SWEep:POINts {sweep_settings.points}')
         self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {sweep_settings.spacing}')
         self.device.command(f'SOURce{self.module_number}:SWEep:DIRection {sweep_settings.direction}')
         self.device.command(f'SOURce{self.module_number}:SWEep:DIRection:RTRip {int(sweep_settings.round_trip)}')
+        self.device.command(f'SOURce{self.module_number}:SWEep:INITialdelay {float(sweep_settings.initial_delay)}')
+        self.device.command(f'SOURce{self.module_number}:SWEep:BLANking {float(sweep_settings.blanking)}')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:MODE SWEep')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STARt {sweep_settings.start}')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STOP {sweep_settings.stop}')
@@ -1193,8 +1193,8 @@ class SourceModule(BaseModule):
             self.device.query(f'SOURce{self.module_number}:SWEep:DIRection?'),
             bool(int(self.device.query(f'SOURce{self.module_number}:SWEep:DIRection:RTRip?'))),
             self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?'),
-            float(self.device.query(f'SOURce{self.module_number}:SWEep:INItialdelay?')),
-            float(self.device.query(f'SOURce{self.module_number}:SWEep:BLANKing?')))
+            float(self.device.query(f'SOURce{self.module_number}:SWEep:INITialdelay?')),
+            float(self.device.query(f'SOURce{self.module_number}:SWEep:BLANking?')))
 
     @requires_firmware_version('1.7.0')
     def disable_all_sweeping(self):
@@ -1253,7 +1253,9 @@ class SourceModule(BaseModule):
                                                        points=num_points,
                                                        dwell=dwell_time,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
-                                                       round_trip=round_trip)
+                                                       round_trip=round_trip,
+                                                       initial_delay=1.0,
+                                                       blanking=1.0)
         self.set_sweep_configuration(sweep_config)
 
     def set_current_ramp_configuration(self, stop_amplitude, start_amplitude=None, slew_rate=0.001, round_trip=False):
@@ -1295,7 +1297,9 @@ class SourceModule(BaseModule):
                                                        points=num_points,
                                                        dwell=dwell_time,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
-                                                       round_trip=round_trip)
+                                                       round_trip=round_trip,
+                                                       initial_delay=1.0,
+                                                       blanking=1.0)
         self.set_sweep_configuration(sweep_config)
 
     @requires_firmware_version('1.7.0')
@@ -1311,7 +1315,7 @@ class SourceModule(BaseModule):
                                      round_trip=False,
                                      include_source_amplitude=True,
                                      include_relative_time=False):
-        """Immediately runs a DC source sweep and returns data for each point in the sweep.
+        """Immediately DDDDDDD a DC source sweep and returns data for each point in the sweep.
 
         Args:
             start_amplitude (float):
@@ -1369,11 +1373,12 @@ class SourceModule(BaseModule):
                                                        start=start_amplitude,
                                                        stop=stop_amplitude,
                                                        points=number_of_points,
-                                                       initial_delay=initial_delay,
                                                        dwell=dwell_time,
                                                        spacing=sweep_spacing,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
-                                                       round_trip=round_trip)
+                                                       round_trip=round_trip,
+                                                       initial_delay=initial_delay,
+                                                       blanking=settle_time)
         self.set_sweep_configuration(sweep_config)
 
         # double the number of points to stream if doing a round trip sweep
@@ -1666,11 +1671,12 @@ class SourceModule(BaseModule):
                                                        start=start_value,
                                                        stop=stop_value,
                                                        points=number_of_points,
-                                                       initial_delay=initial_delay,
                                                        dwell=dwell_time,
                                                        spacing=sweep_spacing,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
-                                                       round_trip=round_trip)
+                                                       round_trip=round_trip,
+                                                       initial_delay=initial_delay,
+                                                       blanking=settle_time)
         self.set_sweep_configuration(sweep_config)
 
         # double the number of points to stream if doing a round trip sweep
