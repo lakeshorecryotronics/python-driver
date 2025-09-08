@@ -1518,7 +1518,7 @@ class SourceModule(BaseModule):
 
         raise ValueError("ac_sweep_parameter must be 'OFFSET', 'FREQUENCY', or 'AMPLITUDE'.")
 
-    def sweep_ac_amplitude(self, start_amplitude, stop_amplitude, *, ac_shape, source_frequency, source_offset=0, **kwargs):
+    def sweep_ac_amplitude(self, start_amplitude, stop_amplitude, ac_shape, source_frequency, source_offset=0, **kwargs):
         """Sweep AC amplitude at fixed frequency and offset.
 
         Args:
@@ -1527,7 +1527,7 @@ class SourceModule(BaseModule):
             ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
             source_frequency (float): The AC frequency in Hz.
             source_offset (float): The AC offset in volts or amps. Default is 0.
-            **kwargs: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
+            ``**kwargs``: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
 
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
@@ -1540,7 +1540,7 @@ class SourceModule(BaseModule):
                                                             ac_shape=ac_shape,
                                                             **kwargs)
 
-    def sweep_ac_frequency(self, start_frequency, stop_frequency, *, ac_shape, source_amplitude, source_offset=0, **kwargs):
+    def sweep_ac_frequency(self, start_frequency, stop_frequency, ac_shape, source_amplitude, source_offset=0, **kwargs):
         """Sweep AC frequency at fixed amplitude and offset.
 
         Args:
@@ -1549,7 +1549,7 @@ class SourceModule(BaseModule):
             source_amplitude (float): The AC amplitude in volts or amps.
             ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
             source_offset (float): The AC offset in volts or amps. Default is 0.
-            **kwargs: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
+            ``**kwargs``: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
 
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
@@ -1562,7 +1562,7 @@ class SourceModule(BaseModule):
                                                             ac_shape=ac_shape,
                                                             **kwargs)
 
-    def sweep_ac_offset(self, start_offset, stop_offset, *, ac_shape, source_amplitude, source_frequency, **kwargs):
+    def sweep_ac_offset(self, start_offset, stop_offset, ac_shape, source_amplitude, source_frequency, **kwargs):
         """Sweep AC offset at fixed amplitude and frequency.
 
         Args:
@@ -1571,7 +1571,7 @@ class SourceModule(BaseModule):
             source_amplitude (float): The AC amplitude in volts or amps.
             source_frequency (float): The AC frequency in Hz.
             ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
-            **kwargs: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
+            ``**kwargs``: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
 
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
