@@ -813,6 +813,11 @@ class MeasureModule(BaseModule):
 
         return float(self.device.query(f'FETCh:SENSe{self.module_number}:LIA:DC?'))
 
+    def get_lock_in_dc_immediate(self):
+        """Returns the immediate dc measurement from the lock-in."""
+
+        return float(self.device.query(f'FETCh:SENSe{self.module_number}:LIA:DC:IMMediate?'))
+
     def get_pll_lock_status(self):
         """Returns the present lock status of the PLL. True if locked, False if unlocked."""
 
