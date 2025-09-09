@@ -1205,8 +1205,8 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
             direction=self.dut_system.SourceSweepSettings.Direction.UP,
             spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
             round_trip=False,
-            initial_delay=1.0,
-            blanking=1.0)
+            initial_delay=0.0,
+            blanking=0.0)
         # Queue up a response for every command that will be sent
         # No start value is passed, so we query the present amplitude from the instrument
         self.fake_connection.setup_response('1.0;No error')
@@ -1259,8 +1259,8 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
             direction=self.dut_system.SourceSweepSettings.Direction.UP,
             spacing=self.dut_system.SourceSweepSettings.SweepSpacing.LINEAR,
             round_trip=False,
-            initial_delay=1.0,
-            blanking=1.0)
+            initial_delay=0.0,
+            blanking=0.0)
         # Queue up a response for every command that will be sent
         self.queue_up_many_no_error_responses(14)
         # Call the function
