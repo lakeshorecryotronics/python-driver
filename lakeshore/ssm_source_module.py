@@ -1254,8 +1254,8 @@ class SourceModule(BaseModule):
                                                        dwell=dwell_time,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
                                                        round_trip=round_trip,
-                                                       initial_delay=1.0,
-                                                       blanking=1.0)
+                                                       initial_delay=0.0,
+                                                       blanking=0.0)
         self.set_sweep_configuration(sweep_config)
 
     def set_current_ramp_configuration(self, stop_amplitude, start_amplitude=None, slew_rate=0.001, round_trip=False):
@@ -1298,8 +1298,8 @@ class SourceModule(BaseModule):
                                                        dwell=dwell_time,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
                                                        round_trip=round_trip,
-                                                       initial_delay=1.0,
-                                                       blanking=1.0)
+                                                       initial_delay=0.0,
+                                                       blanking=0.0)
         self.set_sweep_configuration(sweep_config)
 
     @requires_firmware_version('1.7.0')
