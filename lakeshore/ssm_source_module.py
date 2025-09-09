@@ -1483,7 +1483,7 @@ class SourceModule(BaseModule):
         """
 
         # Determine if the source will provide current or voltage
-        excitation_mode = self.get_excitation_mode() # pylint: disable=no-member
+        excitation_mode = self.get_source_function()
 
         if ac_sweep_parameter == "OFFSET":
             if source_frequency is None or source_amplitude is None:
