@@ -1445,7 +1445,9 @@ class SourceModule(BaseModule):
         return response
 
     def set_readback_nplcycles(self, value):
-        """Sets the source readback averaging time in number of power line cycles (NPLC) of the module. The NPLC value must be between 0.01 and 600.00.
+        """Sets the source readback averaging time in number of power line cycles (NPLC) of the module.
+         
+            The NPLC value must be between 0.01 and 600.00.
 
         Args:
             value (float):
