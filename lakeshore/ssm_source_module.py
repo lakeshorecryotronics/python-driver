@@ -1414,20 +1414,38 @@ class SourceModule(BaseModule):
 
         self.device.command(f"SOURce{self.module_number}:VOLTage:SMODe {state}")
 
-    def get_actual_readback_nplcycles(self):
-        """Returns the averaging time in number of power line cycles (NPLC) of the specified module"""
+    def get_readback_dc(self):
+        """Returns the DC source readback measurement"""
 
-        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles:ACTual?"))
+        response = float(self.device.query(f"FETCh:SOURce{self.module_number}:READback:DC?"))
+        return response
+
+    def get_readback_rms(self):
+        """Returns the RMS source readback measurement"""
+
+        response = float(self.device.query(f"FETCh:SOURce{self.module_number}:READback:RMS?"))
+        return response
+
+    def get_readback_nplcycles(self):
+        """Returns the source readback averaging time in number of power line cycles (NPLC) of the module"""
+
+        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles?"))
         return response
 
     def get_requested_readback_nplcycles(self):
-        """Returns the requested averaging time in number of power line cycles (NPLC) of the specified module"""
+        """Returns the requested source readback averaging time in number of power line cycles (NPLC) of the specified module"""
 
-        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles:[:REQuested]?"))
+        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles[:REQuested]?"))
+        return response
+
+    def get_actual_readback_nplcycles(self):
+        """Returns the actual source readback averaging time in number of power line cycles (NPLC) of the specified module"""
+            
+        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles:ACTual?"))
         return response
 
     def set_readback_nplcycles(self, value):
-        """Sets the averaging time in number of power line cycles (NPLC) of the module. The NPLC value must be between 0.01 and 600.00.
+        """Sets the source readback averaging time in number of power line cycles (NPLC) of the module. The NPLC value must be between 0.01 and 600.00.
 
         Args:
             value (float):
