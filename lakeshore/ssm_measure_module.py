@@ -80,10 +80,15 @@ class MeasureModule(BaseModule):
 
         self.device.command(f'SENSe{self.module_number}:SCALibration:RESet')
 
-    def get_averaging_time(self):
-        """Returns the averaging time of the module in Power Line Cycles. Not relevant in lock-in mode."""
+    def get_actual_averaging_time(self):
+        """Returns the actual averaging time of the module in Power Line Cycles. Not relevant in lock-in mode."""
 
-        return float(self.device.query(f'SENSe{self.module_number}:NPLCycles?'))
+        return float(self.device.query(f'SENSe{self.module_number}:NPLCycles:ACTual?'))
+
+    def get_requested_averaging_time(self):
+        """Returns the requested averaging time of the module in Power Line Cycles. Not relevant in lock-in mode."""
+
+        return float(self.device.query(f'SENSe{self.module_number}:NPLCycles[:REQuested]?'))
 
     def set_averaging_time(self, nplc):
         """Sets the averaging time of the module. Not relevant in lock-in mode.
@@ -185,7 +190,7 @@ class MeasureModule(BaseModule):
         return bool(int(self.device.query(f'SENSe{self.module_number}:FILTer:STATe?')))
 
     def get_lowpass_corner_frequency(self):
-        """Returns the low pass filter cutoff frequency.
+        """Returns the analog low pass filter cutoff frequency.
 
             'NONE', 'F10', 'F30', 'F100', 'F300', 'F1000', 'F3000', or 'F10000'.
         """
@@ -193,7 +198,7 @@ class MeasureModule(BaseModule):
         return self.device.query(f'SENSe{self.module_number}:FILTer:LPASs:FREQuency?')
 
     def get_lowpass_rolloff(self):
-        """Returns the low pass filter roll-off.
+        """Returns the analog low pass filter roll-off.
 
             'R6' or 'R12'.
         """
@@ -235,7 +240,7 @@ class MeasureModule(BaseModule):
         self.device.command(f'SENSe{self.module_number}:FILTer:OPTimization {optimization_type}')
 
     def configure_input_lowpass_filter(self, corner_frequency, rolloff='R12'):
-        """Configure the input low pass filter.
+        """Configure the analog input low pass filter.
 
             Args:
                 corner_frequency (str):
@@ -251,7 +256,7 @@ class MeasureModule(BaseModule):
         self.device.command(f'SENSe{self.module_number}:FILTer:STATe 1')
 
     def configure_input_highpass_filter(self, corner_frequency, rolloff='R12'):
-        """Configure the input high pass filter.
+        """Configure the analog input high pass filter.
 
             Args:
                 corner_frequency (str):
@@ -470,18 +475,6 @@ class MeasureModule(BaseModule):
 
         return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:LPASs:STATe?')))
 
-    def get_lock_in_iir_state(self):
-        """
-        This function is deprecated. Use get_lock_in_lowpass_state() instead.
-
-        .. deprecated:: 1.8.2
-            Use get_lock_in_lowpass_state instead.
-        """
-
-        warn("The get_lock_in_iir_state method is deprecated, use get_lock_in_lowpass_state instead", DeprecationWarning)
-
-        return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:IIR:STATe?')))
-
     def set_lock_in_lowpass_state(self, state):
         """Sets the state of the lock-in (PSD) output IIR filter.
 
@@ -491,18 +484,6 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command(f'SENSe{self.module_number}:LIA:LPASs:STATe {str(int(state))}')
-
-    def set_lock_in_iir_state(self, state):
-        """
-        This function is deprecated. Use set_lock_in_lowpass_state() instead.
-
-        .. deprecated:: 1.8.2
-            Use set_lock_in_lowpass_state instead.
-        """
-
-        warn("The set_lock_in_iir_state method is deprecated, use set_lock_in_lowpass_state instead", DeprecationWarning)
-
-        self.device.command(f'SENSe{self.module_number}:LIA:IIR:STATe {str(int(state))}')
 
     def enable_lock_in_lowpass(self):
         """Sets the state of the lock-in (PSD) output IIR filter to True."""
@@ -519,7 +500,7 @@ class MeasureModule(BaseModule):
 
         warn("The enable_lock_in_iir method is deprecated, use enable_lock_in_lowpass instead", DeprecationWarning)
 
-        self.set_lock_in_iir_state(True)
+        self.set_lock_in_lowpass_state(True)
 
     def disable_lock_in_lowpass(self):
         """Sets the state of the lock-in (PSD) output IIR filter to False."""
@@ -536,24 +517,12 @@ class MeasureModule(BaseModule):
 
         warn("The disable_lock_in_iir method is deprecated, use disable_lock_in_lowpass instead", DeprecationWarning)
 
-        self.set_lock_in_iir_state(False)
+        self.set_lock_in_lowpass_state(False)
 
     def get_lock_in_averaging_state(self):
         """Returns the state of the lock-in (PSD) output averaging (FIR) filter."""
 
         return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:AVERage:STATe?')))
-
-    def get_lock_in_fir_state(self):
-        """
-        This function is deprecated. Use get_lock_in_averaging_state() instead.
-
-        .. deprecated:: 1.8.2
-            Use get_lock_in_averaging_state instead.
-        """
-
-        warn("The get_lock_in_fir_state method is deprecated, use get_lock_in_averaging_state instead", DeprecationWarning)
-
-        return bool(int(self.device.query(f'SENSe{self.module_number}:LIA:FIR:STATe?')))
 
     def set_lock_in_averaging_state(self, state):
         """Sets the state of the lock-in (PSD) output averaging (FIR) filter.
@@ -564,18 +533,6 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command(f'SENSe{self.module_number}:LIA:AVERage:STATe {str(int(state))}')
-
-    def set_lock_in_fir_state(self, state):
-        """
-        This function is deprecated. Use set_lock_in_averaging_state() instead.
-
-        .. deprecated:: 1.8.2
-            Use set_lock_in_averaging_state instead.
-        """
-
-        warn("The set_lock_in_fir_state method is deprecated, use set_lock_in_averaging_state instead", DeprecationWarning)
-
-        self.device.command(f'SENSe{self.module_number}:LIA:FIR:STATe {str(int(state))}')
 
     def enable_lock_in_averaging(self):
         """Sets the state of the lock-in (PSD) output averaging (FIR) filter to True."""
@@ -592,7 +549,7 @@ class MeasureModule(BaseModule):
 
         warn("The enable_lock_in_averaging (FIR) method is deprecated, use enable_lock_in_averaging instead", DeprecationWarning)
 
-        self.set_lock_in_fir_state(True)
+        self.set_lock_in_lowpass_state(True)
 
     def disable_lock_in_averaging(self):
         """Sets the state of the lock-in (PSD) output averaging (FIR) filter to False."""
@@ -609,24 +566,12 @@ class MeasureModule(BaseModule):
 
         warn("The disable_lock_in_averaging (FIR) method is deprecated, use disable_lock_in_averaging instead", DeprecationWarning)
 
-        self.set_lock_in_fir_state(False)
+        self.set_lock_in_lowpass_state(False)
 
     def get_lock_in_reference_cycles(self):
         """Returns the number of averaging (FIR) cycles."""
 
         return int(self.device.query(f'SENSe{self.module_number}:LIA:REFerence:CYCLes?'))
-
-    def get_lock_in_fir_cycles(self):
-        """
-        This function is deprecated. Use get_lock_in_reference_cycles() instead.
-
-        .. deprecated:: 1.8.2
-            Use get_lock_in_reference_cycles instead.
-        """
-
-        warn("The get_lock_in_fir_cycles method is deprecated, use get_lock_in_reference_cycles instead", DeprecationWarning)
-
-        return int(self.device.query(f'SENSe{self.module_number}:LIA:FIR:CYCLes?'))
 
     def set_lock_in_reference_cycles(self, cycles):
         """Sets the number of averaging (FIR) cycles.
@@ -637,18 +582,6 @@ class MeasureModule(BaseModule):
         """
 
         self.device.command(f'SENSe{self.module_number}:LIA:REFerence:CYCLes {str(int(cycles))}')
-
-    def set_lock_in_fir_cycles(self, cycles):
-        """
-        This function is deprecated. Use set_lock_in_reference_cycles() instead.
-
-        .. deprecated:: 1.8.2
-            Use set_lock_in_reference_cycles instead.
-        """
-
-        warn("The set_lock_in_fir_cycles method is deprecated, use set_lock_in_reference_cycles instead", DeprecationWarning)
-
-        self.device.command(f'SENSe{self.module_number}:LIA:FIR:CYCLes {str(int(cycles))}')
 
     def setup_dc_measurement(self, nplc=1):
         """Set up the module for DC measurement.
@@ -662,7 +595,7 @@ class MeasureModule(BaseModule):
         self.set_averaging_time(nplc)
 
     def setup_ac_measurement(self, nplc=1):
-        """Set up the module for DC measurement.
+        """Set up the module for AC measurement.
 
             Args:
                 nplc (float):
@@ -879,6 +812,11 @@ class MeasureModule(BaseModule):
         """Returns the present dc measurement from the lock-in."""
 
         return float(self.device.query(f'FETCh:SENSe{self.module_number}:LIA:DC?'))
+
+    def get_lock_in_dc_immediate(self):
+        """Returns the immediate dc measurement from the lock-in."""
+
+        return float(self.device.query(f'FETCh:SENSe{self.module_number}:LIA:DC:IMMediate?'))
 
     def get_pll_lock_status(self):
         """Returns the present lock status of the PLL. True if locked, False if unlocked."""
@@ -1463,13 +1401,13 @@ class MeasureModule(BaseModule):
 
         self.device.command(f'SENSe{self.module_number}:FUNCtion {value}')
 
-    def get_voltage_measure_sense(self):
-        """Returns the location of voltage sensing for the measure module"""
+    def get_voltage_sense_mode(self):
+        """Returns the voltage measure sense of the specified module"""
 
         return self.device.query(f'SENSe{self.module_number}:VOLTage:SMODe?')
 
-    def set_voltage_measure_sense(self, value):
-        """Sets the location of voltage sensing for the measure module
+    def set_voltage_sense_mode(self, value):
+        """Sets the voltage measure sense of the specified module
 
             Args:
                 value (str):

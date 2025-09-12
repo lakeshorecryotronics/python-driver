@@ -131,7 +131,13 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         self.stream_lock = Lock()
 
         # Sweeping limits
-        self.min_sweep_dwell = 0.000_2
+        self.source_shape_dwell_times = {
+            'DC': 0.000_2,  # 200 microseconds
+            'SINUSOID': 0.01,  # 10 milliseconds
+            'TRIANGLE': 0.02,  # 20 milliseconds
+            'SQUARE': 0.002,  # 2 milliseconds
+        }
+        self.min_sweep_dwell = self.source_shape_dwell_times['DC']  # Default to DC
         self.max_sweep_points = 100_001
 
     def load_modules(self):
@@ -608,3 +614,9 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         """Aborts in progress sweeps across all channels."""
 
         self.command('SWEep:ABORt')
+
+    @requires_firmware_version('1.7.0')
+    def reset_sweeps(self):
+        """Resets the source sweep settings for the specified module to their power on defaults."""
+
+        self.command('SWEep:RESet')

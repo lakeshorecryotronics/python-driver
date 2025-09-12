@@ -92,7 +92,8 @@ class SSMSystemEnums:
                 return str.__str__(self)
 
         def __init__(self, sweep_type, start, stop, points, dwell,
-                     direction=Direction.UP, round_trip=False, spacing=SweepSpacing.LINEAR):
+                     direction=Direction.UP, round_trip=False, spacing=SweepSpacing.LINEAR,
+                     initial_delay=0.0, blanking=0.0):
             """Constructor for SourceModuleSweepSettings class.
 
             Args:
@@ -116,6 +117,10 @@ class SSMSystemEnums:
                     When True, the sweep will begin and end at the same value.
                 spacing (SweepSpacing):
                     The spacing of the sweep.
+                initial_delay (float):
+                    The initial delay before the sweep starts in seconds.
+                blanking (float):
+                    The blanking time per step in seconds.
             """
 
             self.sweep_type = sweep_type
@@ -126,6 +131,8 @@ class SSMSystemEnums:
             self.dwell = dwell
             self.direction = direction
             self.round_trip = round_trip
+            self.initial_delay = initial_delay
+            self.blanking = blanking
 
     class ReferenceModule(str, Enum):
         """Class object representing the available resistance source modules

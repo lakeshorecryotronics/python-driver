@@ -6,6 +6,7 @@ from warnings import warn
 
 from lakeshore.xip_instrument import RegisterBase
 from lakeshore.ssm_base_module import SSMSystemModuleQuestionableRegister, BaseModule
+from lakeshore.ssm_system_enums import SSMSystemEnums
 from lakeshore.requires_firmware_version import requires_firmware_version
 
 
@@ -1168,6 +1169,8 @@ class SourceModule(BaseModule):
         self.device.command(f'SOURce{self.module_number}:SWEep:SPACing {sweep_settings.spacing}')
         self.device.command(f'SOURce{self.module_number}:SWEep:DIRection {sweep_settings.direction}')
         self.device.command(f'SOURce{self.module_number}:SWEep:DIRection:RTRip {int(sweep_settings.round_trip)}')
+        self.device.command(f'SOURce{self.module_number}:SWEep:INITialdelay {float(sweep_settings.initial_delay)}')
+        self.device.command(f'SOURce{self.module_number}:SWEep:BLANking {float(sweep_settings.blanking)}')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:MODE SWEep')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STARt {sweep_settings.start}')
         self.device.command(f'SOURce{self.module_number}:{sweep_settings.sweep_type}:STOP {sweep_settings.stop}')
@@ -1189,7 +1192,9 @@ class SourceModule(BaseModule):
             float(self.device.query(f'SOURce{self.module_number}:SWEep:DWELl?')),
             self.device.query(f'SOURce{self.module_number}:SWEep:DIRection?'),
             bool(int(self.device.query(f'SOURce{self.module_number}:SWEep:DIRection:RTRip?'))),
-            self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?'))
+            self.device.query(f'SOURce{self.module_number}:SWEep:SPACing?'),
+            float(self.device.query(f'SOURce{self.module_number}:SWEep:INITialdelay?')),
+            float(self.device.query(f'SOURce{self.module_number}:SWEep:BLANking?')))
 
     @requires_firmware_version('1.7.0')
     def disable_all_sweeping(self):
@@ -1248,7 +1253,9 @@ class SourceModule(BaseModule):
                                                        points=num_points,
                                                        dwell=dwell_time,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
-                                                       round_trip=round_trip)
+                                                       round_trip=round_trip,
+                                                       initial_delay=0.0,
+                                                       blanking=0.0)
         self.set_sweep_configuration(sweep_config)
 
     def set_current_ramp_configuration(self, stop_amplitude, start_amplitude=None, slew_rate=0.001, round_trip=False):
@@ -1290,7 +1297,9 @@ class SourceModule(BaseModule):
                                                        points=num_points,
                                                        dwell=dwell_time,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
-                                                       round_trip=round_trip)
+                                                       round_trip=round_trip,
+                                                       initial_delay=0.0,
+                                                       blanking=0.0)
         self.set_sweep_configuration(sweep_config)
 
     @requires_firmware_version('1.7.0')
@@ -1301,11 +1310,12 @@ class SourceModule(BaseModule):
                                      dwell_time='AUTO',
                                      number_of_points='AUTO',
                                      settle_time=0.0,
+                                     initial_delay=0.0,
                                      sweep_spacing='LINEAR',
                                      round_trip=False,
                                      include_source_amplitude=True,
                                      include_relative_time=False):
-        """Immediately runs a DC source sweep and returns data for each point in the sweep.
+        """Immediately DDDDDDD a DC source sweep and returns data for each point in the sweep.
 
         Args:
             start_amplitude (float):
@@ -1325,6 +1335,8 @@ class SourceModule(BaseModule):
             settle_time (float):
                 How long to wait before taking a measurement after a step change.
                 Defaults to zero. Must be shorter than the dwell time.
+            initial_delay (float):
+                Time to wait before starting the sweep, defaults to zero.
             sweep_spacing (str or SweepSpacing enum):
                 LINEAR or LOGARITHMIC sweep
             round_trip (bool):
@@ -1339,20 +1351,10 @@ class SourceModule(BaseModule):
 
         if dwell_time == 'AUTO':
             # default of 3 power line cycles
-            dwell_time = 3 / self.device.get_line_frequency()
+            dwell_time = self._calculate_dwell_time_for_shape('DC', 3)
 
         if number_of_points == 'AUTO':
-            if sweep_spacing == 'LINEAR':
-                # determine a decade step size that results in between 100 and 1000 points for linear sweep
-                step_size = 10 ** (math.floor(math.log10(abs(stop_amplitude - start_amplitude))) - 2)
-                number_of_points = round(abs(stop_amplitude - start_amplitude) / step_size + 1)
-            else:
-                # determine a decade step size that results in between 100 and 1000 points for logarithmic sweep
-                step_size = 10 ** (math.floor(math.log10(abs(stop_amplitude/start_amplitude))) - 2)
-                number_of_points = round(abs(stop_amplitude/start_amplitude) / step_size + 1)
-
-        # round dwell time to the nearest valid value
-        dwell_time = round(dwell_time / self.device.min_sweep_dwell, 0) * self.device.min_sweep_dwell
+            number_of_points = self._calculate_number_of_sweep_points(start_amplitude, stop_amplitude, sweep_spacing)
 
         # if custom data sources are not specified, automatically configure the corresponding measure module
         if not optional_custom_data_sources:
@@ -1374,7 +1376,9 @@ class SourceModule(BaseModule):
                                                        dwell=dwell_time,
                                                        spacing=sweep_spacing,
                                                        direction=self.device.SourceSweepSettings.Direction.UP,
-                                                       round_trip=round_trip)
+                                                       round_trip=round_trip,
+                                                       initial_delay=initial_delay,
+                                                       blanking=settle_time)
         self.set_sweep_configuration(sweep_config)
 
         # double the number of points to stream if doing a round trip sweep
@@ -1395,25 +1399,31 @@ class SourceModule(BaseModule):
 
         return sweep_data
 
-    def get_voltage_source_sense(self):
-        """Returns the location controlled by the voltage source as either LOCal or REMote"""
+    def get_voltage_sense_mode(self):
+        """Returns the source voltage source sense for the specified module as either LOCal or REMote"""
 
         return self.device.query(f"SOURce{self.module_number}:VOLTage:SMODe?")
 
-    def set_voltage_source_sense(self, state):
-        """Sets the location controlled by the voltage source
+    def set_voltage_sense_mode(self, state):
+        """Sets the source voltage source sense for the specified module
 
         Args:
             state (str):
-                Voltage sense mode ('LOCal' or 'REMote')
+                Voltage source sense ('LOCal' or 'REMote')
         """
 
         self.device.command(f"SOURce{self.module_number}:VOLTage:SMODe {state}")
 
-    def get_readback_nplcycles(self):
-        """Returns the averaging time in number of power line cycles (NPLC) of the module"""
+    def get_actual_readback_nplcycles(self):
+        """Returns the averaging time in number of power line cycles (NPLC) of the specified module"""
 
-        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles?"))
+        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles:ACTual?"))
+        return response
+
+    def get_requested_readback_nplcycles(self):
+        """Returns the requested averaging time in number of power line cycles (NPLC) of the specified module"""
+
+        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles:[:REQuested]?"))
         return response
 
     def set_readback_nplcycles(self, value):
@@ -1425,3 +1435,265 @@ class SourceModule(BaseModule):
         """
 
         self.device.command(f"SOURce{self.module_number}:READback:NPLCycles {value}")
+
+    def _calculate_number_of_sweep_points(self, start_value, stop_value, sweep_spacing):
+        """Calculates the number of sweep points based on the start and stop values and the sweep spacing.
+
+        Args:
+            start_value (float): The starting value of the sweep.
+            stop_value (float): The stopping value of the sweep.
+            sweep_spacing (float): LINEAR or LOGARITHMIC spacing between sweep points.
+
+        Returns:
+            int: The number of sweep points.
+        """
+        if sweep_spacing == 'LINEAR':
+            step_size = 10 ** (math.floor(math.log10(abs(stop_value - start_value))) - 2)
+            number_of_points = round(abs(stop_value - start_value) / step_size + 1)
+        else:
+            step_size = 10 ** (math.floor(math.log10(abs(stop_value / start_value))) - 2)
+            number_of_points = round(abs(stop_value / start_value) / step_size + 1)
+        return number_of_points
+
+    def _calculate_dwell_time_for_shape(self, source_shape, power_line_cycles=3):
+        """Calculates the dwell time based on the source shape and power line cycles.
+
+        Args:
+            source_shape (str): The shape of the source signal ('DC', 'SINUSOID', 'SQUARE', 'TRIANGLE').
+            power_line_cycles (int): The number of power line cycles to use for the calculation.
+
+        Returns:
+            float: The calculated dwell time in seconds.
+        """
+        min_dwell_for_shape = self.device.source_shape_dwell_times[source_shape]
+        return round(power_line_cycles / self.device.get_line_frequency() / min_dwell_for_shape, 0) * min_dwell_for_shape
+
+    def _get_ac_sweep_parameter_and_data_source(self, ac_sweep_parameter, source_frequency, source_amplitude, source_offset):
+        """Configures the AC source sweep based on the specified parameter and returns the corresponding data source mnemonic and sweep type.
+
+        Args:
+            ac_sweep_parameter (str): The AC parameter to sweep ('OFFSET', 'FREQUENCY', 'AMPLITUDE').
+            source_frequency (float): The AC frequency in Hz.
+            source_amplitude (float): The AC amplitude in volts or amps.
+            source_offset (float): The AC offset in volts or amps.
+            excitation_mode (str): The excitation mode ('VOLTAGE' or 'CURRENT').
+
+        Returns:
+            tuple: A tuple containing the data source mnemonics and sweep type.
+        """
+
+        # Determine if the source will provide current or voltage
+        excitation_mode = self.get_source_function()
+
+        if ac_sweep_parameter == "OFFSET":
+            if source_frequency is None or source_amplitude is None:
+                raise ValueError("source_frequency and source_amplitude are required when sweeping 'OFFSET'.")
+            self.set_frequency(source_frequency)
+            if excitation_mode == "VOLTAGE":
+                self.set_voltage_amplitude(source_amplitude)
+            else:
+                self.set_current_amplitude(source_amplitude)
+            return self.device.SourceSweepType.OFFSET, SSMSystemEnums.DataSourceMnemonic.SOURCE_OFFSET
+
+        if ac_sweep_parameter == "FREQUENCY":
+            if source_amplitude is None or source_offset is None:
+                raise ValueError("source_amplitude and source_offset are required when sweeping 'FREQUENCY'.")
+            if excitation_mode == "VOLTAGE":
+                self.set_voltage_amplitude(source_amplitude)
+                self.set_voltage_offset(source_offset)
+            else:
+                self.set_current_amplitude(source_amplitude)
+                self.set_current_offset(source_offset)
+            return self.device.SourceSweepType.FREQUENCY, SSMSystemEnums.DataSourceMnemonic.SOURCE_FREQUENCY
+
+        if ac_sweep_parameter == "AMPLITUDE":
+            if source_frequency is None or source_offset is None:
+                raise ValueError("source_frequency and source_offset are required when sweeping 'AMPLITUDE'.")
+            self.set_frequency(source_frequency)
+            if excitation_mode == "VOLTAGE":
+                self.set_voltage_offset(source_offset)
+            else:
+                self.set_current_offset(source_offset)
+            return (
+                self.device.SourceSweepType.VOLTAGE_AMPLITUDE
+                if excitation_mode == "VOLTAGE"
+                else self.device.SourceSweepType.CURRENT_AMPLITUDE,
+                SSMSystemEnums.DataSourceMnemonic.SOURCE_AMPLITUDE,
+            )
+
+        raise ValueError("ac_sweep_parameter must be 'OFFSET', 'FREQUENCY', or 'AMPLITUDE'.")
+
+    def sweep_ac_amplitude(self, start_amplitude, stop_amplitude, ac_shape, source_frequency, source_offset=0, **kwargs):
+        """Sweep AC amplitude at fixed frequency and offset.
+
+        Args:
+            start_amplitude (float): The starting amplitude of the sweep in volts or amps.
+            stop_amplitude (float): The ending amplitude of the sweep in volts or amps.
+            ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
+            source_frequency (float): The AC frequency in Hz.
+            source_offset (float): The AC offset in volts or amps. Default is 0.
+            ``**kwargs``: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
+
+        Returns:
+            list: A list of tuples containing the measured data for each point in the sweep.
+        """
+        return self._do_ac_parameter_sweep_step_and_measure(ac_sweep_parameter='AMPLITUDE',
+                                                            start_value=start_amplitude,
+                                                            stop_value=stop_amplitude,
+                                                            source_frequency=source_frequency,
+                                                            source_offset=source_offset,
+                                                            ac_shape=ac_shape,
+                                                            **kwargs)
+
+    def sweep_ac_frequency(self, start_frequency, stop_frequency, ac_shape, source_amplitude, source_offset=0, **kwargs):
+        """Sweep AC frequency at fixed amplitude and offset.
+
+        Args:
+            start_frequency (float): The starting frequency of the sweep in Hz.
+            stop_frequency (float): The ending frequency of the sweep in Hz.
+            source_amplitude (float): The AC amplitude in volts or amps.
+            ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
+            source_offset (float): The AC offset in volts or amps. Default is 0.
+            ``**kwargs``: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
+
+        Returns:
+            list: A list of tuples containing the measured data for each point in the sweep.
+        """
+        return self._do_ac_parameter_sweep_step_and_measure(ac_sweep_parameter='FREQUENCY',
+                                                            start_value=start_frequency,
+                                                            stop_value=stop_frequency,
+                                                            source_amplitude=source_amplitude,
+                                                            source_offset=source_offset,
+                                                            ac_shape=ac_shape,
+                                                            **kwargs)
+
+    def sweep_ac_offset(self, start_offset, stop_offset, ac_shape, source_amplitude, source_frequency, **kwargs):
+        """Sweep AC offset at fixed amplitude and frequency.
+
+        Args:
+            start_offset (float): The starting offset of the sweep in volts or amps.
+            stop_offset (float): The ending offset of the sweep in volts or amps.
+            source_amplitude (float): The AC amplitude in volts or amps.
+            source_frequency (float): The AC frequency in Hz.
+            ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
+            ``**kwargs``: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
+
+        Returns:
+            list: A list of tuples containing the measured data for each point in the sweep.
+        """
+        return self._do_ac_parameter_sweep_step_and_measure(ac_sweep_parameter='OFFSET',
+                                                            start_value=start_offset,
+                                                            stop_value=stop_offset,
+                                                            source_amplitude=source_amplitude,
+                                                            source_frequency=source_frequency,
+                                                            ac_shape=ac_shape,
+                                                            **kwargs)
+    def _do_ac_parameter_sweep_step_and_measure(self,
+                                                ac_sweep_parameter,
+                                                start_value,
+                                                stop_value,
+                                                *optional_custom_data_sources,
+                                                ac_shape='SINUSOID',
+                                                source_amplitude=None,
+                                                source_frequency=None,
+                                                source_offset=None,
+                                                dwell_time='AUTO',
+                                                number_of_points='AUTO',
+                                                settle_time=0.0,
+                                                initial_delay=0.0,
+                                                sweep_spacing='LINEAR',
+                                                round_trip=False,
+                                                include_source_sweep_parameter=True,
+                                                include_relative_time=False):
+        """Immediately runs an AC parameter(amplitude, frequency, offset) source sweep and returns data for each point in the sweep.
+
+        Args:
+            ac_sweep_parameter (str):
+                The AC parameter to sweep, 'OFFSET', 'FREQUENCY', 'AMPLITUDE'.
+            ac_shape (str):
+                The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
+            start_value (float):
+                The starting value of the AC parameter sweep, e.g., amplitude(volts/amps), offset(volts/amps), or frequency(Hz).
+            stop_value (float):
+                The ending value of the AC parameter sweep, e.g., amplitude(volts/amps), offset(volts/amps), or frequency(Hz).
+            source_amplitude (float):
+                The AC voltage amplitude in volts or amps.
+            source_frequency (float):
+                The AC frequency in Hz.
+            source_offset (float):
+                The AC offset in volts or amps.
+            dwell_time (float):
+                Time duration of each step in seconds, defaults to AUTO.
+            number_of_points (int):
+                How many steps to take going from the start to the stop amplitude.
+                AUTO chooses a decade step size that results in between 100 and 1,000 points
+            optional_custom_data_sources (SSMSystemDataSourceMnemonic or str, int):
+                Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
+                Defaults to AC on the source's matching measure channel if unspecified.
+                If specified only the specified custom data sources will be collected.
+                If specified the corresponding measure channel will not be configured automatically.
+            settle_time (float):
+                How long to wait before taking a measurement after a step change.
+                Defaults to zero. Must be shorter than the dwell time.
+            initial_delay (float):
+                Time to wait before starting the sweep, defaults to zero.
+            sweep_spacing (str or SweepSpacing enum):
+                LINEAR or LOGARITHMIC sweep.
+            round_trip (bool):
+                Sweeps to the stop amplitude then sweeps back to the start amplitude when true.
+                Returns double the sweep number of points when true.
+            include_source_sweep_parameter (bool):
+                The source sweep parameter is included in the returned data when true
+            include_relative_time (bool):
+                The time since the start of the sweep is in the returned data when true
+        """
+        self.set_shape(ac_shape)
+
+        sweep_type, data_source_mnemonics = self._get_ac_sweep_parameter_and_data_source(ac_sweep_parameter,
+                                                                                        source_frequency,
+                                                                                        source_amplitude,
+                                                                                        source_offset)
+
+        if dwell_time == 'AUTO':
+            # default of 3 power line cycles
+            dwell_time = self._calculate_dwell_time_for_shape(ac_shape, 3)
+
+        if number_of_points == 'AUTO':
+            number_of_points = self._calculate_number_of_sweep_points(start_value, stop_value, sweep_spacing)
+
+        # if custom data sources are not specified, automatically configure the corresponding measure module
+        if not optional_custom_data_sources:
+            measure_module = self.device.get_measure_module(self.module_number)
+            averaging_nplcs = (dwell_time - settle_time) * self.device.get_line_frequency()
+            measure_module.setup_ac_measurement(averaging_nplcs)
+
+        sweep_config = self.device.SourceSweepSettings(sweep_type=sweep_type,
+                                                       start=start_value,
+                                                       stop=stop_value,
+                                                       points=number_of_points,
+                                                       dwell=dwell_time,
+                                                       spacing=sweep_spacing,
+                                                       direction=self.device.SourceSweepSettings.Direction.UP,
+                                                       round_trip=round_trip,
+                                                       initial_delay=initial_delay,
+                                                       blanking=settle_time)
+        self.set_sweep_configuration(sweep_config)
+
+        # double the number of points to stream if doing a round trip sweep
+        if round_trip:
+            number_of_points *= 2
+
+        # Configure data streaming which initiates the configured sweep
+        if optional_custom_data_sources:
+            sweep_data = self.device.get_data(1 / dwell_time, number_of_points, *optional_custom_data_sources)
+        else:
+            data_sources = []
+            if include_relative_time:
+                data_sources.append((SSMSystemEnums.DataSourceMnemonic.RELATIVE_TIME, self.module_number))
+            if include_source_sweep_parameter:
+                data_sources.append((data_source_mnemonics, self.module_number))
+            data_sources.append((SSMSystemEnums.DataSourceMnemonic.MEASURE_THETA, self.module_number))
+            data_sources.append((SSMSystemEnums.DataSourceMnemonic.MEASURE_R, self.module_number))
+            sweep_data = self.device.get_data(1 / dwell_time, number_of_points, *data_sources)
+
+        return sweep_data

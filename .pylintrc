@@ -321,15 +321,15 @@ exclude-protected=_asdict,_fields,_replace,_source,_make
 [DESIGN]
 
 # Maximum number of arguments for function / method
-max-args=15
-max-positional-arguments=15
+max-args=16
+max-positional-arguments=16
 
 # Argument names that match this expression will be ignored. Default to name
 # with leading underscore
 ignored-argument-names=_.*
 
 # Maximum number of locals for function / method body
-max-locals=18
+max-locals=25
 
 # Maximum number of return / yield for function / method body
 max-returns=6
