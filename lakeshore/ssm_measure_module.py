@@ -80,17 +80,17 @@ class MeasureModule(BaseModule):
 
         self.device.command(f'SENSe{self.module_number}:SCALibration:RESet')
 
-    def get_actual_averaging_time(self):
-        """Returns the actual averaging time of the module in Power Line Cycles. Not relevant in lock-in mode."""
+    def get_averaging_time(self):
+        """Returns the averaging time of the module in Power Line Cycles. Not relevant in lock-in mode."""
 
-        return float(self.device.query(f'SENSe{self.module_number}:NPLCycles:ACTual?'))
+        return float(self.device.query(f'SENSe{self.module_number}:NPLCycles?'))
 
     def get_requested_averaging_time(self):
         """Returns the requested averaging time of the module in Power Line Cycles. Not relevant in lock-in mode."""
 
         return float(self.device.query(f'SENSe{self.module_number}:NPLCycles[:REQuested]?'))
 
-    def get_averaging_time_actual(self):
+    def get_actual_averaging_time(self):
         """Returns the actual averaging time of the module in Power Line Cycles. Not relevant in lock-in mode."""
 
         return float(self.device.query(f'SENSe{self.module_number}:NPLCycles:ACTual?'))
