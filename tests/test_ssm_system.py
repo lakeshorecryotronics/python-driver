@@ -1017,10 +1017,34 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.dut_module.set_voltage_sense_mode('LOCal')
         self.assertIn('SOURce1:VOLTage:SMODe LOCal', self.fake_connection.get_outgoing_message())
 
+    def test_get_readback_dc(self):
+        self.fake_connection.setup_response('2.5;No error')
+        response = self.dut_module.get_readback_dc()
+        self.assertEqual(response, 2.5)
+        self.assertIn('FETCh:SOURce1:READback:DC?', self.fake_connection.get_outgoing_message())
+
+    def test_get_readback_rms(self):
+        self.fake_connection.setup_response('0.707;No error')
+        response = self.dut_module.get_readback_rms()
+        self.assertEqual(response, 0.707)
+        self.assertIn('FETCh:SOURce1:READback:RMS?', self.fake_connection.get_outgoing_message())
+
     def test_get_readback_nplcycles(self):
         self.fake_connection.setup_response('2.00;No error')
-        response = self.dut_module.get_actual_readback_nplcycles()
+        response = self.dut_module.get_readback_nplcycles()
         self.assertEqual(response, 2.00)
+        self.assertIn('SOURce1:READback:NPLCycles?', self.fake_connection.get_outgoing_message())
+
+    def test_get_requested_readback_nplcycles(self):
+        self.fake_connection.setup_response('2.004;No error')
+        response = self.dut_module.get_requested_readback_nplcycles()
+        self.assertEqual(response, 2.004)
+        self.assertIn('SOURce1:READback:NPLCycles[:REQuested]?', self.fake_connection.get_outgoing_message())
+
+    def test_get_actual_readback_nplcycles(self):
+        self.fake_connection.setup_response('2.004;No error')
+        response = self.dut_module.get_actual_readback_nplcycles()
+        self.assertEqual(response, 2.004)
         self.assertIn('SOURce1:READback:NPLCycles:ACTual?', self.fake_connection.get_outgoing_message())
 
     def test_set_readback_nplcycles(self):
@@ -1464,8 +1488,20 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
 
     def test_get_averaging_time(self):
         self.fake_connection.setup_response('0.35;No error')
-        response = self.dut_module.get_actual_averaging_time()
+        response = self.dut_module.get_averaging_time()
         self.assertEqual(response, 0.35)
+        self.assertIn('SENSe1:NPLCycles?', self.fake_connection.get_outgoing_message())
+
+    def test_get_requested_averaging_time(self):
+        self.fake_connection.setup_response('1;No error')
+        response = self.dut_module.get_requested_averaging_time()
+        self.assertEqual(response, 1)
+        self.assertIn('SENSe1:NPLCycles[:REQuested]?', self.fake_connection.get_outgoing_message())
+
+    def test_get_actual_averaging_time(self):
+        self.fake_connection.setup_response('0.996;No error')
+        response = self.dut_module.get_actual_averaging_time()
+        self.assertEqual(response, 0.996)
         self.assertIn('SENSe1:NPLCycles:ACTual?', self.fake_connection.get_outgoing_message())
 
     def test_set_averaging_time(self):
