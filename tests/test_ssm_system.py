@@ -583,6 +583,17 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.dut_module.use_dc_coupling()
         self.assertIn('SOURce1:COUPling DC', self.fake_connection.get_outgoing_message())
 
+    def test_set_automatic_coupling(self):
+        self.fake_connection.setup_response('No error')
+        self.dut_module.set_automatic_coupling(True)
+        self.assertIn('SOURce1:COUPling:AUTO 1', self.fake_connection.get_outgoing_message())
+
+    def test_get_automatic_coupling(self):
+        self.fake_connection.setup_response('1;No error')
+        response = self.dut_module.get_automatic_coupling()
+        self.assertEqual(response, True)
+        self.assertIn('SOURce1:COUPling:AUTO?', self.fake_connection.get_outgoing_message())
+
     def test_get_guard_state(self):
         self.fake_connection.setup_response('1;No error')
         response = self.dut_module.get_guard_state()

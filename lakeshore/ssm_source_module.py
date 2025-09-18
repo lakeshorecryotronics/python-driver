@@ -263,6 +263,22 @@ class SourceModule(BaseModule):
 
         self.set_coupling('DC')
 
+    def set_automatic_coupling(self, enable: bool):
+        """Enable or disable automatic coupling for the module.
+
+        Args:
+            enable (bool): True to enable automatic coupling, False to disable.
+        """
+        self.device.command(f'SOURce{self.module_number}:COUPling:AUTO {int(enable)}')
+
+    def get_automatic_coupling(self) -> bool:
+        """Query the automatic coupling state of the module.
+
+        Returns:
+            bool: True if automatic coupling is enabled, False otherwise.
+        """
+        return bool(int(self.device.query(f'SOURce{self.module_number}:COUPling:AUTO?')))
+
     def get_guard_state(self):
         """Returns the guard state of the module."""
 
@@ -1315,7 +1331,7 @@ class SourceModule(BaseModule):
                                      round_trip=False,
                                      include_source_amplitude=True,
                                      include_relative_time=False):
-        """Immediately DDDDDDD a DC source sweep and returns data for each point in the sweep.
+        """Immediately do a DC source sweep and returns data for each point in the sweep.
 
         Args:
             start_amplitude (float):
