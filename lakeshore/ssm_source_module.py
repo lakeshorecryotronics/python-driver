@@ -313,7 +313,7 @@ class SourceModule(BaseModule):
         """
         This function is deprecated. Use set_cmf_source() instead.
 
-        .. deprecated:: 1.8.2
+        .. deprecated:: 1.9.0
             Use set_cmf_source instead.
         """
 
@@ -325,7 +325,7 @@ class SourceModule(BaseModule):
         """
         This function is deprecated. Use get_cmf_source() instead.
 
-        .. deprecated:: 1.8.2
+        .. deprecated:: 1.9.0
             Use get_cmf_source instead.
         """
 
@@ -352,7 +352,7 @@ class SourceModule(BaseModule):
         """
         This function is deprecated. Use get_cmf_state() instead.
 
-        .. deprecated:: 1.8.2
+        .. deprecated:: 1.9.0
             Use get_cmf_state instead.
         """
 
@@ -374,7 +374,7 @@ class SourceModule(BaseModule):
         """
         This function is deprecated. Use set_cmf_state() instead.
 
-        .. deprecated:: 1.8.2
+        .. deprecated:: 1.9.0
             Use set_cmf_state instead.
         """
 
@@ -391,7 +391,7 @@ class SourceModule(BaseModule):
         """
         This function is deprecated. Use enable_cmf() instead.
 
-        .. deprecated:: 1.8.2
+        .. deprecated:: 1.9.0
             Use enable_cmf instead.
         """
 
@@ -408,7 +408,7 @@ class SourceModule(BaseModule):
         """
         This function is deprecated. Use disable_cmf() instead.
 
-        .. deprecated:: 1.8.2
+        .. deprecated:: 1.9.0
             Use disable_cmf instead.
         """
 
@@ -433,7 +433,7 @@ class SourceModule(BaseModule):
         """
         This function is deprecated. Use configure_cmf() instead.
 
-        .. deprecated:: 1.8.2
+        .. deprecated:: 1.9.0
             Use configure_cmf instead.
         """
 
