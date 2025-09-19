@@ -1792,9 +1792,9 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
 
     def test_get_lock_in_fir_state(self):
         self.fake_connection.setup_response('0;No error')
-        response = self.dut_module.get_lock_in_lowpass_state()
+        response = self.dut_module.get_lock_in_fir_state()
         self.assertEqual(response, False)
-        self.assertIn('SENSe1:LIA:LPASs:STATe?', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENSe1:LIA:FIR:STATe?', self.fake_connection.get_outgoing_message())
 
     def test_get_lock_in_lowpass_state(self):
         self.fake_connection.setup_response('0;No error')
@@ -1804,8 +1804,8 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
 
     def test_set_lock_in_iir_state(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.set_lock_in_lowpass_state(True)
-        self.assertIn('SENSe1:LIA:LPASs:STATe 1', self.fake_connection.get_outgoing_message())
+        self.dut_module.set_lock_in_iir_state(True)
+        self.assertIn('SENSe1:LIA:IIR:STATe 1', self.fake_connection.get_outgoing_message())
 
     def test_set_lock_in_lowpass_state(self):
         self.fake_connection.setup_response('No error')
@@ -1814,8 +1814,8 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
 
     def test_enable_lock_in_iir(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.set_lock_in_lowpass_state(True)
-        self.assertIn('SENSe1:LIA:LPASs:STATe 1', self.fake_connection.get_outgoing_message())
+        self.dut_module.enable_lock_in_iir()
+        self.assertIn('SENSe1:LIA:IIR:STATe 1', self.fake_connection.get_outgoing_message())
 
     def test_enable_lock_in_lowpass(self):
         self.fake_connection.setup_response('No error')
@@ -1824,8 +1824,8 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
 
     def test_disable_lock_in_iir(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.set_lock_in_lowpass_state(False)
-        self.assertIn('SENSe1:LIA:LPASs:STATe 0', self.fake_connection.get_outgoing_message())
+        self.dut_module.disable_lock_in_iir()
+        self.assertIn('SENSe1:LIA:IIR:STATe 0', self.fake_connection.get_outgoing_message())
 
     def test_disable_lock_in_lowpass(self):
         self.fake_connection.setup_response('No error')
@@ -1840,8 +1840,8 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
 
     def test_set_lock_in_fir_state(self):
         self.fake_connection.setup_response('No error')
-        self.dut_module.set_lock_in_lowpass_state(True)
-        self.assertIn('SENSe1:LIA:LPASs:STATe 1', self.fake_connection.get_outgoing_message())
+        self.dut_module.set_lock_in_fir_state(True)
+        self.assertIn('SENSe1:LIA:FIR:STATe 1', self.fake_connection.get_outgoing_message())
 
     def test_set_lock_in_averaging_state(self):
         self.fake_connection.setup_response('No error')
@@ -1851,7 +1851,7 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
     def test_enable_lock_in_fir(self):
         self.fake_connection.setup_response('No error')
         self.dut_module.enable_lock_in_fir()
-        self.assertIn('SENSe1:LIA:LPASs:STATe 1', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENSe1:LIA:FIR:STATe 1', self.fake_connection.get_outgoing_message())
 
     def test_enable_lock_in_averaging(self):
         self.fake_connection.setup_response('No error')
@@ -1861,7 +1861,7 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
     def test_disable_lock_in_fir(self):
         self.fake_connection.setup_response('No error')
         self.dut_module.disable_lock_in_fir() 
-        self.assertIn('SENSe1:LIA:LPASs:STATe 0', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENSe1:LIA:FIR:STATe 0', self.fake_connection.get_outgoing_message())
 
     def test_disable_lock_in_averaging(self):
         self.fake_connection.setup_response('No error')
