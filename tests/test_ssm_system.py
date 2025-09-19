@@ -1050,7 +1050,7 @@ class TestSourceModule(TestWithFakeSSMSSourceModule):
         self.fake_connection.setup_response('2.004;No error')
         response = self.dut_module.get_requested_readback_nplcycles()
         self.assertEqual(response, 2.004)
-        self.assertIn('SOURce1:READback:NPLCycles[:REQuested]?', self.fake_connection.get_outgoing_message())
+        self.assertIn('SOURce1:READback:NPLCycles:REQuested?', self.fake_connection.get_outgoing_message())
 
     def test_get_actual_readback_nplcycles(self):
         self.fake_connection.setup_response('2.004;No error')
@@ -1507,7 +1507,7 @@ class TestMeasureModule(TestWithFakeSSMSMeasureModule):
         self.fake_connection.setup_response('1;No error')
         response = self.dut_module.get_requested_averaging_time()
         self.assertEqual(response, 1)
-        self.assertIn('SENSe1:NPLCycles[:REQuested]?', self.fake_connection.get_outgoing_message())
+        self.assertIn('SENSe1:NPLCycles:REQuested?', self.fake_connection.get_outgoing_message())
 
     def test_get_actual_averaging_time(self):
         self.fake_connection.setup_response('0.996;No error')

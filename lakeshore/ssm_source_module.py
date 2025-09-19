@@ -1451,7 +1451,7 @@ class SourceModule(BaseModule):
     def get_requested_readback_nplcycles(self):
         """Returns the requested source readback averaging time in number of power line cycles (NPLC) of the specified module"""
 
-        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles[:REQuested]?"))
+        response = float(self.device.query(f"SOURce{self.module_number}:READback:NPLCycles:REQuested?"))
         return response
 
     def get_actual_readback_nplcycles(self):
