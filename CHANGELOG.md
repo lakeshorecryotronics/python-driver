@@ -1,6 +1,29 @@
 Change Log
 ==========
 
+Release 1.9.0
+-------------
+Added:
+- Resistance mode support for SSMSystem
+- SSMSystem SMU-10 support
+- Simplified DC sweep and stream method for SSMSystem
+- Lock-in DC componenent query for SSMSystem
+- Ease of use functions for SSMSystem sweeping
+- Requested and Actual queries for SSMSystem NPLC and source readback NPLC
+- Sweep blanking and initial delay for SSMSystem 
+- Auto coupling for BCS-10
+
+Changed:
+- Updated SSMSystem lock-in filter names
+- Reset SSMSystem sweep parameters to fixed before reconfiguring
+- Increased max NPLC limit for SSMSYstem
+
+Fixed:
+- SSMSystem ramp function issues
+- Throw error when invalid sample type is used for FastHall
+- Model 335 init causing error
+- Missing base class functions for Models 336, 372, and 335 
+
 Release 1.8.1
 -------------
 Added:
