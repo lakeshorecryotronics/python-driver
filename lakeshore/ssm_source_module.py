@@ -331,7 +331,7 @@ class SourceModule(BaseModule):
 
         warn("The get_cmr_source method is deprecated, use get_cmf_source instead", DeprecationWarning)
 
-        self.get_cmf_source()
+        return self.get_cmf_source()
 
     def set_cmf_source(self, cmf_source):
         """Sets the Common Mode Feedback (CMF) source.
@@ -358,7 +358,7 @@ class SourceModule(BaseModule):
 
         warn("The get_cmr_state method is deprecated, use get_cmf_state instead", DeprecationWarning)
 
-        self.get_cmf_state()
+        return self.get_cmf_state()
 
     def set_cmf_state(self, cmf_state):
         """Sets the Common Mode Feedback (CMF) state of the module.
