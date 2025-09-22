@@ -319,7 +319,7 @@ class SourceModule(BaseModule):
 
         warn("The set_cmr_source method is deprecated, use set_cmf_source instead", DeprecationWarning)
 
-        self.device.command(f'SOURce{self.module_number}:CMR:SOURce {cmr_source}')
+        self.set_cmf_source(cmr_source)
 
     def get_cmr_source(self):
         """
@@ -331,7 +331,7 @@ class SourceModule(BaseModule):
 
         warn("The get_cmr_source method is deprecated, use get_cmf_source instead", DeprecationWarning)
 
-        return self.device.query(f'SOURce{self.module_number}:CMR:SOURce?')
+        self.get_cmf_source()
 
     def set_cmf_source(self, cmf_source):
         """Sets the Common Mode Feedback (CMF) source.
@@ -358,7 +358,7 @@ class SourceModule(BaseModule):
 
         warn("The get_cmr_state method is deprecated, use get_cmf_state instead", DeprecationWarning)
 
-        return bool(int(self.device.query(f'SOURce{self.module_number}:CMR:STATe?')))
+        self.get_cmf_state()
 
     def set_cmf_state(self, cmf_state):
         """Sets the Common Mode Feedback (CMF) state of the module.
@@ -380,7 +380,7 @@ class SourceModule(BaseModule):
 
         warn("The set_cmr_state method is deprecated, use set_cmf_state instead", DeprecationWarning)
 
-        self.device.command(f'SOURce{self.module_number}:CMR:STATe {str(int(cmr_state))}')
+        self.set_cmf_state(cmr_state)
 
     def enable_cmf(self):
         """Sets the CMF state of the module to True."""
