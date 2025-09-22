@@ -1559,8 +1559,8 @@ class SourceModule(BaseModule):
 
         raise ValueError("ac_sweep_parameter must be 'OFFSET', 'FREQUENCY', or 'AMPLITUDE'.")
 
-    def sweep_ac_amplitude(self, start_amplitude, stop_amplitude, ac_shape, source_frequency, *optional_custom_data_sources,
-                            source_offset=0, **kwargs):
+    def sweep_ac_amplitude(self, *, start_amplitude, stop_amplitude, ac_shape, source_frequency,
+                            source_offset=0, optional_custom_data_sources=None, **kwargs):
         """Sweep AC amplitude at fixed frequency and offset.
 
         Args:
@@ -1575,17 +1575,18 @@ class SourceModule(BaseModule):
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
         """
-        return self._do_ac_parameter_sweep_step_and_measure(ac_sweep_parameter='AMPLITUDE',
-                                                            start_value=start_amplitude,
-                                                            stop_value=stop_amplitude,
-                                                            *optional_custom_data_sources,
+        ocs = optional_custom_data_sources or []
+        return self._do_ac_parameter_sweep_step_and_measure('AMPLITUDE',
+                                                            start_amplitude,
+                                                            stop_amplitude,
+                                                            *ocs,
+                                                            ac_shape=ac_shape,
                                                             source_frequency=source_frequency,
                                                             source_offset=source_offset,
-                                                            ac_shape=ac_shape,
                                                             **kwargs)
 
-    def sweep_ac_frequency(self, start_frequency, stop_frequency, ac_shape, source_amplitude, *optional_custom_data_sources,
-                            source_offset=0, **kwargs):
+    def sweep_ac_frequency(self, *, start_frequency, stop_frequency, source_amplitude, ac_shape,
+                           source_offset=0, optional_custom_data_sources=None, **kwargs):
         """Sweep AC frequency at fixed amplitude and offset.
 
         Args:
@@ -1600,17 +1601,18 @@ class SourceModule(BaseModule):
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
         """
-        return self._do_ac_parameter_sweep_step_and_measure(ac_sweep_parameter='FREQUENCY',
-                                                            start_value=start_frequency,
-                                                            stop_value=stop_frequency,
-                                                            *optional_custom_data_sources,
+        ocs = optional_custom_data_sources or []
+        return self._do_ac_parameter_sweep_step_and_measure('FREQUENCY',
+                                                            start_frequency,
+                                                            stop_frequency,
+                                                            *ocs,
+                                                            ac_shape=ac_shape,
                                                             source_amplitude=source_amplitude,
                                                             source_offset=source_offset,
-                                                            ac_shape=ac_shape,
                                                             **kwargs)
 
-    def sweep_ac_offset(self, start_offset, stop_offset, ac_shape, source_amplitude, source_frequency,
-                         *optional_custom_data_sources, **kwargs):
+    def sweep_ac_offset(self, *, start_offset, stop_offset, ac_shape, source_amplitude, source_frequency,
+                         optional_custom_data_sources=None, **kwargs):
         """Sweep AC offset at fixed amplitude and frequency.
 
         Args:
@@ -1625,13 +1627,14 @@ class SourceModule(BaseModule):
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
         """
-        return self._do_ac_parameter_sweep_step_and_measure(ac_sweep_parameter='OFFSET',
-                                                            start_value=start_offset,
-                                                            stop_value=stop_offset,
-                                                            *optional_custom_data_sources,
+        ocs = optional_custom_data_sources or []
+        return self._do_ac_parameter_sweep_step_and_measure('OFFSET',
+                                                            start_offset,
+                                                            stop_offset,
+                                                            *ocs,
+                                                            ac_shape=ac_shape,
                                                             source_amplitude=source_amplitude,
                                                             source_frequency=source_frequency,
-                                                            ac_shape=ac_shape,
                                                             **kwargs)
     def _do_ac_parameter_sweep_step_and_measure(self,
                                                 ac_sweep_parameter,
