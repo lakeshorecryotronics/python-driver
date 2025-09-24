@@ -24,7 +24,7 @@ stream_elements = [(my_ssm.DataSourceMnemonic.SOURCE_AMPLITUDE,1),
                    (my_ssm.DataSourceMnemonic.MEASURE_THETA, 1),
                    (my_ssm.DataSourceMnemonic.MEASURE_X, 1)]
 
-sweep_data = source1.sweep_ac_amplitude(start_amplitude=start_value,
+sweep_data = source1.do_ac_amplitude_sweep_step_and_measure(start_amplitude=start_value,
                                           stop_amplitude=stop_value, 
                                           ac_shape=ac_sweep_shape,
                                           source_frequency=2500,
