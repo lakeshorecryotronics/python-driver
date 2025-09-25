@@ -1575,11 +1575,11 @@ class SourceModule(BaseModule):
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
         """
-        ocs = optional_custom_data_sources or []
+
         return self._do_ac_parameter_sweep_step_and_measure('AMPLITUDE',
                                                             start_amplitude,
                                                             stop_amplitude,
-                                                            *ocs,
+                                                            *optional_custom_data_sources,
                                                             ac_shape=ac_shape,
                                                             source_frequency=source_frequency,
                                                             source_offset=source_offset,
@@ -1601,11 +1601,11 @@ class SourceModule(BaseModule):
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
         """
-        ocs = optional_custom_data_sources or []
+
         return self._do_ac_parameter_sweep_step_and_measure('FREQUENCY',
                                                             start_frequency,
                                                             stop_frequency,
-                                                            *ocs,
+                                                            *optional_custom_data_sources,
                                                             ac_shape=ac_shape,
                                                             source_amplitude=source_amplitude,
                                                             source_offset=source_offset,
@@ -1627,11 +1627,11 @@ class SourceModule(BaseModule):
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
         """
-        ocs = optional_custom_data_sources or []
+
         return self._do_ac_parameter_sweep_step_and_measure('OFFSET',
                                                             start_offset,
                                                             stop_offset,
-                                                            *ocs,
+                                                            *optional_custom_data_sources,
                                                             ac_shape=ac_shape,
                                                             source_amplitude=source_amplitude,
                                                             source_frequency=source_frequency,
