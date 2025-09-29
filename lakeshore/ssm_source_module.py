@@ -1559,7 +1559,7 @@ class SourceModule(BaseModule):
 
         raise ValueError("ac_sweep_parameter must be 'OFFSET', 'FREQUENCY', or 'AMPLITUDE'.")
 
-    def do_ac_amplitude_sweep_step_and_measure(self, *, start_amplitude, stop_amplitude, ac_shape, source_frequency,
+    def do_ac_amplitude_sweep_step_and_measure(self, start_amplitude, stop_amplitude, ac_shape, source_frequency,
                             source_offset=0, optional_custom_data_sources=None, **kwargs):
         """Sweep AC amplitude at fixed frequency and offset.
 
@@ -1585,7 +1585,7 @@ class SourceModule(BaseModule):
                                                             source_offset=source_offset,
                                                             **kwargs)
 
-    def do_ac_frequency_sweep_step_and_measure(self, *, start_frequency, stop_frequency, source_amplitude, ac_shape,
+    def do_ac_frequency_sweep_step_and_measure(self, start_frequency, stop_frequency, source_amplitude, ac_shape,
                            source_offset=0, optional_custom_data_sources=None, **kwargs):
         """Sweep AC frequency at fixed amplitude and offset.
 
@@ -1611,7 +1611,7 @@ class SourceModule(BaseModule):
                                                             source_offset=source_offset,
                                                             **kwargs)
 
-    def do_ac_offset_sweep_step_and_measure(self, *, start_offset, stop_offset, ac_shape, source_amplitude, source_frequency,
+    def do_ac_offset_sweep_step_and_measure(self, start_offset, stop_offset, ac_shape, source_amplitude, source_frequency,
                          optional_custom_data_sources=None, **kwargs):
         """Sweep AC offset at fixed amplitude and frequency.
 
