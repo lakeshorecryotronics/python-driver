@@ -163,7 +163,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
     option_card_slots = ["E", "F", "G", "H"]
 
-    # Define the max number of channels for each option card- Only supported types are listed
+    # Define the max number of channels for each option card. Only supported types are listed
     max_channels = {
         Model346Enums.OptionCardType.SCANNER: 4,
         Model346Enums.OptionCardType.THERMOCOUPLE: 2,
@@ -253,7 +253,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         )
 
     def turn_alarm_off(self, alarm_id):
-        """Sets the output type of a particular alarm to NONE (off).
+        """Sets the output mode of a particular alarm to NONE (off).
 
                 Args:
                     alarm_id (int):
@@ -460,7 +460,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             "heater_power": float(heater_measurements[3])
         }
 
-    def set_output_mode(self, output, mode, input_channel, powerup_enable=False):
+    def set_output_mode(self, output, mode, input_channel, powerup_enable=False, warmup=False):
         """Configures the output mode of a particular output.
 
             Args:
@@ -474,9 +474,12 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                 powerup_enable (bool):
                     Specifies whether the output remains on (True)
                     or shuts off after power cycle (False).
+                warmup (bool):
+                    Specifies whether the output is enabled and set when a WARM is issued (True)
+                    or not (False).
 
         """
-        command_string = f"OUTMODE {output},{mode},{input_channel},{int(powerup_enable)}"
+        command_string = f"OUTMODE {output},{mode},{input_channel},{int(powerup_enable)},{int(warmup)}"
         self.command(command_string)
 
     def get_output_mode(self, output):
@@ -488,15 +491,26 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Returns:
                 dict[str, Model346Enums.OutputMode | str | bool]:
-                    {"mode": OutputMode, "input_channel": str, "powerup_enable": bool}
+                    {"mode": OutputMode, "input_channel": str, "powerup_enable": bool, "warmup": bool}
 
         """
         response = self.query(f"OUTMODE? {output}").split(",")
         return {
             "mode": self.OutputMode(int(response[0])),
             "input_channel": response[1],
-            "powerup_enable": bool(int(response[2]))
+            "powerup_enable": bool(int(response[2])),
+            "warmup": bool(int(response[3]))
         }
+
+    def start_warmup(self, room_temperature=293.15):
+        """Starts the warmup process for all heaters configured with
+        warmup set to True in OUTMODE
+
+        Args:
+            room_temperature (float):
+                Specifies the room temperature in degrees Kelvin, defaulting to 293.15 K or about 68 F.
+        """
+        self.command(f"WARM {room_temperature}")
 
     def set_analog_output_settings(self, output, high_value, low_value):
         """Configures a voltage-controlled output.
@@ -660,7 +674,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """
         self.command(f"SETPRST {output}")
 
-    def get_ramp_setpoitnt(self, output):
+    def get_ramp_setpoint(self, output):
         """Returns the current setpoint for a particular output.
 
             Args:
