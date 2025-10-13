@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Release 1.9.1
+-------------
+Fixed:
+- Require latest environment and Sphinx versions for readthedocs builds
+
 Release 1.9.0
 -------------
 Added:
