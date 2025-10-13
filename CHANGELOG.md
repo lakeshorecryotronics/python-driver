@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Release 1.9.2
+-------------
+Fixed:
+- Require latest python version for readthedocs builds
+
 Release 1.9.1
 -------------
 Fixed:
