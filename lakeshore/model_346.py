@@ -502,7 +502,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             "warmup": bool(int(response[3]))
         }
 
-    def start_warmup(self, room_temperature=293.15):
+    def start_warmup(self, room_temperature=293.15, percent_out=10):
         """Starts the warmup process for all heaters configured with
         warmup set to True in OUTMODE
 
@@ -510,7 +510,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             room_temperature (float):
                 Specifies the room temperature in degrees Kelvin, defaulting to 293.15 K or about 68 F.
         """
-        self.command(f"WARM {room_temperature}")
+        self.command(f"WARM {room_temperature}, {percent_out}")
 
     def set_analog_output_settings(self, output, high_value, low_value):
         """Configures a voltage-controlled output.
