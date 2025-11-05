@@ -85,7 +85,36 @@ class Model346AlarmSettings:
         self.audible = audible
         self.visible = visible
 
+class Model346StabilitySettings:
+    """Class used to configure an alarm in conjunction with the set/get_alarm_settings() method for the Model346."""
 
+    def __init__(self, enabled, acceptable_error, max_reading_to_reading_delta, settle_time, latch, audible, visible):
+        """Constructor for AlarmSettings class.
+
+            Args:
+                enabled (bool):
+                    Enables or Disables the alarm.
+                acceptable_error (float):
+                    Specifies max acceptable error between setpoint and reading.
+                max_reading_to_reading_delta (float):
+                    Specifies max difference between two readings.
+                settle_time (float):
+                    Specifies the amount of time both conditions must be true.
+                latch (bool):
+                    Specifies whether the stability latches when triggered.
+                audible (bool):
+                    Specifies whether the stability is audible when triggered.
+                visible (bool):
+                    Specifies whether the stability is visible when triggered.
+
+        """
+        self.enabled = enabled
+        self.acceptable_error = acceptable_error
+        self.max_reading_to_reading_delta = max_reading_to_reading_delta
+        self.settle_time = settle_time
+        self.latch = latch
+        self.audible = audible
+        self.visible = visible
 
 class Model346ControlLoopZoneSettings:
     """Control loop configuration for a particular heater output and zone."""
@@ -261,6 +290,50 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         self.command(f"ALARM {alarm_id},,,,{self.AlarmType.NONE},")
+
+    def set_stability_settings(self, output_channel, stability_settings):
+        """Sets the configuration of a particular alarm.
+
+            Args:
+                output_channel (str):
+                    Specifies the output channel to configure (e.g., 1, 2, 5, 6, 9 etc.).
+                stability_settings (Model346StabilitySettings):
+                    The configuration that should be applied to the output.
+
+            Command Format:
+                OUTSTABLE <output>, <enabled>, <high limit>, <low limit>, <deadband>,
+                <latch>, <audible>, <visible>
+        """
+        command_string = (
+            f"OUTSTABLE {output_channel},{int(alarm_settings.enabled)},"
+            f"{stability_settings.acceptable_error},{stability_settings.max_reading_to_reading_delta},"
+            f"{stability_settings.settle_time},{int(stability_settings.latch)},"
+            f"{int(stability_settings.audible)},{int(stability_settings.visible)}"
+        )
+        self.command(command_string)
+
+    def get_stability_settings(self, output_channel):
+        """Returns present configuration of a particular alarm.
+
+            Args:
+                output_channel (int):
+                    Specifies the output of interest.
+
+            Returns:
+                Model346StabilitySettings:
+                    An Model346StabilitySettings object populated with the respective stability parameters.
+
+        """
+        stability_params = self.query(f"OUTSTABLE? {output_channel}").split(",")
+        return Model346StabilitySettings(
+            enabled=bool(int(stability_params[0])),
+            acceptable_error=float(stability_params[1]),
+            max_reading_to_reading_delta=float(stability_params[2]),
+            settle_time=float(stability_params[3]),
+            latch=bool(int(stability_params[4])),
+            audible=bool(int(stability_params[5])),
+            visible=bool(int(stability_params[6]))
+        )
 
     def turn_relay_on(self, relay_number):
         """Turns the specified relay on.
