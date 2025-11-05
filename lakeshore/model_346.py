@@ -444,6 +444,33 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         heater_range = int(self.query(f"RANGE? {output}"))
         return Model346Enums.HeaterRange(heater_range)
 
+    def set_heater_autorange(self, output, enabled):
+        """Sets the heater autorange  setting for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to configure (1 - 4).
+                enabled (bool):
+                    Whether autorange should be enabled or disabled.
+
+        """
+        self.command(f"HTRAUTO {output},{enabled}")
+
+    def get_heater_autorange(self, output):
+        """Returns the heater autorange setting for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to query (1 - 4).
+
+            Returns:
+                (bool):
+                    Whether autorange should be enabled or disabled.
+
+        """
+        heater_range = int(self.query(f"HTRAUTO? {output}"))
+        return Model346Enums.HeaterRange(heater_range)
+
     def set_analog_out_state(self, output, analog_out_state):
         """Sets the analog out state to enable or disable
 
