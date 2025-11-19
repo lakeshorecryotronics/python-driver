@@ -1339,7 +1339,7 @@ class SourceModule(BaseModule):
             stop_amplitude (float):
                 The ending source value of the sweep in volts or amps
             dwell_time (float):
-                Time duration of each step in seconds, defaults to AUTO
+                Time duration of the measurement portion of each step in seconds, defaults to AUTO
             number_of_points (int):
                 How many steps to take going from the start to the stop amplitude.
                 AUTO chooses a decade step size that results in between 100 and 1,000 points
@@ -1349,8 +1349,8 @@ class SourceModule(BaseModule):
                 If specified only the specified custom data sources will be collected.
                 If specified the corresponding measure channel will not be configured automatically.
             settle_time (float):
-                How long to wait before taking a measurement after a step change.
-                Defaults to zero. Must be shorter than the dwell time.
+                This is the user blanking time. How long to wait before taking a measurement after a step change.
+                Defaults to zero.
             initial_delay (float):
                 Time to wait before starting the sweep, defaults to zero.
             sweep_spacing (str or SweepSpacing enum):
@@ -1359,9 +1359,11 @@ class SourceModule(BaseModule):
                 Sweeps to the stop amplitude then sweeps back to the start amplitude when true.
                 Returns double the sweep number of points when true.
             include_source_amplitude (bool):
-                The source amplitude is included in the returned data when true
+                The source amplitude is included in the returned data when true.
+                Not relevant if using custom data sources.
             include_relative_time (bool):
-                The time since the start of the sweep is in the returned data when true
+                The time since the start of the sweep is in the returned data when true.
+                Not relevant if using custom data sources.
         """
         self.set_shape('DC')
 
@@ -1375,7 +1377,7 @@ class SourceModule(BaseModule):
         # if custom data sources are not specified, automatically configure the corresponding measure module
         if not optional_custom_data_sources:
             measure_module = self.device.get_measure_module(self.module_number)
-            averaging_nplcs = (dwell_time - settle_time) * self.device.get_line_frequency()
+            averaging_nplcs = dwell_time * self.device.get_line_frequency()
             measure_module.setup_dc_measurement(averaging_nplcs)
 
         # determine if the source will provide current or voltage
@@ -1564,95 +1566,116 @@ class SourceModule(BaseModule):
         """Sweep AC amplitude at fixed frequency and offset.
 
         Args:
-            start_amplitude (float): The starting amplitude of the sweep in volts or amps.
-            stop_amplitude (float): The ending amplitude of the sweep in volts or amps.
-            ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
-            source_frequency (float): The AC frequency in Hz.
-            source_offset (float): The AC offset in volts or amps. Default is 0.
-            optional_custom_data_sources (SSMSystemDataSourceMnemonic or str, int): Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
-            kwargs: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
+            start_amplitude (float):
+                The starting amplitude of the sweep in volts or amps.
+            stop_amplitude (float):
+                The ending amplitude of the sweep in volts or amps.
+            ac_shape (str):
+                The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
+            source_frequency (float):
+                The AC frequency in Hz.
+            source_offset (float):
+                The AC offset in volts or amps. Default is 0.
+            optional_custom_data_sources (SSMSystemDataSourceMnemonic or str, int):
+                Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
+            kwargs:
+                Additional keyword arguments to pass to the do_ac_parameter_sweep_step_and_measure method.
 
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
         """
 
-        return self._do_ac_parameter_sweep_step_and_measure('AMPLITUDE',
-                                                            start_amplitude,
-                                                            stop_amplitude,
-                                                            *optional_custom_data_sources,
-                                                            ac_shape=ac_shape,
-                                                            source_frequency=source_frequency,
-                                                            source_offset=source_offset,
-                                                            **kwargs)
+        return self.do_ac_parameter_sweep_step_and_measure('AMPLITUDE',
+                                                           start_amplitude,
+                                                           stop_amplitude,
+                                                           *optional_custom_data_sources,
+                                                           ac_shape=ac_shape,
+                                                           source_frequency=source_frequency,
+                                                           source_offset=source_offset,
+                                                           **kwargs)
 
     def do_ac_frequency_sweep_step_and_measure(self, start_frequency, stop_frequency, source_amplitude, ac_shape,
                            source_offset=0, optional_custom_data_sources=None, **kwargs):
         """Sweep AC frequency at fixed amplitude and offset.
 
         Args:
-            start_frequency (float): The starting frequency of the sweep in Hz.
-            stop_frequency (float): The ending frequency of the sweep in Hz.
-            source_amplitude (float): The AC amplitude in volts or amps.
-            ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
-            source_offset (float): The AC offset in volts or amps. Default is 0.
-            optional_custom_data_sources (SSMSystemDataSourceMnemonic or str, int): Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
-            kwargs: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
+            start_frequency (float):
+                The starting frequency of the sweep in Hz.
+            stop_frequency (float):
+                The ending frequency of the sweep in Hz.
+            source_amplitude (float):
+                The AC amplitude in volts or amps.
+            ac_shape (str):
+                The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
+            source_offset (float):
+                The AC offset in volts or amps. Default is 0.
+            optional_custom_data_sources (SSMSystemDataSourceMnemonic or str, int):
+                Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
+            kwargs:
+                Additional keyword arguments to pass to the do_ac_parameter_sweep_step_and_measure method.
 
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
         """
 
-        return self._do_ac_parameter_sweep_step_and_measure('FREQUENCY',
-                                                            start_frequency,
-                                                            stop_frequency,
-                                                            *optional_custom_data_sources,
-                                                            ac_shape=ac_shape,
-                                                            source_amplitude=source_amplitude,
-                                                            source_offset=source_offset,
-                                                            **kwargs)
+        return self.do_ac_parameter_sweep_step_and_measure('FREQUENCY',
+                                                           start_frequency,
+                                                           stop_frequency,
+                                                           *optional_custom_data_sources,
+                                                           ac_shape=ac_shape,
+                                                           source_amplitude=source_amplitude,
+                                                           source_offset=source_offset,
+                                                           **kwargs)
 
     def do_ac_offset_sweep_step_and_measure(self, start_offset, stop_offset, ac_shape, source_amplitude, source_frequency,
                          optional_custom_data_sources=None, **kwargs):
         """Sweep AC offset at fixed amplitude and frequency.
 
         Args:
-            start_offset (float): The starting offset of the sweep in volts or amps.
-            stop_offset (float): The ending offset of the sweep in volts or amps.
-            source_amplitude (float): The AC amplitude in volts or amps.
-            ac_shape (str): The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
-            source_frequency (float): The AC frequency in Hz.
-            optional_custom_data_sources (SSMSystemDataSourceMnemonic or str, int): Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
-            kwargs: Additional keyword arguments to pass to the _do_ac_parameter_sweep_step_and_measure method.
+            start_offset (float):
+                The starting offset of the sweep in volts or amps.
+            stop_offset (float):
+                The ending offset of the sweep in volts or amps.
+            source_amplitude (float):
+                The AC amplitude in volts or amps.
+            ac_shape (str):
+                The AC waveform shape, e.g., 'SINUSOID', 'SQUARE', 'TRIANGLE'.
+            source_frequency (float):
+                The AC frequency in Hz.
+            optional_custom_data_sources (SSMSystemDataSourceMnemonic or str, int):
+                Variable length list of pairs of (DATA_SOURCE, CHANNEL_INDEX).
+            kwargs:
+                Additional keyword arguments to pass to the do_ac_parameter_sweep_step_and_measure method.
 
         Returns:
             list: A list of tuples containing the measured data for each point in the sweep.
         """
 
-        return self._do_ac_parameter_sweep_step_and_measure('OFFSET',
-                                                            start_offset,
-                                                            stop_offset,
-                                                            *optional_custom_data_sources,
-                                                            ac_shape=ac_shape,
-                                                            source_amplitude=source_amplitude,
-                                                            source_frequency=source_frequency,
-                                                            **kwargs)
-    def _do_ac_parameter_sweep_step_and_measure(self,
-                                                ac_sweep_parameter,
-                                                start_value,
-                                                stop_value,
-                                                *optional_custom_data_sources,
-                                                ac_shape='SINUSOID',
-                                                source_amplitude=None,
-                                                source_frequency=None,
-                                                source_offset=None,
-                                                dwell_time='AUTO',
-                                                number_of_points='AUTO',
-                                                settle_time=0.0,
-                                                initial_delay=0.0,
-                                                sweep_spacing='LINEAR',
-                                                round_trip=False,
-                                                include_source_sweep_parameter=True,
-                                                include_relative_time=False):
+        return self.do_ac_parameter_sweep_step_and_measure('OFFSET',
+                                                           start_offset,
+                                                           stop_offset,
+                                                           *optional_custom_data_sources,
+                                                           ac_shape=ac_shape,
+                                                           source_amplitude=source_amplitude,
+                                                           source_frequency=source_frequency,
+                                                           **kwargs)
+    def do_ac_parameter_sweep_step_and_measure(self,
+                                               ac_sweep_parameter,
+                                               start_value,
+                                               stop_value,
+                                               *optional_custom_data_sources,
+                                               ac_shape='SINUSOID',
+                                               source_amplitude=None,
+                                               source_frequency=None,
+                                               source_offset=None,
+                                               dwell_time='AUTO',
+                                               number_of_points='AUTO',
+                                               settle_time=0.0,
+                                               initial_delay=0.0,
+                                               sweep_spacing='LINEAR',
+                                               round_trip=False,
+                                               include_source_sweep_parameter=True,
+                                               include_relative_time=False):
         """Immediately runs an AC parameter(amplitude, frequency, offset) source sweep and returns data for each point in the sweep.
 
         Args:
@@ -1671,7 +1694,7 @@ class SourceModule(BaseModule):
             source_offset (float):
                 The AC offset in volts or amps.
             dwell_time (float):
-                Time duration of each step in seconds, defaults to AUTO.
+                Time duration of the measurement portion of each step in seconds, defaults to AUTO.
             number_of_points (int):
                 How many steps to take going from the start to the stop amplitude.
                 AUTO chooses a decade step size that results in between 100 and 1,000 points
@@ -1681,8 +1704,8 @@ class SourceModule(BaseModule):
                 If specified only the specified custom data sources will be collected.
                 If specified the corresponding measure channel will not be configured automatically.
             settle_time (float):
-                How long to wait before taking a measurement after a step change.
-                Defaults to zero. Must be shorter than the dwell time.
+                This is the user blanking time. How long to wait before taking a measurement after a step change.
+                Defaults to zero.
             initial_delay (float):
                 Time to wait before starting the sweep, defaults to zero.
             sweep_spacing (str or SweepSpacing enum):
@@ -1691,9 +1714,11 @@ class SourceModule(BaseModule):
                 Sweeps to the stop amplitude then sweeps back to the start amplitude when true.
                 Returns double the sweep number of points when true.
             include_source_sweep_parameter (bool):
-                The source sweep parameter is included in the returned data when true
+                The source sweep parameter is included in the returned data when true.
+                Not relevant if using custom data sources.
             include_relative_time (bool):
-                The time since the start of the sweep is in the returned data when true
+                The time since the start of the sweep is included in the returned data when true.
+                Not relevant if using custom data sources.
         """
         self.set_shape(ac_shape)
 
@@ -1712,7 +1737,7 @@ class SourceModule(BaseModule):
         # if custom data sources are not specified, automatically configure the corresponding measure module
         if not optional_custom_data_sources:
             measure_module = self.device.get_measure_module(self.module_number)
-            averaging_nplcs = (dwell_time - settle_time) * self.device.get_line_frequency()
+            averaging_nplcs = dwell_time * self.device.get_line_frequency()
             measure_module.setup_ac_measurement(averaging_nplcs)
 
         sweep_config = self.device.SourceSweepSettings(sweep_type=sweep_type,
