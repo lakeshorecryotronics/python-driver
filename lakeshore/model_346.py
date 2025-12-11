@@ -85,6 +85,7 @@ class Model346AlarmSettings:
         self.audible = audible
         self.visible = visible
 
+
 class Model346StabilitySettings:
     """Class used to configure an alarm in conjunction with the set/get_alarm_settings() method for the Model346."""
 
@@ -116,10 +117,12 @@ class Model346StabilitySettings:
         self.audible = audible
         self.visible = visible
 
+
 class Model346ControlLoopZoneSettings:
     """Control loop configuration for a particular heater output and zone."""
 
-    def __init__(self, upper_bound, proportional, integral, derivative, manual_out_value, heater_range, channel, rate):
+    def __init__(self, upper_bound, proportional, integral, derivative, manual_out_value, heater_range, channel, rate,
+                 output_limit=100.0):
         """Constructor.
 
             Args:
@@ -148,9 +151,11 @@ class Model346ControlLoopZoneSettings:
         self.integral = integral
         self.derivative = derivative
         self.manual_out_value = manual_out_value
+        self.output_limit = output_limit
         self.heater_range = heater_range
         self.channel = channel
         self.rate = rate
+
 
 class Model346InputReadingStatus(RegisterBase):
     """Class object representing the input status flag bits."""
@@ -175,8 +180,10 @@ class Model346InputReadingStatus(RegisterBase):
         self.sensor_units_readings_under_range = sensor_units_readings_under_range
         self.sensor_units_readings_over_range = sensor_units_readings_over_range
 
+
 class OptionCard:
     """Represents an option card with additional information."""
+
     def __init__(self, card_type, max_channels, channels):
         self.card_type = card_type
         self.max_channels = max_channels
@@ -184,6 +191,7 @@ class OptionCard:
 
     def __repr__(self):
         return f"OptionCard(type={self.card_type.name}, max_channels={self.max_channels}, channels={self.channels})"
+
 
 class Model346(Model346Enums, XIPInstrument, TemperatureController):
     """
@@ -476,7 +484,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which output to configure (1 - 4).
+                    Specifies which output to configure (5 - 8).
                 analog_out_state (int):
                     OFF = 0 , ON = 1.
         """
@@ -488,7 +496,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which output to query (1 - 4).
+                    Specifies which output to query (5 - 8).
 
             Returns:
                 (int):
@@ -499,9 +507,32 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         analog_out_range = int(self.query(f"RANGE? {output}"))
         return analog_out_range
 
+    def set_output_percent_limit(self, output, percent_limit):
+        """Sets the output percent limit for a particular output.
+        Args:
+            output (int):
+                Specifies which output to configure (1 - 10).
+            percent_limit (int):
+                Sets a percentage limit for a particular output.
+            """
+        self.command(f"OUTLIMIT {output},{percent_limit}")
+
+    def get_output_percent_limit(self, output):
+        """Sets the output percent limit for a particular output.
+        Args:
+            output (int):
+                Specifies which output to configure (1 - 10).
+        Returns:
+             (int):
+              The set percentage limit for a particular output.
+            """
+        output_limit = int(self.query(f"OUTLIMIT? {output}"))
+        return output_limit
+
     def all_heaters_off(self):
         """Recreates the front panel safety feature of shutting off all heaters."""
-        self.command("RANGE 1,0;RANGE 2,0;RANGE 3,0;RANGE 4,0")
+        self.command(
+            "RANGE 1,0;RANGE 2,0;RANGE 3,0;RANGE 4,0;RANGE 5,0;RANGE 6,0;RANGE 7,0;RANGE 8,0;RANGE 9,0;RANGE 10,0;")
 
     def set_heater_setup(self, output, heater_resistance, max_output, output_units):
         """Method to configure the heaters.
@@ -535,8 +566,8 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """
         heater_setup = self.query(f"HTRSET? {output}").split(",")
         return {
-            "heater_resistance": (int(heater_setup[0])),  
-            "max_output": float(heater_setup[1]),       # Keep as float
+            "heater_resistance": (int(heater_setup[0])),
+            "max_output": float(heater_setup[1]),  # Keep as float
             "output_units": self.HeaterOutputUnits(int(heater_setup[2]))  # Rename key to match expected format
         }
 
@@ -801,8 +832,9 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         command_string = (f"ZONE {output},{zone_number},{zone_settings.upper_bound},{zone_settings.proportional}," +
-                            f"{zone_settings.integral},{zone_settings.derivative},{zone_settings.manual_out_value}," +
-                            f"{zone_settings.heater_range},{zone_settings.channel},{zone_settings.rate}")
+                          f"{zone_settings.integral},{zone_settings.derivative},{zone_settings.manual_out_value}," +
+                          f"{zone_settings.output_limit},{zone_settings.heater_range},{zone_settings.channel}," +
+                          f"{zone_settings.rate}")
         self.command(command_string)
 
     def get_control_loop_zone_table(self, output, zone_number):
@@ -826,9 +858,10 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             integral=float(response[2]),
             derivative=float(response[3]),
             manual_out_value=float(response[4]),
-            heater_range=self.HeaterRange(int(response[5])),
-            channel=response[6],
-            rate=float(response[7])
+            output_limit=float(response[5]),
+            heater_range=self.HeaterRange(int(response[6])),
+            channel=response[7],
+            rate=float(response[8])
         )
 
     def get_curve_number_of_points(self, curve_number):
@@ -867,7 +900,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         self.command(f"RELAY {relay_number},{mode},{input_channel},{condition}")
-
 
     def get_relay_alarm_control_parameters(self, relay_number):
         """Returns the relay control parameters for a specified relay.
@@ -931,7 +963,8 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             slot: OptionCard(
                 card_type=Model346Enums.OptionCardType(int(response[i])),
                 max_channels=self.max_channels.get(Model346Enums.OptionCardType(int(response[i])), 0),
-                channels=self.get_option_card_channels(slot) if Model346Enums.OptionCardType(int(response[i])) in self.max_channels else []
+                channels=self.get_option_card_channels(slot) if Model346Enums.OptionCardType(
+                    int(response[i])) in self.max_channels else []
             )
             for i, slot in enumerate(self.option_card_slots)
         }
@@ -991,6 +1024,8 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         # Generate the list of channels based on the max channel count
         return [f"{slot}{i}" for i in range(1, max_channel_count + 1)]
 
-__all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader', 'Model346OperationEvent',
+
+__all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
+           'Model346OperationEvent',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346ControlLoopZoneSettings']
