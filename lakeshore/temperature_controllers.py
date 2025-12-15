@@ -1040,8 +1040,6 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                 derivative (float):
                     Derivative term in PID control.
                     This value controls how quickly the present field set point will transition to a new set-point.
-                    The ramp rate is configured in field units per second.
-
         """
         self.command(f"PID {output},{gain},{integral},{derivative}")
 
@@ -1054,17 +1052,17 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
             Returns:
                 (dict):
-                    {"gain": float, "integral": float, "ramp_rate": float}
+                    {"gain": float, "integral": float, "derivative": float}
                         gain: Proportional term in PID control.
                         integral: Integral term in PID control.
-                        ramp_rate: Derivative term in PID control.
+                        derivative: Derivative term in PID control.
 
         """
         pid_values = self.query(f"PID? {output}")
         pid_values = pid_values.split(",")
         return {"gain": float(pid_values[0]),
                 "integral": float(pid_values[1]),
-                "ramp_rate": float(pid_values[2])}
+                "derivative": float(pid_values[2])}
 
     def set_setpoint_ramp_parameter(self, output, ramp_enable, rate_value):
         """Sets the control loop of a particular output.
