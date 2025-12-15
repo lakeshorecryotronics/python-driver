@@ -379,7 +379,7 @@ class TestBasicQueries(TestWithFakeModel336):
         response = self.dut.get_heater_pid(1)
         pid_settings = {"gain": 4.25,
                         "integral": 6.1,
-                        "ramp_rate": 0}
+                        "derivative": 0}
         self.assertDictEqual(response, pid_settings)
         self.assertIn("PID? 1", self.fake_connection.get_outgoing_message())
 
