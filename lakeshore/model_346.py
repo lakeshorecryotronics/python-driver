@@ -591,6 +591,28 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             "heater_power": float(heater_measurements[3])
         }
 
+    def get_calculated_heater_output(self, output):
+        """Returns the calculated output value and power for the specified output.
+
+            Args:
+                output (int):
+                    Specifies which output to query (1 - 10).
+
+            Returns:
+                dict[str, float]:
+                    {"output_value": float, "output_power": float}
+                    
+                    For outputs 1-4: output_value is current in Amperes
+                    For outputs 5-8: output_value is voltage in Volts, output_power is 0.0
+                    For outputs 9-10: output_value is sum of currents, output_power is sum of powers
+
+        """
+        heater_output = self.query(f"HTROUT? {output}").split(",")
+        return {
+            "output_value": float(heater_output[0]),
+            "output_power": float(heater_output[1])
+        }
+
     def set_output_mode(self, output, mode, input_channel, powerup_enable=False, warmup=False):
         """Configures the output mode of a particular output.
 
