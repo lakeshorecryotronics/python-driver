@@ -223,6 +223,17 @@ class Model346OutputOperationStatus(RegisterBase):
         self.warmup_mode = warmup_mode
         self.warm = warm
 
+class Model346OutputStatus(RegisterBase):
+    """Class object representing the output status flag bits."""
+
+    bit_names = [
+        "short_circuit_detected",
+        "percentage_limited"
+    ]
+
+    def __init__(self, short_circuit_detected, percentage_limited):
+        self.short_circuit_detected = short_circuit_detected
+        self.percentage_limited = percentage_limited
 
 class OptionCard:
     """Represents an option card with additional information."""
@@ -842,6 +853,22 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         response = int(self.query(f"OUTOPR? {output}"))
         return Model346OutputOperationStatus.from_integer(response)
 
+    def get_output_status(self, output):
+        """Returns the status of the specified output.
+
+            Args:
+                output (int):
+                    Specifies the output to query (1 - 10).
+
+            Returns:
+                (Model346OutputStatus):
+                    Boolean representation of each bit of the output status flag register.
+                    Includes: heater_error (HTRST? is non-zero), percentage_limited.
+
+        """
+        response = int(self.query(f"OUTST? {output}"))
+        return Model346OutputStatus.from_integer(response)
+
     def _get_thermocouple_junction_temp(self, input_channel):
         """Returns the thermocouple junction temperature for the specified input channel.
 
@@ -1126,4 +1153,4 @@ __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', '
            'Model346OperationEvent',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346InputReadingOperationStatus',
-           'Model346OutputOperationStatus', 'Model346ControlLoopZoneSettings']
+           'Model346OutputOperationStatus', 'Model346OutputStatus', 'Model346ControlLoopZoneSettings']

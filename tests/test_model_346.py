@@ -415,6 +415,19 @@ class TestBasicQueries(TestWithFakeModel346):
 
         self.assertIn("OUTOPR? 1", self.fake_connection.get_outgoing_message())
 
+    def test_get_output_status(self):
+        self.fake_connection.setup_response('3;No error')  # Binary: 11 = 1+2
+        response = self.dut.get_output_status(1)
+        
+        # Bit 0 (1): Open circuit/ Short detected
+        # Bit 1 (2): Percentage limited
+        # Total: 1 + 2 = 3
+        
+        self.assertEqual(response.short_circuit_detected, True)
+        self.assertEqual(response.percentage_limited, True)
+
+        self.assertIn("OUTST? 1", self.fake_connection.get_outgoing_message())
+
     def test_get_control_setpoint(self):
         self.fake_connection.setup_response('2.35;No error')
         response = self.dut.get_control_setpoint(1)
