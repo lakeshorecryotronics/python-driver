@@ -181,6 +181,27 @@ class Model346InputReadingStatus(RegisterBase):
         self.sensor_units_readings_over_range = sensor_units_readings_over_range
 
 
+class Model346InputReadingOperationStatus(RegisterBase):
+    """Class object representing the input reading operation status flag bits."""
+
+    bit_names = [
+        "curve_applied",
+        "reading_in_celsius",
+        "",
+        "",
+        "",
+        "",
+        "low_alarm_active",
+        "high_alarm_active"
+    ]
+
+    def __init__(self, curve_applied, reading_in_celsius, low_alarm_active, high_alarm_active):
+        self.curve_applied = curve_applied
+        self.reading_in_celsius = reading_in_celsius
+        self.low_alarm_active = low_alarm_active
+        self.high_alarm_active = high_alarm_active
+
+
 class OptionCard:
     """Represents an option card with additional information."""
 
@@ -767,6 +788,22 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         response = int(self.query(f"RDGST? {input_channel}"))
         return Model346InputReadingStatus.from_integer(response)
 
+    def get_input_reading_operation_status(self, input_channel):
+        """Returns the operation status of the specified input channel.
+
+            Args:
+                input_channel (str):
+                    Specifies the input channel to query (A - H4).
+
+            Returns:
+                (Model346InputReadingOperationStatus):
+                    Boolean representation of each bit of the input operation status flag register.
+                    Includes: curve_applied, reading_in_celsius, low_alarm_active, high_alarm_active.
+
+        """
+        response = int(self.query(f"RDGOPR? {input_channel}"))
+        return Model346InputReadingOperationStatus.from_integer(response)
+
     def _get_thermocouple_junction_temp(self, input_channel):
         """Returns the thermocouple junction temperature for the specified input channel.
 
@@ -1050,4 +1087,5 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', 'Model346CurveHeader',
            'Model346OperationEvent',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
-           'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346ControlLoopZoneSettings']
+           'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346InputReadingOperationStatus',
+           'Model346ControlLoopZoneSettings']

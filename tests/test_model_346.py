@@ -1,6 +1,7 @@
 from tests.utils import TestWithFakeModel346
 from lakeshore import InstrumentException, Model346OperationEvent, Model346AlarmSettings, Model346InputSensorSettings, \
-    Model346InputReadingStatus, AlarmSettings, Model346CurveHeader, Model346ControlLoopZoneSettings
+    Model346InputReadingStatus, Model346InputReadingOperationStatus, AlarmSettings, Model346CurveHeader, \
+    Model346ControlLoopZoneSettings
 
 class TestBasicReadings(TestWithFakeModel346):
 
@@ -377,6 +378,23 @@ class TestBasicQueries(TestWithFakeModel346):
         self.assertEqual(response.sensor_units_readings_over_range, input_reading_status.sensor_units_readings_over_range)
 
         self.assertIn("RDGST? A", self.fake_connection.get_outgoing_message())
+
+    def test_get_input_reading_operation_status(self):
+        self.fake_connection.setup_response('195;No error')  # Binary: 11000011 = 1+2+64+128
+        response = self.dut.get_input_reading_operation_status("A")
+        
+        # Bit 0 (1): Curve applied
+        # Bit 1 (2): Reading in Celsius
+        # Bit 6 (64): Low alarm active
+        # Bit 7 (128): High alarm active
+        # Total: 1 + 2 + 64 + 128 = 195
+        
+        self.assertEqual(response.curve_applied, True)
+        self.assertEqual(response.reading_in_celsius, True)
+        self.assertEqual(response.low_alarm_active, True)
+        self.assertEqual(response.high_alarm_active, True)
+
+        self.assertIn("RDGOPR? A", self.fake_connection.get_outgoing_message())
 
     def test_get_control_setpoint(self):
         self.fake_connection.setup_response('2.35;No error')
