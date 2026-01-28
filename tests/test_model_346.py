@@ -206,6 +206,14 @@ class TestBasicQueries(TestWithFakeModel346):
         self.assertEqual(response, 55.63)
         self.assertIn("HTR? 1", self.fake_connection.get_outgoing_message())
 
+    def test_get_calculated_heater_output(self):
+        self.fake_connection.setup_response('1.25,15.625;No error')
+        response = self.dut.get_calculated_heater_output(1)
+        calculated_output = {"output_value": 1.25,
+                            "output_power": 15.625}
+        self.assertDictEqual(response, calculated_output)
+        self.assertIn("HTROUT? 1", self.fake_connection.get_outgoing_message())
+
     def test_get_filter(self):
         self.fake_connection.setup_response('1,26,5;No error')
         response = self.dut._get_filter("A")
