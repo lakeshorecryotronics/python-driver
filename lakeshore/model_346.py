@@ -202,6 +202,28 @@ class Model346InputReadingOperationStatus(RegisterBase):
         self.high_alarm_active = high_alarm_active
 
 
+class Model346OutputOperationStatus(RegisterBase):
+    """Class object representing the output operation status flag bits."""
+
+    bit_names = [
+        "",
+        "ramp_active",
+        "",
+        "",
+        "stabilizing",
+        "stable",
+        "warmup_mode",
+        "warm"
+    ]
+
+    def __init__(self, ramp_active, stabilizing, stable, warmup_mode, warm):
+        self.ramp_active = ramp_active
+        self.stabilizing = stabilizing
+        self.stable = stable
+        self.warmup_mode = warmup_mode
+        self.warm = warm
+
+
 class OptionCard:
     """Represents an option card with additional information."""
 
@@ -804,6 +826,22 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         response = int(self.query(f"RDGOPR? {input_channel}"))
         return Model346InputReadingOperationStatus.from_integer(response)
 
+    def get_output_operation_status(self, output):
+        """Returns the operation status of the specified output.
+
+            Args:
+                output (int):
+                    Specifies the output to query (1 - 10).
+
+            Returns:
+                (Model346OutputOperationStatus):
+                    Boolean representation of each bit of the output operation status flag register.
+                    Includes: ramp_active, stabilizing, stable, warmup_mode, warm.
+
+        """
+        response = int(self.query(f"OUTOPR? {output}"))
+        return Model346OutputOperationStatus.from_integer(response)
+
     def _get_thermocouple_junction_temp(self, input_channel):
         """Returns the thermocouple junction temperature for the specified input channel.
 
@@ -1088,4 +1126,4 @@ __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', '
            'Model346OperationEvent',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346InputReadingOperationStatus',
-           'Model346ControlLoopZoneSettings']
+           'Model346OutputOperationStatus', 'Model346ControlLoopZoneSettings']

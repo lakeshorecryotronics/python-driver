@@ -1,7 +1,7 @@
 from tests.utils import TestWithFakeModel346
 from lakeshore import InstrumentException, Model346OperationEvent, Model346AlarmSettings, Model346InputSensorSettings, \
-    Model346InputReadingStatus, Model346InputReadingOperationStatus, AlarmSettings, Model346CurveHeader, \
-    Model346ControlLoopZoneSettings
+    Model346InputReadingStatus, Model346InputReadingOperationStatus, Model346OutputOperationStatus, \
+    AlarmSettings, Model346CurveHeader, Model346ControlLoopZoneSettings
 
 class TestBasicReadings(TestWithFakeModel346):
 
@@ -395,6 +395,25 @@ class TestBasicQueries(TestWithFakeModel346):
         self.assertEqual(response.high_alarm_active, True)
 
         self.assertIn("RDGOPR? A", self.fake_connection.get_outgoing_message())
+
+    def test_get_output_operation_status(self):
+        self.fake_connection.setup_response('242;No error')  # Binary: 11110010 = 2+16+32+64+128
+        response = self.dut.get_output_operation_status(1)
+        
+        # Bit 1 (2): Ramp active
+        # Bit 4 (16): Stabilizing
+        # Bit 5 (32): Stable
+        # Bit 6 (64): Warmup mode
+        # Bit 7 (128): Warm
+        # Total: 2 + 16 + 32 + 64 + 128 = 242
+        
+        self.assertEqual(response.ramp_active, True)
+        self.assertEqual(response.stabilizing, True)
+        self.assertEqual(response.stable, True)
+        self.assertEqual(response.warmup_mode, True)
+        self.assertEqual(response.warm, True)
+
+        self.assertIn("OUTOPR? 1", self.fake_connection.get_outgoing_message())
 
     def test_get_control_setpoint(self):
         self.fake_connection.setup_response('2.35;No error')
