@@ -324,6 +324,12 @@ class TestBasicQueries(TestWithFakeModel346):
         self.assertDictEqual(response, pid_settings)
         self.assertIn("PID? 1", self.fake_connection.get_outgoing_message())
 
+    def test_get_output_group(self):
+        self.fake_connection.setup_response('9;No error')
+        response = self.dut.get_output_group(2)
+        self.assertEqual(response, 9)
+        self.assertIn('OUTGROUP? 2', self.fake_connection.get_outgoing_message())
+
     def test_get_heater_range(self):
         self.fake_connection.setup_response('1;No error')
         response = self.dut.get_heater_range(1)
@@ -558,6 +564,16 @@ class TestBasicCommands(TestWithFakeModel346):
         self.fake_connection.setup_response('No error')
         self.dut.set_output_mode(1, self.dut.OutputMode.MONITOR_OUT, "A", True)
         self.assertIn("OUTMODE 1,4,A,1", self.fake_connection.get_outgoing_message())
+
+    def test_set_output_group(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_output_group(2, 9)
+        self.assertIn('OUTGROUP 2,9', self.fake_connection.get_outgoing_message())
+
+    def test_set_output_group_unassign(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_output_group(3, 0)
+        self.assertIn('OUTGROUP 3,0', self.fake_connection.get_outgoing_message())
 
     def test_set_heater_pid(self):
         self.fake_connection.setup_response('No error')

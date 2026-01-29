@@ -709,6 +709,33 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             "warmup": bool(int(response[3]))
         }
 
+    def set_output_group(self, output, group):
+        """Assigns a heater output to a virtual heater group for coordinated control.
+
+            Args:
+                output (int):
+                    Specifies which heater output to configure (1 - 4).
+                group (int):
+                    The virtual heater group to assign the output to: 9 or 10.
+                    Set to 0 to remove the output from a group.
+
+        """
+        self.command(f"OUTGROUP {output},{group}")
+
+    def get_output_group(self, output):
+        """Returns the virtual heater group assignment for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which heater output to query (1 - 4).
+
+            Returns:
+                int:
+                    The virtual heater group (9 or 10), or 0 if not assigned to a group.
+
+        """
+        return int(self.query(f"OUTGROUP? {output}"))
+
     def start_warmup(self, room_temperature=293.15, percent_out=10):
         """Starts the warmup process for all heaters configured with
         warmup set to True in OUTMODE
