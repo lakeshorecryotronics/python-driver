@@ -306,11 +306,12 @@ class TestBasicQueries(TestWithFakeModel346):
         self.assertIn('MOUT? 1', self.fake_connection.get_outgoing_message())
 
     def test_get_heater_output_mode(self):
-        self.fake_connection.setup_response('4,1,1;No error')
+        self.fake_connection.setup_response('4,1,1,0;No error')
         response = self.dut.get_output_mode(1)
         heater_output_settings = {"mode": self.dut.OutputMode.MONITOR_OUT,
                                   "input_channel": '1',
-                                  "powerup_enable": True}
+                                  "powerup_enable": True,
+                                  "warmup": False}
         self.assertDictEqual(response, heater_output_settings)
 
         self.assertIn("OUTMODE? 1", self.fake_connection.get_outgoing_message())
@@ -466,7 +467,7 @@ class TestBasicQueries(TestWithFakeModel346):
         self.assertIn("WEBLOG?", self.fake_connection.get_outgoing_message())
 
     def test_get_control_loop_zone_table(self):
-        self.fake_connection.setup_response('25.36,11,18,1.6,54,1,A,55.68;No error')
+        self.fake_connection.setup_response('25.36,11,18,1.6,54,100.0,1,A,55.68;No error')
         response = self.dut.get_control_loop_zone_table(2, 9)
 
         self.assertEqual(response.upper_bound, 25.36)
@@ -642,6 +643,6 @@ class TestBasicCommands(TestWithFakeModel346):
         self.fake_connection.setup_response('No error')
         control_loop_zone_parameters = Model346ControlLoopZoneSettings(215.36, 10, 15, 3.2, 65,
                                                                        self.dut.HeaterRange.HIGH,
-                                                                       "A", 25.36)
+                                                                       "A", 25.36, 100.0)
         self.dut.set_control_loop_zone_table(1, 5, control_loop_zone_parameters)
-        self.assertEqual("ZONE 1,5,215.36,10,15,3.2,65,2,A,25.36;:SYSTem:ERRor:ALL?", self.fake_connection.get_outgoing_message())
+        self.assertEqual("ZONE 1,5,215.36,10,15,3.2,65,100.0,2,A,25.36;:SYSTem:ERRor:ALL?", self.fake_connection.get_outgoing_message())
