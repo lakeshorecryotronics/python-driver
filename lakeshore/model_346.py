@@ -815,12 +815,12 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         return bool(int(response.strip()))
 
     def set_remote_interface_mode(self, mode):
-        """Implementation does not exist yet (MODE). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
+        """Not supported on Model 346. Overrides from base."""
+        raise NotImplementedError("Remote interface mode query is not supported on Model 346")
 
     def get_remote_interface_mode(self):
-        """Implementation does not exist yet (MODE?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
+        """Not supported on Model 346. Overrides from base."""
+        raise NotImplementedError("Remote interface mode command is not supported on Model 346")
 
     def set_display_field_settings(self, field, input_channel, display_units):
         """Not implemented in Model 346. Legacy method from older temperature controllers."""
