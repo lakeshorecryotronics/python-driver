@@ -822,6 +822,22 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """Implementation does not exist yet (MODE?). Overrides from base."""
         raise NotImplementedError("Implementation does not exist yet")
 
+    def set_display_field_settings(self, field, input_channel, display_units):
+        """Not implemented in Model 346. Legacy method from older temperature controllers."""
+        raise NotImplementedError("Display field settings are not supported on Model 346")
+
+    def get_display_field_settings(self, field):
+        """Not implemented in Model 346. Legacy method from older temperature controllers."""
+        raise NotImplementedError("Display field settings are not supported on Model 346")
+
+    def set_led_state(self, state):
+        """Not implemented in Model 346. Legacy method from older temperature controllers."""
+        raise NotImplementedError("LED state control is not supported on Model 346")
+
+    def get_led_state(self):
+        """Not implemented in Model 346. Legacy method from older temperature controllers."""
+        raise NotImplementedError("LED state control is not supported on Model 346")
+
     def reset_min_max_data(self, channel):
         """Resets the minimum and maximum reading data for the give input, or all inputs if ALL is specified.
 
