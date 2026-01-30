@@ -779,8 +779,8 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         return {"high_value": float(response[0]), "low_value": float(response[1])}
 
     def get_alarm_status(self, channel):
-        """Implementation does not exist yet (ALARMST?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
+        """Deprecated. Use get_input_reading_operation_status() instead to check alarm status."""
+        raise NotImplementedError("This method is deprecated. Use get_input_reading_operation_status() instead.")
 
     def reset_alarm_status(self):
         """Implementation does not exist yet (ALRMST?). Overrides from base."""
