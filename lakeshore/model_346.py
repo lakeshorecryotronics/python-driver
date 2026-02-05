@@ -121,28 +121,29 @@ class Model346StabilitySettings:
 class Model346ControlLoopZoneSettings:
     """Control loop configuration for a particular heater output and zone."""
 
-    def __init__(self, upper_bound, proportional, integral, derivative, manual_out_value, heater_range, channel, rate,
-                 output_limit=100.0):
+    def __init__(self, upper_bound, proportional, integral, derivative, manual_out_value, output_limit, heater_range, 
+                 channel, rate):
         """Constructor.
 
             Args:
                 upper_bound (float):
-                    Specifies the upper set-point boundary of this zone in temperature units.
+                    Specifies the upper boundary of the zone in temperature units.
                 proportional (float):
-                    Specifies the proportional gain for this zone (0.1 to 100,000).
+                    Specifies the proportional gain value (0.1 to 100,000).
                 integral (float):
-                    Specifies the integral gain for this zone (0.1 to 100,000).
+                    Specifies the integral gain value (0.1 to 100,000).
                 derivative (float):
-                    Specifies the derivative gain for this zone (0 to 20000).
+                    Specifies the derivative gain value (0 to 20,000).
                 manual_out_value (float):
-                    Specifies the manual output for this zone (0 to 100 %).
-                heater_range (self.HeaterRange):
-                    Specifies the heater range for this zone.
-                    See self.HeaterRange IntEnum class.
-                channel (alphanumeric):
-                    Passing the NONE member will use the previously assigned sensor.
+                    Specifies the manual output percentage (0 to 100).
+                output_limit (float):
+                    Specifies the output limit percentage (0 to 100).
+                heater_range (Model346Enums.HeaterRange):
+                    Specifies the heater range for this zone (0 = Off, 1 = Low, 2 = High).
+                channel (str):
+                    Specifies input to use for control (A, B, C1-C4, D1-D4, E1-E4, F1-F4, G1-G4, H1-H4).
                 rate (float):
-                    Specifies the ramp rate for this zone (0.1 - 100 K/min). 0 disables ramping.
+                    Specifies the ramp rate in K/min (0.1 to 100, 0 disables ramping).
 
         """
 

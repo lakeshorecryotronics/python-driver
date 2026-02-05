@@ -641,8 +641,8 @@ class TestBasicCommands(TestWithFakeModel346):
 
     def test_set_control_loop_zone_table(self):
         self.fake_connection.setup_response('No error')
-        control_loop_zone_parameters = Model346ControlLoopZoneSettings(215.36, 10, 15, 3.2, 65,
+        control_loop_zone_parameters = Model346ControlLoopZoneSettings(215.36, 10, 15, 3.2, 65, 100.0,
                                                                        self.dut.HeaterRange.HIGH,
-                                                                       "A", 25.36, 100.0)
+                                                                       "A", 25.36)
         self.dut.set_control_loop_zone_table(1, 5, control_loop_zone_parameters)
         self.assertEqual("ZONE 1,5,215.36,10,15,3.2,65,100.0,2,A,25.36;:SYSTem:ERRor:ALL?", self.fake_connection.get_outgoing_message())
