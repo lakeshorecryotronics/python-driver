@@ -783,8 +783,8 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         raise NotImplementedError("This method is deprecated. Use get_input_reading_operation_status() instead.")
 
     def reset_alarm_status(self):
-        """Implementation does not exist yet (ALRMST?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
+        """Resets all alarm statuses including latched alarms."""
+        self.command("ALMRST")
 
     def set_ieee_488(self, address):
         """Implementation does not exist yet (IEEE). Overrides from base."""
