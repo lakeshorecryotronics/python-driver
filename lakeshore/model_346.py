@@ -368,7 +368,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                 <latch>, <audible>, <visible>
         """
         command_string = (
-            f"OUTSTABLE {output_channel},{int(alarm_settings.enabled)},"
+            f"OUTSTABLE {output_channel},{int(stability_settings.enabled)},"
             f"{stability_settings.acceptable_error},{stability_settings.max_reading_to_reading_delta},"
             f"{stability_settings.settle_time},{int(stability_settings.latch)},"
             f"{int(stability_settings.audible)},{int(stability_settings.visible)}"
