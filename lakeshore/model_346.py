@@ -158,6 +158,30 @@ class Model346ControlLoopZoneSettings:
         self.rate = rate
 
 
+class Model346OutputModeSettings:
+    """Class used to configure output mode settings in conjunction with the set/get_output_mode() methods."""
+
+    def __init__(self, mode, input_channel, powerup_enable, warmup):
+        """Constructor for OutputModeSettings class.
+
+            Args:
+                mode (Model346Enums.OutputMode):
+                    Specifies the control mode (Off, Closed Loop PID, Zone, Open Loop, Monitor Out).
+                input_channel (str):
+                    Specifies input to use for control (A, B, C1-C4, D1-D4, E1-E4, F1-F4, G1-G4, H1-H4, NONE).
+                    Unused if not in PID mode.
+                powerup_enable (bool):
+                    Specifies whether the output restarts (True) or remains off (False) after power cycle.
+                warmup (bool):
+                    Specifies if the output will be used for warmup (True) or not (False).
+
+        """
+        self.mode = mode
+        self.input_channel = input_channel
+        self.powerup_enable = powerup_enable
+        self.warmup = warmup
+
+
 class Model346InputReadingStatus(RegisterBase):
     """Class object representing the input status flag bits."""
 
@@ -673,11 +697,11 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which output to configure (1 - 8)
+                    Specifies which output to configure (1 - 10).
                 mode (Model346Enums.OutputMode):
                     Specifies the control mode.
                 input_channel (str):
-                    Specifies which input to use for control (A - H4). 
+                    Specifies which input to use for control (A - H4, NONE). 
                     Unused if not in PID mode.
                 powerup_enable (bool):
                     Specifies whether the output remains on (True)
@@ -695,20 +719,20 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which output to retrieve (1 - 8).
+                    Specifies which output to retrieve (1 - 10).
 
             Returns:
-                dict[str, Model346Enums.OutputMode | str | bool]:
-                    {"mode": OutputMode, "input_channel": str, "powerup_enable": bool, "warmup": bool}
+                Model346OutputModeSettings:
+                    A Model346OutputModeSettings object populated with the output mode parameters.
 
         """
         response = self.query(f"OUTMODE? {output}").split(",")
-        return {
-            "mode": self.OutputMode(int(response[0])),
-            "input_channel": response[1],
-            "powerup_enable": bool(int(response[2])),
-            "warmup": bool(int(response[3]))
-        }
+        return Model346OutputModeSettings(
+            mode=self.OutputMode(int(response[0])),
+            input_channel=response[1],
+            powerup_enable=bool(int(response[2])),
+            warmup=bool(int(response[3]))
+        )
 
     def set_output_group(self, output, group):
         """Assigns a heater output to a virtual heater group for coordinated control.
@@ -1197,4 +1221,5 @@ __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', '
            'Model346OperationEvent',
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346InputReadingOperationStatus',
-           'Model346OutputOperationStatus', 'Model346OutputStatus', 'Model346ControlLoopZoneSettings']
+           'Model346OutputOperationStatus', 'Model346OutputStatus', 'Model346ControlLoopZoneSettings',
+           'Model346OutputModeSettings', 'Model346StabilitySettings']
