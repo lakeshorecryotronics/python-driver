@@ -182,6 +182,37 @@ class Model346OutputModeSettings:
         self.warmup = warmup
 
 
+class Model346RelayControlSettings:
+    """Class used to configure relay control settings in conjunction with the set/get_relay_control() methods."""
+
+    def __init__(self, mode, instance, condition):
+        """Constructor for RelayControlSettings class.
+
+            Args:
+                mode (Model346Enums.RelayControlMode):
+                    Specifies the relay control feature/mode.
+                instance (str | int):
+                    Input instance for the specified mode. Type depends on mode:
+                    - For THERMOMETRY_INPUT: input channel (A, B, C1-C4, D1-D4, E1-E4, F1-F4, G1-G4, H1-H4, NONE)
+                    - For OUTPUT_STATUS: numeric output (1-10)
+                    - For FUNCTION_OUTPUT: function ID (1-16)
+                    - For DIGITAL_INPUT: digital input number (1-2)
+                    - For SYSTEM_STATUS: 0 (warmup all)
+                    - For OFF and ON: ignored (use 0)
+                condition (int | IntEnum):
+                    Condition to evaluate. Type depends on mode:
+                    - For THERMOMETRY_INPUT: RelayThermometryCondition enum
+                    - For OUTPUT_STATUS: RelayOutputStatusCondition enum
+                    - For DIGITAL_INPUT: RelayDigitalInputCondition enum
+                    - For FUNCTION_OUTPUT: RelayFunctionOutputCondition enum
+                    - For OFF, ON, and SYSTEM_STATUS: ignored (use 0)
+
+        """
+        self.mode = mode
+        self.instance = instance
+        self.condition = condition
+
+
 class Model346InputReadingStatus(RegisterBase):
     """Class object representing the input status flag bits."""
 
@@ -1081,14 +1112,24 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 relay_number (int):
-                    The relay to configure.
-                    Options are:
-                    1 or 2.
+                    The relay to configure (1 or 2).
                 mode (Model346Enums.RelayControlMode):
-                input_channel (str or int):
-                    Specifies which input alarm activates the relay.
-                condition (int):
-                    Specifies the condition that triggers the relay.
+                    Specifies the relay control feature/mode.
+                input_channel (str | int):
+                    Input instance for the specified mode. Type depends on mode:
+                    - For THERMOMETRY_INPUT: input channel (A, B, C1-C4, D1-D4, E1-E4, F1-F4, G1-G4, H1-H4, NONE)
+                    - For OUTPUT_STATUS: numeric output (1-10)
+                    - For FUNCTION_OUTPUT: function ID (1-16)
+                    - For DIGITAL_INPUT: digital input number (1-2)
+                    - For SYSTEM_STATUS: 0 (warmup all)
+                    - For OFF and ON: ignored (use 0)
+                condition (int | IntEnum):
+                    Condition to evaluate. Type depends on mode:
+                    - For THERMOMETRY_INPUT: RelayThermometryCondition enum or int (0-10)
+                    - For OUTPUT_STATUS: RelayOutputStatusCondition enum or int (0-4)
+                    - For DIGITAL_INPUT: RelayDigitalInputCondition enum or int (0-1)
+                    - For FUNCTION_OUTPUT: RelayFunctionOutputCondition enum or int (0-1)
+                    - For OFF, ON, and SYSTEM_STATUS: ignored (use 0)
 
         """
         self.command(f"RELAY {relay_number},{mode},{input_channel},{condition}")
@@ -1098,21 +1139,34 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 relay_number (int):
-                    The relay to query.
-                    Options are:
-                    1 or 2.
+                    The relay to query (1 or 2).
 
             Returns:
-                dict[str, Model346Enums.RelayControlMode | str | int]:
-                    {"mode": RelayControlMode, "input_channel": str, "condition": int}
+                Model346RelayControlSettings:
+                    A Model346RelayControlSettings object populated with relay control parameters.
 
         """
         response = self.query(f"RELAY? {relay_number}").split(",")
-        return {
-            "mode": self.RelayControlMode(int(response[0])),
-            "input_channel": response[1],
-            "condition": self.RelayControlAlarm(int(response[2]))
-        }
+        mode = self.RelayControlMode(int(response[0]))
+        
+        # Parse condition based on mode
+        condition_value = int(response[2])
+        if mode == self.RelayControlMode.THERMOMETRY_INPUT:
+            condition = self.RelayThermometryCondition(condition_value)
+        elif mode == self.RelayControlMode.OUTPUT_STATUS:
+            condition = self.RelayOutputStatusCondition(condition_value)
+        elif mode == self.RelayControlMode.DIGITAL_INPUT:
+            condition = self.RelayDigitalInputCondition(condition_value)
+        elif mode == self.RelayControlMode.FUNCTION_OUTPUT:
+            condition = self.RelayFunctionOutputCondition(condition_value)
+        else:
+            condition = condition_value  # For OFF, ON, and SYSTEM_STATUS modes
+        
+        return Model346RelayControlSettings(
+            mode=mode,
+            instance=response[1],
+            condition=condition
+        )
 
     def set_thermocouple_compensation_offset(self, input_channel, offset):
         """Sets the thermal block compensation offset for a thermocouple input.
@@ -1199,7 +1253,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             int: The number of channels available on the option card in the specified slot.
 
         Raises:
-            ValueError: If the slot is invalid.
+            ValueError: If the slot is invalid., 'Model346RelayControlSettings'
         """
         if slot not in self.option_card_slots:
             raise ValueError(f"Invalid slot: {slot}. Valid slots are {', '.join(self.option_card_slots)}.")
