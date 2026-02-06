@@ -85,6 +85,48 @@ class Model346Enums:
         LOW_OR_HIGH_ALARM = 2
         LOW_AND_HIGH_ALARM = 3
 
+    class RelayControlMode(IntEnum):
+        """Enumeration for relay control feature/mode."""
+        OFF = 0
+        ON = 1
+        THERMOMETRY_INPUT = 2
+        OUTPUT_STATUS = 3
+        DIGITAL_INPUT = 4
+        SYSTEM_STATUS = 5
+        FUNCTION_OUTPUT = 6
+
+    class RelayThermometryCondition(IntEnum):
+        """Enumeration for relay thermometry input conditions."""
+        LOW_ALARM_ACTIVE = 0
+        HIGH_ALARM_ACTIVE = 1
+        EITHER_ALARM_ACTIVE = 2
+        BOTH_ALARMS_ACTIVE = 3
+        THRESHOLD_1 = 4
+        THRESHOLD_2 = 5
+        THRESHOLD_3 = 6
+        THRESHOLD_4 = 7
+        SENSOR_FAULT = 8
+        TEMPERATURE_FAULT = 9
+        TEMPERATURE_EXTRAPOLATED = 10
+
+    class RelayOutputStatusCondition(IntEnum):
+        """Enumeration for relay output status conditions."""
+        OUTPUT_LOAD_FAULT = 0
+        OUTPUT_STABILIZING = 1
+        OUTPUT_STABLE = 2
+        OUTPUT_WARM = 3
+        OUTPUT_SETPOINT_RAMPING_COMPLETE = 4
+
+    class RelayDigitalInputCondition(IntEnum):
+        """Enumeration for relay digital input conditions."""
+        LOW = 0
+        HIGH = 1
+
+    class RelayFunctionOutputCondition(IntEnum):
+        """Enumeration for relay function output conditions."""
+        FALSE = 0
+        TRUE = 1
+
     class OptionCardType(IntEnum):
         """Enumeration for option card types."""
         NONE = 0
