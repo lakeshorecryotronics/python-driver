@@ -1339,4 +1339,4 @@ __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', '
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346InputReadingOperationStatus',
            'Model346OutputOperationStatus', 'Model346OutputStatus', 'Model346ControlLoopZoneSettings',
-           'Model346OutputModeSettings', 'Model346StabilitySettings']
+           'Model346OutputModeSettings', 'Model346StabilitySettings', 'Model346FilterSettings']

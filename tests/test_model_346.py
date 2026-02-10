@@ -1,7 +1,8 @@
 from tests.utils import TestWithFakeModel346
 from lakeshore import InstrumentException, Model346OperationEvent, Model346AlarmSettings, Model346InputSensorSettings, \
     Model346InputReadingStatus, Model346InputReadingOperationStatus, Model346OutputOperationStatus, \
-    AlarmSettings, Model346CurveHeader, Model346ControlLoopZoneSettings
+    AlarmSettings, Model346CurveHeader, Model346ControlLoopZoneSettings, Model346FilterSettings, \
+    Model346StabilitySettings
 
 class TestBasicReadings(TestWithFakeModel346):
 
@@ -217,12 +218,12 @@ class TestBasicQueries(TestWithFakeModel346):
 
     def test_get_filter(self):
         self.fake_connection.setup_response('1,26,5;No error')
-        response = self.dut._get_filter("A")
-        filter_parameters = {"filter_enable": True,
-                             "data_points": 26,
-                             "reset_threshold": 5}
-
-        self.assertDictEqual(response, filter_parameters)
+        response = self.dut.get_filter("A")
+        
+        self.assertEqual(response.filter_enable, True)
+        self.assertEqual(response.data_points, 26)
+        self.assertEqual(response.reset_threshold, 5)
+        self.assertIn("FILTER? A", self.fake_connection.get_outgoing_message())
 
     def test_get_input_curve(self):
         self.fake_connection.setup_response('53;No error')
@@ -514,7 +515,8 @@ class TestBasicCommands(TestWithFakeModel346):
 
     def test_set_filter(self):
         self.fake_connection.setup_response('No error')
-        self.dut._set_filter("A", True, 15, 2)
+        filter_settings = Model346FilterSettings(filter_enable=True, data_points=15, reset_threshold=2)
+        self.dut.set_filter("A", filter_settings)
         self.assertIn("FILTER A,1,15,2", self.fake_connection.get_outgoing_message())
 
     def test_set_heater_setup(self):
@@ -646,3 +648,154 @@ class TestBasicCommands(TestWithFakeModel346):
                                                                        "A", 25.36)
         self.dut.set_control_loop_zone_table(1, 5, control_loop_zone_parameters)
         self.assertEqual("ZONE 1,5,215.36,10,15,3.2,65,100.0,2,A,25.36;:SYSTem:ERRor:ALL?", self.fake_connection.get_outgoing_message())
+
+    def test_get_option_card_slot(self):
+        response = self.dut.get_option_card_slot()
+        self.assertEqual(response, ["E", "F", "G", "H"])
+
+    def test_get_digit_input_status(self):
+        self.fake_connection.setup_response('1,0;No error')
+        response = self.dut.get_digit_input_status()
+        self.assertDictEqual(response, {"input_one": 1, "input_two": 0})
+        self.assertIn("DIGIN?", self.fake_connection.get_outgoing_message())
+
+    def test_turn_alarm_off(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.turn_alarm_off("A")
+        self.assertIn("ALARM A,,,,0,", self.fake_connection.get_outgoing_message())
+
+    def test_set_stability_settings(self):
+        self.fake_connection.setup_response('No error')
+        stability_settings = Model346StabilitySettings(True, 0.5, 0.1, 30.0, False, True, True)
+        self.dut.set_stability_settings(1, stability_settings)
+        self.assertIn("OUTSTABLE 1,1,0.5,0.1,30.0,0,1,1", self.fake_connection.get_outgoing_message())
+
+    def test_get_stability_settings(self):
+        self.fake_connection.setup_response('1,0.5,0.1,30.0,0,1,1;No error')
+        response = self.dut.get_stability_settings(1)
+        self.assertEqual(response.enabled, True)
+        self.assertEqual(response.acceptable_error, 0.5)
+        self.assertEqual(response.max_reading_to_reading_delta, 0.1)
+        self.assertEqual(response.settle_time, 30.0)
+        self.assertEqual(response.latch, False)
+        self.assertEqual(response.audible, True)
+        self.assertEqual(response.visible, True)
+        self.assertIn("OUTSTABLE? 1", self.fake_connection.get_outgoing_message())
+
+    def test_set_heater_autorange(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_heater_autorange(1, True)
+        self.assertIn("HTRAUTO 1,True", self.fake_connection.get_outgoing_message())
+
+    def test_get_heater_autorange(self):
+        self.fake_connection.setup_response('1;No error')
+        response = self.dut.get_heater_autorange(1)
+        self.assertEqual(response, self.dut.HeaterRange.LOW)
+        self.assertIn("HTRAUTO? 1", self.fake_connection.get_outgoing_message())
+
+    def test_set_analog_out_state(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_analog_out_state(5, 1)
+        self.assertIn("RANGE 5,1", self.fake_connection.get_outgoing_message())
+
+    def test_get_analog_out_state(self):
+        self.fake_connection.setup_response('1;No error')
+        response = self.dut.get_analog_out_state(5)
+        self.assertEqual(response, 1)
+        self.assertIn("RANGE? 5", self.fake_connection.get_outgoing_message())
+
+    def test_set_output_percent_limit(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_output_percent_limit(1, 75)
+        self.assertIn("OUTLIMIT 1,75", self.fake_connection.get_outgoing_message())
+
+    def test_get_output_percent_limit(self):
+        self.fake_connection.setup_response('75;No error')
+        response = self.dut.get_output_percent_limit(1)
+        self.assertEqual(response, 75)
+        self.assertIn("OUTLIMIT? 1", self.fake_connection.get_outgoing_message())
+
+    def test_all_heaters_off(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.all_heaters_off()
+        self.assertIn("RANGE 1,0;RANGE 2,0;RANGE 3,0;RANGE 4,0;RANGE 5,0;RANGE 6,0;RANGE 7,0;RANGE 8,0;RANGE 9,0;RANGE 10,0;", 
+                     self.fake_connection.get_outgoing_message())
+
+    def test_get_heater_output_measurements(self):
+        self.fake_connection.setup_response('5.2,1.3,4.0,6.76;No error')
+        response = self.dut.get_heater_output_measurements(1)
+        expected = {"heater_voltage": 5.2, "heater_current": 1.3, "heater_resistance": 4.0, "heater_power": 6.76}
+        self.assertDictEqual(response, expected)
+        self.assertIn("HTRDIAG? 1", self.fake_connection.get_outgoing_message())
+
+    def test_start_warmup(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.start_warmup(293.15, 10)
+        self.assertIn("WARM 293.15, 10", self.fake_connection.get_outgoing_message())
+
+    def test_reset_alarm_status(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.reset_alarm_status()
+        self.assertIn("ALMRST", self.fake_connection.get_outgoing_message())
+
+    def test_reset_min_max_data(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.reset_min_max_data("A")
+        self.assertIn("MNMXRST A", self.fake_connection.get_outgoing_message())
+
+    def test_reset_min_max_data_all(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.reset_min_max_data("ALL")
+        self.assertIn("MNMXRST ALL", self.fake_connection.get_outgoing_message())
+
+    def test_set_heater_limit(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_heater_limit(1, True, 5.0, 150.0)
+        self.assertIn("HTRLIM 1,1,5.0,150.0", self.fake_connection.get_outgoing_message())
+
+    def test_get_heater_limit(self):
+        self.fake_connection.setup_response('1,5.0,150.0;No error')
+        response = self.dut.get_heater_limit(1)
+        expected = {"enabled": True, "short_circuit_resistance": 5.0, "open_circuit_resistance": 150.0}
+        self.assertDictEqual(response, expected)
+        self.assertIn("HTRLIM? 1", self.fake_connection.get_outgoing_message())
+
+    def test_reset_control_setpoint(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.reset_control_setpoint(1)
+        self.assertIn("SETPRST 1", self.fake_connection.get_outgoing_message())
+
+    def test_get_ramp_setpoint(self):
+        self.fake_connection.setup_response('25.5;No error')
+        response = self.dut.get_ramp_setpoint(1)
+        self.assertEqual(response, 25.5)
+        self.assertIn("RAMPSETP? 1", self.fake_connection.get_outgoing_message())
+
+    def test_get_curve_number_of_points(self):
+        self.fake_connection.setup_response('200;No error')
+        response = self.dut.get_curve_number_of_points(22)
+        self.assertEqual(response, 200)
+        self.assertIn("CRVNUMPTS? 22", self.fake_connection.get_outgoing_message())
+
+    def test_set_thermocouple_compensation_offset(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_thermocouple_compensation_offset("E1", 2.5)
+        self.assertIn("TCCOMPOFFSET E1,2.5", self.fake_connection.get_outgoing_message())
+
+    def test_get_thermocouple_compensation_offset(self):
+        self.fake_connection.setup_response('2.5;No error')
+        response = self.dut.get_thermocouple_compensation_offset("E1")
+        self.assertEqual(response, 2.5)
+        self.assertIn("TCCOMPOFFSET? E1", self.fake_connection.get_outgoing_message())
+
+    def test_get_option_card_type(self):
+        self.fake_connection.setup_response('1,2,0,0;No error')
+        response = self.dut.get_option_card_type("E")
+        self.assertEqual(response, self.dut.OptionCardType.SCANNER)
+        self.assertIn("CARDS?", self.fake_connection.get_outgoing_message())
+
+    def test_get_option_card_channels(self):
+        self.fake_connection.setup_response('1,2,0,0;No error')
+        response = self.dut.get_option_card_channels("E")
+        self.assertEqual(response, ["E1", "E2", "E3", "E4"])
+        self.assertIn("CARDS?", self.fake_connection.get_outgoing_message())
