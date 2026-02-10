@@ -291,6 +291,29 @@ class Model346OutputStatus(RegisterBase):
         self.short_circuit_detected = short_circuit_detected
         self.percentage_limited = percentage_limited
 
+class Model346FilterSettings:
+    """Class used to configure input filter settings in conjunction with the set/get_filter() methods."""
+
+    def __init__(self, filter_enable, data_points, reset_threshold):
+        """Constructor for Model346FilterSettings class.
+
+            Args:
+                filter_enable (bool):
+                    Enables or disables the filter.
+                    False = Disabled, True = Enabled
+                data_points (int):
+                    Specifies the number of points (2 to 64) used in the filter.
+                    The filter is a running average that smooths input readings exponentially.
+                reset_threshold (int):
+                    Specifies what percent of full scale reading (1 to 10%) limits the filtering function.
+                    Reading changes greater than this percentage reset the filter.
+
+        """
+        self.filter_enable = filter_enable
+        self.data_points = data_points
+        self.reset_threshold = reset_threshold
+
+
 class OptionCard:
     """Represents an option card with additional information."""
 
@@ -337,6 +360,46 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             ip_address,
             tcp_port,
             **kwargs)
+
+    def set_filter(self, input_channel, filter_settings):
+        """Configures the input filter for the specified channel.
+
+            The reading filter applies exponential smoothing to the sensor input readings.
+            If the filter is turned on for a sensor input, all reading values for that input
+            are filtered. The filter is a running average, so it does not change the update rate
+            of an input. The filtered reading is used for everything except closed loop control
+            loop calculations, which use the unfiltered reading.
+
+            Args:
+                input_channel (str):
+                    Specifies input to configure: A, B, C1, C2, C3, C4, D1, D2, D3, D4,
+                    E1, E2, E3, E4, F1, F2, F3, F4, G1, G2, G3, G4, H1, H2, H3, H4
+                filter_settings (Model346FilterSettings):
+                    The filter configuration to apply to the input.
+
+        """
+        self.command(f"FILTER {input_channel},{int(filter_settings.filter_enable)},"
+                     f"{filter_settings.data_points},{filter_settings.reset_threshold}")
+
+    def get_filter(self, input_channel):
+        """Returns the input filter configuration for the specified channel.
+
+            Args:
+                input_channel (str):
+                    Specifies input to query: A, B, C1, C2, C3, C4, D1, D2, D3, D4,
+                    E1, E2, E3, E4, F1, F2, F3, F4, G1, G2, G3, G4, H1, H2, H3, H4
+
+            Returns:
+                Model346FilterSettings:
+                    An Model346FilterSettings object populated with the filter parameters.
+
+        """
+        filter_response = self.query(f"FILTER? {input_channel}").split(",")
+        return Model346FilterSettings(
+            filter_enable=bool(int(filter_response[0])),
+            data_points=int(filter_response[1]),
+            reset_threshold=int(filter_response[2])
+        )
 
     def get_option_card_slot(self):
         """
