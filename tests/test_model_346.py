@@ -2,7 +2,7 @@ from tests.utils import TestWithFakeModel346
 from lakeshore import InstrumentException, Model346OperationEvent, Model346AlarmSettings, Model346InputSensorSettings, \
     Model346InputReadingStatus, Model346InputReadingOperationStatus, Model346OutputOperationStatus, \
     AlarmSettings, Model346CurveHeader, Model346ControlLoopZoneSettings, Model346FilterSettings, \
-    Model346StabilitySettings
+    Model346StabilitySettings, Model346ThresholdSettings
 
 class TestBasicReadings(TestWithFakeModel346):
 
@@ -482,6 +482,15 @@ class TestBasicQueries(TestWithFakeModel346):
 
         self.assertIn("ZONE? 2,9", self.fake_connection.get_outgoing_message())
 
+    def test_get_threshold(self):
+        self.fake_connection.setup_response('50.5,1;No error')
+        response = self.dut.get_threshold('A', 1)
+
+        self.assertEqual(response.value, 50.5)
+        self.assertEqual(response.comparison, self.dut.ThresholdComparison.GREATER_THAN)
+
+        self.assertIn('THRESHOLD? A,1', self.fake_connection.get_outgoing_message())
+
 
 class TestBasicCommands(TestWithFakeModel346):
 
@@ -518,6 +527,12 @@ class TestBasicCommands(TestWithFakeModel346):
         filter_settings = Model346FilterSettings(filter_enable=True, data_points=15, reset_threshold=2)
         self.dut.set_filter("A", filter_settings)
         self.assertIn("FILTER A,1,15,2", self.fake_connection.get_outgoing_message())
+
+    def test_set_threshold(self):
+        self.fake_connection.setup_response('No error')
+        threshold_settings = Model346ThresholdSettings(50.5, self.dut.ThresholdComparison.GREATER_THAN)
+        self.dut.set_threshold('A', 1, threshold_settings)
+        self.assertIn('THRESHOLD A,1,50.5,1', self.fake_connection.get_outgoing_message())
 
     def test_set_heater_setup(self):
         self.fake_connection.setup_response('No error')

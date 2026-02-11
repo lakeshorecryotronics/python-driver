@@ -314,6 +314,23 @@ class Model346FilterSettings:
         self.reset_threshold = reset_threshold
 
 
+class Model346ThresholdSettings:
+    """Class used to configure input threshold settings in conjunction with the set/get_threshold() methods."""
+
+    def __init__(self, value, comparison):
+        """Constructor for Model346ThresholdSettings.
+
+            Args:
+                value (float):
+                    Threshold value.
+                comparison (Model346Enums.ThresholdComparison):
+                    Comparison operator.
+        """
+
+        self.value = value
+        self.comparison = comparison
+
+
 class OptionCard:
     """Represents an option card with additional information."""
 
@@ -417,6 +434,46 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """
         input_status = self.query("DIGIN?").split(",")
         return {"input_one": int(input_status[0]), "input_two": int(input_status[1])}
+
+    def set_threshold(self, input_channel, threshold_id, threshold_settings):
+        """Configures a reading threshold for the specified input.
+
+            The threshold feature allows monitoring of up to four independent thresholds per input.
+
+            Args:
+                input_channel (str):
+                    Specifies input to configure: A, B, C1-C4, D1-D4, E1-E4, F1-F4, G1-G4, H1-H4.
+                threshold_id (int):
+                    Threshold identifier (typically 1 to 4; instrument enforces range).
+                threshold_settings (Model346ThresholdSettings):
+                    Threshold configuration to apply.
+
+            Command Format:
+                THRESHOLD <input>, <id>, <value>, <comparison>
+        """
+        self.command(
+            f"THRESHOLD {input_channel},{threshold_id},{float(threshold_settings.value)},"
+            f"{int(threshold_settings.comparison)}"
+        )
+
+    def get_threshold(self, input_channel, threshold_id):
+        """Returns the reading threshold configuration for the specified input and threshold ID.
+
+            Args:
+                input_channel (str):
+                    Specifies input to query: A, B, C1-C4, D1-D4, E1-E4, F1-F4, G1-G4, H1-H4.
+                threshold_id (int):
+                    Threshold identifier (typically 1 to 4; instrument enforces range).
+
+            Returns:
+                Model346ThresholdSettings:
+                    An object populated with the threshold value and comparison operator.
+        """
+        response = self.query(f"THRESHOLD? {input_channel},{threshold_id}").split(",")
+        return Model346ThresholdSettings(
+            value=float(response[0]),
+            comparison=self.ThresholdComparison(int(response[1]))
+        )
 
     def set_alarm_settings(self, input_channel, alarm_settings):
         """Sets the configuration of a particular alarm.
@@ -1339,4 +1396,5 @@ __all__ = ['Model346AlarmSettings', 'Model346InputSensorSettings', 'Model346', '
            'Model346OperationRegister', 'Model346QuestionableRegister', 'Model346StandardEventRegister',
            'Model346StatusByteRegister', 'Model346InputReadingStatus', 'Model346InputReadingOperationStatus',
            'Model346OutputOperationStatus', 'Model346OutputStatus', 'Model346ControlLoopZoneSettings',
-           'Model346OutputModeSettings', 'Model346StabilitySettings', 'Model346FilterSettings']
+           'Model346OutputModeSettings', 'Model346StabilitySettings', 'Model346FilterSettings',
+           'Model346ThresholdSettings']

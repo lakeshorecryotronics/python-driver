@@ -132,6 +132,11 @@ class Model346Enums:
         FALSE = 0
         TRUE = 1
 
+    class ThresholdComparison(IntEnum):
+        """Enumeration for threshold comparison operator."""
+        LESS_THAN = 0
+        GREATER_THAN = 1
+
     class OptionCardType(IntEnum):
         """Enumeration for option card types."""
         NONE = 0
