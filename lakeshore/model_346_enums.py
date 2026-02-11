@@ -43,10 +43,15 @@ class Model346Enums:
         FIFTY_MILLIVOLTS = 0
 
     class HeaterRange(IntEnum):
-        """Heater range enumerations."""
+        """Heater range enumerations for heater outputs(1-4) amd heater groups 9 and 10."""
         OFF = 0
         LOW = 1
         HIGH = 2
+
+    class HeaterRangeAnalogOutput(IntEnum):
+        """Heater range enumeration for analog outputs 5 and 8."""
+        OFF = 0
+        ON = 1
 
     class HeaterOutputUnits(IntEnum):
         """Enumerator used to represent heater output unit settings."""
