@@ -48,18 +48,22 @@ for slot, option_card in option_cards.items():
                 f"InputRange={sensor_settings.input_range.name}"
             )
 
+        # Read and print the current temperature reading from each scanner channel for channel in option_card.channels:
+            temperature_reading = my_model_346.get_kelvin_reading(input_channel=channel)
+            print(f"Current temperature reading from channel {channel} on slot {slot}: {temperature_reading} K")
+
     # Thermocouple setup for channels on a Thermocouple card
     if option_card.card_type == my_model_346.OptionCardType.THERMOCOUPLE:
         for channel in option_card.channels:
-            # Set the thermocouple type for the channel
+
+            # Set the sensor parameters for the thermocouple
+            my_model_346.set_input_sensor(input_channel=channel, sensor_params=thermocouple_settings)
+
             my_model_346.set_input_curve(input_channel=channel, curve_number=my_model_346.StandardCurveType.THERMOCOUPLE_TYPE_E)
 
             # Get the curve settings and print them
             curve_settings = my_model_346.get_input_curve(input_channel=channel)
             print(f"Channel {channel} on slot {slot} has curve settings: {curve_settings}")
-
-            # Set the sensor parameters for the thermocouple
-            my_model_346.set_input_sensor(input_channel=channel, sensor_params=thermocouple_settings)
 
             # Get the thermocouple sensor settings and print them
             sensor_settings = my_model_346.get_input_sensor(input_channel=channel)
@@ -71,4 +75,8 @@ for slot, option_card in option_cards.items():
                 f"Units={sensor_settings.units.name}, "
                 f"InputRange={sensor_settings.input_range.name}"
             )
+
+            # Read and print the current temperature reading from the thermocouple channel
+            temperature_reading = my_model_346.get_kelvin_reading(input_channel=channel)
+            print(f"Current temperature reading from channel {channel} on slot {slot}: {temperature_reading} K")
 
