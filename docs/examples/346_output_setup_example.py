@@ -30,5 +30,5 @@ output_one = my_model_346.get_heater_output(1)
 print("Output 1: " + str(output_one))
 
 # Obtain the output percentage of output 3 and print it to the console
-output_five = my_model_346.get_analog_output_percentage(5)
+output_five = my_model_346.get_analog_output_settings(5)
 print("Output 5: " + str(output_five))
