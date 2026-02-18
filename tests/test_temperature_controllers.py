@@ -448,3 +448,64 @@ class TestRegisterMethods(TestWithFakeModel372):
         self.assertEqual(register.calibration_error, response.calibration_error)
         self.assertEqual(register.processor_communication_error, response.processor_communication_error)
         self.assertIn("OPSTR?", self.fake_connection.get_outgoing_message())
+
+
+class TestValidation(TestWithFakeModel372):
+
+    def test_set_heater_pid_negative_gain_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_heater_pid(1, -1, 5, 5)
+
+    def test_set_heater_pid_negative_integral_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_heater_pid(1, 5, -1, 5)
+
+    def test_set_heater_pid_negative_derivative_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_heater_pid(1, 5, 5, -1)
+
+    def test_set_heater_pid_non_numeric_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_heater_pid(1, "abc", 5, 5)
+
+    def test_set_heater_pid_bool_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_heater_pid(1, True, 5, 5)
+
+    def test_set_control_setpoint_non_numeric_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_control_setpoint(2, "abc")
+
+    def test_set_control_setpoint_bool_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_control_setpoint(2, True)
+
+    def test_set_control_setpoint_negative_allowed(self):
+        self.fake_connection.setup_response('0')
+        self.dut.set_control_setpoint(2, -10.5)
+        self.assertIn('SETP 2,-10.5', self.fake_connection.get_outgoing_message())
+
+    def test_set_temperature_limit_non_numeric_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_temperature_limit("A", "abc")
+
+    def test_set_temperature_limit_negative_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_temperature_limit("A", -10)
+
+    def test_set_temperature_limit_bool_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_temperature_limit("A", True)
+
+    def test_set_curve_data_point_curvature_zero(self):
+        self.fake_connection.setup_response('0')
+        self.dut.set_curve_data_point(22, 1, 2.86, 9.252, 0.0)
+        self.assertIn("CRVPT 22,1,2.86,9.252,0.0", self.fake_connection.get_outgoing_message())
+
+    def test_set_curve(self):
+        for _ in range(3):
+            self.fake_connection.setup_response('0')
+        self.dut.set_curve(22, [(1.0, 2.0), (3.0, 4.0)])
+        self.assertIn('CRVDEL 22', self.fake_connection.get_outgoing_message())
+        self.assertIn('CRVPT 22,1,1.0,2.0', self.fake_connection.get_outgoing_message())
+        self.assertIn('CRVPT 22,2,3.0,4.0', self.fake_connection.get_outgoing_message())

@@ -179,6 +179,22 @@ class TestBasicQueries(TestWithFakeModel335):
 
         self.assertIn("INTYPE? A", self.fake_connection.get_outgoing_message())
 
+    def test_get_input_sensor_ntc_rtd(self):
+        # NTC_RTD is sensor type 3, range 5
+        self.fake_connection.setup_response('3,0,5,1,1;0')
+        response = self.dut.get_input_sensor("A")
+        self.assertEqual(response.sensor_type, self.dut.InputSensorType.NTC_RTD)
+        self.assertEqual(response.input_range, self.dut.RTDRange(5))
+        self.assertIn("INTYPE? A", self.fake_connection.get_outgoing_message())
+
+    def test_get_input_sensor_platinum_rtd(self):
+        # PLATINUM_RTD is sensor type 2, range 3
+        self.fake_connection.setup_response('2,0,3,1,1;0')
+        response = self.dut.get_input_sensor("A")
+        self.assertEqual(response.sensor_type, self.dut.InputSensorType.PLATINUM_RTD)
+        self.assertEqual(response.input_range, self.dut.RTDRange(3))
+        self.assertIn("INTYPE? A", self.fake_connection.get_outgoing_message())
+
     def test_get_led_state(self):
         self.fake_connection.setup_response('1;0')
         response = self.dut.get_led_state()

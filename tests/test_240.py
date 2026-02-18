@@ -145,3 +145,7 @@ class TestBasicCommandMethods(TestWithFakeModel240):
         self.fake_connection.setup_response('0')
         self.dut.set_factory_defaults(confirm=True)
         self.assertIn('DFLT 99', self.fake_connection.get_outgoing_message())
+
+    def test_set_factory_defaults_raises_without_confirm(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_factory_defaults()

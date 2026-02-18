@@ -15,6 +15,14 @@ class TestResets(TestWithFakeFastHall):
         self.dut.factory_reset(confirm=True)
         self.assertIn('SYSTEM:FACTORYRESET', self.fake_connection.get_outgoing_message())
 
+    def test_factory_reset_raises_without_confirm(self):
+        with self.assertRaises(ValueError):
+            self.dut.factory_reset()
+
+    def test_factory_reset_raises_with_confirm_false(self):
+        with self.assertRaises(ValueError):
+            self.dut.factory_reset(confirm=False)
+
     def test_contact_check_reset(self):
         self.fake_connection.setup_response('No error')
         self.dut.reset_contact_check_measurement()
