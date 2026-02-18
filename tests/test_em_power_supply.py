@@ -283,7 +283,7 @@ class TestRegisterCommands(TestWithFakeEMPowerSupply):
         operational_error_enable_mask = self.dut.EMPowerSupplyOperationalErrorsRegister.from_integer(4)
         self.dut.set_operational_error_enable_mask(operational_error_enable_mask)
         self.fake_connection.get_outgoing_message()
-        self.assertIn("ERSTE 4", self.fake_connection.get_outgoing_message())
+        self.assertIn("ERSTE 1,4", self.fake_connection.get_outgoing_message())
 
     def test_get_operational_error_enable_mask(self):
         self.fake_connection.setup_response("0,4; 0")

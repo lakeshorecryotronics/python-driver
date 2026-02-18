@@ -662,6 +662,9 @@ class ElectromagnetPowerSupply(GenericInstrument):
             register_mask (ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister): Register mask configuration
                 object.
         """
+        # Note: read-modify-write is not atomic. The lock is held per-call, so another thread could
+        # modify the register between the query and command. This is acceptable for typical use since
+        # concurrent register modification is unusual.
         operational_mask = self.query("ERSTE?").split(',')[1]
         self.command(f"ERSTE {register_mask.to_integer()},{operational_mask}")
 
@@ -710,11 +713,14 @@ class ElectromagnetPowerSupply(GenericInstrument):
             Status Byte Register.
 
         Args:
-            register_mask (ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister): Register mask configuration
+            register_mask (ElectromagnetPowerSupply.EMPowerSupplyOperationalErrorsRegister): Register mask configuration
                 object.
         """
+        # Note: read-modify-write is not atomic. The lock is held per-call, so another thread could
+        # modify the register between the query and command. This is acceptable for typical use since
+        # concurrent register modification is unusual.
         hardware_mask = self.query("ERSTE?").split(',')[0]
-        self.command(f"ERSTE {register_mask.to_integer()},{hardware_mask}")
+        self.command(f"ERSTE {hardware_mask},{register_mask.to_integer()}")
 
     def get_operational_error_enable_mask(self):
         """Returns which operational error bits will set the summary bit in the Status Byte Register.
