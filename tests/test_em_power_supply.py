@@ -1,4 +1,3 @@
-import math
 from tests.utils import TestWithFakeEMPowerSupply
 
 
@@ -357,9 +356,21 @@ class TestRampRateValidation(TestWithFakeEMPowerSupply):
         with self.assertRaises(ValueError):
             self.dut.set_ramp_rate("fast")
 
+    def test_set_ramp_rate_rejects_none(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_rate(None)
+
+    def test_set_ramp_rate_rejects_bool(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_rate(True)
+
     def test_set_ramp_rate_rejects_nan(self):
         with self.assertRaises(ValueError):
             self.dut.set_ramp_rate(float('nan'))
+
+    def test_set_ramp_rate_rejects_inf(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_rate(float('inf'))
 
     def test_set_ramp_rate_rejects_zero(self):
         with self.assertRaises(ValueError):
@@ -410,6 +421,10 @@ class TestLimitsValidation(TestWithFakeEMPowerSupply):
         with self.assertRaises(ValueError):
             self.dut.set_limits(50.0, 50.1)
 
+    def test_set_limits_rejects_bool_current(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_limits(True, 3.0)
+
     def test_set_limits_rejects_nan_current(self):
         with self.assertRaises(ValueError):
             self.dut.set_limits(float('nan'), 3.0)
@@ -435,6 +450,10 @@ class TestRampSegmentValidation(TestWithFakeEMPowerSupply):
         with self.assertRaises(ValueError):
             self.dut.set_ramp_segment(0, 50, 2.5)
 
+    def test_set_ramp_segment_rejects_segment_negative(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segment(-1, 50, 2.5)
+
     def test_set_ramp_segment_rejects_segment_six(self):
         with self.assertRaises(ValueError):
             self.dut.set_ramp_segment(6, 50, 2.5)
@@ -450,6 +469,10 @@ class TestRampSegmentValidation(TestWithFakeEMPowerSupply):
     def test_set_ramp_segment_rejects_ramp_rate_above_max(self):
         with self.assertRaises(ValueError):
             self.dut.set_ramp_segment(1, 50, 50.1)
+
+    def test_set_ramp_segment_rejects_ramp_rate_below_min(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segment(1, 50, 0)
 
     def test_set_ramp_segment_rejects_current_above_max(self):
         with self.assertRaises(ValueError):
@@ -499,3 +522,39 @@ class TestSafetyMethodValidation(TestWithFakeEMPowerSupply):
     def test_set_programming_mode_rejects_invalid(self):
         with self.assertRaises(ValueError):
             self.dut.set_programming_mode(3)
+
+    def test_set_front_panel_lock_rejects_invalid_code_type(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_front_panel_lock(1, "abc")
+
+    def test_set_front_panel_lock_rejects_bool_code(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_front_panel_lock(1, True)
+
+    def test_set_ramp_segments_enable_rejects_invalid(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segments_enable(2)
+
+    def test_set_ramp_segments_enable_rejects_string(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segments_enable("on")
+
+    def test_set_ieee_488_rejects_invalid_terminator(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ieee_488(4, 0, 8)
+
+    def test_set_ieee_488_rejects_invalid_eoi(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ieee_488(0, 2, 8)
+
+    def test_set_ieee_488_rejects_address_zero(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ieee_488(0, 0, 0)
+
+    def test_set_ieee_488_rejects_address_31(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ieee_488(0, 0, 31)
+
+    def test_set_ieee_interface_mode_rejects_invalid(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ieee_interface_mode(3)
