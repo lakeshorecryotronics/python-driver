@@ -242,10 +242,10 @@ class TestBasicQueries(TestWithFakeModel335):
     def test_get_heater_pid(self):
         self.fake_connection.setup_response('4.25,6.1,0;0')
         response = self.dut.get_heater_pid(1)
-        pid_settings = {"gain": 4.25,
-                        "integral": 6.1,
-                        "derivative": 0}
-        self.assertDictEqual(response, pid_settings)
+        self.assertAlmostEqual(response['gain'], 4.25)
+        self.assertAlmostEqual(response['integral'], 6.1)
+        self.assertAlmostEqual(response['derivative'], 0)
+        self.assertAlmostEqual(response['ramp_rate'], 0)
 
     def test_get_output_2_polarity(self):
         self.fake_connection.setup_response('1;0')

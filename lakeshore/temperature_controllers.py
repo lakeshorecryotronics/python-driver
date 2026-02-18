@@ -3,6 +3,7 @@
 import math
 import numbers
 import serial
+from warnings import warn
 from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase
 from .temperature_controllers_enums import TemperatureControllerEnums
 
@@ -1062,17 +1063,20 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
             Returns:
                 (dict):
-                    {"gain": float, "integral": float, "derivative": float}
+                    {"gain": float, "integral": float, "derivative": float, "ramp_rate": float}
                         gain: Proportional term in PID control.
                         integral: Integral term in PID control.
                         derivative: Derivative term in PID control.
+                        ramp_rate: Deprecated alias for derivative. Use "derivative" instead.
 
         """
         pid_values = self.query(f"PID? {output}")
         pid_values = pid_values.split(",")
+        derivative = float(pid_values[2])
         return {"gain": float(pid_values[0]),
                 "integral": float(pid_values[1]),
-                "derivative": float(pid_values[2])}
+                "derivative": derivative,
+                "ramp_rate": derivative}
 
     def set_setpoint_ramp_parameter(self, output, ramp_enable, rate_value):
         """Sets the control loop of a particular output.

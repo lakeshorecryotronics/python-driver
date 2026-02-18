@@ -231,13 +231,12 @@ class TestDictionaryMethods(TestWithFakeModel372):
         self.assertIn('PID 1,34.56,56.78,98.76', self.fake_connection.get_outgoing_message())
 
     def test_get_heater_pid(self):
-        pid = {'gain': 34.56,
-               'integral': 56.78,
-               'derivative': 98.76}
-
         self.fake_connection.setup_response('34.56,56.78,98.76;0')
         response = self.dut.get_heater_pid(2)
-        self.assertDictEqual(response, pid)
+        self.assertAlmostEqual(response['gain'], 34.56)
+        self.assertAlmostEqual(response['integral'], 56.78)
+        self.assertAlmostEqual(response['derivative'], 98.76)
+        self.assertAlmostEqual(response['ramp_rate'], 98.76)
         self.assertIn('PID? 2', self.fake_connection.get_outgoing_message())
 
     def test_set_setpoint_ramp_parameter(self):
