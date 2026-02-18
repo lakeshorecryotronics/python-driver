@@ -439,7 +439,12 @@ class ElectromagnetPowerSupply(GenericInstrument):
 
         Args:
             mode (int): Internal water mode (0, 1, 2, or 3). 0 = Manual-Off, 1 = Manual-On, 2 = Auto, 3 = Disabled.
+
+        Raises:
+            ValueError: If mode is not 0, 1, 2, or 3.
         """
+        if mode not in (0, 1, 2, 3):
+            raise ValueError(f"Internal water mode must be 0, 1, 2, or 3, got {mode}")
         self.command(f"INTWTR {mode}")
 
     def get_internal_water(self) :
@@ -456,7 +461,12 @@ class ElectromagnetPowerSupply(GenericInstrument):
 
         Args:
             mode (int): Magnet water mode. (0, 1, 2, or 3). 0 = Manual-Off, 1 = Manual-On, 2 = Auto, 3 = Disabled.
+
+        Raises:
+            ValueError: If mode is not 0, 1, 2, or 3.
         """
+        if mode not in (0, 1, 2, 3):
+            raise ValueError(f"Magnet water mode must be 0, 1, 2, or 3, got {mode}")
         self.command(f"MAGWTR {mode}")
 
     def get_magnet_water(self) :
@@ -472,7 +482,12 @@ class ElectromagnetPowerSupply(GenericInstrument):
 
         Args:
             brightness_level (int): The display brightness. 0=25%, 1=50%, 2=75%, 3=100%.
+
+        Raises:
+            ValueError: If brightness_level is not 0, 1, 2, or 3.
         """
+        if brightness_level not in (0, 1, 2, 3):
+            raise ValueError(f"Brightness level must be 0, 1, 2, or 3, got {brightness_level}")
         self.command(f"DISP {brightness_level}")
 
     def get_display_brightness(self) :
@@ -489,7 +504,12 @@ class ElectromagnetPowerSupply(GenericInstrument):
         Args:
             lock_state (int): The lock state to be set (0, 1, or 2). 0=unlock, 1=lock, and 2=lock limits.
             code (int): Keypad lock code required to make changes to the lock state of the front panel.
+
+        Raises:
+            ValueError: If lock_state is not 0, 1, or 2.
         """
+        if lock_state not in (0, 1, 2):
+            raise ValueError(f"Lock state must be 0, 1, or 2, got {lock_state}")
         self.command(f"LOCK {lock_state},{code}")
 
     def get_front_panel_status(self):
@@ -513,7 +533,12 @@ class ElectromagnetPowerSupply(GenericInstrument):
 
         Args:
             mode (int): Programming mode (0, 1, or 2). 0=Internal, 1=External, 2=Sum.
+
+        Raises:
+            ValueError: If mode is not 0, 1, or 2.
         """
+        if mode not in (0, 1, 2):
+            raise ValueError(f"Programming mode must be 0, 1, or 2, got {mode}")
         self.command(f"XPGM {mode}")
 
     def get_programming_mode(self):
