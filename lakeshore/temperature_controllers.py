@@ -1405,7 +1405,11 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                 "password": login_response[1]}
 
     def _get_identity(self):
-        return self.query('*IDN?', check_errors=False).split(',')
+        idn_response = self.query('*IDN?', check_errors=False).split(',')
+        if len(idn_response) < 4:
+            raise InstrumentException(
+                f"Malformed *IDN? response: expected at least 4 comma-separated fields, got {len(idn_response)}")
+        return idn_response
 
     def _autotune_error(self):
         """Method to raise an exception if autotune error has occurred."""

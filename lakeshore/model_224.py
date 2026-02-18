@@ -1213,7 +1213,11 @@ class Model224(Model224Enums, GenericInstrument):
         return self.RelayControlMode(int(split_relay_settings[0]))
 
     def _get_identity(self):
-        return self.query('*IDN?', check_errors=False).split(',')
+        idn_response = self.query('*IDN?', check_errors=False).split(',')
+        if len(idn_response) < 4:
+            raise InstrumentException(
+                f"Malformed *IDN? response: expected at least 4 comma-separated fields, got {len(idn_response)}")
+        return idn_response
 
 
 __all__ = ['Model224', 'Model224AlarmParameters', 'Model224CurveHeader', 'Model224StandardEventRegister',
