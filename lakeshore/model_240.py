@@ -147,8 +147,15 @@ class Model240(Model240Enums, GenericInstrument):
         """
         return self.query(f"CRDG? {channel}")
 
-    def set_factory_defaults(self):
-        """Sets all configuration values to factory defaults and resets the instrument."""
+    def set_factory_defaults(self, confirm=False):
+        """Sets all configuration values to factory defaults and resets the instrument.
+
+            Args:
+                confirm (bool): Must be True to execute. Prevents accidental factory reset.
+        """
+        if not confirm:
+            raise ValueError(
+                "Factory reset will clear all settings. Pass confirm=True to proceed.")
         self.command("DFLT 99")
 
     def get_kelvin_reading(self, channel):
