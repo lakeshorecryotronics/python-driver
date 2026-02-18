@@ -218,6 +218,7 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         'SRANge': float,
         'SVLimit': lambda s: bool(int(s)),
         'SILimit': lambda s: bool(int(s)),
+        'SSWeeping': lambda s: bool(int(s)),
         'MDC': float,
         'MRMs': float,
         'MPPeak': float,
