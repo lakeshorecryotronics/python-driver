@@ -1,3 +1,4 @@
+import math
 from tests.utils import TestWithFakeEMPowerSupply
 
 
@@ -252,12 +253,12 @@ class TestRegisterCommands(TestWithFakeEMPowerSupply):
         self.assertIn("OPST?", self.fake_connection.get_outgoing_message())
 
     def test_set_hardware_error_enable_mask(self):
-        self.fake_connection.setup_response("0,0; 0")
+        self.fake_connection.setup_response("0,7; 0")
         self.fake_connection.setup_response("0")
         hardware_error_enable_mask = self.dut.EMPowerSupplyHardwareErrorsRegister.from_integer(4)
         self.dut.set_hardware_error_enable_mask(hardware_error_enable_mask)
         self.fake_connection.get_outgoing_message()
-        self.assertIn("ERSTE 4", self.fake_connection.get_outgoing_message())
+        self.assertIn("ERSTE 4,7", self.fake_connection.get_outgoing_message())
 
     def test_get_hardware_error_enable_mask(self):
         self.fake_connection.setup_response("4,0; 0")
@@ -302,3 +303,199 @@ class TestRegisterCommands(TestWithFakeEMPowerSupply):
         response = self.dut.get_operational_error_event()
         self.assertEqual(response.to_integer(), 1)
         self.assertIn("ERSTR?", self.fake_connection.get_outgoing_message())
+
+
+class TestCurrentValidation(TestWithFakeEMPowerSupply):
+
+    def test_set_current_rejects_string(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_current("fifty")
+
+    def test_set_current_rejects_none(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_current(None)
+
+    def test_set_current_rejects_bool(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_current(True)
+
+    def test_set_current_rejects_nan(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_current(float('nan'))
+
+    def test_set_current_rejects_inf(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_current(float('inf'))
+
+    def test_set_current_rejects_above_max(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_current(135.2)
+
+    def test_set_current_rejects_below_negative_max(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_current(-135.2)
+
+    def test_set_current_accepts_boundary_positive(self):
+        self.fake_connection.setup_response("0")
+        self.dut.set_current(135.1)
+        self.assertIn("SETI 135.1", self.fake_connection.get_outgoing_message())
+
+    def test_set_current_accepts_boundary_negative(self):
+        self.fake_connection.setup_response("0")
+        self.dut.set_current(-135.1)
+        self.assertIn("SETI -135.1", self.fake_connection.get_outgoing_message())
+
+    def test_set_current_accepts_zero(self):
+        self.fake_connection.setup_response("0")
+        self.dut.set_current(0)
+        self.assertIn("SETI 0", self.fake_connection.get_outgoing_message())
+
+
+class TestRampRateValidation(TestWithFakeEMPowerSupply):
+
+    def test_set_ramp_rate_rejects_string(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_rate("fast")
+
+    def test_set_ramp_rate_rejects_nan(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_rate(float('nan'))
+
+    def test_set_ramp_rate_rejects_zero(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_rate(0)
+
+    def test_set_ramp_rate_rejects_negative(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_rate(-1.0)
+
+    def test_set_ramp_rate_rejects_above_max(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_rate(50.1)
+
+    def test_set_ramp_rate_accepts_lower_boundary(self):
+        self.fake_connection.setup_response("0")
+        self.dut.set_ramp_rate(0.0001)
+        self.assertIn("RATE 0.0001", self.fake_connection.get_outgoing_message())
+
+    def test_set_ramp_rate_accepts_upper_boundary(self):
+        self.fake_connection.setup_response("0")
+        self.dut.set_ramp_rate(50.0)
+        self.assertIn("RATE 50.0", self.fake_connection.get_outgoing_message())
+
+
+class TestLimitsValidation(TestWithFakeEMPowerSupply):
+
+    def test_set_limits_rejects_string_current(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_limits("high", 3.0)
+
+    def test_set_limits_rejects_string_ramp_rate(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_limits(50.0, "fast")
+
+    def test_set_limits_rejects_negative_current(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_limits(-1.0, 3.0)
+
+    def test_set_limits_rejects_current_above_max(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_limits(135.2, 3.0)
+
+    def test_set_limits_rejects_ramp_rate_below_min(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_limits(50.0, 0.0)
+
+    def test_set_limits_rejects_ramp_rate_above_max(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_limits(50.0, 50.1)
+
+    def test_set_limits_rejects_nan_current(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_limits(float('nan'), 3.0)
+
+    def test_set_limits_rejects_inf_ramp_rate(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_limits(50.0, float('inf'))
+
+    def test_set_limits_accepts_boundary_values(self):
+        self.fake_connection.setup_response("0")
+        self.dut.set_limits(135.1, 50.0)
+        self.assertIn("LIMIT 135.1, 50.0", self.fake_connection.get_outgoing_message())
+
+    def test_set_limits_accepts_lower_boundary_values(self):
+        self.fake_connection.setup_response("0")
+        self.dut.set_limits(0, 0.0001)
+        self.assertIn("LIMIT 0, 0.0001", self.fake_connection.get_outgoing_message())
+
+
+class TestRampSegmentValidation(TestWithFakeEMPowerSupply):
+
+    def test_set_ramp_segment_rejects_segment_zero(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segment(0, 50, 2.5)
+
+    def test_set_ramp_segment_rejects_segment_six(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segment(6, 50, 2.5)
+
+    def test_set_ramp_segment_rejects_string_current(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segment(1, "fifty", 2.5)
+
+    def test_set_ramp_segment_rejects_string_ramp_rate(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segment(1, 50, "fast")
+
+    def test_set_ramp_segment_rejects_ramp_rate_above_max(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segment(1, 50, 50.1)
+
+    def test_set_ramp_segment_rejects_current_above_max(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segment(1, 200, 2.5)
+
+    def test_set_ramp_segment_rejects_nan_current(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_ramp_segment(1, float('nan'), 2.5)
+
+    def test_set_ramp_segment_accepts_segment_one(self):
+        self.fake_connection.setup_response("0")
+        self.dut.set_ramp_segment(1, 50, 2.5)
+        self.assertIn("RSEGS 1, 50, 2.5", self.fake_connection.get_outgoing_message())
+
+    def test_set_ramp_segment_accepts_segment_five(self):
+        self.fake_connection.setup_response("0")
+        self.dut.set_ramp_segment(5, 50, 2.5)
+        self.assertIn("RSEGS 5, 50, 2.5", self.fake_connection.get_outgoing_message())
+
+
+class TestSafetyMethodValidation(TestWithFakeEMPowerSupply):
+
+    def test_set_internal_water_rejects_invalid_mode(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_internal_water(4)
+
+    def test_set_internal_water_rejects_negative(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_internal_water(-1)
+
+    def test_set_magnet_water_rejects_invalid_mode(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_magnet_water(5)
+
+    def test_set_magnet_water_rejects_string(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_magnet_water("auto")
+
+    def test_set_display_brightness_rejects_invalid(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_display_brightness(4)
+
+    def test_set_front_panel_lock_rejects_invalid_state(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_front_panel_lock(3, 123)
+
+    def test_set_programming_mode_rejects_invalid(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_programming_mode(3)
