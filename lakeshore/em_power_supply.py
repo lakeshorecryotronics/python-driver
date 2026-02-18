@@ -228,14 +228,14 @@ class ElectromagnetPowerSupply(GenericInstrument):
             error_response = response_list.pop()
             register = self.EMPowerSupplyStandardEventStatusRegister.from_integer(int(error_response))
             if register.command_error:
-                raise InstrumentException("Command Error: The instrument could not interpret the command due to a "
-                                          "syntax error, an unrecognized header, unrecognized terminator, or an "
-                                          "unsupported command.")
+                raise InstrumentException(f"Command Error for '{query_string}': The instrument could not interpret "
+                                          "the command due to a syntax error, an unrecognized header, unrecognized "
+                                          "terminator, or an unsupported command.")
             if register.execution_error:
-                raise InstrumentException("Execution Error: The instrument was instructed to do something not within "
-                                          "its capabilities.")
+                raise InstrumentException(f"Execution Error for '{query_string}': The instrument was instructed to "
+                                          "do something not within its capabilities.")
             if register.query_error:
-                raise InstrumentException("Query Error: The output queue is full.")
+                raise InstrumentException(f"Query Error for '{query_string}': The output queue is full.")
             response = ';'.join(response_list)
 
         return response

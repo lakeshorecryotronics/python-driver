@@ -145,7 +145,7 @@ class Model240(Model240Enums, GenericInstrument):
                     Specifies channel (1-8).
 
         """
-        return self.query(f"CRDG? {channel}")
+        return float(self.query(f"CRDG? {channel}"))
 
     def set_factory_defaults(self):
         """Sets all configuration values to factory defaults and resets the instrument."""
@@ -169,7 +169,7 @@ class Model240(Model240Enums, GenericInstrument):
                     Specifies channel (1-8).
 
         """
-        return self.query(f"FRDG? {channel}")
+        return float(self.query(f"FRDG? {channel}"))
 
     def get_sensor_reading(self, input_channel):
         """Returns the sensor reading in the sensor's units.
@@ -478,7 +478,7 @@ class Model240(Model240Enums, GenericInstrument):
                     Specifies which channel to query (1-8).
 
         """
-        return self.query(f"SRDG? {channel}")
+        return float(self.query(f"SRDG? {channel}"))
 
 
 __all__ = ['Model240', 'Model240CurveHeader', 'Model240InputParameter', 'Model240ProfiSlot']

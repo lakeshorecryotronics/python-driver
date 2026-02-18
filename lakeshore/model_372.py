@@ -971,7 +971,7 @@ class Model372(Model372Enums, TemperatureController):
                     1: output 1 (warm up heater).
 
                 setpoint (float):
-                    Specifies the set-point the heater ramps to, in Kelvin.
+                    Specifies the set-point the heater ramps to, in Ohms.
 
         """
 
@@ -1009,9 +1009,9 @@ class Model372(Model372Enums, TemperatureController):
         return float(self.query(f"SETP? {str(output_channel)}"))
 
     def get_setpoint_ohms(self, output_channel):
-        """Returns the set-point for the given output channel in kelvin.
+        """Returns the set-point for the given output channel in Ohms.
 
-            Changes the control input's preferred units to Kelvin as a result.
+            Changes the control input's preferred units to Ohms as a result.
 
             Args:
                 output_channel (int):

@@ -1483,10 +1483,14 @@ class SourceModule(BaseModule):
         Returns:
             int: The number of sweep points.
         """
+        if start_value == stop_value:
+            return 1
         if sweep_spacing == 'LINEAR':
             step_size = 10 ** (math.floor(math.log10(abs(stop_value - start_value))) - 2)
             number_of_points = round(abs(stop_value - start_value) / step_size + 1)
         else:
+            if start_value == 0:
+                raise ValueError("Start value cannot be zero for logarithmic sweep")
             step_size = 10 ** (math.floor(math.log10(abs(stop_value / start_value))) - 2)
             number_of_points = round(abs(stop_value / start_value) / step_size + 1)
         return number_of_points

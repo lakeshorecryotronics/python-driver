@@ -13,13 +13,13 @@ class TestBasicTempReadings(TestWithFakeModel240):
     def test_get_celsius_reading(self):
         self.fake_connection.setup_response('123')
         response = self.dut.get_celsius_reading("1")
-        self.assertEqual(response, '123')
+        self.assertEqual(response, 123.0)
         self.assertIn("CRDG? 1", self.fake_connection.get_outgoing_message())
 
     def test_get_fahrenheit_reading(self):
         self.fake_connection.setup_response('123')
         response = self.dut.get_fahrenheit_reading("1")
-        self.assertEqual(response, '123')
+        self.assertEqual(response, 123.0)
         self.assertIn("FRDG? 1", self.fake_connection.get_outgoing_message())
 
 
@@ -74,7 +74,7 @@ class TestBasicQueryMethods(TestWithFakeModel240):
     def test_get_sensor_units_channel_reading(self):
         self.fake_connection.setup_response('12345')
         response = self.dut.get_sensor_units_channel_reading("1")
-        self.assertEqual(response, '12345')
+        self.assertEqual(response, 12345.0)
         self.assertIn("SRDG? 1", self.fake_connection.get_outgoing_message())
 
     def test_get_channel_reading_status(self):
