@@ -147,8 +147,8 @@ class Model335(Model335Enums, TemperatureController):
     """A class object representing the Lake Shore Model 335 cryogenic temperature controller."""
 
     # Initiate instrument specific registers
-    _status_byte_register = Model335StatusByteRegister
-    _service_request_enable = Model335ServiceRequestEnable
+    status_byte_register = Model335StatusByteRegister
+    service_request_enable = Model335ServiceRequestEnable
 
     vid_pid = [(0x1FB9, 0x0300)]
 
