@@ -136,6 +136,8 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
 
         self.settings_profiles = SettingsProfiles(self)
 
+        # Lock ordering: stream_lock must be acquired before dut_lock (inherited from
+        # GenericInstrument) to avoid deadlock. Never acquire dut_lock then stream_lock.
         self.stream_lock = Lock()
 
         # Sweeping limits
@@ -515,11 +517,8 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         if len(response) < 6:
             raise XIPInstrumentException(
                 f"Malformed calibration date response: expected 6 values, got {len(response)}")
-        try:
-            return datetime(int(response[0]), int(response[1]), int(response[2]),
-                            int(response[3]), int(response[4]), int(response[5]))
-        except (ValueError, OverflowError) as ex:
-            raise XIPInstrumentException(f"Invalid calibration date values: {response}") from ex
+        return datetime(int(response[0]), int(response[1]), int(response[2]),
+                        int(response[3]), int(response[4]), int(response[5]))
 
     def get_head_cal_temperature(self):
         """Returns the temperature of the head calibration."""
@@ -538,11 +537,8 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         if len(response) < 6:
             raise XIPInstrumentException(
                 f"Malformed self-calibration date response: expected 6 values, got {len(response)}")
-        try:
-            return datetime(int(response[0]), int(response[1]), int(response[2]),
-                            int(response[3]), int(response[4]), int(response[5]))
-        except (ValueError, OverflowError) as ex:
-            raise XIPInstrumentException(f"Invalid self-calibration date values: {response}") from ex
+        return datetime(int(response[0]), int(response[1]), int(response[2]),
+                        int(response[3]), int(response[4]), int(response[5]))
 
     def get_head_self_cal_temperature(self):
         """Returns the temperature of the last head self calibration."""
