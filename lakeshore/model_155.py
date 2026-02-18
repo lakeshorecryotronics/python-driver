@@ -2,6 +2,7 @@
 
 from time import sleep
 import itertools
+import math
 import numbers
 
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
@@ -234,9 +235,11 @@ class PrecisionSource(XIPInstrument):
 
     @staticmethod
     def _validate_numeric(value, name):
-        """Validate that a value is a real number (not bool)."""
+        """Validate that a value is a finite real number (not bool, NaN, or inf)."""
         if isinstance(value, bool) or not isinstance(value, numbers.Real):
             raise ValueError(f"{name} must be a number, got {type(value).__name__}")
+        if not math.isfinite(value):
+            raise ValueError(f"{name} must be finite, got {value}")
 
     def output_sine_current(self, amplitude, frequency, offset=0.0, phase=0.0):
         """Configures and enables the source output to be a sine wave current source.

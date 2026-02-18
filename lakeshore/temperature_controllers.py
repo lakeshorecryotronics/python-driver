@@ -1,5 +1,6 @@
 """Implements a parent class for temperature controllers that contains shared methods between similar instruments."""
 
+import math
 import numbers
 import serial
 from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase
@@ -404,7 +405,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     (sensor_units: float, temp_value: float, curvature_value: float (optional)).
 
         """
-        true_point_index = 0
+        true_point_index = -1
         data_points = []
         for i in range(0, 200):
             point = self.get_curve_data_point(curve, i + 1)
@@ -1044,11 +1045,11 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The ramp rate is configured in field units per second.
 
         """
-        if isinstance(gain, bool) or not isinstance(gain, numbers.Real) or gain < 0:
+        if isinstance(gain, bool) or not isinstance(gain, numbers.Real) or not math.isfinite(gain) or gain < 0:
             raise ValueError(f"Gain must be a non-negative number, got {gain}")
-        if isinstance(integral, bool) or not isinstance(integral, numbers.Real) or integral < 0:
+        if isinstance(integral, bool) or not isinstance(integral, numbers.Real) or not math.isfinite(integral) or integral < 0:
             raise ValueError(f"Integral must be a non-negative number, got {integral}")
-        if isinstance(derivative, bool) or not isinstance(derivative, numbers.Real) or derivative < 0:
+        if isinstance(derivative, bool) or not isinstance(derivative, numbers.Real) or not math.isfinite(derivative) or derivative < 0:
             raise ValueError(f"Derivative must be a non-negative number, got {derivative}")
         self.command(f"PID {output},{gain},{integral},{derivative}")
 
@@ -1315,7 +1316,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The value for the set-point (in the preferred units of the control loop sensor).
 
         """
-        if isinstance(value, bool) or not isinstance(value, numbers.Real):
+        if isinstance(value, bool) or not isinstance(value, numbers.Real) or not math.isfinite(value):
             raise ValueError(f"Setpoint must be a number, got {type(value).__name__}")
         self.command(f"SETP {output},{value}")
 
@@ -1354,7 +1355,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     A limit of zero will turn the feature off.
 
         """
-        if isinstance(limit, bool) or not isinstance(limit, numbers.Real):
+        if isinstance(limit, bool) or not isinstance(limit, numbers.Real) or not math.isfinite(limit):
             raise ValueError(f"Temperature limit must be a number, got {type(limit).__name__}")
         if limit < 0:
             raise ValueError(f"Temperature limit {limit} must be non-negative")

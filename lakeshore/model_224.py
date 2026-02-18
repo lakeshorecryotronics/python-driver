@@ -873,7 +873,7 @@ class Model224(Model224Enums, GenericInstrument):
         """
 
         data_points = []
-        true_point_index = 0
+        true_point_index = -1
         for i in range(0, 200):
             point = self.get_curve_data_point(curve, i + 1)
             data_points.append(point)
