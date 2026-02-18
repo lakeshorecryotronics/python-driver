@@ -131,34 +131,50 @@ class GenericInstrument:
             if len(serial_string) == 2:
                 self.option_card_serial = serial_string[1]
             self.model_number = idn_response[1]
-        except InstrumentException:
-            self.close()
-            raise
+
+            # Check to make sure the serial number matches what was provided if connecting over TCP
+            if ip_address is not None and serial_number is not None and serial_number != self.serial_number:
+                raise InstrumentException("Instrument found but the serial number does not match. " +
+                                          "serial number provided is " + serial_number +
+                                          ", serial number found is " + self.serial_number)
         except Exception:
             self.close()
             raise
 
-        # Check to make sure the serial number matches what was provided if connecting over TCP
-        if ip_address is not None and serial_number is not None and serial_number != self.serial_number:
-            raise InstrumentException("Instrument found but the serial number does not match. " +
-                                      "serial number provided is " + serial_number +
-                                      ", serial number found is " + self.serial_number)
-
     def close(self):
-        """Close all open connections."""
-        if getattr(self, 'device_serial', None) is not None:
-            try:
-                self.device_serial.close()
-            finally:
-                self.device_serial = None
-        if getattr(self, 'device_tcp', None) is not None:
-            try:
-                self.device_tcp.close()
-            finally:
-                self.device_tcp = None
+        """Close all open connections.
+
+        Caller-provided connections (via the connection parameter) are not closed,
+        as their lifecycle is owned by the caller. The reference is cleared.
+
+        Safe to call multiple times. Acquires dut_lock to prevent races with
+        concurrent command()/query() calls.
+        """
+        lock = getattr(self, 'dut_lock', None)
+        if lock is not None:
+            lock.acquire()
+        try:
+            if getattr(self, 'device_serial', None) is not None:
+                try:
+                    self.device_serial.close()
+                finally:
+                    self.device_serial = None
+            if getattr(self, 'device_tcp', None) is not None:
+                try:
+                    self.device_tcp.close()
+                finally:
+                    self.device_tcp = None
+            if getattr(self, 'user_connection', None) is not None:
+                self.user_connection = None
+        finally:
+            if lock is not None:
+                lock.release()
 
     def __del__(self):
-        self.close()
+        try:
+            self.close()
+        except Exception:
+            pass
 
     def __enter__(self):
         return self
@@ -246,10 +262,13 @@ class GenericInstrument:
     def disconnect_tcp(self):
         """Disconnect the TCP connection."""
 
-        try:
-            self.device_tcp.close()
-        finally:
-            self.device_tcp = None
+        with self.dut_lock:
+            if self.device_tcp is None:
+                return
+            try:
+                self.device_tcp.close()
+            finally:
+                self.device_tcp = None
 
     def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, data_bits=None,
                     stop_bits=None, parity=None, timeout=None, handshaking=None, flow_control=None):
@@ -289,10 +308,13 @@ class GenericInstrument:
     def disconnect_usb(self):
         """Disconnect the USB connection."""
 
-        try:
-            self.device_serial.close()
-        finally:
-            self.device_serial = None
+        with self.dut_lock:
+            if self.device_serial is None:
+                return
+            try:
+                self.device_serial.close()
+            finally:
+                self.device_serial = None
 
     def _tcp_command(self, command):
         """Send a command over the TCP connection."""
@@ -311,6 +333,8 @@ class GenericInstrument:
                 raw_bytes = self.device_tcp.recv(4096)
             except socket.timeout as ex:
                 raise InstrumentException("Connection timed out") from ex
+            except OSError as ex:
+                raise InstrumentException(f"TCP communication error: {ex}") from ex
 
             if not raw_bytes:
                 raise InstrumentException("Connection closed by remote host")
