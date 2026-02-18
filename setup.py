@@ -23,7 +23,6 @@ setup(
     install_requires=['pyserial>=3.0',
                       'iso8601',
                       'packaging',
-                      "enum34;python_version<'3.4'",
                       'wakepy>=0.7.1'],
     classifiers=['Programming Language :: Python :: 3']
 )

@@ -84,6 +84,7 @@ class GenericInstrument:
 
     vid_pid = []
     logger = logging.getLogger(__name__)
+    MAX_BUFFER_SIZE = 1 * 1024 * 1024  # 1 MB
 
     def __init__(self, serial_number, com_port, baud_rate, data_bits, stop_bits, parity, flow_control,
                  handshaking, timeout, ip_address, tcp_port, connection=None):
@@ -131,27 +132,56 @@ class GenericInstrument:
             if len(serial_string) == 2:
                 self.option_card_serial = serial_string[1]
             self.model_number = idn_response[1]
-        except InstrumentException:
-            print('Instrument found but unable to communicate. Please check interface settings on the instrument.')
+
+            # Check to make sure the serial number matches what was provided if connecting over TCP
+            if ip_address is not None and serial_number is not None and serial_number != self.serial_number:
+                raise InstrumentException("Instrument found but the serial number does not match. " +
+                                          "serial number provided is " + serial_number +
+                                          ", serial number found is " + self.serial_number)
+        except Exception:
+            self.close()
             raise
 
-        # Check to make sure the serial number matches what was provided if connecting over TCP
-        if ip_address is not None and serial_number is not None and serial_number != self.serial_number:
-            raise InstrumentException("Instrument found but the serial number does not match. " +
-                                      "serial number provided is " + serial_number +
-                                      ", serial number found is " + self.serial_number)
+    def close(self):
+        """Close all open connections.
+
+        Caller-provided connections (via the connection parameter) are not closed,
+        as their lifecycle is owned by the caller. The reference is cleared.
+
+        Safe to call multiple times. Acquires dut_lock to prevent races with
+        concurrent command()/query() calls.
+        """
+        lock = getattr(self, 'dut_lock', None)
+        if lock is not None:
+            lock.acquire()
+        try:
+            if getattr(self, 'device_serial', None) is not None:
+                try:
+                    self.device_serial.close()
+                finally:
+                    self.device_serial = None
+            if getattr(self, 'device_tcp', None) is not None:
+                try:
+                    self.device_tcp.close()
+                finally:
+                    self.device_tcp = None
+            if getattr(self, 'user_connection', None) is not None:
+                self.user_connection = None
+        finally:
+            if lock is not None:
+                lock.release()
 
     def __del__(self):
-        if self.device_serial is not None:
-            self.device_serial.close()
-        if self.device_tcp is not None:
-            self.device_tcp.close()
+        try:
+            self.close()
+        except Exception:
+            pass
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.__del__()
+        self.close()
 
     def write(self, command_string):
         """Alias of command. Send a command to the instrument.
@@ -233,8 +263,13 @@ class GenericInstrument:
     def disconnect_tcp(self):
         """Disconnect the TCP connection."""
 
-        self.device_tcp.close()
-        self.device_tcp = None
+        with self.dut_lock:
+            if self.device_tcp is None:
+                return
+            try:
+                self.device_tcp.close()
+            finally:
+                self.device_tcp = None
 
     def connect_usb(self, serial_number=None, com_port=None, baud_rate=None, data_bits=None,
                     stop_bits=None, parity=None, timeout=None, handshaking=None, flow_control=None):
@@ -274,8 +309,13 @@ class GenericInstrument:
     def disconnect_usb(self):
         """Disconnect the USB connection."""
 
-        self.device_serial.close()
-        self.device_serial = None
+        with self.dut_lock:
+            if self.device_serial is None:
+                return
+            try:
+                self.device_serial.close()
+            finally:
+                self.device_serial = None
 
     def _tcp_command(self, command):
         """Send a command over the TCP connection."""
@@ -286,22 +326,29 @@ class GenericInstrument:
         """Query over the TCP connection."""
 
         self._tcp_command(query)
-
         total_response = ""
 
-        # Continuously receive data from the buffer until a line break
         while True:
-
-            # Receive the data and raise an error on timeout
             try:
-                response = self.device_tcp.recv(4096).decode('utf-8')
+                raw_bytes = self.device_tcp.recv(4096)
             except socket.timeout as ex:
                 raise InstrumentException("Connection timed out") from ex
+            except OSError as ex:
+                raise InstrumentException(f"TCP communication error: {ex}") from ex
 
-            # Add received information to the response
+            if not raw_bytes:
+                raise InstrumentException("Connection closed by remote host")
+
+            try:
+                response = raw_bytes.decode('utf-8')
+            except UnicodeDecodeError as ex:
+                raise InstrumentException("Invalid response encoding") from ex
+
             total_response += response
 
-            # Return the response once it ends with a line break
+            if len(total_response) > self.MAX_BUFFER_SIZE:
+                raise InstrumentException("Response exceeded maximum buffer size")
+
             if total_response.endswith("\r\n"):
                 return total_response.rstrip()
 
@@ -325,10 +372,14 @@ class GenericInstrument:
     def _custom_eol_readline(self):
         line = bytearray()
         while True:
-            new_character = self.device_serial.read(1)
+            try:
+                new_character = self.device_serial.read(1)
+            except OSError as ex:
+                raise InstrumentException(f"Serial communication error: {ex}") from ex
             if new_character:
                 line += new_character
-                # Check to see if the last two characters are the terminator characters \r\n
+                if len(line) > self.MAX_BUFFER_SIZE:
+                    raise InstrumentException("Serial response exceeded maximum buffer size")
                 if line[-2:] == b'\r\n':
                     break
             else:
@@ -351,4 +402,8 @@ class GenericInstrument:
         return response
 
     def _get_identity(self):
-        return self.query('*IDN?').split(',')
+        idn_response = self.query('*IDN?').split(',')
+        if len(idn_response) < 4:
+            raise InstrumentException(
+                f"Malformed *IDN? response: expected at least 4 comma-separated fields, got {len(idn_response)}")
+        return idn_response
