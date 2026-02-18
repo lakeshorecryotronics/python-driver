@@ -84,6 +84,7 @@ class GenericInstrument:
 
     vid_pid = []
     logger = logging.getLogger(__name__)
+    MAX_BUFFER_SIZE = 1 * 1024 * 1024  # 1 MB
 
     def __init__(self, serial_number, com_port, baud_rate, data_bits, stop_bits, parity, flow_control,
                  handshaking, timeout, ip_address, tcp_port, connection=None):
@@ -326,7 +327,6 @@ class GenericInstrument:
 
         self._tcp_command(query)
         total_response = ""
-        MAX_BUFFER_SIZE = 1 * 1024 * 1024  # 1 MB
 
         while True:
             try:
@@ -346,7 +346,7 @@ class GenericInstrument:
 
             total_response += response
 
-            if len(total_response) > MAX_BUFFER_SIZE:
+            if len(total_response) > self.MAX_BUFFER_SIZE:
                 raise InstrumentException("Response exceeded maximum buffer size")
 
             if total_response.endswith("\r\n"):
@@ -370,13 +370,15 @@ class GenericInstrument:
         return response.rstrip()
 
     def _custom_eol_readline(self):
-        MAX_LINE_SIZE = 1 * 1024 * 1024  # 1 MB
         line = bytearray()
         while True:
-            new_character = self.device_serial.read(1)
+            try:
+                new_character = self.device_serial.read(1)
+            except OSError as ex:
+                raise InstrumentException(f"Serial communication error: {ex}") from ex
             if new_character:
                 line += new_character
-                if len(line) > MAX_LINE_SIZE:
+                if len(line) > self.MAX_BUFFER_SIZE:
                     raise InstrumentException("Serial response exceeded maximum buffer size")
                 if line[-2:] == b'\r\n':
                     break
