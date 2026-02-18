@@ -218,7 +218,7 @@ class Model346InputReadingStatus(RegisterBase):
 
     bit_names = [
         "hardware_settling",
-        "",
+        "temperature_extrapolated",
         "",
         "current_source_in_compliance",
         "temperature_underrange",
@@ -227,9 +227,10 @@ class Model346InputReadingStatus(RegisterBase):
         "sensor_units_readings_over_range"
     ]
 
-    def __init__(self, hardware_settling, current_source_in_compliance, temperature_underrange, temperature_overrange,
+    def __init__(self, hardware_settling, temperature_extrapolated, current_source_in_compliance, temperature_underrange, temperature_overrange,
                  sensor_units_readings_under_range, sensor_units_readings_over_range):
         self.hardware_settling = hardware_settling
+        self.temperature_extrapolated = temperature_extrapolated
         self.current_source_in_compliance = current_source_in_compliance
         self.temperature_underrange = temperature_underrange
         self.temperature_overrange = temperature_overrange
