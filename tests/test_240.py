@@ -93,6 +93,44 @@ class TestBasicQueryMethods(TestWithFakeModel240):
 
         self.assertIn("INTYPE? 1", self.fake_connection.get_outgoing_message())
 
+    def test_get_input_parameter_zeros_are_false(self):
+        self.fake_connection.setup_response('2,0,2,0,2,0')
+        response = self.dut.get_input_parameter(1)
+
+        self.assertEqual(response.auto_range_enable, False)
+        self.assertEqual(response.current_reversal_enable, False)
+        self.assertEqual(response.input_enable, False)
+
+        self.assertIn("INTYPE? 1", self.fake_connection.get_outgoing_message())
+
+
+class TestScpiParameterValidation(TestWithFakeModel240):
+
+    def test_reject_semicolon_in_sensor_name(self):
+        with self.assertRaises(ValueError) as ctx:
+            self.dut.set_sensor_name(1, "evil;DFLT 99")
+        self.assertIn("SCPI delimiters", str(ctx.exception))
+
+    def test_reject_newline_in_sensor_name(self):
+        with self.assertRaises(ValueError) as ctx:
+            self.dut.set_sensor_name(1, "evil\nDFLT 99")
+        self.assertIn("SCPI delimiters", str(ctx.exception))
+
+    def test_reject_semicolon_in_modname(self):
+        with self.assertRaises(ValueError) as ctx:
+            self.dut.set_modname("evil;DFLT 99")
+        self.assertIn("SCPI delimiters", str(ctx.exception))
+
+    def test_valid_sensor_name_accepted(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_sensor_name(1, "MySensor")
+        self.assertIn('INNAME 1,MySensor', self.fake_connection.get_outgoing_message())
+
+    def test_valid_modname_accepted(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_modname("MyModule")
+        self.assertIn('MODNAME MyModule', self.fake_connection.get_outgoing_message())
+
 
 class TestBasicCommandMethods(TestWithFakeModel240):
 

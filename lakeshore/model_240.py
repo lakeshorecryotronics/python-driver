@@ -286,6 +286,7 @@ class Model240(Model240Enums, GenericInstrument):
                     Specifies the name to associate with the sensor channel.
 
         """
+        self._validate_scpi_parameter(name, "name")
         self.command(f"INNAME {channel},{name}")
 
     def get_sensor_name(self, channel):
@@ -345,6 +346,7 @@ class Model240(Model240Enums, GenericInstrument):
                     Specifies the name or description to help identify the module.
 
         """
+        self._validate_scpi_parameter(name, "name")
         self.command(f"MODNAME {name}")
 
     def get_modname(self):
