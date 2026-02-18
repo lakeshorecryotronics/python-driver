@@ -251,7 +251,20 @@ class ElectromagnetPowerSupply(GenericInstrument):
                 A. The Model 648 bounds are 0.0000 - 135.1000 A.
 
             max_ramp_rate (float): The maximum output current ramp rate setting allowed (0.0001 - 50.000 A/s).
+
+        Raises:
+            ValueError: If max_current or max_ramp_rate is not a number or out of range.
         """
+        if not isinstance(max_current, (int, float)):
+            raise ValueError(f"Max current must be a number, got {type(max_current).__name__}")
+        if not isinstance(max_ramp_rate, (int, float)):
+            raise ValueError(f"Max ramp rate must be a number, got {type(max_ramp_rate).__name__}")
+        if max_current < 0 or max_current > 135.1:
+            raise ValueError(
+                f"Max current {max_current} A is outside valid range (0 - 135.1 A)")
+        if max_ramp_rate < 0.0001 or max_ramp_rate > 50.0:
+            raise ValueError(
+                f"Max ramp rate {max_ramp_rate} A/s is outside valid range (0.0001 - 50.0 A/s)")
         self.command(f"LIMIT {max_current}, {max_ramp_rate}")
 
     def get_limits(self):
@@ -273,7 +286,15 @@ class ElectromagnetPowerSupply(GenericInstrument):
         Args:
             ramp_rate (float): The rate at which the current will ramp when a new output current setting is entered
                 (0.0001 - 50.000 A/s).
+
+        Raises:
+            ValueError: If ramp_rate is not a number or out of range.
         """
+        if not isinstance(ramp_rate, (int, float)):
+            raise ValueError(f"Ramp rate must be a number, got {type(ramp_rate).__name__}")
+        if ramp_rate < 0.0001 or ramp_rate > 50.0:
+            raise ValueError(
+                f"Ramp rate {ramp_rate} A/s is outside valid range (0.0001 - 50.0 A/s)")
         self.command(f"RATE {ramp_rate}")
 
     def get_ramp_rate(self):
@@ -294,7 +315,18 @@ class ElectromagnetPowerSupply(GenericInstrument):
             current (float): Specifies the upper output current setting that will use this segment.
             ramp_rate (float): Specifies the rate at which the current will ramp. (0.0001 - 50.000 A/s).
 
+        Raises:
+            ValueError: If any parameter is invalid or out of range.
         """
+        if segment not in range(1, 6):
+            raise ValueError(f"Segment must be 1-5, got {segment}")
+        if not isinstance(current, (int, float)):
+            raise ValueError(f"Current must be a number, got {type(current).__name__}")
+        if not isinstance(ramp_rate, (int, float)):
+            raise ValueError(f"Ramp rate must be a number, got {type(ramp_rate).__name__}")
+        if ramp_rate < 0.0001 or ramp_rate > 50.0:
+            raise ValueError(
+                f"Ramp rate {ramp_rate} A/s is outside valid range (0.0001 - 50.0 A/s)")
         self.command(f"RSEGS {segment}, {current}, {ramp_rate}")
 
     def get_ramp_segment(self, segment):
@@ -336,7 +368,16 @@ class ElectromagnetPowerSupply(GenericInstrument):
         Args:
             current (float): The output current value that the output will ramp to at the present ramp rate. The Model
                 643 bounds are 0.0000 - +/-70.1000 A. The Model 648 bounds are 0.0000 - +/-135.1000 A.
+
+        Raises:
+            ValueError: If current is not a number or exceeds safe bounds.
         """
+        if not isinstance(current, (int, float)):
+            raise ValueError(f"Current must be a number, got {type(current).__name__}")
+        max_current = 135.1  # Model 648 maximum; Model 643 is 70.1 A
+        if abs(current) > max_current:
+            raise ValueError(
+                f"Current magnitude {abs(current)} A exceeds maximum safe value of {max_current} A")
         self.command(f"SETI {current}")
 
     def get_current(self):
