@@ -232,6 +232,12 @@ class PrecisionSource(XIPInstrument):
         """
         self.command("ROUTE:TERMINALS " + output_connections_location)
 
+    @staticmethod
+    def _validate_numeric(value, name):
+        """Validate that a value is a real number (not bool)."""
+        if isinstance(value, bool) or not isinstance(value, numbers.Real):
+            raise ValueError(f"{name} must be a number, got {type(value).__name__}")
+
     def output_sine_current(self, amplitude, frequency, offset=0.0, phase=0.0):
         """Configures and enables the source output to be a sine wave current source.
 
@@ -246,6 +252,9 @@ class PrecisionSource(XIPInstrument):
                     Shifts the phase of the output relative to the reference out. Must be between -180 and 180 degrees.
 
         """
+        for val, name in [(amplitude, "Amplitude"), (frequency, "Frequency"),
+                          (offset, "Offset"), (phase, "Phase")]:
+            self._validate_numeric(val, name)
 
         # Change the output mode to source current instead of voltage
         self.command("SOURCE:FUNCTION:MODE CURRENT")
@@ -282,6 +291,9 @@ class PrecisionSource(XIPInstrument):
                     Shifts the phase of the output relative to the reference out. Must be between -180 and 180 degrees.
 
         """
+        for val, name in [(amplitude, "Amplitude"), (frequency, "Frequency"),
+                          (offset, "Offset"), (phase, "Phase")]:
+            self._validate_numeric(val, name)
 
         # Change the output mode to source voltage instead of current
         self.command("SOURCE:FUNCTION:MODE VOLTAGE")
@@ -312,8 +324,7 @@ class PrecisionSource(XIPInstrument):
                     The output current level in amps.
 
         """
-        if isinstance(current_level, bool) or not isinstance(current_level, numbers.Real):
-            raise ValueError(f"Current level must be a number, got {type(current_level).__name__}")
+        self._validate_numeric(current_level, "Current level")
 
         # Change the output mode to source current instead of voltage
         self.command("SOURCE:FUNCTION:MODE CURRENT")
@@ -335,8 +346,7 @@ class PrecisionSource(XIPInstrument):
                     The output voltage level in volts.
 
         """
-        if isinstance(voltage_level, bool) or not isinstance(voltage_level, numbers.Real):
-            raise ValueError(f"Voltage level must be a number, got {type(voltage_level).__name__}")
+        self._validate_numeric(voltage_level, "Voltage level")
 
         # Change the output mode to source voltage instead of current
         self.command("SOURCE:FUNCTION:MODE VOLTAGE")
@@ -406,8 +416,7 @@ class PrecisionSource(XIPInstrument):
                     The maximum settable current in amps. Must be between 0 and 100 milli-amps.
 
         """
-        if isinstance(current_limit, bool) or not isinstance(current_limit, numbers.Real):
-            raise ValueError(f"Current limit must be a number, got {type(current_limit).__name__}")
+        self._validate_numeric(current_limit, "Current limit")
         if current_limit < 0 or current_limit > 0.1:
             raise ValueError(f"Current limit must be between 0 and 100 milli-amps (0.1 A), got {current_limit}")
         self.command("SOURCE:CURRENT:LIMIT " + str(current_limit))
@@ -420,8 +429,7 @@ class PrecisionSource(XIPInstrument):
                     The maximum settable voltage in volts. Must be between 0 and 100 volts.
 
         """
-        if isinstance(voltage_limit, bool) or not isinstance(voltage_limit, numbers.Real):
-            raise ValueError(f"Voltage limit must be a number, got {type(voltage_limit).__name__}")
+        self._validate_numeric(voltage_limit, "Voltage limit")
         if voltage_limit < 0 or voltage_limit > 100:
             raise ValueError(f"Voltage limit must be between 0 and 100 volts, got {voltage_limit}")
         self.command("SOURCE:VOLTAGE:LIMIT " + str(voltage_limit))
@@ -434,8 +442,7 @@ class PrecisionSource(XIPInstrument):
                     The maximum permissible voltage. Must be between 1 and 100 volts.
 
         """
-        if isinstance(max_voltage, bool) or not isinstance(max_voltage, numbers.Real):
-            raise ValueError(f"Max voltage must be a number, got {type(max_voltage).__name__}")
+        self._validate_numeric(max_voltage, "Max voltage")
         if max_voltage < 1 or max_voltage > 100:
             raise ValueError(f"Max voltage must be between 1 and 100 volts, got {max_voltage}")
         self.command("SOURCE:CURRENT:PROTECTION " + str(max_voltage))
@@ -448,8 +455,7 @@ class PrecisionSource(XIPInstrument):
                     The maximum permissible current in amps.
 
         """
-        if isinstance(max_current, bool) or not isinstance(max_current, numbers.Real):
-            raise ValueError(f"Max current must be a number, got {type(max_current).__name__}")
+        self._validate_numeric(max_current, "Max current")
         if max_current < 0:
             raise ValueError(f"Max current must be non-negative, got {max_current}")
         self.command("SOURCE:VOLTAGE:PROTECTION " + str(max_current))
