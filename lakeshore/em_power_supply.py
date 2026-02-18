@@ -1,7 +1,31 @@
 """Implements functionality unique to the Model 643 and 648 electromagnet power supplies."""
 
+import math
+
 import serial
 from .generic_instrument import GenericInstrument, RegisterBase, _parse_response, InstrumentException
+
+
+def _validate_number(value, name):
+    """Validate that a value is a finite number (rejects bool, NaN, and inf).
+
+        Args:
+            value: The value to validate.
+            name (str): Parameter name for error messages.
+
+        Returns:
+            The validated value (unchanged).
+
+        Raises:
+            ValueError: If the value is not a finite number.
+    """
+    if isinstance(value, bool):
+        raise ValueError(f"{name} must be a number, got bool")
+    if not isinstance(value, (int, float)):
+        raise ValueError(f"{name} must be a number, got {type(value).__name__}")
+    if not math.isfinite(value):
+        raise ValueError(f"{name} must be finite, got {value}")
+    return value
 
 
 class ElectromagnetPowerSupply(GenericInstrument):
@@ -253,12 +277,10 @@ class ElectromagnetPowerSupply(GenericInstrument):
             max_ramp_rate (float): The maximum output current ramp rate setting allowed (0.0001 - 50.000 A/s).
 
         Raises:
-            ValueError: If max_current or max_ramp_rate is not a number or out of range.
+            ValueError: If max_current or max_ramp_rate is not a finite number or out of range.
         """
-        if not isinstance(max_current, (int, float)):
-            raise ValueError(f"Max current must be a number, got {type(max_current).__name__}")
-        if not isinstance(max_ramp_rate, (int, float)):
-            raise ValueError(f"Max ramp rate must be a number, got {type(max_ramp_rate).__name__}")
+        _validate_number(max_current, "Max current")
+        _validate_number(max_ramp_rate, "Max ramp rate")
         if max_current < 0 or max_current > 135.1:
             raise ValueError(
                 f"Max current {max_current} A is outside valid range (0 - 135.1 A)")
@@ -288,10 +310,9 @@ class ElectromagnetPowerSupply(GenericInstrument):
                 (0.0001 - 50.000 A/s).
 
         Raises:
-            ValueError: If ramp_rate is not a number or out of range.
+            ValueError: If ramp_rate is not a finite number or out of range.
         """
-        if not isinstance(ramp_rate, (int, float)):
-            raise ValueError(f"Ramp rate must be a number, got {type(ramp_rate).__name__}")
+        _validate_number(ramp_rate, "Ramp rate")
         if ramp_rate < 0.0001 or ramp_rate > 50.0:
             raise ValueError(
                 f"Ramp rate {ramp_rate} A/s is outside valid range (0.0001 - 50.0 A/s)")
@@ -316,14 +337,16 @@ class ElectromagnetPowerSupply(GenericInstrument):
             ramp_rate (float): Specifies the rate at which the current will ramp. (0.0001 - 50.000 A/s).
 
         Raises:
-            ValueError: If any parameter is invalid or out of range.
+            ValueError: If any parameter is not a finite number or out of range.
         """
         if segment not in range(1, 6):
             raise ValueError(f"Segment must be 1-5, got {segment}")
-        if not isinstance(current, (int, float)):
-            raise ValueError(f"Current must be a number, got {type(current).__name__}")
-        if not isinstance(ramp_rate, (int, float)):
-            raise ValueError(f"Ramp rate must be a number, got {type(ramp_rate).__name__}")
+        _validate_number(current, "Current")
+        _validate_number(ramp_rate, "Ramp rate")
+        max_current = 135.1  # Model 648 maximum; Model 643 is 70.1 A
+        if abs(current) > max_current:
+            raise ValueError(
+                f"Current magnitude {abs(current)} A exceeds maximum safe value of {max_current} A")
         if ramp_rate < 0.0001 or ramp_rate > 50.0:
             raise ValueError(
                 f"Ramp rate {ramp_rate} A/s is outside valid range (0.0001 - 50.0 A/s)")
@@ -370,10 +393,9 @@ class ElectromagnetPowerSupply(GenericInstrument):
                 643 bounds are 0.0000 - +/-70.1000 A. The Model 648 bounds are 0.0000 - +/-135.1000 A.
 
         Raises:
-            ValueError: If current is not a number or exceeds safe bounds.
+            ValueError: If current is not a finite number or exceeds safe bounds.
         """
-        if not isinstance(current, (int, float)):
-            raise ValueError(f"Current must be a number, got {type(current).__name__}")
+        _validate_number(current, "Current")
         max_current = 135.1  # Model 648 maximum; Model 643 is 70.1 A
         if abs(current) > max_current:
             raise ValueError(
@@ -771,7 +793,7 @@ class ElectromagnetPowerSupply(GenericInstrument):
             Status Byte Register.
 
         Returns:
-            ElectromagnetPowerSupply.EMPowerSupplyHardwareErrorsRegister: Register mask configuration object.
+            ElectromagnetPowerSupply.EMPowerSupplyOperationalErrorsRegister: Register mask configuration object.
         """
         operational_mask = int(self.query("ERSTE?").split(',')[1])
         return self.EMPowerSupplyOperationalErrorsRegister.from_integer(operational_mask)
