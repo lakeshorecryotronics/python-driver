@@ -126,6 +126,77 @@ class TestSSMSSYSTEM(TestWithFakeSSMS):
         self.assertIn('TRACe:FORMat:ENCOding:B64:BFORmat?', self.fake_connection.get_outgoing_message())
         self.assertIn('TRACe:STARt 3', self.fake_connection.get_outgoing_message())
 
+    def test_stream_data_sends_stop_on_completion(self):
+        """Test that TRACe:STOp is sent when stream_data completes normally"""
+
+        list_data = [(False, 45.6521), (True, 1.258), (False, 65.8974)]
+
+        my_data = []
+        for data in list_data:
+            for value in data:
+                my_data.append(value)
+
+        list_format = '<?d?d?d'
+        pack_data = pack(list_format, *my_data)
+        encoded_data = str(b64encode(pack_data))[2:-1]
+
+        self.fake_connection.setup_response('No error')       # trace reset
+        self.fake_connection.setup_response('No error')       # configure elements
+        self.fake_connection.setup_response('No error')       # format encoding
+        self.fake_connection.setup_response('No error')       # rate
+        self.fake_connection.setup_response('9;No error')     # bytes per row
+        self.fake_connection.setup_response('"?d";No error')  # binary format
+        self.fake_connection.setup_response('No error')       # trace start
+        self.fake_connection.setup_response(encoded_data)     # trace data
+        self.fake_connection.setup_response('0;No error')     # overflow
+
+        # Consume all data
+        list(self.dut.stream_data(10, 3, ("MX", 1), ("MY", 2), ("MR", 3)))
+
+        # Drain all outgoing messages and check TRACe:STOp was sent
+        outgoing_messages = []
+        while self.fake_connection.outgoing:
+            outgoing_messages.append(self.fake_connection.get_outgoing_message())
+        self.assertTrue(
+            any('TRACe:STOp' in msg for msg in outgoing_messages),
+            f'TRACe:STOp not found in outgoing messages: {outgoing_messages}')
+
+    def test_stream_data_sends_stop_on_early_break(self):
+        """Test that TRACe:STOp is sent when caller breaks out of stream_data early"""
+
+        list_data = [(False, 45.6521), (True, 1.258), (False, 65.8974)]
+
+        my_data = []
+        for data in list_data:
+            for value in data:
+                my_data.append(value)
+
+        list_format = '<?d?d?d'
+        pack_data = pack(list_format, *my_data)
+        encoded_data = str(b64encode(pack_data))[2:-1]
+
+        self.fake_connection.setup_response('No error')       # trace reset
+        self.fake_connection.setup_response('No error')       # configure elements
+        self.fake_connection.setup_response('No error')       # format encoding
+        self.fake_connection.setup_response('No error')       # rate
+        self.fake_connection.setup_response('9;No error')     # bytes per row
+        self.fake_connection.setup_response('"?d";No error')  # binary format
+        self.fake_connection.setup_response('No error')       # trace start
+        self.fake_connection.setup_response(encoded_data)     # trace data
+
+        # Only consume 1 of 3 points then abandon the generator
+        gen = self.dut.stream_data(10, 3, ("MX", 1), ("MY", 2), ("MR", 3))
+        next(gen)
+        gen.close()
+
+        # Drain all outgoing messages and check TRACe:STOp was sent
+        outgoing_messages = []
+        while self.fake_connection.outgoing:
+            outgoing_messages.append(self.fake_connection.get_outgoing_message())
+        self.assertTrue(
+            any('TRACe:STOp' in msg for msg in outgoing_messages),
+            f'TRACe:STOp not found in outgoing messages: {outgoing_messages}')
+
     def test_get_data(self):
         """Test get data"""
 

@@ -1,5 +1,6 @@
 """Implements functionality unique to the Lake Shore M81."""
 from datetime import datetime
+import logging
 import struct
 import time
 from base64 import b64decode
@@ -13,17 +14,23 @@ from lakeshore.ssm_source_module import SourceModule
 from lakeshore.ssm_settings_profiles import SettingsProfiles
 from lakeshore.requires_firmware_version import requires_firmware_version
 
+logger = logging.getLogger(__name__)
+
 try:
     from wakepy import keep
 except (NotImplementedError, KeyError, ImportError):
-    # Provide a no-op context manager fallback
+    # Provide a no-op context manager fallback when wakepy is unavailable
     from contextlib import contextmanager
+
+    class _NoOpMode:
+        """Mimics wakepy's Mode object returned by keep.running()."""
+        success = False
 
     class _NoOpKeep:
         @staticmethod
         @contextmanager
         def running():
-            yield
+            yield _NoOpMode()
 
     keep = _NoOpKeep()
 
@@ -281,6 +288,13 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
     def stream_data(self, rate, num_points, *data_sources):
         """Generator object to stream data from the instrument.
 
+            A TRACe:STOp command is sent when the generator exits for any reason
+            (normal completion, caller break, exception, or garbage collection)
+            to ensure instrument-side cleanup.
+
+            Note: the overflow check only runs on normal completion. If the
+            generator is abandoned early, overflow status is not checked.
+
             Args:
                 rate (int):
                     Desired transfer rate in points/sec.
@@ -322,18 +336,26 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
 
                         for row in rows:
                             if len(row) < bytes_per_row:
+                                # Incomplete trailing row from non-evenly-divisible buffer
+                                logger.debug('Skipping incomplete row (%d/%d bytes)', len(row), bytes_per_row)
                                 break
                             if num_points is not None and num_collected >= num_points:
+                                # Batch contained more rows than needed to reach num_points
                                 break
                             data = struct.unpack(binary_format, row)
                             num_collected += 1
                             yield data
                 finally:
+                    # Best-effort cleanup: stop instrument-side streaming.
+                    # May block briefly if dut_lock is held by another thread.
                     try:
                         self.command('TRACe:STOp', check_errors=False)
                     except Exception:
-                        pass
+                        logger.debug('Failed to send TRACe:STOp during cleanup', exc_info=True)
 
+            # Note: this overflow check is only reached on normal generator
+            # completion. If the generator is abandoned (e.g. caller break),
+            # GeneratorExit bypasses this code via the context manager exits.
             overflow_occurred = bool(int(self.query('TRACe:DATA:OVERflow?', check_errors=True)))
             if overflow_occurred:
                 raise XIPInstrumentException('Data loss occurred during this data stream.')
