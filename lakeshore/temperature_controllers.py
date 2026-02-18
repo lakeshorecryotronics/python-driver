@@ -366,7 +366,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The curvature value scale used to calculate spindle coefficients to 6 digits. Optional parameter.
 
         """
-        if curvature:
+        if curvature is not None:
             command_string = f"CRVPT {curve},{index},{sensor_units},{temperature},{curvature}"
         else:
             command_string = f"CRVPT {curve},{index},{sensor_units},{temperature}"
@@ -412,7 +412,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                 true_point_index = i
 
         # Remove all extraneous points
-        return data_points[:true_point_index]
+        return data_points[:true_point_index + 1]
 
     def set_curve(self, curve, data_points):
         """Method to define a user curve using a list of data points.
@@ -427,7 +427,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """
         self.delete_curve(curve)
 
-        for index, point in data_points:
+        for index, point in enumerate(data_points):
             if len(point) > 2:
                 self.set_curve_data_point(curve, index + 1, point[0], point[1], point[2])
             else:
@@ -1054,17 +1054,17 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
             Returns:
                 (dict):
-                    {"gain": float, "integral": float, "ramp_rate": float}
+                    {"gain": float, "integral": float, "derivative": float}
                         gain: Proportional term in PID control.
                         integral: Integral term in PID control.
-                        ramp_rate: Derivative term in PID control.
+                        derivative: Derivative term in PID control.
 
         """
         pid_values = self.query(f"PID? {output}")
         pid_values = pid_values.split(",")
         return {"gain": float(pid_values[0]),
                 "integral": float(pid_values[1]),
-                "ramp_rate": float(pid_values[2])}
+                "derivative": float(pid_values[2])}
 
     def set_setpoint_ramp_parameter(self, output, ramp_enable, rate_value):
         """Sets the control loop of a particular output.

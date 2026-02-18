@@ -899,7 +899,7 @@ class Model224(Model224Enums, GenericInstrument):
 
         self.delete_curve(curve)
 
-        for index, point in data_points:
+        for index, point in enumerate(data_points):
             self.set_curve_data_point(curve, index + 1, point[0], point[1])
 
     def get_relay_status(self, relay_channel):
