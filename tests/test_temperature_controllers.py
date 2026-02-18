@@ -501,6 +501,41 @@ class TestValidation(TestWithFakeModel372):
         self.dut.set_curve_data_point(22, 1, 2.86, 9.252, 0.0)
         self.assertIn("CRVPT 22,1,2.86,9.252,0.0", self.fake_connection.get_outgoing_message())
 
+    def test_set_heater_pid_zero_values(self):
+        self.fake_connection.setup_response('0')
+        self.dut.set_heater_pid(1, 0, 0, 0)
+        self.assertIn("PID 1,0,0,0", self.fake_connection.get_outgoing_message())
+
+    def test_set_heater_pid_nan_raises(self):
+        import math
+        with self.assertRaises(ValueError):
+            self.dut.set_heater_pid(1, float('nan'), 5, 5)
+
+    def test_set_heater_pid_inf_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_heater_pid(1, float('inf'), 5, 5)
+
+    def test_set_control_setpoint_nan_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_control_setpoint(2, float('nan'))
+
+    def test_set_control_setpoint_inf_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_control_setpoint(2, float('inf'))
+
+    def test_set_temperature_limit_zero(self):
+        self.fake_connection.setup_response('0')
+        self.dut.set_temperature_limit("A", 0)
+        self.assertIn("TLIMIT A,0", self.fake_connection.get_outgoing_message())
+
+    def test_set_temperature_limit_nan_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_temperature_limit("A", float('nan'))
+
+    def test_set_temperature_limit_inf_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_temperature_limit("A", float('inf'))
+
     def test_set_curve(self):
         for _ in range(3):
             self.fake_connection.setup_response('0')

@@ -97,3 +97,73 @@ class TestLimitValidation(TestWithFakePrecisionSource):
         self.fake_connection.setup_response('No error')
         self.dut.set_voltage_mode_current_protection(0.05)
         self.assertIn("SOURCE:VOLTAGE:PROTECTION 0.05", self.fake_connection.get_outgoing_message())
+
+    def test_set_current_limit_at_zero(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_current_limit(0)
+        self.assertIn("SOURCE:CURRENT:LIMIT 0", self.fake_connection.get_outgoing_message())
+
+    def test_set_current_limit_at_max(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_current_limit(0.1)
+        self.assertIn("SOURCE:CURRENT:LIMIT 0.1", self.fake_connection.get_outgoing_message())
+
+    def test_set_voltage_limit_at_zero(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_voltage_limit(0)
+        self.assertIn("SOURCE:VOLTAGE:LIMIT 0", self.fake_connection.get_outgoing_message())
+
+    def test_set_voltage_limit_at_max(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_voltage_limit(100)
+        self.assertIn("SOURCE:VOLTAGE:LIMIT 100", self.fake_connection.get_outgoing_message())
+
+    def test_set_current_mode_voltage_protection_at_min(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_current_mode_voltage_protection(1)
+        self.assertIn("SOURCE:CURRENT:PROTECTION 1", self.fake_connection.get_outgoing_message())
+
+    def test_set_current_mode_voltage_protection_at_max(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_current_mode_voltage_protection(100)
+        self.assertIn("SOURCE:CURRENT:PROTECTION 100", self.fake_connection.get_outgoing_message())
+
+    def test_set_voltage_mode_current_protection_at_zero(self):
+        self.fake_connection.setup_response('No error')
+        self.dut.set_voltage_mode_current_protection(0)
+        self.assertIn("SOURCE:VOLTAGE:PROTECTION 0", self.fake_connection.get_outgoing_message())
+
+    def test_set_current_limit_nan_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_current_limit(float('nan'))
+
+    def test_set_voltage_limit_inf_raises(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_voltage_limit(float('inf'))
+
+
+class TestOutputHappyPath(TestWithFakePrecisionSource):
+
+    def test_output_dc_current(self):
+        for _ in range(4):
+            self.fake_connection.setup_response('No error')
+        self.dut.output_dc_current(0.05)
+        self.assertIn("SOURCE:FUNCTION:MODE CURRENT", self.fake_connection.get_outgoing_message())
+
+    def test_output_dc_voltage(self):
+        for _ in range(4):
+            self.fake_connection.setup_response('No error')
+        self.dut.output_dc_voltage(5.0)
+        self.assertIn("SOURCE:FUNCTION:MODE VOLTAGE", self.fake_connection.get_outgoing_message())
+
+    def test_output_sine_current(self):
+        for _ in range(7):
+            self.fake_connection.setup_response('No error')
+        self.dut.output_sine_current(0.01, 1000)
+        self.assertIn("SOURCE:FUNCTION:MODE CURRENT", self.fake_connection.get_outgoing_message())
+
+    def test_output_sine_voltage(self):
+        for _ in range(7):
+            self.fake_connection.setup_response('No error')
+        self.dut.output_sine_voltage(1.0, 1000)
+        self.assertIn("SOURCE:FUNCTION:MODE VOLTAGE", self.fake_connection.get_outgoing_message())
