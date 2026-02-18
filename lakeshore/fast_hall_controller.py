@@ -2,6 +2,7 @@
 
 import json
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
+from .generic_instrument import InstrumentException
 
 
 class FastHallOperationRegister(RegisterBase):
@@ -92,7 +93,7 @@ class ContactCheckManualParameters:
                  measurement_range='AUTO',
                  min_r_squared=0.9999,
                  blanking_time=2e-3):
-        """The constructor for ContackCheckManualParameters class.
+        """The constructor for ContactCheckManualParameters class.
 
             Args:
                 excitation_type (str):
@@ -380,7 +381,7 @@ class FourWireParameters:
         self.blanking_time = blanking_time
         self.max_samples = max_samples
         self.min_snr = min_snr
-        self.excitation_reversal = str(int(excitation_reversal))
+        self.excitation_reversal = excitation_reversal
 
 
 class DCHallParameters:
@@ -452,7 +453,7 @@ class DCHallParameters:
         self.compliance_limit = compliance_limit
         self.averaging_samples = averaging_samples
         self.user_defined_field = user_defined_field
-        self.with_field_reversal = str(int(with_field_reversal))
+        self.with_field_reversal = with_field_reversal
         self.resistivity = resistivity
         self.blanking_time = blanking_time
         self.sample_thickness = sample_thickness
@@ -540,7 +541,7 @@ class ResistivityManualParameters:
 
 
 class ResistivityLinkParameters:
-    """Class object representing parameters used for running manual Resistivity measurements."""
+    """Class object representing parameters used for running Resistivity Link measurements."""
     def __init__(self,
                  measurement_range='AUTO',
                  sample_thickness=0,
@@ -596,6 +597,15 @@ class FastHall(XIPInstrument):
         self.operation_register = FastHallOperationRegister
         self.questionable_register = FastHallQuestionableRegister
 
+    def _parse_json_response(self, response, context=""):
+        """Parse a JSON response from the instrument with error handling."""
+        try:
+            return json.loads(response)
+        except json.JSONDecodeError as ex:
+            raise InstrumentException(
+                f"Failed to parse JSON response{' for ' + context if context else ''}: {ex}"
+            ) from ex
+
     # Status Methods
     def get_contact_check_running_status(self):
         """Indicates if the contact check measurement is running."""
@@ -618,7 +628,7 @@ class FastHall(XIPInstrument):
         return bool(int(self.query("HALL:DC:RUNNING?")))
 
     def get_dc_hall_waiting_status(self):
-        """Indicates if the DC hall measurement is running."""
+        """Indicates if the DC hall measurement is waiting."""
         return bool(int(self.query("HALL:DC:WAITING?")))
 
     def continue_dc_hall(self):
@@ -739,7 +749,7 @@ class FastHall(XIPInstrument):
                          f"{str(settings.blanking_time)}," +
                          f"{str(settings.max_samples)}," +
                          f"{str(settings.min_snr)}," +
-                         f"{str(settings.excitation_reversal)}")
+                         f"{str(int(settings.excitation_reversal))}")
         self.command(command_string)
 
     def start_dc_hall_vdp(self, settings):
@@ -759,7 +769,7 @@ class FastHall(XIPInstrument):
                          f"{str(settings.compliance_limit)}," +
                          f"{str(settings.averaging_samples)}," +
                          f"{str(settings.user_defined_field)}," +
-                         f"{str(settings.with_field_reversal)}," +
+                         f"{str(int(settings.with_field_reversal))}," +
                          f"{str(settings.resistivity)}," +
                          f"{str(settings.blanking_time)}," +
                          f"{str(settings.sample_thickness)}")
@@ -777,10 +787,10 @@ class FastHall(XIPInstrument):
                          f"{str(settings.excitation_range)}," +
                          f"{str(settings.excitation_measurement_range)}," +
                          f"{str(settings.measurement_range)}," +
-                         f"{str(settings.compliance_limit)}," + \
+                         f"{str(settings.compliance_limit)}," +
                          f"{str(settings.averaging_samples)}," +
                          f"{str(settings.user_defined_field)}," +
-                         f"{str(settings.with_field_reversal)}," +
+                         f"{str(int(settings.with_field_reversal))}," +
                          f"{str(settings.resistivity)}," +
                          f"{str(settings.blanking_time)}," +
                          f"{str(settings.sample_thickness)}")
@@ -849,7 +859,7 @@ class FastHall(XIPInstrument):
 
         # Parse the JSON query string into a dictionary with only the setup results
         json_results = self.query('CCHECK:RESULT:JSON? 0')
-        setup_results = json.loads(json_results).get('Setup')
+        setup_results = self._parse_json_response(json_results, 'contact check setup').get('Setup', {})
 
         # Generate a  Contact Check settings object using the setup result values as the initialization parameters
         settings = ContactCheckManualParameters(excitation_type=setup_results.get('ExcitationType'),
@@ -868,12 +878,12 @@ class FastHall(XIPInstrument):
 
         # Parse the JSON query string into a dictionary
         json_results = self.query('CCHECK:RESULT:JSON? 0')
-        measurement_results = json.loads(json_results)
+        measurement_results = self._parse_json_response(json_results, 'contact check measurement')
 
         # Remove the setup data from the results dictionary
-        measurement_results.pop('Setup')
-        measurement_results.pop('OptimizationSetup')
-        measurement_results.pop('OptimizationDiagnostics')
+        measurement_results.pop('Setup', None)
+        measurement_results.pop('OptimizationSetup', None)
+        measurement_results.pop('OptimizationDiagnostics', None)
 
         return measurement_results
 
@@ -882,22 +892,20 @@ class FastHall(XIPInstrument):
 
         # Parse the JSON query string into a dictionary with only the setup results
         json_results = self.query('FASTHALL:RESULT:JSON? 0')
-        setup_results = json.loads(json_results).get('Setup')
+        setup_results = self._parse_json_response(json_results, 'FastHall setup').get('Setup', {})
 
         # Generate a FastHall settings object using the setup result values as the initialization parameters
         settings = FastHallManualParameters(excitation_type=setup_results.get('ExcitationType'),
                                             excitation_value=setup_results.get('ExcitationValue'),
                                             excitation_range=setup_results.get('ExcitationRange'),
-                                            excitation_measurement_range=setup_results.get('ExcitationMeasurementRange'
-                                                                                           ),
+                                            excitation_measurement_range=setup_results.get('ExcitationMeasurementRange'),
                                             measurement_range=setup_results.get('MeasurementRange'),
                                             compliance_limit=setup_results.get('ComplianceLimit'),
-                                            max_samples=setup_results.get('MeasurementRange'),
+                                            max_samples=setup_results.get('MaximumNumberOfSamples'),
                                             user_defined_field=setup_results.get('UserDefinedFieldReadingInTesla'),
                                             resistivity=setup_results.get('Resistivity'),
                                             blanking_time=setup_results.get('BlankingTimeInSeconds'),
-                                            averaging_samples=setup_results.get('NumberOfVoltageCompensationSamplesTo\
-                                            Average'),
+                                            averaging_samples=setup_results.get('NumberOfVoltageCompensationSamplesToAverage'),
                                             sample_thickness=setup_results.get('SampleThicknessInMeters'),
                                             min_hall_voltage_snr=setup_results.get('HallVoltageSnr'))
         return settings
@@ -907,10 +915,10 @@ class FastHall(XIPInstrument):
 
         # Parse the JSON query string into a dictionary
         json_results = self.query('FASTHALL:RESULT:JSON? 0')
-        measurement_results = json.loads(json_results)
+        measurement_results = self._parse_json_response(json_results, 'FastHall measurement')
 
         # Remove the setup data from the results dictionary
-        measurement_results.pop('Setup')
+        measurement_results.pop('Setup', None)
 
         return measurement_results
 
@@ -919,13 +927,15 @@ class FastHall(XIPInstrument):
 
         # Parse the JSON query string into a dictionary with only the setup results
         json_results = self.query('FWIRE:RESULT:JSON? 0')
-        setup_results = json.loads(json_results).get('Setup')
+        setup_results = self._parse_json_response(json_results, 'four wire setup').get('Setup', {})
 
         # Generate a Four Wire settings object using the setup result values as the initialization parameters
-        settings = FourWireParameters(contact_point1=setup_results.get('ContactPairExcitation').get('Point1'),
-                                      contact_point2=setup_results.get('ContactPairExcitation').get('Point2'),
-                                      contact_point3=setup_results.get('ContactPairSense').get('Point1'),
-                                      contact_point4=setup_results.get('ContactPairSense').get('Point2'),
+        contact_pair_excitation = setup_results.get('ContactPairExcitation', {})
+        contact_pair_sense = setup_results.get('ContactPairSense', {})
+        settings = FourWireParameters(contact_point1=contact_pair_excitation.get('Point1'),
+                                      contact_point2=contact_pair_excitation.get('Point2'),
+                                      contact_point3=contact_pair_sense.get('Point1'),
+                                      contact_point4=contact_pair_sense.get('Point2'),
                                       excitation_type=setup_results.get('ExcitationType'),
                                       excitation_value=setup_results.get('ExcitationValue'),
                                       excitation_range=setup_results.get('ExcitationRange'),
@@ -943,10 +953,10 @@ class FastHall(XIPInstrument):
 
         # Parse the JSON query string into a dictionary
         json_results = self.query('FWIRE:RESULT:JSON? 0')
-        measurement_results = json.loads(json_results)
+        measurement_results = self._parse_json_response(json_results, 'four wire measurement')
 
         # Remove the setup data from the results dictionary
-        measurement_results.pop('Setup')
+        measurement_results.pop('Setup', None)
 
         return measurement_results
 
@@ -955,7 +965,7 @@ class FastHall(XIPInstrument):
 
         # Parse the JSON query string into a dictionary with only the setup results
         json_results = self.query('HALL:DC:RESULT:JSON? 0')
-        setup_results = json.loads(json_results).get('Setup')
+        setup_results = self._parse_json_response(json_results, 'DC Hall setup').get('Setup', {})
 
         # Generate a DC Hall settings object using the setup result values as the initialization parameters
         settings = DCHallParameters(excitation_type=setup_results.get('ExcitationType'),
@@ -977,10 +987,10 @@ class FastHall(XIPInstrument):
 
         # Parse the JSON query string into a dictionary
         json_results = self.query('HALL:DC:RESULT:JSON? 0')
-        measurement_results = json.loads(json_results)
+        measurement_results = self._parse_json_response(json_results, 'DC Hall measurement')
 
         # Remove the setup data from the results dictionary
-        measurement_results.pop('Setup')
+        measurement_results.pop('Setup', None)
 
         return measurement_results
 
@@ -989,19 +999,18 @@ class FastHall(XIPInstrument):
 
         # Parse the JSON query string into a dictionary with only the setup results
         json_results = self.query('RESISTIVITY:RESULT:JSON? 0')
-        setup_results = json.loads(json_results).get('Setup')
+        setup_results = self._parse_json_response(json_results, 'resistivity setup').get('Setup', {})
 
         # Generate a Resistivity settings object using the setup result values as the initialization parameters
-        settings = ResistivityManualParameters(setup_results.get('ExcitationType'),
+        settings = ResistivityManualParameters(excitation_type=setup_results.get('ExcitationType'),
                                                excitation_value=setup_results.get('ExcitationValue'),
                                                excitation_range=setup_results.get('ExcitationRange'),
-                                               excitation_measurement_range=setup_results.get('Excitation\
-                                               MeasurementRange'),
+                                               excitation_measurement_range=setup_results.get('ExcitationMeasurementRange'),
                                                measurement_range=setup_results.get('MeasurementRange'),
                                                compliance_limit=setup_results.get('ComplianceLimit'),
                                                width=setup_results.get('SampleWidthInMeters'),
                                                separation=setup_results.get('SampleArmSeparationInMeters'),
-                                               max_samples=setup_results.get('MaxNumberOfSamples'),
+                                               max_samples=setup_results.get('MaxNumberOfSamples'),  # TODO: verify key from M91 manual (other methods use 'MaximumNumberOfSamples')
                                                blanking_time=setup_results.get('BlankingTimeInSeconds'),
                                                sample_thickness=setup_results.get('SampleThicknessInMeters'),
                                                min_snr=setup_results.get('MinimumSnr'))
@@ -1012,10 +1021,10 @@ class FastHall(XIPInstrument):
 
         # Parse the JSON query string into a dictionary
         json_results = self.query('RESISTIVITY:RESULT:JSON? 0')
-        measurement_results = json.loads(json_results)
+        measurement_results = self._parse_json_response(json_results, 'resistivity measurement')
 
         # Remove the setup data from the results dictionary
-        measurement_results.pop('Setup')
+        measurement_results.pop('Setup', None)
 
         return measurement_results
 
@@ -1061,7 +1070,7 @@ class FastHall(XIPInstrument):
             self.start_contact_check_hbar(settings)
         else:
             raise ValueError('Invalid value for sample_type argument. '
-                             'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR for a Hall bar."')
+                             'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR" for a Hall bar.')
 
         #  Loop until measurement has stopped running
         while self.get_contact_check_running_status():
@@ -1155,7 +1164,7 @@ class FastHall(XIPInstrument):
             self.start_dc_hall_hbar(settings)
         else:
             raise ValueError('Invalid value for sample_type argument. '
-                             'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR for a Hall bar."')
+                             'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR" for a Hall bar.')
 
         # Loop until measurement has stopped running or waiting
         while self.get_dc_hall_running_status() or self.get_dc_hall_waiting_status():
@@ -1207,7 +1216,7 @@ class FastHall(XIPInstrument):
             self.start_resistivity_hbar(settings)
         else:
             raise ValueError('Invalid value for sample_type argument. '
-                             'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR for a Hall bar."')
+                             'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR" for a Hall bar.')
 
         # Loop until measurement has stopped running
         while self.get_resistivity_running_status():
