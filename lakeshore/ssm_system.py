@@ -1,6 +1,7 @@
 """Implements functionality unique to the Lake Shore M81."""
 from datetime import datetime
 import struct
+import time
 from base64 import b64decode
 from threading import Lock
 from warnings import warn
@@ -14,10 +15,17 @@ from lakeshore.requires_firmware_version import requires_firmware_version
 
 try:
     from wakepy import keep
-except NotImplementedError:
-    pass  # Proceed without wakepy on linux without systemd
-except KeyError:
-    pass  # Proceed without wakepy on linux without dbus
+except (NotImplementedError, KeyError, ImportError):
+    # Provide a no-op context manager fallback
+    from contextlib import contextmanager
+
+    class _NoOpKeep:
+        @staticmethod
+        @contextmanager
+        def running():
+            yield
+
+    keep = _NoOpKeep()
 
 
 class SSMSystemOperationRegister(RegisterBase):
@@ -293,25 +301,36 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
                 bytes_per_row = int(self.query('TRACe:FORMat:ENCOding:B64:BCOunt?'))
                 binary_format = '<' + self.query('TRACe:FORMat:ENCOding:B64:BFORmat?').strip('\"')
 
-                if num_points is not None:
-                    self.command(f'TRACe:STARt {num_points}')
-                else:
-                    self.command('TRACe:STARt')
+                try:
+                    if num_points is not None:
+                        self.command(f'TRACe:STARt {num_points}')
+                    else:
+                        self.command('TRACe:STARt')
 
-                num_collected = 0
-                while num_points is None or num_collected < num_points:
-                    b64_string = ''
-                    while not b64_string:
-                        b64_string = self.query('TRACe:DATA:ALL?', check_errors=False)
+                    num_collected = 0
+                    while num_points is None or num_collected < num_points:
+                        b64_string = ''
+                        while not b64_string:
+                            b64_string = self.query('TRACe:DATA:ALL?', check_errors=False)
+                            if not b64_string:
+                                time.sleep(0.01)
 
-                    new_bytes = b64decode(b64_string)
-                    rows = [new_bytes[i:i + bytes_per_row] for i in range(0, len(new_bytes), bytes_per_row)]
+                        new_bytes = b64decode(b64_string)
+                        rows = [new_bytes[i:i + bytes_per_row] for i in range(0, len(new_bytes), bytes_per_row)]
 
-                    for row in rows:
-                        data = struct.unpack(binary_format, row)
-                        num_collected += 1
-
-                        yield data
+                        for row in rows:
+                            if len(row) < bytes_per_row:
+                                break
+                            if num_points is not None and num_collected >= num_points:
+                                break
+                            data = struct.unpack(binary_format, row)
+                            num_collected += 1
+                            yield data
+                finally:
+                    try:
+                        self.command('TRACe:STOp', check_errors=False)
+                    except Exception:
+                        pass
 
             overflow_occurred = bool(int(self.query('TRACe:DATA:OVERflow?', check_errors=True)))
             if overflow_occurred:
@@ -493,7 +512,14 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         """Returns the date and time of the head calibration."""
 
         response = self.query('CALibration:DATE?').split(',')
-        return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]), int(response[4]), int(response[5]))
+        if len(response) < 6:
+            raise XIPInstrumentException(
+                f"Malformed calibration date response: expected 6 values, got {len(response)}")
+        try:
+            return datetime(int(response[0]), int(response[1]), int(response[2]),
+                            int(response[3]), int(response[4]), int(response[5]))
+        except (ValueError, OverflowError) as ex:
+            raise XIPInstrumentException(f"Invalid calibration date values: {response}") from ex
 
     def get_head_cal_temperature(self):
         """Returns the temperature of the head calibration."""
@@ -509,7 +535,14 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         """Returns the datetime of the last head self calibration."""
 
         response = self.query('CALibration:SCALibration:DATE?').split(',')
-        return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]), int(response[4]), int(response[5]))
+        if len(response) < 6:
+            raise XIPInstrumentException(
+                f"Malformed self-calibration date response: expected 6 values, got {len(response)}")
+        try:
+            return datetime(int(response[0]), int(response[1]), int(response[2]),
+                            int(response[3]), int(response[4]), int(response[5]))
+        except (ValueError, OverflowError) as ex:
+            raise XIPInstrumentException(f"Invalid self-calibration date values: {response}") from ex
 
     def get_head_self_cal_temperature(self):
         """Returns the temperature of the last head self calibration."""
