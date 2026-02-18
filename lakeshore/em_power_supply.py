@@ -9,15 +9,12 @@ from .generic_instrument import GenericInstrument, RegisterBase, _parse_response
 def _validate_number(value, name):
     """Validate that a value is a finite number (rejects bool, NaN, and inf).
 
-        Args:
-            value: The value to validate.
-            name (str): Parameter name for error messages.
+    Args:
+        value: The value to validate.
+        name (str): Parameter name for error messages.
 
-        Returns:
-            The validated value (unchanged).
-
-        Raises:
-            ValueError: If the value is not a finite number.
+    Raises:
+        ValueError: If the value is not a finite number.
     """
     if isinstance(value, bool):
         raise ValueError(f"{name} must be a number, got bool")
@@ -25,12 +22,15 @@ def _validate_number(value, name):
         raise ValueError(f"{name} must be a number, got {type(value).__name__}")
     if not math.isfinite(value):
         raise ValueError(f"{name} must be finite, got {value}")
-    return value
 
 
 class ElectromagnetPowerSupply(GenericInstrument):
     """Class object representing a Lake Shore Model 643 or 648 electromagnet power supply."""
     vid_pid = [(0x1FB9, 0x0601), (0x1FB9, 0x0602)]  # 643, 648
+
+    _MAX_CURRENT = 135.1    # Model 648 maximum; Model 643 is 70.1 A
+    _MIN_RAMP_RATE = 0.0001  # A/s
+    _MAX_RAMP_RATE = 50.0    # A/s
 
     def __init__(self,
                  serial_number=None,
@@ -281,12 +281,13 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         _validate_number(max_current, "Max current")
         _validate_number(max_ramp_rate, "Max ramp rate")
-        if max_current < 0 or max_current > 135.1:
+        if max_current < 0 or max_current > self._MAX_CURRENT:
             raise ValueError(
-                f"Max current {max_current} A is outside valid range (0 - 135.1 A)")
-        if max_ramp_rate < 0.0001 or max_ramp_rate > 50.0:
+                f"Max current {max_current} A is outside valid range (0 - {self._MAX_CURRENT} A)")
+        if max_ramp_rate < self._MIN_RAMP_RATE or max_ramp_rate > self._MAX_RAMP_RATE:
             raise ValueError(
-                f"Max ramp rate {max_ramp_rate} A/s is outside valid range (0.0001 - 50.0 A/s)")
+                f"Max ramp rate {max_ramp_rate} A/s is outside valid range "
+                f"({self._MIN_RAMP_RATE} - {self._MAX_RAMP_RATE} A/s)")
         self.command(f"LIMIT {max_current}, {max_ramp_rate}")
 
     def get_limits(self):
@@ -313,9 +314,10 @@ class ElectromagnetPowerSupply(GenericInstrument):
             ValueError: If ramp_rate is not a finite number or out of range.
         """
         _validate_number(ramp_rate, "Ramp rate")
-        if ramp_rate < 0.0001 or ramp_rate > 50.0:
+        if ramp_rate < self._MIN_RAMP_RATE or ramp_rate > self._MAX_RAMP_RATE:
             raise ValueError(
-                f"Ramp rate {ramp_rate} A/s is outside valid range (0.0001 - 50.0 A/s)")
+                f"Ramp rate {ramp_rate} A/s is outside valid range "
+                f"({self._MIN_RAMP_RATE} - {self._MAX_RAMP_RATE} A/s)")
         self.command(f"RATE {ramp_rate}")
 
     def get_ramp_rate(self):
@@ -337,19 +339,19 @@ class ElectromagnetPowerSupply(GenericInstrument):
             ramp_rate (float): Specifies the rate at which the current will ramp. (0.0001 - 50.000 A/s).
 
         Raises:
-            ValueError: If any parameter is not a finite number or out of range.
+            ValueError: If segment is not 1-5, or current/ramp_rate is not a finite number or out of range.
         """
         if segment not in range(1, 6):
             raise ValueError(f"Segment must be 1-5, got {segment}")
         _validate_number(current, "Current")
         _validate_number(ramp_rate, "Ramp rate")
-        max_current = 135.1  # Model 648 maximum; Model 643 is 70.1 A
-        if abs(current) > max_current:
+        if abs(current) > self._MAX_CURRENT:
             raise ValueError(
-                f"Current magnitude {abs(current)} A exceeds maximum safe value of {max_current} A")
-        if ramp_rate < 0.0001 or ramp_rate > 50.0:
+                f"Current magnitude {abs(current)} A exceeds maximum safe value of {self._MAX_CURRENT} A")
+        if ramp_rate < self._MIN_RAMP_RATE or ramp_rate > self._MAX_RAMP_RATE:
             raise ValueError(
-                f"Ramp rate {ramp_rate} A/s is outside valid range (0.0001 - 50.0 A/s)")
+                f"Ramp rate {ramp_rate} A/s is outside valid range "
+                f"({self._MIN_RAMP_RATE} - {self._MAX_RAMP_RATE} A/s)")
         self.command(f"RSEGS {segment}, {current}, {ramp_rate}")
 
     def get_ramp_segment(self, segment):
@@ -370,7 +372,12 @@ class ElectromagnetPowerSupply(GenericInstrument):
 
         Args:
             state (bool): The state of the ramp segments enable. 0=Disabled and 1=Enabled.
+
+        Raises:
+            ValueError: If state is not a bool or 0/1.
         """
+        if state not in (True, False, 0, 1):
+            raise ValueError(f"Ramp segments enable must be True/False or 0/1, got {state}")
         self.command(f"RSEG {int(state)}")
 
     def get_ramp_segments_enable(self):
@@ -396,10 +403,9 @@ class ElectromagnetPowerSupply(GenericInstrument):
             ValueError: If current is not a finite number or exceeds safe bounds.
         """
         _validate_number(current, "Current")
-        max_current = 135.1  # Model 648 maximum; Model 643 is 70.1 A
-        if abs(current) > max_current:
+        if abs(current) > self._MAX_CURRENT:
             raise ValueError(
-                f"Current magnitude {abs(current)} A exceeds maximum safe value of {max_current} A")
+                f"Current magnitude {abs(current)} A exceeds maximum safe value of {self._MAX_CURRENT} A")
         self.command(f"SETI {current}")
 
     def get_current(self):
@@ -506,10 +512,12 @@ class ElectromagnetPowerSupply(GenericInstrument):
             code (int): Keypad lock code required to make changes to the lock state of the front panel.
 
         Raises:
-            ValueError: If lock_state is not 0, 1, or 2.
+            ValueError: If lock_state is not 0, 1, or 2, or code is not an integer.
         """
         if lock_state not in (0, 1, 2):
             raise ValueError(f"Lock state must be 0, 1, or 2, got {lock_state}")
+        if not isinstance(code, int) or isinstance(code, bool):
+            raise ValueError(f"Lock code must be an integer, got {type(code).__name__}")
         self.command(f"LOCK {lock_state},{code}")
 
     def get_front_panel_status(self):
@@ -556,7 +564,16 @@ class ElectromagnetPowerSupply(GenericInstrument):
             terminator(int): the terminator. 0=<CR><LF>, 1=<LF><CR>, 2=<LF>, 3=no terminator (must have EOI enabled).
             eoi_enable(int): Sets EOI (End of Interrupt) mode. 0=Enabled, 1=Disabled.
             address (int): Specifies IEEE address. 1 - 30(0 and 31 are reserved).
+
+        Raises:
+            ValueError: If any parameter is out of its valid range.
         """
+        if terminator not in (0, 1, 2, 3):
+            raise ValueError(f"Terminator must be 0, 1, 2, or 3, got {terminator}")
+        if eoi_enable not in (0, 1):
+            raise ValueError(f"EOI enable must be 0 or 1, got {eoi_enable}")
+        if not isinstance(address, int) or isinstance(address, bool) or address < 1 or address > 30:
+            raise ValueError(f"IEEE address must be an integer from 1-30, got {address}")
         self.command(f"IEEE {terminator},{eoi_enable},{address}")
 
     def get_iee_488(self):
@@ -576,7 +593,12 @@ class ElectromagnetPowerSupply(GenericInstrument):
 
         Args:
             mode (int): Interface mode. 0, 1 or 2. 0=local, 1=remote, and 2=remote with local lockout.
+
+        Raises:
+            ValueError: If mode is not 0, 1, or 2.
         """
+        if mode not in (0, 1, 2):
+            raise ValueError(f"Interface mode must be 0, 1, or 2, got {mode}")
         self.command(f"MODE {mode}")
 
     def get_ieee_interface_mode(self):
