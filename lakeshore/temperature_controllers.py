@@ -143,6 +143,14 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                                    False, False, timeout, ip_address, tcp_port, **kwargs)
 
     @staticmethod
+    def _validate_numeric(value, name):
+        """Validate that a value is a finite real number (not bool, NaN, or inf)."""
+        if isinstance(value, bool) or not isinstance(value, numbers.Real):
+            raise ValueError(f"{name} must be a number, got {type(value).__name__}")
+        if not math.isfinite(value):
+            raise ValueError(f"{name} must be finite, got {value}")
+
+    @staticmethod
     def _error_check(error_code):
         event_register = StandardEventRegister.from_integer(error_code)
         if event_register.query_error:
@@ -1046,12 +1054,15 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The ramp rate is configured in field units per second.
 
         """
-        if isinstance(gain, bool) or not isinstance(gain, numbers.Real) or not math.isfinite(gain) or gain < 0:
-            raise ValueError(f"Gain must be a non-negative number, got {gain}")
-        if isinstance(integral, bool) or not isinstance(integral, numbers.Real) or not math.isfinite(integral) or integral < 0:
-            raise ValueError(f"Integral must be a non-negative number, got {integral}")
-        if isinstance(derivative, bool) or not isinstance(derivative, numbers.Real) or not math.isfinite(derivative) or derivative < 0:
-            raise ValueError(f"Derivative must be a non-negative number, got {derivative}")
+        self._validate_numeric(gain, "Gain")
+        self._validate_numeric(integral, "Integral")
+        self._validate_numeric(derivative, "Derivative")
+        if gain < 0:
+            raise ValueError(f"Gain must be non-negative, got {gain}")
+        if integral < 0:
+            raise ValueError(f"Integral must be non-negative, got {integral}")
+        if derivative < 0:
+            raise ValueError(f"Derivative must be non-negative, got {derivative}")
         self.command(f"PID {output},{gain},{integral},{derivative}")
 
     def get_heater_pid(self, output):
@@ -1320,8 +1331,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The value for the set-point (in the preferred units of the control loop sensor).
 
         """
-        if isinstance(value, bool) or not isinstance(value, numbers.Real) or not math.isfinite(value):
-            raise ValueError(f"Setpoint must be a number, got {type(value).__name__}")
+        self._validate_numeric(value, "Setpoint")
         self.command(f"SETP {output},{value}")
 
     def get_control_setpoint(self, output):
@@ -1359,10 +1369,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     A limit of zero will turn the feature off.
 
         """
-        if isinstance(limit, bool) or not isinstance(limit, numbers.Real) or not math.isfinite(limit):
-            raise ValueError(f"Temperature limit must be a number, got {type(limit).__name__}")
+        self._validate_numeric(limit, "Temperature limit")
         if limit < 0:
-            raise ValueError(f"Temperature limit {limit} must be non-negative")
+            raise ValueError(f"Temperature limit must be non-negative, got {limit}")
         self.command(f"TLIMIT {input_channel},{limit}")
 
     def get_temperature_limit(self, input_channel):
