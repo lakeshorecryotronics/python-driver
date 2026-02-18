@@ -1,4 +1,7 @@
-"""Implements functionality unique to the Lake Shore Model 350 cryogenic temperature controller."""
+"""Implements functionality unique to the Lake Shore Model 350 cryogenic temperature controller.
+
+NOTE: This module is a non-functional stub. No instrument-specific methods have been implemented yet.
+"""
 import serial
 
 from .generic_instrument import GenericInstrument
@@ -23,6 +26,6 @@ class Model350(GenericInstrument):
                  tcp_port=7777,
                  **kwargs):
 
-        # Call the parent init, then fill in values specific to the 121
+        # Call the parent init
         GenericInstrument.__init__(self, serial_number, com_port, baud_rate, data_bits, stop_bits, parity, flow_control,
                                    handshaking, timeout, ip_address, tcp_port, **kwargs)
