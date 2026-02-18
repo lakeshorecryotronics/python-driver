@@ -637,7 +637,7 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version("1.6.2019092002")
     def get_qualifier_latching_setting(self):
         """Returns whether the qualifier latches."""
-        return self.query("SENSE:QUALIFIER:LATCH?")
+        return bool(int(self.query("SENSE:QUALIFIER:LATCH?")))
 
     @requires_firmware_version("1.6.2019092002")
     def set_qualifier_latching_setting(self, latching):
@@ -647,7 +647,7 @@ class Teslameter(XIPInstrument):
                 latching (bool):
                     Determines whether the qualifier latches.
         """
-        self.command(f"SENSE:QUALIFIER:LATCH {str(latching)}")
+        self.command(f"SENSE:QUALIFIER:LATCH {int(latching)}")
 
     @requires_firmware_version("1.6.2019092002")
     def reset_qualifier_latch(self):

@@ -1089,7 +1089,7 @@ class SourceModule(BaseModule):
 
     def get_disable_on_compliance(self):
         """Returns the present state of disable on compliance."""
-        response = bool(self.device.query(f'SOURce{self.module_number}:DOCompliance?', check_errors=False))
+        response = bool(int(self.device.query(f'SOURce{self.module_number}:DOCompliance?', check_errors=False)))
         return response
 
     def set_current_output_limit_low(self, limit):

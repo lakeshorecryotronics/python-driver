@@ -330,10 +330,10 @@ class Model240(Model240Enums, GenericInstrument):
         response = self.query(f"INTYPE? {channel}")
         data = response.split(",")
         input_parameter = Model240InputParameter(self.SensorTypes(int(data[0])),
-                                                 bool(data[1]),
-                                                 bool(data[3]),
+                                                 bool(int(data[1])),
+                                                 bool(int(data[3])),
                                                  self.Units(int(data[4])),
-                                                 bool(data[5]),
+                                                 bool(int(data[5])),
                                                  int(data[2]))
         return input_parameter
 
