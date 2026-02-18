@@ -2,6 +2,7 @@
 
 from time import sleep
 import itertools
+import numbers
 
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
@@ -311,7 +312,7 @@ class PrecisionSource(XIPInstrument):
                     The output current level in amps.
 
         """
-        if not isinstance(current_level, (int, float)):
+        if isinstance(current_level, bool) or not isinstance(current_level, numbers.Real):
             raise ValueError(f"Current level must be a number, got {type(current_level).__name__}")
 
         # Change the output mode to source current instead of voltage
@@ -334,7 +335,7 @@ class PrecisionSource(XIPInstrument):
                     The output voltage level in volts.
 
         """
-        if not isinstance(voltage_level, (int, float)):
+        if isinstance(voltage_level, bool) or not isinstance(voltage_level, numbers.Real):
             raise ValueError(f"Voltage level must be a number, got {type(voltage_level).__name__}")
 
         # Change the output mode to source voltage instead of current
@@ -405,7 +406,7 @@ class PrecisionSource(XIPInstrument):
                     The maximum settable current in amps. Must be between 0 and 100 milli-amps.
 
         """
-        if not isinstance(current_limit, (int, float)):
+        if isinstance(current_limit, bool) or not isinstance(current_limit, numbers.Real):
             raise ValueError(f"Current limit must be a number, got {type(current_limit).__name__}")
         if current_limit < 0 or current_limit > 0.1:
             raise ValueError(f"Current limit must be between 0 and 100 milli-amps (0.1 A), got {current_limit}")
@@ -419,7 +420,7 @@ class PrecisionSource(XIPInstrument):
                     The maximum settable voltage in volts. Must be between 0 and 100 volts.
 
         """
-        if not isinstance(voltage_limit, (int, float)):
+        if isinstance(voltage_limit, bool) or not isinstance(voltage_limit, numbers.Real):
             raise ValueError(f"Voltage limit must be a number, got {type(voltage_limit).__name__}")
         if voltage_limit < 0 or voltage_limit > 100:
             raise ValueError(f"Voltage limit must be between 0 and 100 volts, got {voltage_limit}")
@@ -433,7 +434,7 @@ class PrecisionSource(XIPInstrument):
                     The maximum permissible voltage. Must be between 1 and 100 volts.
 
         """
-        if not isinstance(max_voltage, (int, float)):
+        if isinstance(max_voltage, bool) or not isinstance(max_voltage, numbers.Real):
             raise ValueError(f"Max voltage must be a number, got {type(max_voltage).__name__}")
         if max_voltage < 1 or max_voltage > 100:
             raise ValueError(f"Max voltage must be between 1 and 100 volts, got {max_voltage}")
@@ -447,7 +448,7 @@ class PrecisionSource(XIPInstrument):
                     The maximum permissible current in amps.
 
         """
-        if not isinstance(max_current, (int, float)):
+        if isinstance(max_current, bool) or not isinstance(max_current, numbers.Real):
             raise ValueError(f"Max current must be a number, got {type(max_current).__name__}")
         if max_current < 0:
             raise ValueError(f"Max current must be non-negative, got {max_current}")
