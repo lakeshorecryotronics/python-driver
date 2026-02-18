@@ -346,8 +346,15 @@ class Model224(Model224Enums, GenericInstrument):
 
         self.command("*WAI")
 
-    def set_to_factory_defaults(self):
-        """Sets all the settings and configurations to their factory default values."""
+    def set_to_factory_defaults(self, confirm=False):
+        """Sets all the settings and configurations to their factory default values.
+
+            Args:
+                confirm (bool): Must be True to execute. Prevents accidental factory reset.
+        """
+        if not confirm:
+            raise ValueError(
+                "Factory reset will clear all settings. Pass confirm=True to proceed.")
         self.command("DFLT 99")
 
     def get_reading_status(self, input_channel):
@@ -873,7 +880,7 @@ class Model224(Model224Enums, GenericInstrument):
         """
 
         data_points = []
-        true_point_index = 0
+        true_point_index = -1
         for i in range(0, 200):
             point = self.get_curve_data_point(curve, i + 1)
             data_points.append(point)
@@ -899,7 +906,7 @@ class Model224(Model224Enums, GenericInstrument):
 
         self.delete_curve(curve)
 
-        for index, point in data_points:
+        for index, point in enumerate(data_points):
             self.set_curve_data_point(curve, index + 1, point[0], point[1])
 
     def get_relay_status(self, relay_channel):

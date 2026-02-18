@@ -499,11 +499,18 @@ class ElectromagnetPowerSupply(GenericInstrument):
         """
         return int(self.query("MODE?"))
 
-    def set_factory_defaults(self):
+    def set_factory_defaults(self, confirm=False):
         """Sets all configuration values to factory defaults and resets the instrument.
 
             The instrument must be at zero amps for this command to work.
+
+            Args:
+                confirm (bool): Must be True to execute. Prevents accidental factory reset.
         """
+        if not confirm:
+            raise ValueError(
+                "Factory reset will clear all settings including safety limits. "
+                "Pass confirm=True to proceed.")
         self.command("DFLT 99")
 
     def reset_instrument(self):

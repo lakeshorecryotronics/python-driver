@@ -1,6 +1,9 @@
 """Implements a parent class for temperature controllers that contains shared methods between similar instruments."""
 
+import math
+import numbers
 import serial
+from warnings import warn
 from .generic_instrument import GenericInstrument, InstrumentException, RegisterBase
 from .temperature_controllers_enums import TemperatureControllerEnums
 
@@ -138,6 +141,14 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         # Call the parent init, then fill in values specific to temperature controllers
         GenericInstrument.__init__(self, serial_number, com_port, baud_rate, 7, 1, serial.PARITY_ODD,
                                    False, False, timeout, ip_address, tcp_port, **kwargs)
+
+    @staticmethod
+    def _validate_numeric(value, name):
+        """Validate that a value is a finite real number (not bool, NaN, or inf)."""
+        if isinstance(value, bool) or not isinstance(value, numbers.Real):
+            raise ValueError(f"{name} must be a number, got {type(value).__name__}")
+        if not math.isfinite(value):
+            raise ValueError(f"{name} must be finite, got {value}")
 
     @staticmethod
     def _error_check(error_code):
@@ -366,7 +377,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The curvature value scale used to calculate spindle coefficients to 6 digits. Optional parameter.
 
         """
-        if curvature:
+        if curvature is not None:
             command_string = f"CRVPT {curve},{index},{sensor_units},{temperature},{curvature}"
         else:
             command_string = f"CRVPT {curve},{index},{sensor_units},{temperature}"
@@ -403,7 +414,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     (sensor_units: float, temp_value: float, curvature_value: float (optional)).
 
         """
-        true_point_index = 200
+        true_point_index = -1
         data_points = []
         for i in range(0, 200):
             point = self.get_curve_data_point(curve, i + 1)
@@ -412,7 +423,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                 true_point_index = i
 
         # Remove all extraneous points
-        return data_points[:true_point_index]
+        return data_points[:true_point_index + 1]
 
     def set_curve(self, curve, data_points):
         """Method to define a user curve using a list of data points.
@@ -427,7 +438,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """
         self.delete_curve(curve)
 
-        for index, point in data_points:
+        for index, point in enumerate(data_points):
             if len(point) > 2:
                 self.set_curve_data_point(curve, index + 1, point[0], point[1], point[2])
             else:
@@ -1043,6 +1054,15 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The ramp rate is configured in field units per second.
 
         """
+        self._validate_numeric(gain, "Gain")
+        self._validate_numeric(integral, "Integral")
+        self._validate_numeric(derivative, "Derivative")
+        if gain < 0:
+            raise ValueError(f"Gain must be non-negative, got {gain}")
+        if integral < 0:
+            raise ValueError(f"Integral must be non-negative, got {integral}")
+        if derivative < 0:
+            raise ValueError(f"Derivative must be non-negative, got {derivative}")
         self.command(f"PID {output},{gain},{integral},{derivative}")
 
     def get_heater_pid(self, output):
@@ -1054,17 +1074,23 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
 
             Returns:
                 (dict):
-                    {"gain": float, "integral": float, "ramp_rate": float}
+                    {"gain": float, "integral": float, "derivative": float, "ramp_rate": float}
                         gain: Proportional term in PID control.
                         integral: Integral term in PID control.
-                        ramp_rate: Derivative term in PID control.
+                        derivative: Derivative term in PID control.
+                        ramp_rate: Deprecated alias for derivative. Use "derivative" instead.
 
         """
         pid_values = self.query(f"PID? {output}")
         pid_values = pid_values.split(",")
+        derivative = float(pid_values[2])
+        # "ramp_rate" was the original (incorrect) key name for the derivative PID term.
+        # Kept for backward compatibility — new code should use "derivative" to match
+        # the set_heater_pid() parameter name.
         return {"gain": float(pid_values[0]),
                 "integral": float(pid_values[1]),
-                "ramp_rate": float(pid_values[2])}
+                "derivative": derivative,
+                "ramp_rate": derivative}
 
     def set_setpoint_ramp_parameter(self, output, ramp_enable, rate_value):
         """Sets the control loop of a particular output.
@@ -1308,6 +1334,7 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The value for the set-point (in the preferred units of the control loop sensor).
 
         """
+        self._validate_numeric(value, "Setpoint")
         self.command(f"SETP {output},{value}")
 
     def get_control_setpoint(self, output):
@@ -1345,6 +1372,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     A limit of zero will turn the feature off.
 
         """
+        self._validate_numeric(limit, "Temperature limit")
+        if limit < 0:
+            raise ValueError(f"Temperature limit must be non-negative, got {limit}")
         self.command(f"TLIMIT {input_channel},{limit}")
 
     def get_temperature_limit(self, input_channel):

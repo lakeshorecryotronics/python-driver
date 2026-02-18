@@ -3,7 +3,7 @@ from collections import deque
 
 import unittest
 from lakeshore import Teslameter, FastHall, Model121, Model372, Model335, Model240, Model224, Model336, SSMSystem, \
-    Model643
+    Model643, PrecisionSource
 
 fake_dut_comms_log = logging.getLogger('fake_dut_comms')
 
@@ -146,6 +146,15 @@ class TestWithFakeSSMSMeasureModule(unittest.TestCase):
         self.dut_system = SSMSystem(connection=self.fake_connection)
         self.dut_module = self.dut_system.get_measure_module(1)
         self.fake_connection.reset()  # Clear startup activity
+
+
+class TestWithFakePrecisionSource(unittest.TestCase):
+    def setUp(self):
+        self.fake_connection = FakeDutConnection()
+        self.fake_connection.setup_response('LSCI,MODEL155,FakeSerial,999.999.999')
+        self.fake_connection.setup_response('No error')
+        self.dut = PrecisionSource(connection=self.fake_connection)
+        self.fake_connection.reset()
 
 
 class TestWithFakeModel336(unittest.TestCase):

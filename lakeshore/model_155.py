@@ -2,6 +2,8 @@
 
 from time import sleep
 import itertools
+import math
+import numbers
 
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
 
@@ -231,6 +233,14 @@ class PrecisionSource(XIPInstrument):
         """
         self.command("ROUTE:TERMINALS " + output_connections_location)
 
+    @staticmethod
+    def _validate_numeric(value, name):
+        """Validate that a value is a finite real number (not bool, NaN, or inf)."""
+        if isinstance(value, bool) or not isinstance(value, numbers.Real):
+            raise ValueError(f"{name} must be a number, got {type(value).__name__}")
+        if not math.isfinite(value):
+            raise ValueError(f"{name} must be finite, got {value}")
+
     def output_sine_current(self, amplitude, frequency, offset=0.0, phase=0.0):
         """Configures and enables the source output to be a sine wave current source.
 
@@ -245,6 +255,9 @@ class PrecisionSource(XIPInstrument):
                     Shifts the phase of the output relative to the reference out. Must be between -180 and 180 degrees.
 
         """
+        for val, name in [(amplitude, "Amplitude"), (frequency, "Frequency"),
+                          (offset, "Offset"), (phase, "Phase")]:
+            self._validate_numeric(val, name)
 
         # Change the output mode to source current instead of voltage
         self.command("SOURCE:FUNCTION:MODE CURRENT")
@@ -281,6 +294,9 @@ class PrecisionSource(XIPInstrument):
                     Shifts the phase of the output relative to the reference out. Must be between -180 and 180 degrees.
 
         """
+        for val, name in [(amplitude, "Amplitude"), (frequency, "Frequency"),
+                          (offset, "Offset"), (phase, "Phase")]:
+            self._validate_numeric(val, name)
 
         # Change the output mode to source voltage instead of current
         self.command("SOURCE:FUNCTION:MODE VOLTAGE")
@@ -311,6 +327,7 @@ class PrecisionSource(XIPInstrument):
                     The output current level in amps.
 
         """
+        self._validate_numeric(current_level, "Current level")
 
         # Change the output mode to source current instead of voltage
         self.command("SOURCE:FUNCTION:MODE CURRENT")
@@ -332,6 +349,7 @@ class PrecisionSource(XIPInstrument):
                     The output voltage level in volts.
 
         """
+        self._validate_numeric(voltage_level, "Voltage level")
 
         # Change the output mode to source voltage instead of current
         self.command("SOURCE:FUNCTION:MODE VOLTAGE")
@@ -401,6 +419,9 @@ class PrecisionSource(XIPInstrument):
                     The maximum settable current in amps. Must be between 0 and 100 milli-amps.
 
         """
+        self._validate_numeric(current_limit, "Current limit")
+        if current_limit < 0 or current_limit > 0.1:
+            raise ValueError(f"Current limit must be between 0 and 100 milli-amps (0.1 A), got {current_limit}")
         self.command("SOURCE:CURRENT:LIMIT " + str(current_limit))
 
     def set_voltage_limit(self, voltage_limit):
@@ -408,9 +429,12 @@ class PrecisionSource(XIPInstrument):
 
             Args:
                 voltage_limit (float):
-                    The maximum settable voltage in amps. Must be between 0 and 100 volts.
+                    The maximum settable voltage in volts. Must be between 0 and 100 volts.
 
         """
+        self._validate_numeric(voltage_limit, "Voltage limit")
+        if voltage_limit < 0 or voltage_limit > 100:
+            raise ValueError(f"Voltage limit must be between 0 and 100 volts, got {voltage_limit}")
         self.command("SOURCE:VOLTAGE:LIMIT " + str(voltage_limit))
 
     def set_current_mode_voltage_protection(self, max_voltage):
@@ -421,6 +445,9 @@ class PrecisionSource(XIPInstrument):
                     The maximum permissible voltage. Must be between 1 and 100 volts.
 
         """
+        self._validate_numeric(max_voltage, "Max voltage")
+        if max_voltage < 1 or max_voltage > 100:
+            raise ValueError(f"Max voltage must be between 1 and 100 volts, got {max_voltage}")
         self.command("SOURCE:CURRENT:PROTECTION " + str(max_voltage))
 
     def set_voltage_mode_current_protection(self, max_current):
@@ -428,9 +455,12 @@ class PrecisionSource(XIPInstrument):
 
             Args:
                 max_current (float):
-                    The maximum permissible voltage. Must be between 1 and 100 volts.
+                    The maximum permissible current in amps.
 
         """
+        self._validate_numeric(max_current, "Max current")
+        if max_current < 0:
+            raise ValueError(f"Max current must be non-negative, got {max_current}")
         self.command("SOURCE:VOLTAGE:PROTECTION " + str(max_current))
 
     def enable_ac_high_voltage_compliance(self):

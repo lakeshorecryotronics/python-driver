@@ -179,6 +179,22 @@ class TestBasicQueries(TestWithFakeModel335):
 
         self.assertIn("INTYPE? A", self.fake_connection.get_outgoing_message())
 
+    def test_get_input_sensor_ntc_rtd(self):
+        # NTC_RTD is sensor type 3, range 5
+        self.fake_connection.setup_response('3,0,5,1,1;0')
+        response = self.dut.get_input_sensor("A")
+        self.assertEqual(response.sensor_type, self.dut.InputSensorType.NTC_RTD)
+        self.assertEqual(response.input_range, self.dut.RTDRange(5))
+        self.assertIn("INTYPE? A", self.fake_connection.get_outgoing_message())
+
+    def test_get_input_sensor_platinum_rtd(self):
+        # PLATINUM_RTD is sensor type 2, range 3
+        self.fake_connection.setup_response('2,0,3,1,1;0')
+        response = self.dut.get_input_sensor("A")
+        self.assertEqual(response.sensor_type, self.dut.InputSensorType.PLATINUM_RTD)
+        self.assertEqual(response.input_range, self.dut.RTDRange(3))
+        self.assertIn("INTYPE? A", self.fake_connection.get_outgoing_message())
+
     def test_get_led_state(self):
         self.fake_connection.setup_response('1;0')
         response = self.dut.get_led_state()
@@ -226,10 +242,10 @@ class TestBasicQueries(TestWithFakeModel335):
     def test_get_heater_pid(self):
         self.fake_connection.setup_response('4.25,6.1,0;0')
         response = self.dut.get_heater_pid(1)
-        pid_settings = {"gain": 4.25,
-                        "integral": 6.1,
-                        "ramp_rate": 0}
-        self.assertDictEqual(response, pid_settings)
+        self.assertAlmostEqual(response['gain'], 4.25)
+        self.assertAlmostEqual(response['integral'], 6.1)
+        self.assertAlmostEqual(response['derivative'], 0)
+        self.assertAlmostEqual(response['ramp_rate'], 0)
 
     def test_get_output_2_polarity(self):
         self.fake_connection.setup_response('1;0')

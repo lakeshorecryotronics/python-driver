@@ -354,3 +354,18 @@ class TestDisplayMethods(TestWithFakeModel224):
         response = self.dut.get_display_configuration()
         self.assertDictEqual(response, expected_response)
         self.assertIn("DISPLAY?", self.fake_connection.get_outgoing_message())
+
+
+class TestFactoryDefaults(TestWithFakeModel224):
+    def test_set_to_factory_defaults(self):
+        self.fake_connection.setup_response('0')
+        self.dut.set_to_factory_defaults(confirm=True)
+        self.assertIn('DFLT 99', self.fake_connection.get_outgoing_message())
+
+    def test_set_to_factory_defaults_raises_without_confirm(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_to_factory_defaults()
+
+    def test_set_to_factory_defaults_raises_with_confirm_false(self):
+        with self.assertRaises(ValueError):
+            self.dut.set_to_factory_defaults(confirm=False)

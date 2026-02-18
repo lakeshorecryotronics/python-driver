@@ -324,7 +324,7 @@ class XIPInstrument(GenericInstrument):
                     An instrument specific QuestionableRegister class object with all bits configured true or false.
         """
 
-        integer_representation = self.questionable_register.to_integer(register_mask)
+        integer_representation = register_mask.to_integer()
         self.command(f"STATus:QUEStionable:ENABle {str(integer_representation)}", check_errors=False)
 
     def reset_status_register_masks(self):
@@ -403,8 +403,15 @@ class XIPInstrument(GenericInstrument):
         """Resets measurement settings to their default values."""
         self.command("SYSTEM:PRESET")
 
-    def factory_reset(self):
-        """Resets all system information such as settings, wi-fi connections, date and time, etc."""
+    def factory_reset(self, confirm=False):
+        """Resets all system information such as settings, wi-fi connections, date and time, etc.
+
+            Args:
+                confirm (bool): Must be True to execute. Prevents accidental factory reset.
+        """
+        if not confirm:
+            raise ValueError(
+                "Factory reset will clear all settings. Pass confirm=True to proceed.")
         self.command("SYSTEM:FACTORYRESET")
 
     def _get_identity(self):
