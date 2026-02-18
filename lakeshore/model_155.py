@@ -311,6 +311,8 @@ class PrecisionSource(XIPInstrument):
                     The output current level in amps.
 
         """
+        if not isinstance(current_level, (int, float)):
+            raise ValueError(f"Current level must be a number, got {type(current_level).__name__}")
 
         # Change the output mode to source current instead of voltage
         self.command("SOURCE:FUNCTION:MODE CURRENT")
@@ -332,6 +334,8 @@ class PrecisionSource(XIPInstrument):
                     The output voltage level in volts.
 
         """
+        if not isinstance(voltage_level, (int, float)):
+            raise ValueError(f"Voltage level must be a number, got {type(voltage_level).__name__}")
 
         # Change the output mode to source voltage instead of current
         self.command("SOURCE:FUNCTION:MODE VOLTAGE")
@@ -401,6 +405,10 @@ class PrecisionSource(XIPInstrument):
                     The maximum settable current in amps. Must be between 0 and 100 milli-amps.
 
         """
+        if not isinstance(current_limit, (int, float)):
+            raise ValueError(f"Current limit must be a number, got {type(current_limit).__name__}")
+        if current_limit < 0 or current_limit > 0.1:
+            raise ValueError(f"Current limit must be between 0 and 100 milli-amps (0.1 A), got {current_limit}")
         self.command("SOURCE:CURRENT:LIMIT " + str(current_limit))
 
     def set_voltage_limit(self, voltage_limit):
@@ -408,9 +416,13 @@ class PrecisionSource(XIPInstrument):
 
             Args:
                 voltage_limit (float):
-                    The maximum settable voltage in amps. Must be between 0 and 100 volts.
+                    The maximum settable voltage in volts. Must be between 0 and 100 volts.
 
         """
+        if not isinstance(voltage_limit, (int, float)):
+            raise ValueError(f"Voltage limit must be a number, got {type(voltage_limit).__name__}")
+        if voltage_limit < 0 or voltage_limit > 100:
+            raise ValueError(f"Voltage limit must be between 0 and 100 volts, got {voltage_limit}")
         self.command("SOURCE:VOLTAGE:LIMIT " + str(voltage_limit))
 
     def set_current_mode_voltage_protection(self, max_voltage):
@@ -421,6 +433,10 @@ class PrecisionSource(XIPInstrument):
                     The maximum permissible voltage. Must be between 1 and 100 volts.
 
         """
+        if not isinstance(max_voltage, (int, float)):
+            raise ValueError(f"Max voltage must be a number, got {type(max_voltage).__name__}")
+        if max_voltage < 1 or max_voltage > 100:
+            raise ValueError(f"Max voltage must be between 1 and 100 volts, got {max_voltage}")
         self.command("SOURCE:CURRENT:PROTECTION " + str(max_voltage))
 
     def set_voltage_mode_current_protection(self, max_current):
@@ -428,9 +444,13 @@ class PrecisionSource(XIPInstrument):
 
             Args:
                 max_current (float):
-                    The maximum permissible voltage. Must be between 1 and 100 volts.
+                    The maximum permissible current in amps.
 
         """
+        if not isinstance(max_current, (int, float)):
+            raise ValueError(f"Max current must be a number, got {type(max_current).__name__}")
+        if max_current < 0:
+            raise ValueError(f"Max current must be non-negative, got {max_current}")
         self.command("SOURCE:VOLTAGE:PROTECTION " + str(max_current))
 
     def enable_ac_high_voltage_compliance(self):

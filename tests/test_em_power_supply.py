@@ -169,7 +169,7 @@ class TestResets(TestWithFakeEMPowerSupply):
 
     def test_set_factory_defaults(self):
         self.fake_connection.setup_response("0")
-        self.dut.set_factory_defaults()
+        self.dut.set_factory_defaults(confirm=True)
         self.assertIn("DFLT 99", self.fake_connection.get_outgoing_message())
 
     def test_reset_instrument(self):

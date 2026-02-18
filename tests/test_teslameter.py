@@ -357,7 +357,7 @@ class TestResets(TestWithFakeTeslameter):
 
     def test_factory_reset(self):
         self.fake_connection.setup_response('No error')
-        self.dut.factory_reset()
+        self.dut.factory_reset(confirm=True)
         self.assertIn('SYSTEM:FACTORYRESET', self.fake_connection.get_outgoing_message())
 
 

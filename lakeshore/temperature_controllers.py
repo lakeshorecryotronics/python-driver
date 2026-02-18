@@ -1043,6 +1043,12 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The ramp rate is configured in field units per second.
 
         """
+        if not isinstance(gain, (int, float)) or gain < 0:
+            raise ValueError(f"Gain must be a non-negative number, got {gain}")
+        if not isinstance(integral, (int, float)) or integral < 0:
+            raise ValueError(f"Integral must be a non-negative number, got {integral}")
+        if not isinstance(derivative, (int, float)) or derivative < 0:
+            raise ValueError(f"Derivative must be a non-negative number, got {derivative}")
         self.command(f"PID {output},{gain},{integral},{derivative}")
 
     def get_heater_pid(self, output):
@@ -1308,6 +1314,10 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     The value for the set-point (in the preferred units of the control loop sensor).
 
         """
+        if not isinstance(value, (int, float)):
+            raise ValueError(f"Setpoint must be a number, got {type(value).__name__}")
+        if value < 0:
+            raise ValueError(f"Setpoint {value} must be non-negative")
         self.command(f"SETP {output},{value}")
 
     def get_control_setpoint(self, output):
@@ -1345,6 +1355,10 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
                     A limit of zero will turn the feature off.
 
         """
+        if not isinstance(limit, (int, float)):
+            raise ValueError(f"Temperature limit must be a number, got {type(limit).__name__}")
+        if limit < 0:
+            raise ValueError(f"Temperature limit {limit} must be non-negative")
         self.command(f"TLIMIT {input_channel},{limit}")
 
     def get_temperature_limit(self, input_channel):
