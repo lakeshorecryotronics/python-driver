@@ -85,14 +85,6 @@ class GenericInstrument:
     vid_pid = []
     logger = logging.getLogger(__name__)
 
-    @staticmethod
-    def _validate_scpi_parameter(value, param_name):
-        """Validate a parameter value for SCPI safety."""
-        str_value = str(value)
-        if ';' in str_value or '\n' in str_value or '\r' in str_value:
-            raise ValueError(
-                f"Invalid characters in {param_name}: SCPI delimiters not allowed in parameter values")
-
     def __init__(self, serial_number, com_port, baud_rate, data_bits, stop_bits, parity, flow_control,
                  handshaking, timeout, ip_address, tcp_port, connection=None):
         # Initialize values common to all instruments
@@ -360,3 +352,11 @@ class GenericInstrument:
 
     def _get_identity(self):
         return self.query('*IDN?').split(',')
+
+    @staticmethod
+    def _validate_scpi_parameter(value, param_name):
+        """Validate a parameter value for SCPI safety."""
+        str_value = str(value)
+        if ';' in str_value or '\n' in str_value or '\r' in str_value:
+            raise ValueError(
+                f"Invalid characters in {param_name}: SCPI delimiters not allowed in parameter values")
