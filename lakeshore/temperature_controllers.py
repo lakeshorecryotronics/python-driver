@@ -1084,6 +1084,9 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         pid_values = self.query(f"PID? {output}")
         pid_values = pid_values.split(",")
         derivative = float(pid_values[2])
+        # "ramp_rate" was the original (incorrect) key name for the derivative PID term.
+        # Kept for backward compatibility — new code should use "derivative" to match
+        # the set_heater_pid() parameter name.
         return {"gain": float(pid_values[0]),
                 "integral": float(pid_values[1]),
                 "derivative": derivative,
