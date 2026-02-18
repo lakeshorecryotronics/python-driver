@@ -364,7 +364,7 @@ class Model335(Model335Enums, TemperatureController):
             sensor_range = 0
         elif input_sensor_type == self.InputSensorType.DIODE:
             sensor_range = self.DiodeRange(int(sensor_configuration[2]))
-        elif input_sensor_type in (self.InputSensorType.PLATINUM_RTD or self.InputSensorType.NTC_RTD):
+        elif input_sensor_type in (self.InputSensorType.PLATINUM_RTD, self.InputSensorType.NTC_RTD):
             sensor_range = self.RTDRange(int(sensor_configuration[2]))
         elif input_sensor_type == self.InputSensorType.THERMOCOUPLE:
             sensor_range = self.ThermocoupleRange(int(sensor_configuration[2]))

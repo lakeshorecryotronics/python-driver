@@ -324,7 +324,7 @@ class XIPInstrument(GenericInstrument):
                     An instrument specific QuestionableRegister class object with all bits configured true or false.
         """
 
-        integer_representation = self.questionable_register.to_integer(register_mask)
+        integer_representation = register_mask.to_integer()
         self.command(f"STATus:QUEStionable:ENABle {str(integer_representation)}", check_errors=False)
 
     def reset_status_register_masks(self):
