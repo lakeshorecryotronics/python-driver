@@ -681,18 +681,17 @@ class TestBasicCommands(TestWithFakeModel346):
 
     def test_set_stability_settings(self):
         self.fake_connection.setup_response('No error')
-        stability_settings = Model346StabilitySettings(True, 0.5, 0.1, 30.0, False, True, True)
+        stability_settings = Model346StabilitySettings(True, 0.5, 0.1, 30.0, True, True)
         self.dut.set_stability_settings(1, stability_settings)
-        self.assertIn("OUTSTABLE 1,1,0.5,0.1,30.0,0,1,1", self.fake_connection.get_outgoing_message())
+        self.assertIn("OUTSTABLE 1,1,0.5,0.1,30.0,1,1", self.fake_connection.get_outgoing_message())
 
     def test_get_stability_settings(self):
-        self.fake_connection.setup_response('1,0.5,0.1,30.0,0,1,1;No error')
+        self.fake_connection.setup_response('1,0.5,0.1,30.0,1,1;No error')
         response = self.dut.get_stability_settings(1)
         self.assertEqual(response.enabled, True)
         self.assertEqual(response.acceptable_error, 0.5)
         self.assertEqual(response.max_reading_to_reading_delta, 0.1)
         self.assertEqual(response.settle_time, 30.0)
-        self.assertEqual(response.latch, False)
         self.assertEqual(response.audible, True)
         self.assertEqual(response.visible, True)
         self.assertIn("OUTSTABLE? 1", self.fake_connection.get_outgoing_message())

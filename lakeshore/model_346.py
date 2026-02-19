@@ -89,7 +89,7 @@ class Model346AlarmSettings:
 class Model346StabilitySettings:
     """Class used to configure an alarm in conjunction with the set/get_alarm_settings() method for the Model346."""
 
-    def __init__(self, enabled, acceptable_error, max_reading_to_reading_delta, settle_time, latch, audible, visible):
+    def __init__(self, enabled, acceptable_error, max_reading_to_reading_delta, settle_time, audible, visible):
         """Constructor for AlarmSettings class.
 
             Args:
@@ -101,8 +101,6 @@ class Model346StabilitySettings:
                     Specifies max difference between two readings.
                 settle_time (float):
                     Specifies the amount of time both conditions must be true.
-                latch (bool):
-                    Specifies whether the stability latches when triggered.
                 audible (bool):
                     Specifies whether the stability is audible when triggered.
                 visible (bool):
@@ -113,7 +111,6 @@ class Model346StabilitySettings:
         self.acceptable_error = acceptable_error
         self.max_reading_to_reading_delta = max_reading_to_reading_delta
         self.settle_time = settle_time
-        self.latch = latch
         self.audible = audible
         self.visible = visible
 
@@ -541,12 +538,12 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Command Format:
                 OUTSTABLE <output>, <enabled>, <high limit>, <low limit>, <deadband>,
-                <latch>, <audible>, <visible>
+                <audible>, <visible>
         """
         command_string = (
             f"OUTSTABLE {output_channel},{int(stability_settings.enabled)},"
             f"{stability_settings.acceptable_error},{stability_settings.max_reading_to_reading_delta},"
-            f"{stability_settings.settle_time},{int(stability_settings.latch)},"
+            f"{stability_settings.settle_time},"
             f"{int(stability_settings.audible)},{int(stability_settings.visible)}"
         )
         self.command(command_string)
@@ -569,9 +566,8 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             acceptable_error=float(stability_params[1]),
             max_reading_to_reading_delta=float(stability_params[2]),
             settle_time=float(stability_params[3]),
-            latch=bool(int(stability_params[4])),
-            audible=bool(int(stability_params[5])),
-            visible=bool(int(stability_params[6]))
+            audible=bool(int(stability_params[4])),
+            visible=bool(int(stability_params[5]))
         )
 
     def turn_relay_on(self, relay_number):
