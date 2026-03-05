@@ -14,15 +14,83 @@ Model346OperationEvent = OperationEvent
 class Model346OperationRegister(RegisterBase):
     """Class object representing the operation status register.
 
-        (Not yet implemented)
+        Represents the top-level STATus:OPERation:CONDition? register.
+
+        Bit mapping from Model 346 manual (status_reference.rst),
+        STATus:OPERation:CONDition? section::
+
+            Bit 0 (weight 1):     CORE Summary Bit (A, B, C1-4, D1-4)
+            Bit 1 (weight 2):     OPTion Summary Bit (E, F, G, H)
+            Bit 2 (weight 4):     OUTput Summary Bit (1-10)
+            Bit 4 (weight 16):    ALL WARM bit
+            Bit 15 (weight 32768): External 24V not present
+            
+        All other bits (3, 5-14) are not used per the manual.
     """
+
+    bit_names = [
+        "core_summary",          # Bit 0: CORE Summary Bit
+        "option_summary",        # Bit 1: OPTion Summary Bit
+        "output_summary",        # Bit 2: OUTput Summary Bit
+        "",                      # Bit 3: not used
+        "all_warm",              # Bit 4: ALL WARM bit
+        "", "", "", "",          # Bits 5-8: not used
+        "", "", "", "",          # Bits 9-12: not used
+        "", "",                  # Bits 13-14: not used
+        "external_24v_missing"   # Bit 15: External 24V not present
+    ]
+
+    def __init__(self,
+                 core_summary,
+                 option_summary,
+                 output_summary,
+                 all_warm,
+                 external_24v_missing):
+        self.core_summary = core_summary
+        self.option_summary = option_summary
+        self.output_summary = output_summary
+        self.all_warm = all_warm
+        self.external_24v_missing = external_24v_missing
 
 
 class Model346QuestionableRegister(RegisterBase):
     """Class object representing the questionable status register.
 
-        (Not yet implemented)
+        Represents the top-level STATus:QUEStionable:CONDition? register.
+
+        **Note:** The Model 346 manual (status_reference.rst) does NOT explicitly
+        document the bit structure of the top-level questionable register. The manual
+        documents child registers (CORE, OPTion, OUTput, FUNCtion) but not the
+        top-level summary bit mapping.
+        
+        This implementation infers a structure analogous to the operation register,
+        assuming summary bits for each hierarchical group, but this should be
+        verified against actual instrument behavior.
+        
+        The Model 346 status system organizes questionable status into::
+        
+            - CORE: Inputs A, B, C1-C4, D1-D4 (RDGST? status)
+            - OPTion: Option cards E, F, G, H (channels 1-4 each)
+            - OUTput: Outputs 1-10 (OUTST? status)
+            - FUNCtion: Functions 1-16
     """
+
+    bit_names = [
+        "core_summary",     # Bit 0: CORE questionable summary (inferred)
+        "option_summary",   # Bit 1: OPTion questionable summary (inferred)
+        "output_summary",   # Bit 2: OUTput questionable summary (inferred)
+        "function_summary"  # Bit 3: FUNCtion questionable summary (inferred)
+    ]
+
+    def __init__(self,
+                 core_summary,
+                 option_summary,
+                 output_summary,
+                 function_summary):
+        self.core_summary = core_summary
+        self.option_summary = option_summary
+        self.output_summary = output_summary
+        self.function_summary = function_summary
 
 
 class Model346InputSensorSettings:
@@ -211,20 +279,35 @@ class Model346RelayControlSettings:
 
 
 class Model346InputReadingStatus(RegisterBase):
-    """Class object representing the input status flag bits."""
+    """Class object representing the input status flag bits.
+    
+        Represents the RDGST? input reading status query result.
+        
+        Per status_reference.rst, bit mapping is::
+        
+            Bit 0 (weight 1):   Hardware settling
+            Bit 1:              (not used)
+            Bit 2 (weight 4):   Temperature extrapolated
+            Bit 3 (weight 8):   Current source in compliance
+            Bit 4 (weight 16):  Temperature underrange
+            Bit 5 (weight 32):  Temperature overrange
+            Bit 6 (weight 64):  Sensor units reading under range
+            Bit 7 (weight 128): Sensor units reading over range
+    """
 
     bit_names = [
-        "hardware_settling",
-        "temperature_extrapolated",
-        "",
-        "current_source_in_compliance",
-        "temperature_underrange",
-        "temperature_overrange",
-        "sensor_units_readings_under_range",
-        "sensor_units_readings_over_range"
+        "hardware_settling",                  # Bit 0
+        "",                                   # Bit 1 (not used per manual)
+        "temperature_extrapolated",           # Bit 2
+        "current_source_in_compliance",       # Bit 3
+        "temperature_underrange",             # Bit 4
+        "temperature_overrange",              # Bit 5
+        "sensor_units_readings_under_range",  # Bit 6
+        "sensor_units_readings_over_range"    # Bit 7
     ]
 
-    def __init__(self, hardware_settling, temperature_extrapolated, current_source_in_compliance, temperature_underrange, temperature_overrange,
+    def __init__(self, hardware_settling, temperature_extrapolated, current_source_in_compliance, 
+                 temperature_underrange, temperature_overrange,
                  sensor_units_readings_under_range, sensor_units_readings_over_range):
         self.hardware_settling = hardware_settling
         self.temperature_extrapolated = temperature_extrapolated
@@ -236,7 +319,18 @@ class Model346InputReadingStatus(RegisterBase):
 
 
 class Model346InputReadingOperationStatus(RegisterBase):
-    """Class object representing the input reading operation status flag bits."""
+    """Class object representing the input reading operation status flag bits.
+    
+        Represents the RDGOPR? input reading operation status query result.
+        
+        Per status_reference.rst, bit mapping is::
+        
+            Bit 0 (weight 1):   Curve applied to input
+            Bit 1 (weight 2):   Input reading and settings in Celsius
+            Bits 2-5:           (not used)
+            Bit 6 (weight 64):  Input low alarm active
+            Bit 7 (weight 128): Input high alarm active
+    """
 
     bit_names = [
         "curve_applied",
@@ -257,7 +351,20 @@ class Model346InputReadingOperationStatus(RegisterBase):
 
 
 class Model346OutputOperationStatus(RegisterBase):
-    """Class object representing the output operation status flag bits."""
+    """Class object representing the output operation status flag bits.
+    
+        Represents the OUTOPR? output operation query result.
+        
+        Per status_reference.rst, bit mapping is::
+        
+            Bit 0:              (not used)
+            Bit 1 (weight 2):   RAMPST? is non-zero (ramp active)
+            Bits 2-3:           (not used)
+            Bit 4 (weight 16):  Output is stabilizing
+            Bit 5 (weight 32):  Output is stable
+            Bit 6 (weight 64):  Output is in warmup mode (heaters only)
+            Bit 7 (weight 128): Output is warm (heaters only)
+    """
 
     bit_names = [
         "",
@@ -278,7 +385,17 @@ class Model346OutputOperationStatus(RegisterBase):
         self.warm = warm
 
 class Model346OutputStatus(RegisterBase):
-    """Class object representing the output status flag bits."""
+    """Class object representing the output status flag bits.
+    
+        Represents the OUTST? output status query result.
+        
+        Per status_reference.rst, bit mapping is::
+        
+            Bit 0 (weight 1): HTRST? is non-zero (heater error)
+            Bit 1 (weight 2): Output is percentage limited
+            Bit 2 (weight 4): Output current source is zeroed to prevent
+                              transience while changing ranges
+    """
 
     bit_names = [
         "heater_error",
@@ -377,6 +494,12 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             ip_address,
             tcp_port,
             **kwargs)
+
+        # Configure status register classes for the Model 346
+        self.status_byte_register = StatusByteRegister
+        self.standard_event_register = StandardEventRegister
+        self.operation_register = Model346OperationRegister
+        self.questionable_register = Model346QuestionableRegister
 
     def set_filter(self, input_channel, filter_settings):
         """Configures the input filter for the specified channel.
