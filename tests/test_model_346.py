@@ -370,15 +370,19 @@ class TestBasicQueries(TestWithFakeModel346):
     def test_get_input_reading_status(self):
         self.fake_connection.setup_response('33;No error')
         response = self.dut.get_input_reading_status("A")
-        input_reading_status = Model346InputReadingStatus(hardware_settling=True,  # Bit 0 (1)
-                                                            current_source_in_compliance=False,  # Bit 3 (8) not set
-                                                             temperature_underrange=False,  # Bit 4 (16) not set
-                                                              temperature_overrange=True,  # Bit 5 (32)
-                                                                sensor_units_readings_under_range=False,  # Bit 6 (64) not set
-                                                                 sensor_units_readings_over_range=False  # Bit 7 (128) not set
+        # Response 33 = 0b00100001 = bit 0 (1) + bit 5 (32)
+        input_reading_status = Model346InputReadingStatus(
+            hardware_settling=True,                       # Bit 0 (weight 1)
+            temperature_extrapolated=False,               # Bit 2 (weight 4) not set
+            current_source_in_compliance=False,           # Bit 3 (weight 8) not set
+            temperature_underrange=False,                 # Bit 4 (weight 16) not set
+            temperature_overrange=True,                   # Bit 5 (weight 32)
+            sensor_units_readings_under_range=False,      # Bit 6 (weight 64) not set
+            sensor_units_readings_over_range=False        # Bit 7 (weight 128) not set
         )
 
         self.assertEqual(response.hardware_settling, input_reading_status.hardware_settling)
+        self.assertEqual(response.temperature_extrapolated, input_reading_status.temperature_extrapolated)
         self.assertEqual(response.current_source_in_compliance, input_reading_status.current_source_in_compliance)
         self.assertEqual(response.temperature_overrange, input_reading_status.temperature_overrange)
         self.assertEqual(response.temperature_underrange, input_reading_status.temperature_underrange)
