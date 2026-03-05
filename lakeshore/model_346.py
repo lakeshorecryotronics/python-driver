@@ -281,13 +281,15 @@ class Model346OutputStatus(RegisterBase):
     """Class object representing the output status flag bits."""
 
     bit_names = [
-        "short_circuit_detected",
-        "percentage_limited"
+        "heater_error",
+        "percentage_limited",
+        "current_source_zeroed"
     ]
 
-    def __init__(self, short_circuit_detected, percentage_limited):
-        self.short_circuit_detected = short_circuit_detected
+    def __init__(self, heater_error, percentage_limited, current_source_zeroed):
+        self.heater_error = heater_error
         self.percentage_limited = percentage_limited
+        self.current_source_zeroed = current_source_zeroed
 
 class Model346FilterSettings:
     """Class used to configure input filter settings in conjunction with the set/get_filter() methods."""
@@ -1079,7 +1081,10 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             Returns:
                 (Model346OutputStatus):
                     Boolean representation of each bit of the output status flag register.
-                    Includes: heater_error (HTRST? is non-zero), percentage_limited.
+                    Includes:
+                    - heater_error: HTRST? is non-zero
+                    - percentage_limited: Output is percentage limited
+                    - current_source_zeroed: Output current source is zeroed to prevent transience while changing ranges
 
         """
         response = int(self.query(f"OUTST? {output}"))
