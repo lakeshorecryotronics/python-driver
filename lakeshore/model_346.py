@@ -114,13 +114,11 @@ class Model346InputSensorSettings:
                     and Model346Enums.NTCRTDRange.
 
         """
-
         self.sensor_type = sensor_type
         self.autorange_enable = autorange_enable
         self.compensation = compensation
         self.units = units
         self.input_range = input_range
-
 
 class Model346AlarmSettings:
     """Class used to configure an alarm in conjunction with the set/get_alarm_settings() method for the Model346."""
@@ -186,7 +184,7 @@ class Model346StabilitySettings:
 class Model346ControlLoopZoneSettings:
     """Control loop configuration for a particular heater output and zone."""
 
-    def __init__(self, upper_bound, proportional, integral, derivative, manual_out_value, output_limit, heater_range, 
+    def __init__(self, upper_bound, proportional, integral, derivative, manual_out_value, output_limit, heater_range,
                  channel, rate):
         """Constructor.
 
@@ -306,7 +304,7 @@ class Model346InputReadingStatus(RegisterBase):
         "sensor_units_readings_over_range"    # Bit 7
     ]
 
-    def __init__(self, hardware_settling, temperature_extrapolated, current_source_in_compliance, 
+    def __init__(self, hardware_settling, temperature_extrapolated, current_source_in_compliance,
                  temperature_underrange, temperature_overrange,
                  sensor_units_readings_under_range, sensor_units_readings_over_range):
         self.hardware_settling = hardware_settling
@@ -1393,7 +1391,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """
         response = self.query(f"RELAY? {relay_number}").split(",")
         mode = self.RelayControlMode(int(response[0]))
-        
+
         # Parse condition based on mode
         condition_value = int(response[2])
         if mode == self.RelayControlMode.THERMOMETRY_INPUT:
@@ -1406,7 +1404,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             condition = self.RelayFunctionOutputCondition(condition_value)
         else:
             condition = condition_value  # For OFF, ON, and SYSTEM_STATUS modes
-        
+
         return Model346RelayControlSettings(
             mode=mode,
             instance=response[1],
