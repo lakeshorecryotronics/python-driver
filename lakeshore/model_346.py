@@ -24,8 +24,9 @@ class Model346OperationRegister(RegisterBase):
             Bit 2 (weight 4):     OUTput Summary Bit (1-10)
             Bit 4 (weight 16):    ALL WARM bit
             Bit 15 (weight 32768): External 24V not present
-            
+
         All other bits (3, 5-14) are not used per the manual.
+
     """
 
     bit_names = [
@@ -73,6 +74,7 @@ class Model346QuestionableRegister(RegisterBase):
             - OPTion: Option cards E, F, G, H (channels 1-4 each)
             - OUTput: Outputs 1-10 (OUTST? status)
             - FUNCtion: Functions 1-16
+
     """
 
     bit_names = [
@@ -291,6 +293,7 @@ class Model346InputReadingStatus(RegisterBase):
             Bit 5 (weight 32):  Temperature overrange
             Bit 6 (weight 64):  Sensor units reading under range
             Bit 7 (weight 128): Sensor units reading over range
+
     """
 
     bit_names = [
@@ -328,6 +331,7 @@ class Model346InputReadingOperationStatus(RegisterBase):
             Bits 2-5:           (not used)
             Bit 6 (weight 64):  Input low alarm active
             Bit 7 (weight 128): Input high alarm active
+
     """
 
     bit_names = [
@@ -362,6 +366,7 @@ class Model346OutputOperationStatus(RegisterBase):
             Bit 5 (weight 32):  Output is stable
             Bit 6 (weight 64):  Output is in warmup mode (heaters only)
             Bit 7 (weight 128): Output is warm (heaters only)
+
     """
 
     bit_names = [
@@ -393,6 +398,7 @@ class Model346OutputStatus(RegisterBase):
             Bit 1 (weight 2): Output is percentage limited
             Bit 2 (weight 4): Output current source is zeroed to prevent
                               transience while changing ranges
+
     """
 
     bit_names = [
@@ -859,23 +865,28 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
     def set_output_percent_limit(self, output, percent_limit):
         """Sets the output percent limit for a particular output.
-        Args:
-            output (int):
-                Specifies which output to configure (1 - 10).
-            percent_limit (int):
-                Sets a percentage limit for a particular output.
-            """
+
+            Args:
+                output (int):
+                    Specifies which output to configure (1 - 10).
+                percent_limit (int):
+                    Sets a percentage limit for a particular output.
+
+        """
         self.command(f"OUTLIMIT {output},{percent_limit}")
 
     def get_output_percent_limit(self, output):
-        """Sets the output percent limit for a particular output.
-        Args:
-            output (int):
-                Specifies which output to configure (1 - 10).
-        Returns:
-             (int):
-              The set percentage limit for a particular output.
-            """
+        """Returns the output percent limit for a particular output.
+
+            Args:
+                output (int):
+                    Specifies which output to query (1 - 10).
+
+            Returns:
+                int:
+                    The set percentage limit for a particular output.
+
+        """
         output_limit = int(self.query(f"OUTLIMIT? {output}"))
         return output_limit
 
