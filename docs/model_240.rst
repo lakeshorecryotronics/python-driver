@@ -36,17 +36,17 @@ with instrument settings and other methods that use objects and classes.
 .. autoclass:: lakeshore.model_240.Model240CurveHeader
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: lakeshore.model_240.Model240InputParameter
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: lakeshore.model_240.Model240ProfiSlot
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 Enumeration objects
 ___________________

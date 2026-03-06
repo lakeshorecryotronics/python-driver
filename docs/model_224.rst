@@ -32,17 +32,17 @@ ________________
 .. autoclass:: Model224AlarmParameters
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model224InputSensorSettings
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model224CurveHeader
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 Enumeration objects
 ___________________

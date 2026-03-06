@@ -41,12 +41,12 @@ accept an argument of a class object, specific to the Lake Shore model 335.
 .. autoclass:: Model335InputSensorSettings
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model335ControlLoopZoneSettings
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 Status register classes
 _______________________

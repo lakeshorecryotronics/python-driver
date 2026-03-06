@@ -40,12 +40,10 @@ This page outlines the objects and classes used to interact with registers in th
 .. autoclass:: StatusByteRegister
     :noindex:
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: StandardEventRegister
     :noindex:
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 

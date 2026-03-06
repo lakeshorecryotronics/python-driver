@@ -13,11 +13,13 @@ Begin by completing the :ref:`installation` process then read up on :ref:`gettin
 .. _Lake Shore: https://www.lakeshore.com
 .. _github page: https://github.com/lakeshorecryotronics/python-driver
 
+
 Supported Products
 ==================
 Some products are fully supported by the driver and do not require knowledge of the remote interface commands and queries. Instruments with basic support will establish a connection but require familiarity with the product's commands and queries.
 
 Visit the :ref:`supported_instruments` section to view a complete list of products supported by the driver.
+
 
 Table of contents
 =================

@@ -46,50 +46,50 @@ methods of the M91.
 .. autoclass:: ContactCheckManualParameters
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: ContactCheckOptimizedParameters
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: FastHallManualParameters
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: FastHallLinkParameters
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: FourWireParameters
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: DCHallParameters
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: ResistivityManualParameters
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: ResistivityLinkParameters
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: StatusByteRegister
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: StandardEventRegister
     :members:
 
-    .. automethod:: __init__
+    :special-members: __init__
 

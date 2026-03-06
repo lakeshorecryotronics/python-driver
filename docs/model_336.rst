@@ -37,33 +37,27 @@ accept an argument of a class object, specific to the Lake Shore model 336.
 
 .. autoclass:: Model336InputSensorSettings
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model336ControlLoopZoneSettings
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model336AlarmSettings
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: lakeshore.temperature_controllers.AlarmSettings
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model336CurveHeader
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: lakeshore.temperature_controllers.CurveHeader
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 Status Register Classes
 _______________________

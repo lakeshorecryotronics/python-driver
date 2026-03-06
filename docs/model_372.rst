@@ -39,38 +39,31 @@ _________________________________________
 
 .. autoclass:: Model372InputChannelSettings
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model372InputSetupSettings
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model372HeaterOutputSettings
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model372ControlLoopZoneSettings
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model372AlarmParameters
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model372CurveHeader
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: CurveHeader
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model372StandardEventRegister
     :members:
