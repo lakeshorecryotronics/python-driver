@@ -349,3 +349,21 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 sys.path.insert(0, os.path.abspath(".."))
+
+
+# -- Custom Sphinx configuration ------------------------------------------
+
+def autodoc_skip_member(app, what, name, obj, skip, options):
+    """Skip inherited to_bytes and from_bytes methods from Python's int class.
+    
+    These methods are automatically inherited by IntEnum classes but are not
+    relevant to the instrument driver API and cause Sphinx docstring warnings.
+    """
+    if name in ('to_bytes', 'from_bytes'):
+        return True
+    return skip
+
+
+def setup(app):
+    """Sphinx setup hook to connect custom event handlers."""
+    app.connect('autodoc-skip-member', autodoc_skip_member)
