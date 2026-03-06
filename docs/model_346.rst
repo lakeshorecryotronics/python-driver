@@ -36,18 +36,15 @@ accept an argument of a class object, specific to the Lake Shore model 346.
 
 .. autoclass:: Model346InputSensorSettings
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model346AlarmSettings
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 .. autoclass:: Model346CurveHeader
     :members:
-
-    .. automethod:: __init__
+    :special-members: __init__
 
 
 Enumeration objects
