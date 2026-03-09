@@ -627,21 +627,21 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         )
 
     def set_stability_settings(self, output_channel, stability_settings):
-        """Sets the configuration of a particular alarm.
+        """Sets the stability detection configuration for a particular output.
 
             Args:
-                output_channel (str):
-                    Specifies the output channel to configure (e.g., 1, 2, 5, 6, 9 etc.).
+                output_channel (int):
+                    Specifies the output channel to configure (1 to 10).
                 stability_settings (Model346StabilitySettings):
                     The configuration that should be applied to the output.
 
             Command Format:
-                OUTSTABLE <output>, <enabled>, <high limit>, <low limit>, <deadband>,
+                OUTSTABLE <output>, <enabled>, <setpoint error>, <settle time>,
                 <audible>, <visible>
         """
         command_string = (
             f"OUTSTABLE {output_channel},{int(stability_settings.enabled)},"
-            f"{stability_settings.acceptable_error},{stability_settings.max_reading_to_reading_delta},"
+            f"{stability_settings.setpoint_error},"
             f"{stability_settings.settle_time},"
             f"{int(stability_settings.audible)},{int(stability_settings.visible)}"
         )
@@ -662,11 +662,10 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         stability_params = self.query(f"OUTSTABLE? {output_channel}").split(",")
         return Model346StabilitySettings(
             enabled=bool(int(stability_params[0])),
-            acceptable_error=float(stability_params[1]),
-            max_reading_to_reading_delta=float(stability_params[2]),
-            settle_time=float(stability_params[3]),
-            audible=bool(int(stability_params[4])),
-            visible=bool(int(stability_params[5]))
+            setpoint_error=float(stability_params[1]),
+            settle_time=float(stability_params[2]),
+            audible=bool(int(stability_params[3])),
+            visible=bool(int(stability_params[4]))
         )
 
     def turn_relay_on(self, relay_number):
