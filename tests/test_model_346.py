@@ -677,11 +677,6 @@ class TestBasicCommands(TestWithFakeModel346):
         self.assertDictEqual(response, {"input_one": 1, "input_two": 0})
         self.assertIn("DIGIN?", self.fake_connection.get_outgoing_message())
 
-    def test_turn_alarm_off(self):
-        self.fake_connection.setup_response('No error')
-        self.dut.turn_alarm_off("A")
-        self.assertIn("ALARM A,,,,0,", self.fake_connection.get_outgoing_message())
-
     def test_set_stability_settings(self):
         self.fake_connection.setup_response('No error')
         stability_settings = Model346StabilitySettings(True, 0.5, 0.1, 30.0, True, True)

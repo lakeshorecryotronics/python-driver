@@ -58,13 +58,6 @@ class Model346Enums:
         POWER = 0
         CURRENT = 1
 
-    class AlarmType(IntEnum):
-        """Enumeration for possible alarm output types"""
-        NONE = 0
-        RELAY = 1
-        FRONT_DISPLAY = 2
-        FRONT_AUDIO = 3
-
     class OutputMode(IntEnum):
         """Output control enumeration."""
         OFF = 0

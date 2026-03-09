@@ -646,16 +646,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             visible=bool(int(alarm_params[6]))
         )
 
-    def turn_alarm_off(self, alarm_id):
-        """Sets the output mode of a particular alarm to NONE (off).
-
-                Args:
-                    alarm_id (int):
-                        Specifies the alarm of interest.
-
-        """
-        self.command(f"ALARM {alarm_id},,,,{self.AlarmType.NONE},")
-
     def set_stability_settings(self, output_channel, stability_settings):
         """Sets the configuration of a particular alarm.
 
