@@ -94,6 +94,7 @@ class Model346Enums:
         """Enumeration for relay control feature/mode."""
         OFF = 0
         ON = 1
+        ALARMS = 2
         THERMOMETRY_INPUT = 2
         OUTPUT_STATUS = 3
         DIGITAL_INPUT = 4

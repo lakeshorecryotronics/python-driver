@@ -309,11 +309,10 @@ class TestBasicQueries(TestWithFakeModel346):
     def test_get_heater_output_mode(self):
         self.fake_connection.setup_response('4,1,1,0;No error')
         response = self.dut.get_output_mode(1)
-        heater_output_settings = {"mode": self.dut.OutputMode.MONITOR_OUT,
-                                  "input_channel": '1',
-                                  "powerup_enable": True,
-                                  "warmup": False}
-        self.assertDictEqual(response, heater_output_settings)
+        self.assertEqual(response.mode, self.dut.OutputMode.MONITOR_OUT)
+        self.assertEqual(response.input_channel, '1')
+        self.assertEqual(response.powerup_enable, True)
+        self.assertEqual(response.warmup, False)
 
         self.assertIn("OUTMODE? 1", self.fake_connection.get_outgoing_message())
 
@@ -322,7 +321,7 @@ class TestBasicQueries(TestWithFakeModel346):
         response = self.dut.get_heater_pid(1)
         pid_settings = {"gain": 4.25,
                         "integral": 6.1,
-                        "ramp_rate": 0}
+                        "derivative": 0.0}
         self.assertDictEqual(response, pid_settings)
         self.assertIn("PID? 1", self.fake_connection.get_outgoing_message())
 
@@ -349,16 +348,15 @@ class TestBasicQueries(TestWithFakeModel346):
     def test_get_relay_alarm_control_parameters(self):
         self.fake_connection.setup_response('0,A,2;No error')
         response = self.dut.get_relay_alarm_control_parameters(1)
-        relay_alarm = {"mode": False,
-                        "input_channel": "A",
-                        "condition": self.dut.RelayControlAlarm.LOW_OR_HIGH_ALARM}
-        self.assertDictEqual(response, relay_alarm)
+        self.assertEqual(response.mode, self.dut.RelayControlMode.OFF)
+        self.assertEqual(response.instance, "A")
+        self.assertEqual(response.condition, 2)
         self.assertIn("RELAY? 1", self.fake_connection.get_outgoing_message())
 
     def test_get_relay_control_mode(self):
         self.fake_connection.setup_response('2,A,2;No error')
         response = self.dut.get_relay_control_mode(1)
-        self.assertEqual(response, self.dut.RelayControlMode.ALARMS)
+        self.assertEqual(response, self.dut.RelayControlMode.THERMOMETRY_INPUT)
         self.assertIn("RELAY? 1", self.fake_connection.get_outgoing_message())
 
     def test_get_relay_status(self):
@@ -431,12 +429,13 @@ class TestBasicQueries(TestWithFakeModel346):
         self.fake_connection.setup_response('3;No error')  # Binary: 11 = 1+2
         response = self.dut.get_output_status(1)
         
-        # Bit 0 (1): Open circuit/ Short detected
-        # Bit 1 (2): Percentage limited
+        # Bit 0 (1): HTRST? is non-zero (heater error)
+        # Bit 1 (2): Output is percentage limited
         # Total: 1 + 2 = 3
         
-        self.assertEqual(response.short_circuit_detected, True)
+        self.assertEqual(response.heater_error, True)
         self.assertEqual(response.percentage_limited, True)
+        self.assertEqual(response.current_source_zeroed, False)
 
         self.assertIn("OUTST? 1", self.fake_connection.get_outgoing_message())
 
@@ -624,7 +623,7 @@ class TestBasicCommands(TestWithFakeModel346):
 
     def test_set_relay_alarms(self):
         self.fake_connection.setup_response('No error')
-        self.dut.set_relay_alarms(1, self.dut.RelayControlMode.ALARMS, 'A', self.dut.RelayControlAlarm.HIGH_ALARM)
+        self.dut.set_relay_alarms(1, self.dut.RelayControlMode.THERMOMETRY_INPUT, 'A', self.dut.RelayControlAlarm.HIGH_ALARM)
         self.assertIn("RELAY 1,2,A,1", self.fake_connection.get_outgoing_message())
 
     def test_set_soft_cal_curve_dt_470(self):
