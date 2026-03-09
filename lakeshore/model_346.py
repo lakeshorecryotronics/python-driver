@@ -1,6 +1,5 @@
 """Implements functionality unique to the Lake Shore Model 346."""
 
-from enum import IntEnum  # pylint: disable=unused-import
 from lakeshore.temperature_controllers import TemperatureController, CurveHeader, OperationEvent
 from lakeshore.xip_instrument import XIPInstrument, StandardEventRegister, StatusByteRegister, RegisterBase
 from lakeshore.model_346_enums import Model346Enums
@@ -15,9 +14,6 @@ class Model346OperationRegister(RegisterBase):
     """Class object representing the operation status register.
 
         Represents the top-level STATus:OPERation:CONDition? register.
-
-        Bit mapping from Model 346 manual (status_reference.rst),
-        STATus:OPERation:CONDition? section::
 
             Bit 0 (weight 1):     CORE Summary Bit (A, B, C1-4, D1-4)
             Bit 1 (weight 2):     OPTion Summary Bit (E, F, G, H)
@@ -59,15 +55,6 @@ class Model346QuestionableRegister(RegisterBase):
 
         Represents the top-level STATus:QUEStionable:CONDition? register.
 
-        **Note:** The Model 346 manual (status_reference.rst) does NOT explicitly
-        document the bit structure of the top-level questionable register. The manual
-        documents child registers (CORE, OPTion, OUTput, FUNCtion) but not the
-        top-level summary bit mapping.
-        
-        This implementation infers a structure analogous to the operation register,
-        assuming summary bits for each hierarchical group, but this should be
-        verified against actual instrument behavior.
-        
         The Model 346 status system organizes questionable status into::
         
             - CORE: Inputs A, B, C1-C4, D1-D4 (RDGST? status)
@@ -78,10 +65,10 @@ class Model346QuestionableRegister(RegisterBase):
     """
 
     bit_names = [
-        "core_summary",     # Bit 0: CORE questionable summary (inferred)
-        "option_summary",   # Bit 1: OPTion questionable summary (inferred)
-        "output_summary",   # Bit 2: OUTput questionable summary (inferred)
-        "function_summary"  # Bit 3: FUNCtion questionable summary (inferred)
+        "core_summary",     # Bit 0: CORE questionable summary
+        "option_summary",   # Bit 1: OPTion questionable summary
+        "output_summary",   # Bit 2: OUTput questionable summary
+        "function_summary"  # Bit 3: FUNCtion questionable summary
     ]
 
     def __init__(self,
@@ -155,18 +142,16 @@ class Model346AlarmSettings:
 
 
 class Model346StabilitySettings:
-    """Class used to configure an alarm in conjunction with the set/get_alarm_settings() method for the Model346."""
+    """Class used to configure stability settings in conjunction with the set/get_stability_settings() method for the Model346."""
 
-    def __init__(self, enabled, acceptable_error, max_reading_to_reading_delta, settle_time, audible, visible):
-        """Constructor for AlarmSettings class.
+    def __init__(self, enabled, setpoint_error, settle_time, audible, visible):
+        """Constructor for StabilitySettings class.
 
             Args:
                 enabled (bool):
-                    Enables or Disables the alarm.
-                acceptable_error (float):
+                    Enables or Disables the stability.
+                setpoint_error (float):
                     Specifies max acceptable error between setpoint and reading.
-                max_reading_to_reading_delta (float):
-                    Specifies max difference between two readings.
                 settle_time (float):
                     Specifies the amount of time both conditions must be true.
                 audible (bool):
@@ -176,8 +161,7 @@ class Model346StabilitySettings:
 
         """
         self.enabled = enabled
-        self.acceptable_error = acceptable_error
-        self.max_reading_to_reading_delta = max_reading_to_reading_delta
+        self.setpoint_error = setpoint_error
         self.settle_time = settle_time
         self.audible = audible
         self.visible = visible
@@ -248,7 +232,7 @@ class Model346OutputModeSettings:
 
 
 class Model346RelayControlSettings:
-    """Class used to configure relay control settings in conjunction with the set/get_relay_control() methods."""
+    """Class used to configure relay control settings."""
 
     def __init__(self, mode, instance, condition):
         """Constructor for RelayControlSettings class.
@@ -323,8 +307,6 @@ class Model346InputReadingOperationStatus(RegisterBase):
     """Class object representing the input reading operation status flag bits.
     
         Represents the RDGOPR? input reading operation status query result.
-        
-        Per status_reference.rst, bit mapping is::
         
             Bit 0 (weight 1):   Curve applied to input
             Bit 1 (weight 2):   Input reading and settings in Celsius
@@ -571,12 +553,10 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                 input_channel (str):
                     Specifies input to configure: A, B, C1-C4, D1-D4, E1-E4, F1-F4, G1-G4, H1-H4.
                 threshold_id (int):
-                    Threshold identifier (typically 1 to 4; instrument enforces range).
+                    Threshold identifier (1 to 4).
                 threshold_settings (Model346ThresholdSettings):
                     Threshold configuration to apply.
 
-            Command Format:
-                THRESHOLD <input>, <id>, <value>, <comparison>
         """
         self.command(
             f"THRESHOLD {input_channel},{threshold_id},{float(threshold_settings.value)},"
@@ -590,7 +570,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                 input_channel (str):
                     Specifies input to query: A, B, C1-C4, D1-D4, E1-E4, F1-F4, G1-G4, H1-H4.
                 threshold_id (int):
-                    Threshold identifier (typically 1 to 4; instrument enforces range).
+                    Threshold identifier (1 to 4).
 
             Returns:
                 Model346ThresholdSettings:
@@ -668,7 +648,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         self.command(command_string)
 
     def get_stability_settings(self, output_channel):
-        """Returns present configuration of a particular alarm.
+        """Returns present configuration of a particular stability setting.
 
             Args:
                 output_channel (int):
