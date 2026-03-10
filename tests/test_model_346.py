@@ -614,12 +614,12 @@ class TestBasicCommands(TestWithFakeModel346):
     def test_turn_relay_on(self):
         self.fake_connection.setup_response('No error')
         self.dut.turn_relay_on(2)
-        self.assertIn("RELAY 2,1,None,0", self.fake_connection.get_outgoing_message())
+        self.assertIn("RELAY 2,1,0,0", self.fake_connection.get_outgoing_message())
 
     def test_turn_relay_off(self):
         self.fake_connection.setup_response('No error')
         self.dut.turn_relay_off(2)
-        self.assertIn("RELAY 2,0,None,0", self.fake_connection.get_outgoing_message())
+        self.assertIn("RELAY 2,0,0,0", self.fake_connection.get_outgoing_message())
 
     def test_set_relay_alarms(self):
         self.fake_connection.setup_response('No error')
@@ -701,7 +701,7 @@ class TestBasicCommands(TestWithFakeModel346):
     def test_get_heater_autorange(self):
         self.fake_connection.setup_response('1;No error')
         response = self.dut.get_heater_autorange(1)
-        self.assertEqual(response, self.dut.HeaterRange.LOW)
+        self.assertEqual(response, self.dut.HeaterAutorange.ENABLED)
         self.assertIn("HTRAUTO? 1", self.fake_connection.get_outgoing_message())
 
     def test_set_analog_out_state(self):
@@ -787,11 +787,6 @@ class TestBasicCommands(TestWithFakeModel346):
         response = self.dut.get_curve_number_of_points(22)
         self.assertEqual(response, 200)
         self.assertIn("CRVNUMPTS? 22", self.fake_connection.get_outgoing_message())
-
-    def test_set_thermocouple_compensation_offset(self):
-        self.fake_connection.setup_response('No error')
-        self.dut.set_thermocouple_compensation_offset("E1", 2.5)
-        self.assertIn("TCCOMPOFFSET E1,2.5", self.fake_connection.get_outgoing_message())
 
     def test_get_thermocouple_compensation_offset(self):
         self.fake_connection.setup_response('2.5;No error')

@@ -48,6 +48,11 @@ class Model346Enums:
         LOW = 1
         HIGH = 2
 
+    class HeaterAutorange(IntEnum):
+        """Heater autorange enumeration for heater outputs 1-4."""
+        DISABLED = 0
+        ENABLED = 1
+
     class HeaterRangeAnalogOutput(IntEnum):
         """Heater range enumeration for analog outputs 5 and 8."""
         OFF = 0

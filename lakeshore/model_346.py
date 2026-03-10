@@ -119,11 +119,13 @@ class Model346AlarmSettings:
                 enabled (bool):
                     Enables or Disables the alarm.
                 high_limit (float):
-                    Specifies the high limit for the alarm in Kelvin.
+                    Specifies the high limit for the alarm. Units depend on
+                    whether a curve is assigned to the input (sensor units if
+                    no curve, K or C per INTYPE if a curve is assigned).
                 low_limit (float):
-                    Specifies the low limit for the alarm in Kelvin.
+                    Specifies the low limit for the alarm.
                 deadband (float):
-                    Specifies the deadband for the alarm in Kelvin.
+                    Specifies the deadband for the alarm.
                 latch (bool):
                     Specifies whether the alarm latches when triggered.
                 audible (bool):
@@ -716,11 +718,11 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                      f"{input_range},{int(sensor_params.compensation)},{sensor_params.units}")
 
     def get_input_sensor(self, input_channel):
-        """Sets the sensor type and associated parameters.
+        """Returns the sensor type and associated parameters.
 
             Args:
                 input_channel (str):
-                    Specifies input to configure (A - H4).
+                    Specifies input to query (A - H4).
 
             Returns:
                 Model346InputSensorSettings:
@@ -755,7 +757,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which output to configure (1 - 4).
+                    Specifies which output to configure (1 to 4, 9, or 10).
                 heater_range (Model346Enums.HeaterRange):
                     The heater range to apply to a particular output.
 
@@ -767,7 +769,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which output to query (1 - 4).
+                    Specifies which output to query (1 to 4, 9, or 10).
 
             Returns:
                 (Model346Enums.HeaterRange):
@@ -778,12 +780,12 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         return Model346Enums.HeaterRange(heater_range)
 
     def set_heater_autorange(self, output, enabled):
-        """Sets the heater autorange  setting for a particular output.
+        """Sets the heater autorange setting for a particular output.
 
             Args:
                 output (int):
                     Specifies which output to configure (1 - 4).
-                enabled (bool):
+                enabled (int):
                     Whether autorange should be enabled or disabled.
 
         """
@@ -797,12 +799,12 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                     Specifies which output to query (1 - 4).
 
             Returns:
-                (bool):
-                    Whether autorange should be enabled or disabled.
+                (Model346Enums.HeaterAutorange):
+                    Whether autorange is enabled or disabled.
 
         """
         heater_range = int(self.query(f"HTRAUTO? {output}"))
-        return Model346Enums.HeaterRange(heater_range)
+        return Model346Enums.HeaterAutorange(heater_range)
 
     def set_analog_out_state(self, output, analog_out_state):
         """Sets the analog out state to enable or disable
@@ -830,7 +832,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
         """
         analog_out_range = int(self.query(f"RANGE? {output}"))
-        return analog_out_range
+        return Model346.HeaterRangeAnalogOutput(analog_out_range)
 
     def set_output_percent_limit(self, output, percent_limit):
         """Sets the output percent limit for a particular output.
@@ -838,8 +840,8 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             Args:
                 output (int):
                     Specifies which output to configure (1 - 10).
-                percent_limit (int):
-                    Sets a percentage limit for a particular output.
+                percent_limit (float):
+                    Sets a percentage limit for a particular output (0 to 100).
 
         """
         self.command(f"OUTLIMIT {output},{percent_limit}")
@@ -869,7 +871,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which heater output to configure (1 - 4).
+                    Specifies which heater output to configure (1 to 4, 9 or 10)
                 heater_resistance (float):
                     10 to 100 ohms.
                 max_output (float):
@@ -887,7 +889,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which heater output to configure (1 - 4)
+                    Specifies which heater output to query (1 to 4, 9 or 10).
 
             Returns:
                 dict[str, float | Model346Enums.HeaterOutputUnits]:
@@ -906,10 +908,10 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which heater output to query (1 - 4)
+                    Specifies which heater output to query (1 - 8).
 
             Returns:
-                dict[str, float ]:
+                dict[str, float]:
                     {"heater_voltage": float, "heater_current": float, "heater_resistance": float, "heater_power": float}
 
         """
@@ -1014,11 +1016,14 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
     def start_warmup(self, room_temperature=293.15, percent_out=10):
         """Starts the warmup process for all heaters configured with
-        warmup set to True in OUTMODE
+        warmup set to True in OUTMODE.
 
         Args:
             room_temperature (float):
-                Specifies the room temperature in degrees Kelvin, defaulting to 293.15 K or about 68 F.
+                Target temperature in Kelvin (275 to 325). Defaults to 293.15 K.
+            percent_out (float):
+                The acceptable output percentage for the system to be considered
+                WARM (0 to 100). Defaults to 10.
         """
         self.command(f"WARM {room_temperature}, {percent_out}")
 
@@ -1029,11 +1034,13 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Analog output channel to configure (5 - 8)
+                    Analog output channel to configure (5 - 8).
                 high_value (float):
-                    Represents the data at which the Monitor Out reaches +100% output.
+                    Represents the input reading at which the Monitor Out reaches
+                    +100% output (+10 V).
                 low_value (float):
-                    Represents the data at which the analog output reaches 0% output.
+                    Represents the input reading at which the analog output reaches
+                    0% output (0 V).
 
         """
         command_string = f"ANALOG {output},{high_value},{low_value}"
@@ -1071,20 +1078,20 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         raise NotImplementedError("Implementation does not exist yet")
 
     def set_keypad_lock(self, state):
-        """Sets the state of the front panel keypad lock.
+        """Sets the state of the front panel settings lock.
 
             Args:
-                state (bool): The desired state of the keypad lock (True for locked, False for unlocked).
+                state (bool): The desired state of the settings lock (True for locked, False for unlocked).
 
         """
         command_string = f"SYSTem:KLOCk {int(state)}"
         self.command(command_string)
 
     def get_keypad_lock(self):
-        """Returns the current state of the front panel keypad lock.
+        """Returns the current state of the front panel settings lock.
 
             Returns:
-                bool: True if the keypad is locked, False if it is unlocked.
+                bool: True if settings are locked, False if unlocked.
 
         """
         response = self.query("SYSTem:KLOCk?")
@@ -1133,7 +1140,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                     Specifies the input channel to query (A - H4).
 
             Returns:
-                (InputReadingStatus):
+                (Model346InputReadingStatus):
                     Boolean representation of each bit of the input status flag register.
 
         """
@@ -1196,11 +1203,11 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 input_channel (str):
-                    Specifies the input channel to query (A - H4).
+                    Specifies the thermocouple input to query (E1, E2, F1, F2, G1, G2, H1, H2).
 
             Returns:
                 float:
-                    The thermocouple junction temperature in degrees Kelvin.
+                    The thermocouple junction temperature in Kelvin.
 
         """
         response = float(self.query(f"TEMP? {input_channel}"))
@@ -1246,7 +1253,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which output to reset (1 - 8).
+                    Specifies which output to reset (1 - 10).
 
         """
         self.command(f"SETPRST {output}")
@@ -1256,7 +1263,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which output to query (1 - 8).
+                    Specifies which output to query (1 - 10).
 
             Returns:
                 float:
@@ -1270,10 +1277,10 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which output to configure (1 - 8).
+                    Specifies which output to configure (1 to 4, 9, or 10).
                 zone_number (int):
                     Specifies which zone to configure (1 - 10).
-                zone_settings (Model346ControlLoopZeroSettings):
+                zone_settings (Model346ControlLoopZoneSettings):
                     The settings to apply to the specified zone.
 
         """
@@ -1288,7 +1295,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
 
             Args:
                 output (int):
-                    Specifies which output to query (1 - 8).
+                    Specifies which output to query (1 to 4, 9, or 10).
                 zone_number (int):
                     Specifies which zone to query (1 - 10).
 
@@ -1433,12 +1440,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             slot (str): Specifies the slot to query (E, F, G, H).
 
         Returns:
-            str: The type of option card connected to the slot:
-                - "Nothing"
-                - "Scanner"
-                - "Motor" # Currently not supported by python driver
-                - "Level Sense" # Currently not supported by python driver
-                - "Thermocouple"
+            Model346Enums.OptionCardType: The type of option card connected to the slot.
 
         Raises:
             ValueError: If the slot is invalid.
@@ -1455,16 +1457,16 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         return Model346Enums.OptionCardType(int(response[slot_index]))
 
     def get_option_card_channels(self, slot):
-        """Returns the number of channels available on the specified option card slot.
+        """Returns the list of channels available on the specified option card slot.
 
         Args:
             slot (str): Specifies the slot to query (E, F, G, H).
 
         Returns:
-            int: The number of channels available on the option card in the specified slot.
+            list[str]: The list of channels available on the option card in the specified slot.
 
         Raises:
-            ValueError: If the slot is invalid., 'Model346RelayControlSettings'
+            ValueError: If the slot is invalid.
         """
         if slot not in self.option_card_slots:
             raise ValueError(f"Invalid slot: {slot}. Valid slots are {', '.join(self.option_card_slots)}.")
