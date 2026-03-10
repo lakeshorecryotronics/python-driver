@@ -605,19 +605,19 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         )
         self.command(command_string)
 
-    def get_alarm_settings(self, alarm_id):
+    def get_alarm_settings(self, input_channel):
         """Returns present configuration of a particular alarm.
 
             Args:
-                alarm_id (int):
-                    Specifies the alarm of interest.
+                input_channel (str):
+                    Specifies the input channel to query (e.g., A, B, C1, C2, etc.).
 
             Returns:
                 Model346AlarmSettings:
                     An Model346AlarmSettings object populated with the respective alarm parameters.
 
         """
-        alarm_params = self.query(f"ALARM? {alarm_id}").split(",")
+        alarm_params = self.query(f"ALARM? {input_channel}").split(",")
         return Model346AlarmSettings(
             enabled=bool(int(alarm_params[0])),
             high_limit=float(alarm_params[1]),
@@ -854,11 +854,11 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                     Specifies which output to query (1 - 10).
 
             Returns:
-                int:
+                float:
                     The set percentage limit for a particular output.
 
         """
-        output_limit = int(self.query(f"OUTLIMIT? {output}"))
+        output_limit = float(self.query(f"OUTLIMIT? {output}"))
         return output_limit
 
     def all_heaters_off(self):
