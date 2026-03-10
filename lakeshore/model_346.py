@@ -1391,18 +1391,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             condition=condition
         )
 
-    def set_thermocouple_compensation_offset(self, input_channel, offset):
-        """Sets the thermal block compensation offset for a thermocouple input.
-        
-            Args:
-                input_channel (str):
-                    Specifies the thermocouple input to configure.
-                    Valid channels: E1, E2, F1, F2, G1, G2, H1, H2
-                offset (float):
-                    Offset value in Kelvin to apply to the thermal block temperature reading
-        """
-        self.command(f"TCCOMPOFFSET {input_channel},{offset}")
-
     def get_thermocouple_compensation_offset(self, input_channel):
         """Returns the thermal block compensation offset for a thermocouple input.
         
