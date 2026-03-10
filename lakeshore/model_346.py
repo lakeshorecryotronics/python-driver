@@ -678,7 +678,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                     1 or 2.
 
         """
-        input_channel = None
+        input_channel = 0
         condition = 0
         self.command(f"RELAY {relay_number},1,{input_channel},{condition}")
 
@@ -692,7 +692,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                     1 or 2.
 
         """
-        input_channel = None
+        input_channel = 0
         condition = 0
         self.command(f"RELAY {relay_number},0,{input_channel},{condition}")
 
