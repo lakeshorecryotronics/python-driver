@@ -310,11 +310,15 @@ class Model346InputReadingOperationStatus(RegisterBase):
     
         Represents the RDGOPR? input reading operation status query result.
         
-            Bit 0 (weight 1):   Curve applied to input
-            Bit 1 (weight 2):   Input reading and settings in Celsius
-            Bits 2-5:           (not used)
-            Bit 6 (weight 64):  Input low alarm active
-            Bit 7 (weight 128): Input high alarm active
+            Bit 0 (weight 1):    Curve applied to input
+            Bit 1 (weight 2):    Input reading and settings in Celsius
+            Bits 2-5:            (not used)
+            Bit 6 (weight 64):   Input low alarm active
+            Bit 7 (weight 128):  Input high alarm active
+            Bit 8 (weight 256):  Threshold 1 active
+            Bit 9 (weight 512):  Threshold 2 active
+            Bit 10 (weight 1024): Threshold 3 active
+            Bit 11 (weight 2048): Threshold 4 active
 
     """
 
@@ -326,14 +330,24 @@ class Model346InputReadingOperationStatus(RegisterBase):
         "",
         "",
         "low_alarm_active",
-        "high_alarm_active"
+        "high_alarm_active",
+        "threshold_1_active",
+        "threshold_2_active",
+        "threshold_3_active",
+        "threshold_4_active"
     ]
 
-    def __init__(self, curve_applied, reading_in_celsius, low_alarm_active, high_alarm_active):
+    def __init__(self, curve_applied, reading_in_celsius, low_alarm_active, high_alarm_active,
+                 threshold_1_active=False, threshold_2_active=False,
+                 threshold_3_active=False, threshold_4_active=False):
         self.curve_applied = curve_applied
         self.reading_in_celsius = reading_in_celsius
         self.low_alarm_active = low_alarm_active
         self.high_alarm_active = high_alarm_active
+        self.threshold_1_active = threshold_1_active
+        self.threshold_2_active = threshold_2_active
+        self.threshold_3_active = threshold_3_active
+        self.threshold_4_active = threshold_4_active
 
 
 class Model346OutputOperationStatus(RegisterBase):
