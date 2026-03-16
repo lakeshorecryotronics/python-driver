@@ -488,23 +488,6 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         """
         self.command(f"CRVDEL {curve}")
 
-    def get_alarm_status(self, channel):
-        """Returns the high state and low state of the alarm for the specified channel.
-
-                Args:
-                    channel (str or int)
-                        Specifies which input channel to read from.
-
-                Returns:
-                    (dict[str, bool]):
-                        {"high_state_enabled": bool, "low_state_enabled" bool}
-
-        """
-        response = self.query(f"ALARMST? {channel}")
-        separated_response = response.split(",")
-        return {"high_state_enabled": bool(int(separated_response[0])),
-                "low_state_enabled": bool(int(separated_response[1]))}
-
     def reset_alarm_status(self):
         """Clears the high and low status of all alarms."""
         self.command("ALMRST")
@@ -705,26 +688,6 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
         status_code = int(self.query(f"HTRST? {output}"))
         return self.HeaterError(status_code)
 
-    def set_ieee_488(self, address):
-        """Specifies the IEEE address.
-
-            Args:
-                address (int):
-                    1-30 (0 and 31 reserved).
-
-        """
-        self.command(f"IEEE {address}")
-
-    def get_ieee_488(self):
-        """Returns the IEEE address set.
-
-            Returns:
-                (int):
-                    Address 1-30 (0 and 31 reserved).
-
-        """
-        return int(self.query("IEEE?"))
-
     def set_input_curve(self, input_channel, curve_number):
         """Specifies the curve an input uses for temperature conversion.
 
@@ -825,27 +788,6 @@ class TemperatureController(GenericInstrument, TemperatureControllerEnums):
     def reset_min_max_data(self):
         """Resets the minimum and maximum input data."""
         self.command("MNMXRST")
-
-    def set_remote_interface_mode(self, mode):
-        """Places the instrument in one of three interface modes.
-
-            Args:
-                mode (TemperatureControllerEnums.InterfaceMode):
-                    A member of the instrument's InterfaceMode IntEnum class.
-
-        """
-        self.command(f"MODE {mode}")
-
-    def get_remote_interface_mode(self):
-        """Returns the state of the interface mode.
-
-            Returns:
-                (TemperatureControllerEnums.InterfaceMode):
-                    A member of the instrument's InterfaceMode IntEnum class.
-
-        """
-        mode = int(self.query("MODE?"))
-        return self.InterfaceMode(mode)
 
     def set_manual_output(self, output, value):
         """When instrument is in closed loop PID, Zone, or Open Loop modes a manual output may be set.
@@ -1462,6 +1404,27 @@ class LegacyTemperatureController(TemperatureController, LegacyTemperatureContro
         return {'activating_input_channel': activating_input_channel,
                 'alarm_relay_trigger_type': alarm_relay_trigger_type}
 
+    def set_remote_interface_mode(self, mode):
+        """Places the instrument in one of three interface modes.
+
+            Args:
+                mode (TemperatureControllerEnums.InterfaceMode):
+                    A member of the instrument's InterfaceMode IntEnum class.
+
+        """
+        self.command(f"MODE {mode}")
+
+    def get_remote_interface_mode(self):
+        """Returns the state of the interface mode.
+
+            Returns:
+                (TemperatureControllerEnums.InterfaceMode):
+                    A member of the instrument's InterfaceMode IntEnum class.
+
+        """
+        mode = int(self.query("MODE?"))
+        return self.InterfaceMode(mode)
+
     def set_display_field_settings(self, field, input_channel, display_units):
         """Configures a display field when the display is in custom mode.
 
@@ -1516,3 +1479,40 @@ class LegacyTemperatureController(TemperatureController, LegacyTemperatureContro
 
         """
         return bool(int(self.query("LEDS?")))
+    
+    def set_ieee_488(self, address):
+        """Specifies the IEEE address.
+
+            Args:
+                address (int):
+                    1-30 (0 and 31 reserved).
+
+        """
+        self.command(f"IEEE {address}")
+
+    def get_ieee_488(self):
+        """Returns the IEEE address set.
+
+            Returns:
+                (int):
+                    Address 1-30 (0 and 31 reserved).
+
+        """
+        return int(self.query("IEEE?"))
+    
+    def get_alarm_status(self, channel):
+        """Returns the high state and low state of the alarm for the specified channel.
+
+                Args:
+                    channel (str or int)
+                        Specifies which input channel to read from.
+
+                Returns:
+                    (dict[str, bool]):
+                        {"high_state_enabled": bool, "low_state_enabled" bool}
+
+        """
+        response = self.query(f"ALARMST? {channel}")
+        separated_response = response.split(",")
+        return {"high_state_enabled": bool(int(separated_response[0])),
+                "low_state_enabled": bool(int(separated_response[1]))}
