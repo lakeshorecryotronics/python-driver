@@ -20,6 +20,8 @@ Setting up outputs on the Model 346
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/346_output_setup_example.py
 
+Setting up options cards on the Model 346
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: examples/346_option_card_sensor_setup_example.py
 
 Instrument class methods
