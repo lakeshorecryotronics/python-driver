@@ -1479,7 +1479,7 @@ class LegacyTemperatureController(TemperatureController, LegacyTemperatureContro
 
         """
         return bool(int(self.query("LEDS?")))
-    
+
     def set_ieee_488(self, address):
         """Specifies the IEEE address.
 
@@ -1499,7 +1499,7 @@ class LegacyTemperatureController(TemperatureController, LegacyTemperatureContro
 
         """
         return int(self.query("IEEE?"))
-    
+
     def get_alarm_status(self, channel):
         """Returns the high state and low state of the alarm for the specified channel.
 

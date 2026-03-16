@@ -42,7 +42,7 @@ class TestBasicReadings(TestWithFakeModel346):
 
     def test_get_thermocouple_junction_temp(self):
         self.fake_connection.setup_response('218.65;No error')
-        response = self.dut._get_thermocouple_junction_temp("E1")
+        response = self.dut.get_thermocouple_junction_temp("E1")
         self.assertAlmostEqual(response, 218.65)
         self.assertIn("TEMP? E1", self.fake_connection.get_outgoing_message())
 
@@ -671,9 +671,9 @@ class TestBasicCommands(TestWithFakeModel346):
         response = self.dut.get_option_card_slot()
         self.assertEqual(response, ["E", "F", "G", "H"])
 
-    def test_get_digit_input_status(self):
+    def test_get_digital_input_status(self):
         self.fake_connection.setup_response('1,0;No error')
-        response = self.dut.get_digit_input_status()
+        response = self.dut.get_digital_input_status()
         self.assertDictEqual(response, {"input_one": 1, "input_two": 0})
         self.assertIn("DIGIN?", self.fake_connection.get_outgoing_message())
 

@@ -1,5 +1,7 @@
 """Implements functionality unique to the Lake Shore Model 346."""
 
+import warnings
+
 from lakeshore.temperature_controllers import TemperatureController, CurveHeader, OperationEvent
 from lakeshore.xip_instrument import XIPInstrument, StandardEventRegister, StatusByteRegister, RegisterBase
 from lakeshore.model_346_enums import Model346Enums
@@ -549,7 +551,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """
         return self.option_card_slots
 
-    def get_digit_input_status(self):
+    def get_digital_input_status(self):
         """Returns the status of the digital inputs.
 
             Returns:
@@ -607,9 +609,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                 alarm_settings (Model346AlarmSettings):
                     The configuration that should be applied to the alarm.
 
-            Command Format:
-                ALARM <input>, <enabled>, <high limit>, <low limit>, <deadband>,
-                <latch>, <audible>, <visible>
         """
         command_string = (
             f"ALARM {input_channel},{int(alarm_settings.enabled)},"
@@ -651,9 +650,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                 stability_settings (Model346StabilitySettings):
                     The configuration that should be applied to the output.
 
-            Command Format:
-                OUTSTABLE <output>, <enabled>, <setpoint error>, <settle time>,
-                <audible>, <visible>
         """
         command_string = (
             f"OUTSTABLE {output_channel},{int(stability_settings.enabled)},"
@@ -694,9 +690,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                     1 or 2.
 
         """
-        input_channel = 0
-        condition = 0
-        self.command(f"RELAY {relay_number},1,{input_channel},{condition}")
+        self.command(f"RELAY {relay_number},1,0,0")
 
     def turn_relay_off(self, relay_number):
         """Turns the specified relay off.
@@ -708,9 +702,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                     1 or 2.
 
         """
-        input_channel = 0
-        condition = 0
-        self.command(f"RELAY {relay_number},0,{input_channel},{condition}")
+        self.command(f"RELAY {relay_number},0,0,0")
 
     def set_input_sensor(self, input_channel, sensor_params):
         """Sets the sensor type and associated parameters.
@@ -913,8 +905,8 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         heater_setup = self.query(f"HTRSET? {output}").split(",")
         return {
             "heater_resistance": (int(heater_setup[0])),
-            "max_output": float(heater_setup[1]),  # Keep as float
-            "output_units": self.HeaterOutputUnits(int(heater_setup[2]))  # Rename key to match expected format
+            "max_output": float(heater_setup[1]),
+            "output_units": self.HeaterOutputUnits(int(heater_setup[2]))
         }
 
     def get_heater_output_measurements(self, output):
@@ -949,7 +941,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
                     {"output_value": float, "output_power": float}
                     
                     For outputs 1-4: output_value is current in Amperes
-                    For outputs 5-8: output_value is voltage in Volts, output_power is 0.0
+                    For outputs 5-8: output_value is voltage in Volts, output_power is not calculated and will return as 0
                     For outputs 9-10: output_value is sum of currents, output_power is sum of powers
 
         """
@@ -1075,21 +1067,9 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         response = self.query(f"ANALOG? {output}").split(",")
         return {"high_value": float(response[0]), "low_value": float(response[1])}
 
-    def get_alarm_status(self, channel):
-        """Deprecated. Use get_input_reading_operation_status() instead to check alarm status."""
-        raise NotImplementedError("This method is deprecated. Use get_input_reading_operation_status() instead.")
-
     def reset_alarm_status(self):
         """Resets all alarm statuses including latched alarms."""
         self.command("ALMRST")
-
-    def set_ieee_488(self, address):
-        """Implementation does not exist yet (IEEE). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
-
-    def get_ieee_488(self):
-        """Implementation does not exist yet (IEEE?). Overrides from base."""
-        raise NotImplementedError("Implementation does not exist yet")
 
     def set_keypad_lock(self, state):
         """Sets the state of the front panel settings lock.
@@ -1110,30 +1090,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """
         response = self.query("SYSTem:KLOCk?")
         return bool(int(response.strip()))
-
-    def set_remote_interface_mode(self, mode):
-        """Not supported on Model 346. Overrides from base."""
-        raise NotImplementedError("Remote interface mode query is not supported on Model 346")
-
-    def get_remote_interface_mode(self):
-        """Not supported on Model 346. Overrides from base."""
-        raise NotImplementedError("Remote interface mode command is not supported on Model 346")
-
-    def set_display_field_settings(self, field, input_channel, display_units):
-        """Not implemented in Model 346. Legacy method from older temperature controllers."""
-        raise NotImplementedError("Display field settings are not supported on Model 346")
-
-    def get_display_field_settings(self, field):
-        """Not implemented in Model 346. Legacy method from older temperature controllers."""
-        raise NotImplementedError("Display field settings are not supported on Model 346")
-
-    def set_led_state(self, state):
-        """Not implemented in Model 346. Legacy method from older temperature controllers."""
-        raise NotImplementedError("LED state control is not supported on Model 346")
-
-    def get_led_state(self):
-        """Not implemented in Model 346. Legacy method from older temperature controllers."""
-        raise NotImplementedError("LED state control is not supported on Model 346")
 
     def reset_min_max_data(self, channel):
         """Resets the minimum and maximum reading data for the give input, or all inputs if ALL is specified.
@@ -1212,7 +1168,7 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         response = int(self.query(f"OUTST? {output}"))
         return Model346OutputStatus.from_integer(response)
 
-    def _get_thermocouple_junction_temp(self, input_channel):
+    def get_thermocouple_junction_temp(self, input_channel):
         """Returns the thermocouple junction temperature for the specified input channel.
 
             Args:
@@ -1346,11 +1302,6 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
         """
         return int(self.query(f"CRVNUMPTS? {curve_number}"))
 
-    def get_digital_input_state(self, input_number):
-        """Embedded needs to be updated to support this method."""
-
-        raise NotImplementedError("Embedded needs to be updated to support this method")
-
     def set_relay_alarms(self, relay_number, mode, input_channel, condition):
         """Sets a relay to turn on and off automatically based on the state of the alarm of the specified input channel.
 
@@ -1480,10 +1431,16 @@ class Model346(Model346Enums, XIPInstrument, TemperatureController):
             list[str]: The list of channels available on the option card in the specified slot.
 
         Raises:
-            ValueError: If the slot is invalid.
+            ValueError: If the option card type is unsupported.
         """
+
         if slot not in self.option_card_slots:
-            raise ValueError(f"Invalid slot: {slot}. Valid slots are {', '.join(self.option_card_slots)}.")
+            warnings.warn(
+                f"Invalid slot: {slot}. Valid slots are {', '.join(self.option_card_slots)}.",
+                UserWarning,
+                stacklevel=2,
+            )
+            return []
 
         # Get the type of the option card in the specified slot
         option_card_type = self.get_option_card_type(slot)
