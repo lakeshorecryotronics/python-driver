@@ -21,7 +21,7 @@ Advanced support
 * [Model 240 Input Modules](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-modules/240-series-input-modules)
 * [Model 335 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-335-cryogenic-temperature-controller)
 * [Model 336 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-336-cryogenic-temperature-controller)
-* Model 346 Cryogenic Temperature Controller
+* [Model 346 Cryogenic Temperature Controller](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-346-cryogenic-temperature-controller)
 * [Model 372 AC Resistance Bridge](https://www.lakeshore.com/products/categories/overview/temperature-products/cryogenic-temperature-controllers/model-372-ac-resistance-bridge-temperature-controller)
 * [Model 643 and 648 Electromagnet Power Supplies](https://www.lakeshore.com/products/categories/material-characterization-products/electromagnet-power-supplies)
 
