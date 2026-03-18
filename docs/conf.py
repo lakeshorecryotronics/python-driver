@@ -42,6 +42,16 @@ autodoc_default_options = {
     'member-order': 'bysource'
 }
 
+
+def _skip_inherited_int_enum_methods(app, what, name, obj, skip, options):
+    if name in {"to_bytes", "from_bytes"}:
+        return True
+    return skip
+
+
+def setup(app):
+    app.connect("autodoc-skip-member", _skip_inherited_int_enum_methods)
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

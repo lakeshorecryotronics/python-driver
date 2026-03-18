@@ -1,7 +1,7 @@
 from tests.utils import TestWithFakeModel372
 from lakeshore import InstrumentException
 from lakeshore.temperature_controllers import TemperatureController
-from lakeshore.model_372 import  Model372CurveHeader, Model372StandardEventRegister, Model372OperationEventRegister
+from lakeshore.model_372 import Model372CurveHeader, Model372StandardEventRegister, Model372OperationEventRegister
 
 
 class TestBasicMethods(TestWithFakeModel372):
@@ -284,7 +284,7 @@ class TestObjectMethods(TestWithFakeModel372):
 
     def test_set_relay_control_parameter_alarms(self):
         self.fake_connection.setup_response('0')
-        self.dut.set_relay_alarms(1, "B", TemperatureController.RelayControlAlarm.BOTH_ALARMS)
+        self.dut.set_relay_alarms(1, "B", self.dut.RelayControlAlarm.BOTH_ALARMS)
         self.assertIn("RELAY 1,2,B,2", self.fake_connection.get_outgoing_message())
 
     def test_set_relay_control_parameter_no_alarms(self):
@@ -295,7 +295,7 @@ class TestObjectMethods(TestWithFakeModel372):
     def test_get_relay_alarm_control_parameters(self):
         self.fake_connection.setup_response("2,D1,0;0")
         expected_response = {'activating_input_channel': "D1",
-                             'alarm_relay_trigger_type': TemperatureController.RelayControlAlarm.LOW_ALARM}
+                             'alarm_relay_trigger_type': self.dut.RelayControlAlarm.LOW_ALARM}
         response = self.dut.get_relay_alarm_control_parameters(2)
         self.assertDictEqual(response, expected_response)
         self.assertIn("RELAY? 2", self.fake_connection.get_outgoing_message())
@@ -303,7 +303,7 @@ class TestObjectMethods(TestWithFakeModel372):
     def test_get_relay_control_mode(self):
         self.fake_connection.setup_response('1,0,0;0')
         response = self.dut.get_relay_control_mode(1)
-        self.assertEqual(response, TemperatureController.RelayControlMode.RELAY_ON)
+        self.assertEqual(response, self.dut.RelayControlMode.RELAY_ON)
         self.assertIn("RELAY? 1", self.fake_connection.get_outgoing_message())
 
 

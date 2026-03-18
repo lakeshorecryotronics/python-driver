@@ -1,7 +1,8 @@
 """Implements functionality unique to the Lake Shore Model 336 cryogenic temperature controller."""
+
 from .generic_instrument import RegisterBase
 from .model_336_enums import Model336Enums
-from .temperature_controllers import TemperatureController, InstrumentException, StandardEventRegister, OperationEvent, \
+from .temperature_controllers import LegacyTemperatureController, InstrumentException, StandardEventRegister, OperationEvent, \
     CurveHeader, AlarmSettings
 
 Model336CurveHeader = CurveHeader
@@ -145,7 +146,7 @@ class Model336InputReadingStatus(RegisterBase):
         self.sensor_units_overrange = sensor_units_overrange
 
 
-class Model336(Model336Enums, TemperatureController):
+class Model336(Model336Enums, LegacyTemperatureController):
     """A class object representing the Lake Shore Model 336 cryogenic temperature controller."""
 
     vid_pid = [(0x1FB9, 0x0301)]
@@ -163,35 +164,35 @@ class Model336(Model336Enums, TemperatureController):
                  **kwargs):
 
         # Call the parent init, then fill in values specific to the 336
-        TemperatureController.__init__(self, serial_number, com_port, 57600, timeout, ip_address,
-                                       tcp_port, **kwargs)
+        LegacyTemperatureController.__init__(self, serial_number, com_port, 57600, timeout, ip_address, tcp_port,
+                                             **kwargs)
 
     # Alias specific temperature controller methods
-    get_analog_output_percentage = TemperatureController._get_analog_output_percentage
-    set_autotune = TemperatureController._set_autotune
-    set_contrast_level = TemperatureController._set_contrast_level
-    get_contrast_level = TemperatureController._get_contrast_level
-    get_operation_condition = TemperatureController._get_operation_condition
-    get_operation_event_enable = TemperatureController._get_operation_event_enable
-    set_operation_event_enable = TemperatureController._set_operation_event_enable
-    get_operation_event = TemperatureController._get_operation_event
-    get_thermocouple_junction_temp = TemperatureController._get_thermocouple_junction_temp
-    set_soft_cal_curve_dt_470 = TemperatureController._set_soft_cal_curve_dt_470
-    set_soft_cal_curve_pt_100 = TemperatureController._set_soft_cal_curve_pt_100
-    set_soft_cal_curve_pt_1000 = TemperatureController._set_soft_cal_curve_pt_1000
-    set_filter = TemperatureController._set_filter
-    get_filter = TemperatureController._get_filter
-    set_network_settings = TemperatureController._set_network_settings
-    get_network_settings = TemperatureController._get_network_settings
-    get_network_configuration = TemperatureController._get_network_configuration
-    set_website_login = TemperatureController._set_website_login
-    get_website_login = TemperatureController._get_website_login
-    get_celsius_reading = TemperatureController._get_celsius_reading
-    set_interface = TemperatureController._set_interface
-    get_interface = TemperatureController._get_interface
-    get_tuning_control_status = TemperatureController._get_tuning_control_status
-    set_diode_excitation_current = TemperatureController._set_diode_excitation_current
-    get_diode_excitation_current = TemperatureController._get_diode_excitation_current
+    get_analog_output_percentage = LegacyTemperatureController._get_analog_output_percentage
+    set_autotune = LegacyTemperatureController._set_autotune
+    set_contrast_level = LegacyTemperatureController._set_contrast_level
+    get_contrast_level = LegacyTemperatureController._get_contrast_level
+    get_operation_condition = LegacyTemperatureController._get_operation_condition
+    get_operation_event_enable = LegacyTemperatureController._get_operation_event_enable
+    set_operation_event_enable = LegacyTemperatureController._set_operation_event_enable
+    get_operation_event = LegacyTemperatureController._get_operation_event
+    get_thermocouple_junction_temp = LegacyTemperatureController._get_thermocouple_junction_temp
+    set_soft_cal_curve_dt_470 = LegacyTemperatureController._set_soft_cal_curve_dt_470
+    set_soft_cal_curve_pt_100 = LegacyTemperatureController._set_soft_cal_curve_pt_100
+    set_soft_cal_curve_pt_1000 = LegacyTemperatureController._set_soft_cal_curve_pt_1000
+    set_filter = LegacyTemperatureController._set_filter
+    get_filter = LegacyTemperatureController._get_filter
+    set_network_settings = LegacyTemperatureController._set_network_settings
+    get_network_settings = LegacyTemperatureController._get_network_settings
+    get_network_configuration = LegacyTemperatureController._get_network_configuration
+    set_website_login = LegacyTemperatureController._set_website_login
+    get_website_login = LegacyTemperatureController._get_website_login
+    get_celsius_reading = LegacyTemperatureController._get_celsius_reading
+    set_interface = LegacyTemperatureController._set_interface
+    get_interface = LegacyTemperatureController._get_interface
+    get_tuning_control_status = LegacyTemperatureController._get_tuning_control_status
+    set_diode_excitation_current = LegacyTemperatureController._set_diode_excitation_current
+    get_diode_excitation_current = LegacyTemperatureController._get_diode_excitation_current
 
     def set_monitor_output_heater(self, output, channel, units, high_value, low_value, polarity):
         """Configures a voltage-controlled output.
