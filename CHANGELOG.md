@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Release 1.9.3
+Release 1.10.0
 -------------
 Added:
 - Full support for the Model 346 temperature controller
