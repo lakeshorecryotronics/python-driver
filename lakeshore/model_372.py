@@ -331,8 +331,8 @@ class Model372(Model372Enums, LegacyTemperatureController):
     vid_pid = [(0x1FB9, 0x0305)]
 
     # Initialize registers
-    _status_byte_register = Model372StatusByteRegister
-    _service_request_enable = Model372ServiceRequestEnable
+    status_byte_register = Model372StatusByteRegister
+    service_request_enable = Model372ServiceRequestEnable
 
     def __init__(self,
                  baud_rate,

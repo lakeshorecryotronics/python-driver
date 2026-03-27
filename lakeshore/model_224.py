@@ -113,7 +113,7 @@ class Model224ServiceRequestRegister(RegisterBase):
         "",
         "message_available",
         "event_summary",
-        ""
+        "",
         "operation_summary"
     ]
 
@@ -135,7 +135,7 @@ class Model224StatusByteRegister(RegisterBase):
         "",
         "message_available",
         "event_summary",
-        "master_summary_status"
+        "master_summary_status",
         "operation_summary"
     ]
 
