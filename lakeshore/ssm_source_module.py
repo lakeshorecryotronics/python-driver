@@ -1000,7 +1000,7 @@ class SourceModule(BaseModule):
 
     def get_dark_mode_state(self):
         """Returns the dark mode state for the given pod."""
-        response = self.device.query(f'SOURce{self.module_number}:DMODe?', cherk_errors=False)
+        response = self.device.query(f'SOURce{self.module_number}:DMODe?', check_errors=False)
         return response
 
     def set_dark_mode_state(self, state):
@@ -1014,7 +1014,7 @@ class SourceModule(BaseModule):
 
     def get_voltage_output_limit_high(self):
         """Returns the present voltage high output limit."""
-        response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:LIMit:HIGH?', cherk_errors=False))
+        response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:LIMit:HIGH?', check_errors=False))
         return response
 
     def set_voltage_output_limit_high(self, limit):
@@ -1033,7 +1033,7 @@ class SourceModule(BaseModule):
 
     def get_voltage_output_limit_low(self):
         """Returns the present voltage low output limit."""
-        response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:LIMit:LOW?', cherk_errors=False))
+        response = float(self.device.query(f'SOURce{self.module_number}:VOLTage:LIMit:LOW?', check_errors=False))
         return response
 
     def set_voltage_output_limit_low(self, limit):
@@ -1052,7 +1052,7 @@ class SourceModule(BaseModule):
 
     def get_current_output_limit_high(self):
         """Returns the present current high output limit."""
-        response = float(self.device.query(f'SOURce{self.module_number}:CURRent:LIMit:HIGH?', cherk_errors=False))
+        response = float(self.device.query(f'SOURce{self.module_number}:CURRent:LIMit:HIGH?', check_errors=False))
         return response
 
     def set_current_output_limit_high(self, limit):
@@ -1071,7 +1071,7 @@ class SourceModule(BaseModule):
 
     def get_current_output_limit_low(self):
         """Returns the present current low output limit."""
-        response = float(self.device.query(f'SOURce{self.module_number}:CURRent:LIMit:LOW?', cherk_errors=False))
+        response = float(self.device.query(f'SOURce{self.module_number}:CURRent:LIMit:LOW?', check_errors=False))
         return response
 
     def set_disable_on_compliance(self, disable_on_compliance):

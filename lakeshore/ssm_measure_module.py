@@ -1029,7 +1029,7 @@ class MeasureModule(BaseModule):
     def get_dark_mode_state(self):
         """Returns the dark mode state for the given pod."""
 
-        response = self.device.query(f'SENSe{self.module_number}:DMODe?', cherk_errors=False)
+        response = self.device.query(f'SENSe{self.module_number}:DMODe?', check_errors=False)
         return response
 
     def set_dark_mode_state(self, state):
@@ -1234,7 +1234,7 @@ class MeasureModule(BaseModule):
         Args:
             resistance_mode (ResistanceMode): The desired resistance optimization mode.
         """
-        if isinstance(resistance_mode, SSMSystemEnums.ResistanceExcitationType):
+        if isinstance(resistance_mode, SSMSystemEnums.ResistanceMode):
             mode = resistance_mode.name
         else:
             mode = resistance_mode

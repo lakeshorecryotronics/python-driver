@@ -1,6 +1,8 @@
 """Implements functionality unique to the Lake Shore M81."""
 from datetime import datetime
+import logging
 import struct
+import time
 from base64 import b64decode
 from threading import Lock
 from warnings import warn
@@ -12,12 +14,25 @@ from lakeshore.ssm_source_module import SourceModule
 from lakeshore.ssm_settings_profiles import SettingsProfiles
 from lakeshore.requires_firmware_version import requires_firmware_version
 
+logger = logging.getLogger(__name__)
+
 try:
     from wakepy import keep
-except NotImplementedError:
-    pass  # Proceed without wakepy on linux without systemd
-except KeyError:
-    pass  # Proceed without wakepy on linux without dbus
+except (NotImplementedError, KeyError, ImportError):
+    # Provide a no-op context manager fallback when wakepy is unavailable
+    from contextlib import contextmanager
+
+    class _NoOpMode:
+        """Mimics wakepy's Mode object returned by keep.running()."""
+        success = False
+
+    class _NoOpKeep:
+        @staticmethod
+        @contextmanager
+        def running():
+            yield _NoOpMode()
+
+    keep = _NoOpKeep()
 
 
 class SSMSystemOperationRegister(RegisterBase):
@@ -128,6 +143,8 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
 
         self.settings_profiles = SettingsProfiles(self)
 
+        # Lock ordering: stream_lock must be acquired before dut_lock (inherited from
+        # GenericInstrument) to avoid deadlock. Never acquire dut_lock then stream_lock.
         self.stream_lock = Lock()
 
         # Sweeping limits
@@ -218,6 +235,7 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         'SRANge': float,
         'SVLimit': lambda s: bool(int(s)),
         'SILimit': lambda s: bool(int(s)),
+        'SSWeeping': lambda s: bool(int(s)),
         'MDC': float,
         'MRMs': float,
         'MPPeak': float,
@@ -270,6 +288,13 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
     def stream_data(self, rate, num_points, *data_sources):
         """Generator object to stream data from the instrument.
 
+            A TRACe:STOp command is sent when the generator exits for any reason
+            (normal completion, caller break, exception, or garbage collection)
+            to ensure instrument-side cleanup.
+
+            Note: the overflow check only runs on normal completion. If the
+            generator is abandoned early, overflow status is not checked.
+
             Args:
                 rate (int):
                     Desired transfer rate in points/sec.
@@ -292,26 +317,45 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
                 bytes_per_row = int(self.query('TRACe:FORMat:ENCOding:B64:BCOunt?'))
                 binary_format = '<' + self.query('TRACe:FORMat:ENCOding:B64:BFORmat?').strip('\"')
 
-                if num_points is not None:
-                    self.command(f'TRACe:STARt {num_points}')
-                else:
-                    self.command('TRACe:STARt')
+                try:
+                    if num_points is not None:
+                        self.command(f'TRACe:STARt {num_points}')
+                    else:
+                        self.command('TRACe:STARt')
 
-                num_collected = 0
-                while num_points is None or num_collected < num_points:
-                    b64_string = ''
-                    while not b64_string:
-                        b64_string = self.query('TRACe:DATA:ALL?', check_errors=False)
+                    num_collected = 0
+                    while num_points is None or num_collected < num_points:
+                        b64_string = ''
+                        while not b64_string:
+                            b64_string = self.query('TRACe:DATA:ALL?', check_errors=False)
+                            if not b64_string:
+                                time.sleep(0.01)
 
-                    new_bytes = b64decode(b64_string)
-                    rows = [new_bytes[i:i + bytes_per_row] for i in range(0, len(new_bytes), bytes_per_row)]
+                        new_bytes = b64decode(b64_string)
+                        rows = [new_bytes[i:i + bytes_per_row] for i in range(0, len(new_bytes), bytes_per_row)]
 
-                    for row in rows:
-                        data = struct.unpack(binary_format, row)
-                        num_collected += 1
+                        for row in rows:
+                            if len(row) < bytes_per_row:
+                                # Incomplete trailing row from non-evenly-divisible buffer
+                                logger.debug('Skipping incomplete row (%d/%d bytes)', len(row), bytes_per_row)
+                                break
+                            if num_points is not None and num_collected >= num_points:
+                                # Batch contained more rows than needed to reach num_points
+                                break
+                            data = struct.unpack(binary_format, row)
+                            num_collected += 1
+                            yield data
+                finally:
+                    # Best-effort cleanup: stop instrument-side streaming.
+                    # May block briefly if dut_lock is held by another thread.
+                    try:
+                        self.command('TRACe:STOp', check_errors=False)
+                    except Exception:
+                        logger.debug('Failed to send TRACe:STOp during cleanup', exc_info=True)
 
-                        yield data
-
+            # Note: this overflow check is only reached on normal generator
+            # completion. If the generator is abandoned (e.g. caller break),
+            # GeneratorExit bypasses this code via the context manager exits.
             overflow_occurred = bool(int(self.query('TRACe:DATA:OVERflow?', check_errors=True)))
             if overflow_occurred:
                 raise XIPInstrumentException('Data loss occurred during this data stream.')
@@ -492,7 +536,11 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         """Returns the date and time of the head calibration."""
 
         response = self.query('CALibration:DATE?').split(',')
-        return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]), int(response[4]), int(response[5]))
+        if len(response) < 6:
+            raise XIPInstrumentException(
+                f"Malformed calibration date response: expected 6 values, got {len(response)}")
+        return datetime(int(response[0]), int(response[1]), int(response[2]),
+                        int(response[3]), int(response[4]), int(response[5]))
 
     def get_head_cal_temperature(self):
         """Returns the temperature of the head calibration."""
@@ -508,7 +556,11 @@ class SSMSystem(XIPInstrument, SSMSystemEnums):
         """Returns the datetime of the last head self calibration."""
 
         response = self.query('CALibration:SCALibration:DATE?').split(',')
-        return datetime(int(response[0]), int(response[1]), int(response[2]), int(response[3]), int(response[4]), int(response[5]))
+        if len(response) < 6:
+            raise XIPInstrumentException(
+                f"Malformed self-calibration date response: expected 6 values, got {len(response)}")
+        return datetime(int(response[0]), int(response[1]), int(response[2]),
+                        int(response[3]), int(response[4]), int(response[5]))
 
     def get_head_self_cal_temperature(self):
         """Returns the temperature of the last head self calibration."""
