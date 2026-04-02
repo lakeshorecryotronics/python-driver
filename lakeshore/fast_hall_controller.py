@@ -1,7 +1,9 @@
 """Implements functionality unique to the Lake Shore M91 Fast Hall."""
 
 import json
+import time
 from .xip_instrument import XIPInstrument, RegisterBase, StatusByteRegister, StandardEventRegister
+from .generic_instrument import InstrumentException
 
 
 class FastHallOperationRegister(RegisterBase):
@@ -1017,11 +1019,13 @@ class FastHall(XIPInstrument):
 
         return measurement_results
 
-    def run_complete_contact_check_optimized(self, settings):
+    def run_complete_contact_check_optimized(self, settings, timeout=None):
         """Performs a contact check measurement and then returns the corresponding measurement results.
 
             Args:
                 settings(ContactCheckOptimizedParameters):
+                timeout (float):
+                    Optional timeout in seconds. If specified, raises InstrumentException if exceeded.
 
             Returns:
                 The measurement results as a dictionary.
@@ -1031,14 +1035,17 @@ class FastHall(XIPInstrument):
         self.start_contact_check_vdp_optimized(settings)
 
         # Loop until measurement has stopped running
+        start_time = time.time()
         while self.get_contact_check_running_status():
-            pass
+            if timeout is not None and (time.time() - start_time) > timeout:
+                raise InstrumentException(f"Measurement timed out after {timeout} seconds")
+            time.sleep(0.1)
 
         # Collect and return results
         results = self.get_contact_check_measurement_results()
         return results
 
-    def run_complete_contact_check_manual(self, settings, sample_type):
+    def run_complete_contact_check_manual(self, settings, sample_type, timeout=None):
         """Performs a manual contact check measurement and then returns the corresponding measurement results.
 
             Args:
@@ -1046,6 +1053,8 @@ class FastHall(XIPInstrument):
                     Object with settings for FastHall link setup.
                 sample_type (str):
                     Indicates sample type. Options: "VDP" (Van der Pauw sample), or "HBAR" (Hall Bar sample).
+                timeout (float):
+                    Optional timeout in seconds. If specified, raises InstrumentException if exceeded.
 
             Returns:
                 The measurement results as a dictionary.
@@ -1062,19 +1071,24 @@ class FastHall(XIPInstrument):
                              'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR for a Hall bar."')
 
         #  Loop until measurement has stopped running
+        start_time = time.time()
         while self.get_contact_check_running_status():
-            pass
+            if timeout is not None and (time.time() - start_time) > timeout:
+                raise InstrumentException(f"Measurement timed out after {timeout} seconds")
+            time.sleep(0.1)
 
         # Collect and return results
         results = self.get_contact_check_measurement_results()
         return results
 
-    def run_complete_fasthall_link(self, settings):
+    def run_complete_fasthall_link(self, settings, timeout=None):
         """Performs a FastHall Link measurement and then returns the corresponding measurement results.
 
             Args:
                 settings(FastHallLinkParameters):
                     Object with settings for FastHall link setup.
+                timeout (float):
+                    Optional timeout in seconds. If specified, raises InstrumentException if exceeded.
 
             Returns:
                 The measurement results as a dictionary.
@@ -1084,19 +1098,24 @@ class FastHall(XIPInstrument):
         self.start_fasthall_link_vdp(settings)
 
         # Loop until measurement has stopped running
+        start_time = time.time()
         while self.get_fasthall_running_status():
-            pass
+            if timeout is not None and (time.time() - start_time) > timeout:
+                raise InstrumentException(f"Measurement timed out after {timeout} seconds")
+            time.sleep(0.1)
 
         # Collect and return results
         results = self.get_fasthall_measurement_results()
         return results
 
-    def run_complete_fasthall_manual(self, settings):
+    def run_complete_fasthall_manual(self, settings, timeout=None):
         """Performs a manual FastHall measurement and then returns the corresponding measurement results.
 
             Args:
                 settings(FastHallManualParameters):
                     Object with settings for FastHall link setup.
+                timeout (float):
+                    Optional timeout in seconds. If specified, raises InstrumentException if exceeded.
             Returns:
                 The measurement results as a dictionary.
         """
@@ -1105,18 +1124,23 @@ class FastHall(XIPInstrument):
         self.start_fasthall_vdp(settings)
 
         # Loop until measurement has stopped running
+        start_time = time.time()
         while self.get_fasthall_running_status():
-            pass
+            if timeout is not None and (time.time() - start_time) > timeout:
+                raise InstrumentException(f"Measurement timed out after {timeout} seconds")
+            time.sleep(0.1)
 
         # Collect and return results
         results = self.get_fasthall_measurement_results()
         return results
 
-    def run_complete_four_wire(self, settings):
+    def run_complete_four_wire(self, settings, timeout=None):
         """Performs a Four Wire measurement and then returns the corresponding measurement results.
 
             Args:
                 settings(FourWireParameters):
+                timeout (float):
+                    Optional timeout in seconds. If specified, raises InstrumentException if exceeded.
 
             Returns:
                 The measurement results as a dictionary.
@@ -1126,14 +1150,17 @@ class FastHall(XIPInstrument):
         self.start_four_wire(settings)
 
         # Loop until measurement has stopped running
+        start_time = time.time()
         while self.get_four_wire_running_status():
-            pass
+            if timeout is not None and (time.time() - start_time) > timeout:
+                raise InstrumentException(f"Measurement timed out after {timeout} seconds")
+            time.sleep(0.1)
 
         # Collect and return results
         results = self.get_four_wire_measurement_results()
         return results
 
-    def run_complete_dc_hall(self, settings, sample_type):
+    def run_complete_dc_hall(self, settings, sample_type, timeout=None):
         """Performs a DC Hall measurement and then returns the corresponding measurement results.
 
             Args:
@@ -1141,6 +1168,8 @@ class FastHall(XIPInstrument):
                     Object with settings for FastHall link setup.
                 sample_type(str):
                     Indicates sample type. Options: "VDP" (Van der Pauw sample), or"HBAR" (Hall Bar sample).
+                timeout (float):
+                    Optional timeout in seconds. If specified, raises InstrumentException if exceeded.
 
             Returns:
                 The measurement results as a dictionary.
@@ -1156,19 +1185,25 @@ class FastHall(XIPInstrument):
                              'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR for a Hall bar."')
 
         # Loop until measurement has stopped running or waiting
+        start_time = time.time()
         while self.get_dc_hall_running_status() or self.get_dc_hall_waiting_status():
             if self.get_dc_hall_waiting_status():
                 self.continue_dc_hall()
+            if timeout is not None and (time.time() - start_time) > timeout:
+                raise InstrumentException(f"Measurement timed out after {timeout} seconds")
+            time.sleep(0.1)
 
         # Collect and return results
         results = self.get_dc_hall_measurement_results()
         return results
 
-    def run_complete_resistivity_link(self, settings):
+    def run_complete_resistivity_link(self, settings, timeout=None):
         """Performs a resistivity link measurement and then returns the corresponding measurement results.
 
             Args:
                 settings(ResistivityLinkParameters):
+                timeout (float):
+                    Optional timeout in seconds. If specified, raises InstrumentException if exceeded.
 
             Returns:
                 The measurement results as a dictionary.
@@ -1178,14 +1213,17 @@ class FastHall(XIPInstrument):
         self.start_resistivity_link_vdp(settings)
 
         # Loop until measurement has stopped running
+        start_time = time.time()
         while self.get_resistivity_running_status():
-            pass
+            if timeout is not None and (time.time() - start_time) > timeout:
+                raise InstrumentException(f"Measurement timed out after {timeout} seconds")
+            time.sleep(0.1)
 
         # Collect and return results
         results = self.get_resistivity_measurement_results()
         return results
 
-    def run_complete_resistivity_manual(self, settings, sample_type):
+    def run_complete_resistivity_manual(self, settings, sample_type, timeout=None):
         """Performs a manual resistivity measurement and then returns the corresponding measurement results.
 
             Args:
@@ -1193,6 +1231,8 @@ class FastHall(XIPInstrument):
                     Object with settings for manual resistivity setup.
                 sample_type(str):
                     Indicates sample type. Options are: "VDP" (Van der Pauw sample), or "HBAR" (Hall Bar sample).
+                timeout (float):
+                    Optional timeout in seconds. If specified, raises InstrumentException if exceeded.
 
             Returns:
                 The measurement results as a dictionary.
@@ -1208,8 +1248,11 @@ class FastHall(XIPInstrument):
                              'Sample type must be either "VDP" for a Van der Pauw sample or "HBAR for a Hall bar."')
 
         # Loop until measurement has stopped running
+        start_time = time.time()
         while self.get_resistivity_running_status():
-            pass
+            if timeout is not None and (time.time() - start_time) > timeout:
+                raise InstrumentException(f"Measurement timed out after {timeout} seconds")
+            time.sleep(0.1)
 
         # Collect and return results
         results = self.get_resistivity_measurement_results()

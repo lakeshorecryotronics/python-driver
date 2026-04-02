@@ -145,7 +145,7 @@ class Model240(Model240Enums, GenericInstrument):
                     Specifies channel (1-8).
 
         """
-        return self.query(f"CRDG? {channel}")
+        return float(self.query(f"CRDG? {channel}"))
 
     def set_factory_defaults(self):
         """Sets all configuration values to factory defaults and resets the instrument."""
@@ -169,7 +169,7 @@ class Model240(Model240Enums, GenericInstrument):
                     Specifies channel (1-8).
 
         """
-        return self.query(f"FRDG? {channel}")
+        return float(self.query(f"FRDG? {channel}"))
 
     def get_sensor_reading(self, input_channel):
         """Returns the sensor reading in the sensor's units.
@@ -286,6 +286,7 @@ class Model240(Model240Enums, GenericInstrument):
                     Specifies the name to associate with the sensor channel.
 
         """
+        self._validate_scpi_parameter(name, "name")
         self.command(f"INNAME {channel},{name}")
 
     def get_sensor_name(self, channel):
@@ -330,10 +331,10 @@ class Model240(Model240Enums, GenericInstrument):
         response = self.query(f"INTYPE? {channel}")
         data = response.split(",")
         input_parameter = Model240InputParameter(self.SensorTypes(int(data[0])),
-                                                 bool(data[1]),
-                                                 bool(data[3]),
+                                                 bool(int(data[1])),
+                                                 bool(int(data[3])),
                                                  self.Units(int(data[4])),
-                                                 bool(data[5]),
+                                                 bool(int(data[5])),
                                                  int(data[2]))
         return input_parameter
 
@@ -345,6 +346,7 @@ class Model240(Model240Enums, GenericInstrument):
                     Specifies the name or description to help identify the module.
 
         """
+        self._validate_scpi_parameter(name, "name")
         self.command(f"MODNAME {name}")
 
     def get_modname(self):
@@ -478,7 +480,7 @@ class Model240(Model240Enums, GenericInstrument):
                     Specifies which channel to query (1-8).
 
         """
-        return self.query(f"SRDG? {channel}")
+        return float(self.query(f"SRDG? {channel}"))
 
 
 __all__ = ['Model240', 'Model240CurveHeader', 'Model240InputParameter', 'Model240ProfiSlot']

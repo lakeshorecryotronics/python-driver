@@ -1089,7 +1089,7 @@ class SourceModule(BaseModule):
 
     def get_disable_on_compliance(self):
         """Returns the present state of disable on compliance."""
-        response = bool(self.device.query(f'SOURce{self.module_number}:DOCompliance?', check_errors=False))
+        response = bool(int(self.device.query(f'SOURce{self.module_number}:DOCompliance?', check_errors=False)))
         return response
 
     def set_current_output_limit_low(self, limit):
@@ -1485,10 +1485,14 @@ class SourceModule(BaseModule):
         Returns:
             int: The number of sweep points.
         """
+        if start_value == stop_value:
+            return 1
         if sweep_spacing == 'LINEAR':
             step_size = 10 ** (math.floor(math.log10(abs(stop_value - start_value))) - 2)
             number_of_points = round(abs(stop_value - start_value) / step_size + 1)
         else:
+            if start_value == 0:
+                raise ValueError("Start value cannot be zero for logarithmic sweep")
             step_size = 10 ** (math.floor(math.log10(abs(stop_value / start_value))) - 2)
             number_of_points = round(abs(stop_value / start_value) / step_size + 1)
         return number_of_points

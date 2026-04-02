@@ -1,4 +1,6 @@
+from unittest.mock import patch
 from tests.utils import TestWithFakeFastHall
+from lakeshore.generic_instrument import InstrumentException
 from lakeshore.fast_hall_controller import ContactCheckManualParameters, ContactCheckOptimizedParameters, \
     FastHallManualParameters, FastHallLinkParameters, FourWireParameters, DCHallParameters, \
     ResistivityManualParameters, ResistivityLinkParameters
@@ -338,3 +340,96 @@ class TestResistivityRun(TestWithFakeFastHall):
         self.dut.start_resistivity_hbar(parameters)
         self.assertIn('RESISTIVITY:HBAR:START CURRENT,0.01,0.02,0.03,4,5,0.006,0.007,800,9,0.001,11',
                       self.fake_connection.get_outgoing_message())
+
+
+class TestRunCompleteTimeout(TestWithFakeFastHall):
+    def test_contact_check_optimized_timeout(self):
+        # Setup: start command succeeds, status returns running (True)
+        self.fake_connection.setup_response('No error')  # start command
+        self.fake_connection.setup_response('1;No error')  # running status = True
+        parameters = ContactCheckOptimizedParameters()
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.run_complete_contact_check_optimized(parameters, timeout=0)
+        self.assertIn("timed out", str(ctx.exception))
+
+    def test_contact_check_manual_timeout(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('1;No error')
+        parameters = ContactCheckManualParameters(excitation_type='VOLTAGE', excitation_start_value=-5,
+                                                  excitation_end_value=5, compliance_limit=10e-3, number_of_points=25)
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.run_complete_contact_check_manual(parameters, "VDP", timeout=0)
+        self.assertIn("timed out", str(ctx.exception))
+
+    def test_fasthall_link_timeout(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('1;No error')
+        parameters = FastHallLinkParameters(user_defined_field=0.5)
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.run_complete_fasthall_link(parameters, timeout=0)
+        self.assertIn("timed out", str(ctx.exception))
+
+    def test_fasthall_manual_timeout(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('1;No error')
+        parameters = FastHallManualParameters(excitation_type='VOLTAGE', excitation_value=1, compliance_limit=10e-6,
+                                              user_defined_field=0.5)
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.run_complete_fasthall_manual(parameters, timeout=0)
+        self.assertIn("timed out", str(ctx.exception))
+
+    def test_four_wire_timeout(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('1;No error')
+        parameters = FourWireParameters(contact_point1=1, contact_point2=2, contact_point3=3, contact_point4=4,
+                                        excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=1.5)
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.run_complete_four_wire(parameters, timeout=0)
+        self.assertIn("timed out", str(ctx.exception))
+
+    def test_dc_hall_timeout(self):
+        self.fake_connection.setup_response('No error')
+        # dc_hall checks both running and waiting status
+        self.fake_connection.setup_response('1;No error')  # running = True
+        self.fake_connection.setup_response('0;No error')  # waiting = False
+        parameters = DCHallParameters(excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=1.5,
+                                      averaging_samples=100, user_defined_field=0.5)
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.run_complete_dc_hall(parameters, "VDP", timeout=0)
+        self.assertIn("timed out", str(ctx.exception))
+
+    def test_resistivity_link_timeout(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('1;No error')
+        parameters = ResistivityLinkParameters()
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.run_complete_resistivity_link(parameters, timeout=0)
+        self.assertIn("timed out", str(ctx.exception))
+
+    def test_resistivity_manual_timeout(self):
+        self.fake_connection.setup_response('No error')
+        self.fake_connection.setup_response('1;No error')
+        parameters = ResistivityManualParameters(excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=5)
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.run_complete_resistivity_manual(parameters, "VDP", timeout=0)
+        self.assertIn("timed out", str(ctx.exception))
+
+
+class TestRunCompleteNormal(TestWithFakeFastHall):
+    def test_contact_check_optimized_completes(self):
+        json_result = '{"Setup": {}, "OptimizationSetup": {}, "OptimizationDiagnostics": {}, "Result": "ok"}'
+        self.fake_connection.setup_response('No error')    # start command
+        self.fake_connection.setup_response('0;No error')  # running = False (done immediately)
+        self.fake_connection.setup_response(f'{json_result};No error')  # results JSON
+        parameters = ContactCheckOptimizedParameters()
+        results = self.dut.run_complete_contact_check_optimized(parameters)
+        self.assertEqual(results, {"Result": "ok"})
+
+    def test_four_wire_completes(self):
+        self.fake_connection.setup_response('No error')    # start command
+        self.fake_connection.setup_response('0;No error')  # running = False
+        self.fake_connection.setup_response('{"Setup": {}, "Result": "ok"};No error')  # results JSON
+        parameters = FourWireParameters(contact_point1=1, contact_point2=2, contact_point3=3, contact_point4=4,
+                                        excitation_type='CURRENT', excitation_value=10e-3, compliance_limit=1.5)
+        results = self.dut.run_complete_four_wire(parameters)
+        self.assertEqual(results, {"Result": "ok"})

@@ -1,5 +1,6 @@
 """Implements functionality unique to the Lake Shore F41 and F71 Teslameters."""
 
+import time
 from collections import namedtuple
 from datetime import datetime
 
@@ -137,41 +138,44 @@ class Teslameter(XIPInstrument):
             response = self.query('FETC:BUFF:DC?', check_errors=False).strip('"')
 
             # Ignore the response if it contains no data
-            if ';' in response:
-                # Split apart the response into single data points.
-                data_points = response.rstrip(';').split(';')
+            if ';' not in response:
+                time.sleep(0.1)
+                continue
 
-                for point in data_points:
-                    # Split the data point along the delimiter.
-                    point_data = point.split(',')
+            # Split apart the response into single data points.
+            data_points = response.rstrip(';').split(';')
 
-                    # Convert the returned values from strings to appropriate types
-                    for count, _ in enumerate(point_data):
-                        if count == 0:
-                            point_data[count] = iso8601.parse_date(point_data[count])
-                        elif count == len(point_data) - 1:
-                            point_data[count] = int(point_data[count])
-                        else:
-                            point_data[count] = float(point_data[count])
+            for point in data_points:
+                # Split the data point along the delimiter.
+                point_data = point.split(',')
 
-                    # If the instrument does not have a field control option, insert zero as the control set point.
-                    if len(point_data) == 6:
-                        input_state = point_data.pop()
-                        point_data.append(0.0)
-                        point_data.append(input_state)
+                # Convert the returned values from strings to appropriate types
+                for count, _ in enumerate(point_data):
+                    if count == 0:
+                        point_data[count] = iso8601.parse_date(point_data[count])
+                    elif count == len(point_data) - 1:
+                        point_data[count] = int(point_data[count])
+                    else:
+                        point_data[count] = float(point_data[count])
 
-                    # Count how many samples have been collected and calculate the elapsed time.
-                    number_of_samples += 1
-                    elapsed_time_in_seconds = sample_rate_in_ms * number_of_samples / 1000
+                # If the instrument does not have a field control option, insert zero as the control set point.
+                if len(point_data) == 6:
+                    input_state = point_data.pop()
+                    point_data.append(0.0)
+                    point_data.append(input_state)
 
-                    # If we have exceeded the requested number of samples, end the stream.
-                    if number_of_samples > total_number_of_samples:
-                        break
+                # Count how many samples have been collected and calculate the elapsed time.
+                number_of_samples += 1
+                elapsed_time_in_seconds = sample_rate_in_ms * number_of_samples / 1000
 
-                    # Unpack the parsed point into a namedtuple and append it to the list
-                    new_point = DataPoint(elapsed_time_in_seconds, *point_data)
+                # If we have exceeded the requested number of samples, end the stream.
+                if number_of_samples > total_number_of_samples:
+                    break
 
-                    yield new_point
+                # Unpack the parsed point into a namedtuple and append it to the list
+                new_point = DataPoint(elapsed_time_in_seconds, *point_data)
+
+                yield new_point
 
     @requires_firmware_version('1.1.2018091003')
     def get_buffered_data_points(self, length_of_time_in_seconds, sample_rate_in_ms):
@@ -637,7 +641,7 @@ class Teslameter(XIPInstrument):
     @requires_firmware_version("1.6.2019092002")
     def get_qualifier_latching_setting(self):
         """Returns whether the qualifier latches."""
-        return self.query("SENSE:QUALIFIER:LATCH?")
+        return bool(int(self.query("SENSE:QUALIFIER:LATCH?")))
 
     @requires_firmware_version("1.6.2019092002")
     def set_qualifier_latching_setting(self, latching):
@@ -647,7 +651,7 @@ class Teslameter(XIPInstrument):
                 latching (bool):
                     Determines whether the qualifier latches.
         """
-        self.command(f"SENSE:QUALIFIER:LATCH {str(latching)}")
+        self.command(f"SENSE:QUALIFIER:LATCH {int(latching)}")
 
     @requires_firmware_version("1.6.2019092002")
     def reset_qualifier_latch(self):

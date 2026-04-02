@@ -352,3 +352,11 @@ class GenericInstrument:
 
     def _get_identity(self):
         return self.query('*IDN?').split(',')
+
+    @staticmethod
+    def _validate_scpi_parameter(value, param_name):
+        """Validate a parameter value for SCPI safety."""
+        str_value = str(value)
+        if ';' in str_value or '\n' in str_value or '\r' in str_value:
+            raise ValueError(
+                f"Invalid characters in {param_name}: SCPI delimiters not allowed in parameter values")

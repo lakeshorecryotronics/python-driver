@@ -107,7 +107,7 @@ class SettingsProfiles:
         """
 
         response = self.device.query(f'PROFile:RESTore:VALid? "{name}"')
-        return bool(response)
+        return bool(int(response))
 
     def restore(self, name):
         """Restore a profile.

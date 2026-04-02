@@ -1451,6 +1451,31 @@ class TestSweepMethods(TestWithFakeSSMSSourceModule):
         self.assertIn('TRACe:STARt 3', self.fake_connection.get_outgoing_message())
 
 
+class TestSweepPointCalculation(TestWithFakeSSMSSourceModule):
+    def test_start_equals_stop_returns_one(self):
+        result = self.dut_module._calculate_number_of_sweep_points(5.0, 5.0, 'LINEAR')
+        self.assertEqual(result, 1)
+
+    def test_start_equals_stop_logarithmic_returns_one(self):
+        result = self.dut_module._calculate_number_of_sweep_points(5.0, 5.0, 'LOGARITHMIC')
+        self.assertEqual(result, 1)
+
+    def test_zero_start_logarithmic_raises(self):
+        with self.assertRaises(ValueError) as ctx:
+            self.dut_module._calculate_number_of_sweep_points(0, 5.0, 'LOGARITHMIC')
+        self.assertIn("zero", str(ctx.exception).lower())
+
+    def test_linear_sweep_normal(self):
+        result = self.dut_module._calculate_number_of_sweep_points(0, 1.0, 'LINEAR')
+        self.assertIsInstance(result, int)
+        self.assertGreater(result, 1)
+
+    def test_logarithmic_sweep_normal(self):
+        result = self.dut_module._calculate_number_of_sweep_points(1.0, 10.0, 'LOGARITHMIC')
+        self.assertIsInstance(result, int)
+        self.assertGreater(result, 1)
+
+
 class TestMeasureModule(TestWithFakeSSMSMeasureModule):
     def test_get_name(self):
         self.fake_connection.setup_response('Module_name;No error')

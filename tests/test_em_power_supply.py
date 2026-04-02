@@ -1,4 +1,32 @@
+from lakeshore.generic_instrument import InstrumentException
 from tests.utils import TestWithFakeEMPowerSupply
+
+
+class TestErrorMessageContext(TestWithFakeEMPowerSupply):
+
+    def test_command_error_includes_query_string(self):
+        # Standard Event Register bit 5 (0x20 = 32) = command error
+        self.fake_connection.setup_response("0; 32")
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.get_current()
+        self.assertIn("SETI?", str(ctx.exception))
+        self.assertIn("Command Error", str(ctx.exception))
+
+    def test_execution_error_includes_query_string(self):
+        # Standard Event Register bit 4 (0x10 = 16) = execution error
+        self.fake_connection.setup_response("0; 16")
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.get_current()
+        self.assertIn("SETI?", str(ctx.exception))
+        self.assertIn("Execution Error", str(ctx.exception))
+
+    def test_query_error_includes_query_string(self):
+        # Standard Event Register bit 2 (0x04 = 4) = query error
+        self.fake_connection.setup_response("0; 4")
+        with self.assertRaises(InstrumentException) as ctx:
+            self.dut.get_current()
+        self.assertIn("SETI?", str(ctx.exception))
+        self.assertIn("Query Error", str(ctx.exception))
 
 
 class TestCurrentSettings(TestWithFakeEMPowerSupply):

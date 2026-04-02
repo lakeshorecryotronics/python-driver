@@ -1284,7 +1284,7 @@ class MeasureModule(BaseModule):
             bool: The state of resistance auto-range on the module.
         """
 
-        return bool(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe:AUTO?"))
+        return bool(int(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:RANGe:AUTO?")))
 
     def set_resistance_optimization_state(self, optimization_state):
         """Sets the state of resistance optimization on the module
@@ -1306,7 +1306,7 @@ class MeasureModule(BaseModule):
             bool: The state of resistance optimization. True if optimizing for resistance, else False.
         """
 
-        return bool(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OPTimize?"))
+        return bool(int(self.device.query(f"CALCulate:SENSe{self.module_number}:RESistance:OPTimize?")))
 
     def set_resistance_observation_time_state(self, state):
         """Sets the state of the observation time on the module.
